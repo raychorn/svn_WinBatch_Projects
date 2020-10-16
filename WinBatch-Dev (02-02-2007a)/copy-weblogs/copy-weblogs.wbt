@@ -1,0 +1,60 @@
+; copy-weblogs.wbt
+
+wName = "copy-weblogs v1.0"
+
+_noTime = "0000:00:00:00:00:00"
+
+; Purpose: Copy All weblogs from one place to another... copies files matching one filter to a folder... does not drill down into the source folder...
+
+_dir_name = "C:\Inetpub\logs\cfide.data.halsmalltalker.com\W3SVC4\*.log"
+_dest_folder = "D:\@temp\DATA_C_Inetpub_logs_cfide.data.halsmalltalker.com_W3SVC4\"
+
+_dir_name = ""
+_dest_folder = ""
+
+If param0 > 0
+	; param1 is the source folder and filter
+	_dir_name = param1
+
+	; param2 is the dest folder and filter
+	_dest_folder = param2
+Endif
+
+if (strlen(_dir_name) > 0) && (DirExist( _dest_folder))
+	if StrSub( _dest_folder, strlen(_dest_folder), 1) <> "\"
+		_dest_folder = StrCat(_dest_folder, "\")
+	endif
+
+	fList = FileItemize( _dir_name)
+	if ItemCount( fList, @TAB) < 1
+		_dir_name = StrCat( _dir_name, "\*.log")
+	endif
+
+	aRoot = FilePath( _dir_name)
+
+	for i = 1 to ItemCount( fList, @TAB)
+		aFile = ItemExtract( i, fList, @TAB)
+		aFpath = StrCat(aRoot, aFile)
+		BoxCaption( 1, "Checking... %aFile%")
+		aSize =  FileSize( aFpath)
+		aTime = FileTimeGetEx(aFpath, 2)
+		dFile = "%_dest_folder%%aFile%"
+		dSize =  0
+		tDiff = ""
+		if FileExist( dFile) == @TRUE
+			dSize =  FileSize( dFile)
+			dTime = FileTimeGetEx(dFile, 2)
+			tDiff = TimeDiff( aTime, dTime)
+		endif
+		_t = StrCmp( tDiff, _noTime)
+		if ( (aSize > 0) && (aSize <> dSize) ) || (dSize == 0) || ( (strlen(tDiff) > 0) && (_t != 0))
+			ErrorMode(@OFF)
+			BoxCaption( 1, "Copying... %aFile%")
+			a = FileCopy( aFpath, dFile, @FALSE)
+			ErrorMode(@CANCEL)
+		endif
+	next
+endif
+
+exit
+

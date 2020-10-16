@@ -1,0 +1,6 @@
+open ediftp.ingrammicro.com
+user
+US112544
+vision
+get SRP600PCD0001.TUE c:\@temp\SRP600PCD0001.TUE
+quit 

@@ -1,0 +1,81 @@
+; Js_to_CF_SrcEnc_binary.wbt
+;
+; Purposes: Converts instances of '#' to '##' and breaks into smaller strings suitable for use in a <CFSCRIPT>.
+
+AddExtender("WWWSK32I.DLL")
+
+_wname = "Js_to_CF_SrcEnc_binary v1.0"
+wname = "%_wname% (c)2005 Ray C Horn, All Rights Reserved."
+
+CR = StrCat(Num2Char(13),Num2Char(10))
+_crlf = CR
+
+_dblTicks = '"'
+
+_maxStringLen = 100
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+_now = TimeYmdHms()	; YYYY:MM:DD:HH:MM:SS
+_nowBegin = _now
+
+_yyyy = ItemExtract( 1, _now, ":")
+_mm = ItemExtract( 2, _now, ":")
+_dd = ItemExtract( 3, _now, ":")
+
+;inputS = AskTextBox( "Enter the JS Code from SrcEnc Here","?", "", 1, 0)
+types = "All Files|*.*|JS Files|*.js|"
+fnInput = AskFileName("Open File", "Z:\wwwroot", types, "*.js", 1)
+
+sz = FileSize(fnInput)
+
+types = "All Files|*.*|JS Files|*.js|"
+fn1 = AskFileName("Save File", "Z:\wwwroot", types, "*.js", 0)
+
+;varName = AskLine("CF Var name", "code_disabl_right_click_script_III_js ?", "code_disabl_right_click_script_III_js")
+
+varName = fn1
+dabegin = StrIndex(varName, "\", StrLen(varName), @BACKSCAN)
+if dabegin <> 0 then varName = StrSub( varName, dabegin + 1, StrLen(varName) - dabegin + 1)
+daend = StrIndex(varName, ".", 1, @FWDSCAN)
+if daend <> 0 then varName = StrSub( varName, 1, daend - 1)
+varName = StrReplace( varName, '-', '_')
+
+
+binbuf = BinaryAlloc(sz+100)
+if binbuf == 0
+	Message("Error", "BinaryAlloc Failed")
+else
+	BinaryRead(binbuf, fnInput)
+	cf_arrayN = 0
+	for j = 1 to sz by _maxStringLen
+		inputS = BinaryPeekStr(binbuf, j, _maxStringLen)
+;		cf_inputS = StrReplace( inputS, "#", "##")
+;		cf_inputS = StrReplace( cf_inputS, "/", "\/")
+;		cf_inputS = StrReplace( inputS, '"', '\"')
+		cf_arrayN = cf_arrayN + 1
+		cf_array%cf_arrayN% = urlEncode(inputS)
+	next
+	binbuf = BinaryFree(binbuf)
+endif
+
+_fhandOut = FileOpen( fn1, "WRITE")
+
+;FileWrite( _fhandOut, "%varName% = ArrayNew(1);")
+
+_x = 1
+for j = 1 to cf_arrayN
+	_ss = cf_array%j%
+;	FileWrite( _fhandOut, StrCat( varName, "[%_x%] = ", _dblTicks, _ss, _dblTicks, ";"))
+	FileWrite( _fhandOut, _ss)
+	_x = _x + 1
+Next
+
+FileClose(_fhandOut)
+
+Message("Sanity check", "Processed %sz% bytes.")
+
+exit
+
+
+

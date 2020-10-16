@@ -1,0 +1,65 @@
+
+; file DIRTREE.WBT
+;
+; Version 1.1
+;
+; Date Created 1/17/92
+;
+; Date of Last Update 2/1/95
+;
+; Purpose: called to build the list of directories
+;
+; Parameters:
+;
+;    INPUT:
+;          param1 - the name of the target drive.
+;
+;          param2 - the name of the variable that stores the
+;                   list of directories in the target drive.
+;
+
+LclCurDir = DirGet()
+
+If param0 >= 2 
+  LclDrive = param1
+  LclDirList = param2
+Else
+  LclDrive = StrSub(LclCurDir, 1, 2)
+  LclDirList = "dirList"
+EndIf
+
+; log on the selected drive
+DirChange("%LclDrive%")
+
+; initialize the list of directories
+%LclDirList% = StrCat("\", @TAB)
+; start loop to search for directories
+LclI = 1
+While LclI <= ItemCount(%LclDirList%, @TAB) 
+  LclRootDir = ItemExtract(LclI, %LclDirList%, @TAB)
+  DirChange("%LclDrive%%LclRootDir%")
+  ; find the subdirectories attached to the current directory
+  LclSDirList = DirItemize("*")
+  ; count the number of subdirectories
+  LclN = ItemCount(LclSDirList, @TAB)
+  ; process subdirectories
+  If LclN != 0 
+    ; loop to build the global list of directories
+    For LclJ = 1 to LclN
+     LclDir = ItemExtract(LclJ, LclSDirList,  @TAB)
+     %LclDirList% = StrCat(%LclDirList%, LclRootDir, LclDir, "\", @TAB)
+    Next
+  Endif
+  LclI = LclI + 1
+EndWhile
+
+; move back to original directory
+DirChange(LclCurDir)
+
+; drop the locally local variables
+Drop(LclI, LclJ, LclN, LclDirList, LclDir, LclCurDir)
+Drop(LclRootDir, LclSDirList, LclDrive)
+
+Return
+
+

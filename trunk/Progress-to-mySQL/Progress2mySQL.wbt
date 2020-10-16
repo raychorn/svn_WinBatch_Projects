@@ -1,0 +1,168 @@
+;*********************************************************************************************************
+; Progress2mySQL.wbt
+;
+; Purpose:  Automate the task of making Progress Procedures and mySQL Tables from Progress Schema Reports.
+;
+;*********************************************************************************************************
+
+#DefineFunction ReadDataFromFile(_fname, _delim, _subDelim)
+	IntControl(73, 2,0,0,0)
+
+	data = ""
+
+	fhand = FileOpen( _fname, "READ")
+	while @TRUE
+		x = FileRead(fhand)
+		If x == "*EOF*" Then Break
+		xC = ""
+		xCnt = ItemCount( x, " ")
+		xCs = StrTrim(ItemExtract( 1, x, " "))
+		xC = ItemInsert( xCs, ItemCount( xC, _subDelim), xC, _subDelim)
+		xCs = StrTrim(ItemExtract( xCnt, x, " "))
+		xC = ItemInsert( xCs, ItemCount( xC, _subDelim), xC, _subDelim)
+		data = ItemInsert( xC, ItemCount( data, _delim), data, _delim)
+	endwhile
+	FileClose(fhand)
+
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction WriteProgressProcFromData( _fnameP, _progressTableName, _progressSchema, _delim, _subDelim)
+	IntControl(73, 2,0,0,0)
+
+	fhand = FileOpen( _fnameP, "WRITE")
+	xCnt = ItemCount( _progressSchema, _delim)
+
+	xL = ""
+	for i = 1 to xCnt
+		xCs = StrTrim(ItemExtract( 1, ItemExtract( i, _progressSchema, _delim), _subDelim))
+		xL = ItemInsert( xCs, ItemCount( xL, "|"), xL, "|")
+	next
+
+	FileWrite( fhand, "DEFINE STREAM sRptStream.")
+	FileWrite( fhand, 'OUTPUT STREAM sRptstream TO "V:\%_progressTableName%.txt".')
+	FileWrite( fhand, "")
+	FileWrite( fhand, "PUT STREAM sRptStream UNFORMATTED")
+	FileWrite( fhand, StrCat('"', xL, '" SKIP.'))
+	FileWrite( fhand, "")
+	FileWrite( fhand, StrCat("FOR EACH ", _progressTableName))
+	FileWrite( fhand, StrCat(@TAB, "NO-LOCK"))
+	FileWrite( fhand, StrCat(@TAB, "BY ", ItemExtract( 1, xL, "|"), ":"))
+	FileWrite( fhand, "")
+	FileWrite( fhand, StrCat(@TAB, "PUT STREAM sRptStream UNFORMATTED"))
+	for i = 1 to xCnt
+		xCs = StrTrim(ItemExtract( i, xL, "|"))
+		_bar = ""
+		if i < xCnt then _bar = '"|"'
+		FileWrite( fhand, StrCat(@TAB, '"%xCs%=" %_progressTableName%.%xCs% %_bar%'))
+	next
+	FileWrite( fhand, StrCat(@TAB, "SKIP."))
+	FileWrite( fhand, "")
+	FileWrite( fhand, "END.")
+
+	FileClose(fhand)
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction WriteMySQLSchemaFromData( _fnameM, _progressTableName, _progressSchema, _delim, _subDelim)
+	IntControl(73, 2,0,0,0)
+
+	fhand = FileOpen( _fnameM, "WRITE")
+	xCnt = ItemCount( _progressSchema, _delim)
+
+	FileWrite( fhand, "SET FOREIGN_KEY_CHECKS=0;")
+	FileWrite( fhand, "use pub;")
+	FileWrite( fhand, "#----------------------------")
+	FileWrite( fhand, "# Table structure for %_progressTableName%")
+	FileWrite( fhand, "#----------------------------")
+
+	colDefs = ""
+	for i = 1 to xCnt
+		xCs = StrTrim(ItemExtract( i, _progressSchema, _delim))
+		xCt1 = StrTrim(ItemExtract( 1, xCs, _subDelim))
+		xCt2 = StrTrim(ItemExtract( 2, xCs, _subDelim))
+		xCtp = StrTrim(ItemExtract( 1, ItemExtract( 2, xCt2, "("), ")"))
+		xCv = ""
+		if (StrIndexNc( xCt2, "x(", 0, @Fwdscan) > 0) || (StrLower(xCt2) == 'x')
+			if (StrLower(xCt2) == 'x') then xCtp = 1
+			xCv = "`%xCt1%` varchar(%xCtp%) default NULL"
+		else
+			if xCt2 == "99/99/9999"
+				xCv = "`%xCt1%` date default NULL"
+			else
+				if StrIndexNc( xCt2, "yes/no", 0, @Fwdscan) > 0
+					xCv = "`%xCt1%` varchar(3) default NULL"
+				else
+					if StrIndexNc( xCt2, "9", 0, @Fwdscan) > 0
+						if StrLen(xCt2) < 9 then xCv = "`%xCt1%` int(11) default NULL"
+						if StrLen(xCt2) > 9 then xCv = "`%xCt1%` float default NULL"
+					else
+						Message( "DEBUG", "Unknown type (%xCt2%) for %xCt1% !")
+					endif
+				endif
+			endif
+		endif
+		colDefs = ItemInsert( xCv, ItemCount( colDefs, ","), colDefs, ",")
+	next
+
+	FileWrite( fhand, StrCat("CREATE TABLE `%_progressTableName%` (", colDefs, ") ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
+	FileWrite( fhand, "#----------------------------")
+
+	FileClose(fhand)
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+_wname = "Progress2mySQL v1.0.0"
+wname = "%_wname% [Progress2mySQL] (c)1990-2006 Hierarchical Applications Limited, All Rights Reserved."
+
+types="All Files|*.*|"
+fname = AskFileName( "Progress Table Schema Report Name", "Z:\Sequoia Insurance Company (Brandtley Greenlaw)\Progress Db Analysis\schemas", types, "", 1)
+
+fnameB = FileBaseName( fname)
+
+fnameP = StrCat(fname, ".p")
+
+fnameM = StrCat(fname, ".mySQL")
+
+progressTableName = ItemExtract( 1, fnameB, ".")
+
+if StrLen(progressTableName) == 0 then exit
+
+progressSchema = ReadDataFromFile( fname, "|", "~")
+
+if StrLen(progressSchema) == 0 then exit
+
+progressSchemaCount = ItemCount(progressSchema, "|")
+
+WriteProgressProcFromData( fnameP, progressTableName, progressSchema, "|", "~")
+
+WriteMySQLSchemaFromData( fnameM, progressTableName, progressSchema, "|", "~")
+
+exit
+

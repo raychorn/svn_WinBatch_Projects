@@ -1,0 +1,230 @@
+; tribes2missions.wbt
+
+wName = "Tribes2 Mission Randomizer Vers 2.1"
+
+; $Host::MissionType = "CTF";
+; $Host::Map = "Katabatic";
+
+; USAGE: Name the file that contains these 2 vars and then let this program set these values every time this program is run...
+
+; Purpose: To better randomize the mission Tribes2 uses as the default Mission  - this is to make it look like the server has more than 1 mission to use...
+
+_maxWaitSecs = 60 * 5
+
+_timeDelayMins = 10
+
+_bwadminMapRotationVarName = "$bwadmin::MapRotationFile"
+
+inputTokenEquals = "="
+inputTokenSemiColon = ";"
+inputTokenFwdSlash = "/"
+
+_dir_name = "D:\Tribes2"
+
+while 1
+	_dir_name = AskDirectory( "Tribes2 Root Folder ? %_dir_name%", "", "", "Tribes2 Root Folder is", 2) 
+	exeRootPath = "%_dir_name%\GameData\"
+	exeFilePath = "%exeRootPath%Tribes2.exe"
+	if (FileExist( exeFilePath) == @TRUE)
+		break;
+	endif
+endwhile
+
+modRootPath = ""
+
+_beginTime = TimeYmdHms()
+while 1
+	if strlen(modRootPath) == 0
+		modRootPath = AskDirectory( "Tribes2 Mod Root Folder ? %_dir_name%", _dir_name, "", "Tribes2 Mod Root Folder is", 2) 
+		varFilePath = "%modRootPath%\prefs\serverPrefs.cs"
+		_inputFilePath = "%modRootPath%\scripts\bwadmin\bwadmin.cs"
+		inputFilePath = "%modRootPath%\scripts\bwadmin\bwadminMapRotation.cs"
+	endif
+	_nowTime = TimeYmdHms()
+	_elapsedTime = TimeDiffSecs( _nowTime, _beginTime)
+	BoxCaption( 1, "Elapsed Time is %_elapsedTime% secs")
+	if ( (_elapsedTime > _maxWaitSecs) || ( (FileExist( varFilePath) == @TRUE) && (FileExist( _inputFilePath) == @TRUE) ) || ( (FileExist( varFilePath) == @TRUE) && (FileExist( inputFilePath) == @TRUE) ) )
+		if ( ( (FileExist( varFilePath) == @TRUE) && (FileExist( _inputFilePath) == @TRUE) ) && (FileExist( inputFilePath) == @TRUE) )
+			; this is the default so use it
+			break
+		else
+			if ( ( (FileExist( varFilePath) == @TRUE) && (FileExist( _inputFilePath) == @TRUE) ) && (FileExist( inputFilePath) == @FALSE) )
+				; read the _inputFilePath to get the inputFilePath since the inputFilePath is missing
+				Gosub ReadBwAdminInputFile
+				Gosub SleepSome
+			else
+			endif
+		endif
+	else
+		if ( (_elapsedTime > _maxWaitSecs) && ( (FileExist( varFilePath) == @FALSE) || (FileExist( _inputFilePath) == @FALSE) ) && ( (FileExist( varFilePath) == @FALSE) || (FileExist( inputFilePath) == @FALSE) ) )
+			Message( wName, "Cannot locate the files : %varFilePath% and %inputFilePath% - Try again later...")
+			exit
+		else
+			Gosub SleepSome
+		endif
+	endif
+endwhile
+
+varHostMissionType = "$Host::MissionType"
+varHostMap = "$Host::Map"
+
+; We parse the bwadminMapRotation.cs file to get the list of missions and mission types we use...
+; bwadmin_mapAdd("The Perfect Storm", "CTF");
+
+inputTokenOne = "bwadmin_mapAdd"
+inputTokenOpenParen = "("
+inputTokenCloseParen = ")"
+inputTokenComma = ","
+inputTokenQuotes = "\""
+
+inputTokenComment = "//"
+
+; HostMissionType1 .. HostMissionTypeN - the array of Mission Types
+; HostMissionTypeCount - the number of Mission Types
+
+; HostMap1 .. HostMapN - the array of Mission Maps - each value holds the name of the mission and the misson type
+; HostMapCount - the number of Mission Maps
+
+__timeDelayMins = StrTrim( AskLine( wName, "Wait how many minutes until default mission is changed ? (default is %_timeDelayMins% minutes)", _timeDelayMins))
+
+if int(__timeDelayMins) > 1
+	_timeDelayMins = int(__timeDelayMins)
+endif
+
+while 1
+	now = TimeYmdHms()                         ; Gets Current Time
+	later = TimeAdd(now,"0000:00:00:00:%_timeDelayMins%:00") ; Adds 10 mins to current time
+	BoxCaption( 1, "Waiting %later%")
+	TimeWait(later)                            ; Waits for that time to occur
+
+	BoxCaption( 1, "Reading...")
+	Gosub ReadInputFile
+	
+	i = Random( HostMapCount)
+	if i == 0
+		i = 1
+	endif
+	m = HostMap%i%
+	mName = ItemExtract( 1, m, inputTokenComma)
+	mType = ItemExtract( 2, m, inputTokenComma)
+	
+	BoxCaption( 1, "Writing...")
+	Gosub ReadVarFile
+endwhile
+
+exit
+
+
+:SleepSome
+	_delayTime = "0000:00:00:00:00:10"
+	_newTime = TimeAdd( TimeYmdHms(), _delayTime)
+	BoxCaption( 1, "Sleeping until %_newTime%")
+	TimeWait( _newTime)
+return
+
+
+:ReadBwAdminInputFile
+if FileExist( _inputFilePath) == @TRUE
+	fIN = FileOpen( _inputFilePath, "READ")
+	while @TRUE				; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		i = StrIndexNc( x, _bwadminMapRotationVarName, 1, @FWDSCAN)
+		_itemCount = ItemCount(x, inputTokenEquals)
+		varName = strTrim(ItemExtract( 1, x, inputTokenEquals))
+		If ( (i > 0) && (_itemCount == 2) && (varName == _bwadminMapRotationVarName) )
+			varValue = ItemExtract( 2, x, inputTokenEquals)
+			_varValue = StrReplace( StrTrim( StrReplace( ItemExtract( 1, varValue, inputTokenSemiColon), '"', "")), inputTokenFwdSlash, "\")
+			__varValue = "%modRootPath%%_varValue%"
+			if (FileExist( __varValue) == @TRUE)
+				inputFilePath = __varValue
+			endif
+			break
+		Else
+		Endif
+	endwhile
+	FileClose(fIN)
+endif
+return
+
+
+:ReadInputFile
+if FileExist( inputFilePath) == @TRUE
+	HostMapCount = 0
+	fIN = FileOpen( inputFilePath, "READ")
+	while @TRUE				; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		i = StrIndexNc( x, inputTokenOne, 1, @FWDSCAN)
+		If i > 0
+			tc = StrIndexNc( x, inputTokenComment, 1, @FWDSCAN)
+			if ( (tc > i) || (tc == 0) )
+				t1 = StrIndexNc( x, inputTokenOpenParen, i, @FWDSCAN)
+				If t1 > 0
+					t2 = StrIndexNc( x, inputTokenCloseParen, t1, @FWDSCAN)
+					If t2 > 0
+						str = StrSub( x, t1 + 1, t2 - t1 - 1)
+						HostMapCount = HostMapCount + 1
+						mName = ItemExtract( 1, str, inputTokenComma)
+						mType = ItemExtract( 2, str, inputTokenComma)
+						HostMap%HostMapCount% = strcat( mName, inputTokenComma, mType)
+					else
+					endif
+				else
+				endif
+			else
+			endif
+		Else
+		Endif
+	endwhile
+	FileClose(fIN)
+endif
+return
+
+
+:ReadVarFile
+if FileExist( varFilePath) == @TRUE
+	fIN = FileOpen( varFilePath, "READ")
+	oName = strcat( varFilePath, ".new")
+	fOUT = FileOpen( oName, "WRITE")
+	while @TRUE				; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		iHMT = StrIndexNc( x, varHostMissionType, 1, @FWDSCAN)
+		iHM = StrIndexNc( x, varHostMap, 1, @FWDSCAN)
+		If ( (iHMT > 0) || (iHM > 0) )
+			tc = StrIndexNc( x, inputTokenComment, 1, @FWDSCAN)
+			if ( (tc > iHMT) || (tc > iHM) || (tc == 0) )
+				if iHMT > 0
+					s = StrSub( x, iHMT + strlen( varHostMissionType) + 1, 1)
+					if ( (s == " ") || (s == inputTokenEquals) )
+						; $Host::MissionType = "CTF";
+						x = strcat( varHostMissionType, " = ", mType, inputTokenSemiColon)
+					endif
+				else
+					if iHM > 0
+						s = StrSub( x, iHM + strlen( varHostMap) + 1, 1)
+						if ( (s == " ") || (s == inputTokenEquals) )
+							; $Host::Map = "Katabatic";
+							x = strcat( varHostMap, " = ", mName, inputTokenSemiColon)
+						endif
+					endif
+				endif
+			else
+			endif
+		Else
+		Endif
+		FileWrite( fOUT, x)
+	endwhile
+	FileClose(fIN)
+	FileClose(fOUT)
+
+	FileDelete( varFilePath)
+	dsoName = strcat( varFilePath, ".dso")
+	if FileExist( dsoName) == @TRUE
+		FileDelete( dsoName)
+	endif
+	FileRename( oName, varFilePath)
+endif
+return
+

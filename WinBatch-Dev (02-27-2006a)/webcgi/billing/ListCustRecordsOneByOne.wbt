@@ -1,0 +1,45 @@
+:ListCustRecordsOneByOne
+
+_parms = ""
+
+If b_show_delinquency_status
+    If IsDefined( %sql_alias%1) == @YES
+        a_custid = %sql_alias%1
+
+        sql_level = "1"
+
+        _table = "receivables"
+        If b_show_domain_ip_names
+            a_webid = %sql_alias%5
+            sql_stmnt%sql_level% = "SELECT SUM(r.fee_due) FROM receivables r, website w WHERE r.custid = %a_custid% AND r.webid=%a_webid% AND r.webid=w.id AND r.custid=w.custid AND r.pid IS NULL"
+            Drop( a_webid)
+        Else
+            sql_stmnt%sql_level% = "SELECT SUM(r.fee_due) FROM receivables r WHERE r.custid = %a_custid% AND r.pid IS NULL"
+        Endif
+        sql_fetch_map%sql_level% = "N"
+        sql_fetch_gosub%sql_level% = "GrabSQLValue"
+        sql_fetch = @TRUE
+        sql_alias%sql_level% = _table
+        _datasource = datasource
+        Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+    
+        Drop( a_custid)
+    Endif
+
+    If IsDefined( a_value) == @YES
+        _parms = "a_value"
+    Endif
+Endif
+
+Call( StrCat( _cgi_dir, "_ListCustRecordsOneByOne.wbc"), _parms)
+
+sql_level = ""
+
+If IsDefined( a_value) == @YES
+    Drop( a_value)
+Endif
+
+Drop( _parms)
+
+return
+

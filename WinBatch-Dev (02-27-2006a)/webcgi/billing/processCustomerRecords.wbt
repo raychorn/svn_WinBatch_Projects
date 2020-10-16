@@ -1,0 +1,116 @@
+:processCustomerRecords
+_ticks_begin = GetTickCount( )
+
+WebOut('<OL>', _html_crlf)
+For j=1 to CustomerRecord0
+    aRec = CustomerRecord%j%
+    
+    If StrIndex( aRec, "=", 1, @FWDSCAN) > 0
+        _name = ItemExtract( 1, aRec, "=")
+        _value = ItemExtract( 2, aRec, "=")
+
+        If (StrLen( _name) > 255) || (StrLen( _value) > 255)
+            WebOut('<LI><B><FONT COLOR="GREEN">PROBLEM: #1 ', _html_crlf)
+            WebOut('_name=', _html_crlf)
+            WebOut(_name, _html_crlf)
+            WebOut(' _value=', _html_crlf)
+            WebOut(_value, _html_crlf)
+            WebOut(', > 255 chars', _html_crlf)
+            WebOut('</FONT></B></LI>', _html_crlf)
+        
+            __name = _name
+            __value = _value
+        
+            If StrCmp( __name, "BANDWIDTH-USAGE") == 0
+                bu_c = ItemCount( __value, ",")
+                For bu_i = bu_c to 1 by -1
+                    bu_item = ItemExtract( bu_i, __value, ",")
+                    If (StrLen( bu_item) > 1) && (StrIndex( bu_item, ">", 1, @FWDSCAN) > 0)
+                        bu_date = ItemExtract( 1, bu_item, ">")
+                        bu_KB = ItemExtract( 2, bu_item, ">")
+
+                        _name = StrCat( __name, "+", bu_date)
+                        _value = bu_KB
+
+                        Gosub InsertNameValueIntoDb
+                    
+                        Drop( bu_date, bu_KB)
+                    Endif
+                
+                    Drop( bu_item)
+                Next
+            
+                Drop( bu_c, bu_i)
+            Endif
+            
+            Drop( __name, __value)
+        Else
+            If StrIndex( _name, "|-", 1, @FWDSCAN) > 0
+                _name = StrReplace( _name, "|-", "-")
+
+                WebOut('<LI><B><FONT COLOR="GREEN">CORRECTED: #1 %_name%, for | problem</FONT></B></LI>', _html_crlf)
+            Else
+            Endif
+
+            Gosub InsertNameValueIntoDb
+        Endif
+    
+        WebOut('<LI><B>', _html_crlf)
+        WebOut('aRec=', _html_crlf)
+        WebOut(aRec, _html_crlf)
+        WebOut(', ', _html_crlf)
+        WebOut(_name, _html_crlf)
+        WebOut('=', _html_crlf)
+        WebOut(_value, _html_crlf)
+        WebOut('</B></LI>', _html_crlf)
+
+        Drop( _name, _value)
+    Endif
+    
+    Drop( CustomerRecord%j%, aRec)
+Next
+WebOut('</OL>', _html_crlf)
+
+BinaryFree( binbuf_RCR)
+
+_ticks_end = GetTickCount( )
+    
+_ticks_elapsed = _ticks_end - _ticks_begin
+_ticks_average = _ticks_elapsed / CustomerRecord0
+
+_secs_to_delay = 30
+_ticks_begin2 = GetTickCount( )
+Delay( _secs_to_delay)
+_ticks_end2 = GetTickCount( )
+_ticks_elapsed2 = (_ticks_end2 - _ticks_begin2) / _secs_to_delay
+
+_hrs_elapsed = 0
+_mins_elapsed = 0
+_secs_elapsed = _ticks_elapsed / _ticks_elapsed2
+If _secs_elapsed > 60
+    _mins_elapsed = _secs_elapsed / 60
+    _secs_elapsed = _secs_elapsed - (_mins_elapsed * 60)
+
+    If _mins_elapsed > 60
+        _hrs_elapsed = _mins_elapsed / 60
+        _mins_elapsed = _mins_elapsed - (_hrs_elapsed * 60)
+    Endif
+Endif
+
+_hrs_elapsed = StrFixLeft( "%_hrs_elapsed%", "0", 2)
+_mins_elapsed = StrFixLeft( "%_mins_elapsed%", "0", 2)
+_secs_elapsed = StrFixLeft( "%_secs_elapsed%", "0", 2)
+
+
+WebOut('<LI><FONT COLOR="BLUE"><B>', _html_crlf)
+WebOut('CustomerRecord0=%CustomerRecord0%, ', _html_crlf)
+WebOut('_ticks_elapsed=%_ticks_elapsed%, ', _html_crlf)
+WebOut('_ticks_average=%_ticks_average%, ', _html_crlf)
+WebOut('_ticks_elapsed2=%_ticks_elapsed2%', _html_crlf)
+WebOut('<BR>elapsed time=%_hrs_elapsed%:%_mins_elapsed%:%_secs_elapsed%', _html_crlf)
+WebOut('</B></FONT></LI>', _html_crlf)
+
+WebOut('<P><B><A HREF="%this_cgi%" TARGET="_top">Go Back for another...</A></B></P>', _html_crlf)
+
+return
+

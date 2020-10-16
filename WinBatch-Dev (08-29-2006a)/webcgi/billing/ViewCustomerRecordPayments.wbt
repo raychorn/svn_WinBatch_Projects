@@ -1,0 +1,49 @@
+:ViewCustomerRecord
+
+WebOut('', _html_crlf)
+
+_table = "receivables"
+Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+sql_stmnt = "SELECT * FROM receivables r WHERE r.custid = %_custid% AND r.pid=-1 ORDER BY r.thedate ;"
+;sql_fetch_map = "N,S64,S64,S64,S32,S32,S32,S128,S32,S32,S32,S32,S32,N,N,S32,S32"
+sql_fetch_gosub = "ViewSomePrePaymentRecords"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+
+_table = "receivables"
+Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+sql_stmnt = "SELECT * FROM receivables r WHERE r.custid = %_custid% AND r.pid IS NULL ORDER BY r.thedate ;"
+;sql_fetch_map = "N,S64,S64,S64,S32,S32,S32,S128,S32,S32,S32,S32,S32,N,N,S32,S32"
+sql_fetch_gosub = "ViewSomeReceivablesRecords"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+
+_table = "payments"
+Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+sql_stmnt = "SELECT * FROM payments p WHERE p.custid = %_custid% ORDER BY p.thedate ;"
+;sql_fetch_map = "N,S64,S64,S64,S32,S32,S32,S128,S32,S32,S32,S32,S32,N,N,S32,S32"
+sql_fetch_gosub = "ViewSomePaymentsRecords"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+If IsDefined( __edit_mode) == @YES
+    _edit_mode = __edit_mode
+    Drop( __edit_mode)
+Endif
+
+WebOut('', _html_crlf)
+;WebOut('<BR><B>sql_fetch_map=%sql_fetch_map%</B><BR>', _html_crlf)
+
+return
+

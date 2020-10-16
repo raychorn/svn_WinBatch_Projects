@@ -1,0 +1,257 @@
+__appName = "AgencyPolicy"
+_appName = "%__appName% v1.1"
+
+;FamiliesFirst c2003
+;Agency Policy Script 
+;
+;Usage START /WAIT AgencyPolicy.exe %USERNAME% %USERDOMAIN% %COMPUTERNAME%
+
+AddExtender("wwodb32i.dll")
+
+;INITIALIZE VARIABLES
+
+;_debug = 1
+_debug = 0
+
+UserName = "UnDefined"
+UserDomain = "UnDefined"
+ComputerName = "UnDefined"
+
+_dsn = "AgencyPolicy"
+_dsnUser = "sa"
+_dsnPwd = "almostall4one"
+
+_table = "AgencyPolicy"
+
+If param0 > 0
+	UserName = param1
+Else
+	UserName = AskLine("%_appName%", "UserName ? (rhorn)", "UnDefined-UserName")
+Endif
+
+If param0 > 1
+	UserDomain = param2
+Else
+	UserDomain = AskLine("%_appName%", "UserDomain ? (FF_PDC1)", "UnDefined-UserDomain")
+Endif
+
+If param0 > 2
+	ComputerName = param3
+Else
+	ComputerName = AskLine("%_appName%", "ComputerName ? (appdev)", "UnDefined-ComputerName")
+Endif
+
+; Message("%_appName%", "UserName (%UserName%), UserDomain (%UserDomain%), ComputerName (%ComputerName%)")
+
+_crlf = StrCat(Num2Char(13), Num2Char(10))
+_tab = StrCat(Num2Char(9))
+
+_myFPath = IntControl( 1004, 0, 0, 0, 0)
+_myPath =  FilePath( _myFPath)
+_fileNameLog =  StrCat( "%_myPath%%__appName%", ".Log")
+
+_fhandLog = FileOpen( _fileNameLog, "APPEND")
+
+_today = TimeDate()
+FileWrite( _fhandLog, "%_today% BEGIN :: %_appName% %_crlf%")
+
+_now = TimeYmdHms()
+_nowBegin = _now
+FileWrite( _fhandLog, "%_tab% %_now% UserName (%UserName%), UserDomain (%UserDomain%), ComputerName (%ComputerName%)")
+
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+henv = qAllocEnv()
+
+If henv == -1
+	;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+	retcode = qLastCode()
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qAllocEnv failed (%retcode%)")
+Endif
+
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM 
+;OF 10 OPEN CONNECTION HANDLES
+hdbc = qAllocConnect(henv) 
+
+If hdbc == -1
+	retcode = qLastCode()
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qAllocConnect failed (%retcode%)")
+Endif
+
+;CONNECTS TO THE "SAMPLE" DATA SOURCE 
+;WITH THE DATA SOURCE NAME 'ContactDSN'
+retcode = qConnect(hdbc, _dsn, _dsnUser, _dsnPwd) 
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)  
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qConnect failed (%retcode%). The ODBC DSN (DataSource Name) of %_dsn% is probably missing or the username/pwd is wrong within this program.")
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)  
+
+If hstmt == -1
+	retcode = qLastCode()
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qAllocStmt failed (%retcode%)")
+Endif
+
+; Step 1 :: Has the user been entered in the database yet regardless of the date ?
+; Step 2 :: If the user has not been entered in the database then insert the record - show the prompts and get the responses
+
+;THE FOLLOWING EXECUTES AN SQL STATEMENT.
+;THE COLUMNS BELOW ARE ACTUAL COLUMN NAMES IN YOUR DATA SOURCE, ;E.G.,"LASTNAME":
+retcode = qExecDirect(hstmt, "SELECT id, promptTag_vc, prompt_text FROM AgencyPolicyPrompts WHERE (promptTag_vc LIKE 'p1.%%') ORDER BY promptTag_vc")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qExecDirect failed (%retcode%)")
+Endif
+
+prompt_text0 = 0
+prompt_p1 = ""
+
+While @TRUE
+  ;FETCHES A ROW OF DATA FROM A RESULT SET
+	retcode = qFetch(hstmt) 
+
+	If retcode == @qNoData Then Break
+
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Warning :: qFetch failed (%retcode%)")
+		Break
+	Endif
+
+	_index = ""
+	retcode = qGetData(hstmt, 2, "promptTag_vc", 255)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Warning", "promptTag_vc qGetData failed (%retcode%)")
+		endif
+		Break
+	else
+		_index = StrReplace( promptTag_vc, ".", "")
+	Endif
+
+	retcode = qGetData(hstmt, 3, "prompt_text", 255)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Warning", "P_LNAME qGetData failed (%retcode%)")
+		endif
+		Break
+	else
+		prompt_text0 = prompt_text0 + 1
+		prompt_text%prompt_text0% = prompt_text
+		prompt_p1 = StrCat( prompt_p1 , prompt_text%prompt_text0% )
+		if StrLen(StrTrim( prompt_text%prompt_text0% )) == 0
+			prompt_p1 = StrCat( prompt_p1 , _crlf , _crlf)
+		endif
+	Endif
+
+EndWhile
+
+;SQL_CLOSE - RESETS OR FREES A SQL STATEMENT HANDLE 
+;(SET WITH QALLOC)
+qFreeStmt(hstmt, 0)  
+qFreeStmt(hstmt, 2)  ; SQL_UNBIND
+
+;THE FOLLOWING EXECUTES AN SQL STATEMENT.
+;THE COLUMNS BELOW ARE ACTUAL COLUMN NAMES IN YOUR DATA SOURCE, ;E.G.,"LASTNAME":
+retcode = qExecDirect(hstmt, "SELECT id, today_dt, UserName_vc, UserDomain_vc, ComputerName_vc FROM %_table% WHERE (UserName_vc = '%UserName%') AND (UserDomain_vc = '%UserDomain%') AND (ComputerName_vc = '%ComputerName%')")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	_errmsg = qError(hstmt, 2)
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qExecDirect failed (%retcode%) -- Reason :: The specified user has not yet responded to this program.")
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab%%_tab% %_now% Reason :: %_errmsg%")
+Endif
+
+numcols = qNumRsltCol( hstmt)
+
+_dataExists = 0
+
+While @TRUE
+  ;FETCHES A ROW OF DATA FROM A RESULT SET
+	retcode = qFetch(hstmt) 
+
+	If retcode == @qNoData Then Break
+
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		_errmsg = qError(hstmt, 2)
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Warning :: qFetch failed (%retcode%) [%_errmsg%]")
+		Break
+	Endif
+
+	_dataExists = _dataExists + 1
+
+EndWhile
+
+if _dataExists == 0
+	q = AskYesNo( "FamiliesFirst Inc. Agency Policy", prompt_p1)
+	if q == @YES
+		_q = "Yes"
+	else
+		_q = "No"
+	endif
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% prompt_p1 (%_q%) [%q%]")
+;	Message( "debug", "q = [%q%], _q = [%_q%]")
+
+	if q == @YES
+		;SQL_CLOSE - RESETS OR FREES A SQL STATEMENT HANDLE 
+		;(SET WITH QALLOC)
+		qFreeStmt(hstmt, 0)  
+		qFreeStmt(hstmt, 2)  ; SQL_UNBIND
+
+		_sql = "INSERT INTO %_table% (today_dt, UserName_vc, UserDomain_vc, ComputerName_vc) VALUES (GETDATE(), '%UserName%', '%UserDomain%', '%ComputerName%')"
+		retcode = qExecDirect(hstmt, _sql)
+		
+		If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+			_errmsg = qError(hstmt, 2)
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_tab% %_now% Warning :: qExecDirect failed (%retcode%) -- Reason :: The specified user's acceptance cannot be recorded in the database.")
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_tab%%_tab% %_now% SQL :: %_sql%")
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_tab%%_tab% %_now% Error :: %_errmsg%")
+		Endif
+	endif
+
+endif
+
+_today = TimeDate()
+_now = TimeYmdHms()
+_ds = TimeDiffSecs(_now, _nowBegin)
+_dsv = _ds
+_dv = 60 * 60
+_hh = Int(_dsv / _dv)
+_dsv = _dsv - (_hh * _dv)
+_dv = 60
+_mm = Int(_dsv / _dv)
+_dsv = _dsv - (_mm * _dv)
+_ss = _dsv
+if _hh <= 9
+	_hh = "0%_hh%"
+endif
+if _mm <= 9
+	_mm = "0%_mm%"
+endif
+if _ss <= 9
+	_ss = "0%_ss%"
+endif
+_t = "%_hh%:%_mm%:%_ss%"
+FileWrite( _fhandLog, "%_today% END :: %_appName% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS)")
+
+fileclose( _fhandLog)
+
+;SQL_DROP  - RESETS OR FREES AN SQL STATEMENT HANDLE
+qFreeStmt(hstmt, 1)
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc)
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)

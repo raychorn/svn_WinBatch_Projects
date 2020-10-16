@@ -1,0 +1,3 @@
+T2S`212.110.163.242:28400`GAMERSREVOLT.COM DM #1`Oasis`64`0`190`0
+queryversion=VER5`net_protocol=39`minimum_net_protocol=39`build_version=23115`game=base`mission=Deathmatch`status=1`dedicated=1`bot_count=0`cpu_speed=1000`info=GAMERSREVOLT.COM FASTEST SERVER IN iTALY P3-DUAL-1GHZ`numteams=1
+

@@ -1,0 +1,75 @@
+;************************************************************************
+; swf-viewer.wbt
+; 
+;************************************************************************
+
+target_id = 34
+targetMask = "__printjob__"
+fpath = "Z:\Ruby In Steel\BigFix_DSS\reports\public\uploads\export\__printjob__\"
+
+#DefineFunction getTargetFileName(_targetMask,_id)
+	IntControl(73, 2,0,0,0)
+
+	Return("%_targetMask%%_id%.jpg")
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+_wname = "SWF-Viewer v1.0.0"
+wname = "%_wname% (c)1978-2007 Hierarchical Applications Limited, All Rights Reserved."
+
+_title = wname
+
+targetFileName = StrCat(fpath,getTargetFileName(targetMask,target_id))
+if (FileExist( targetFileName)) then
+	FileDelete( targetFileName)
+endif
+
+objExplorer = ObjectCreate("InternetExplorer.Application")
+objExplorer.addressbar = @FALSE
+objExplorer.statusbar = @FALSE
+objExplorer.menubar = @FALSE
+objExplorer.toolbar = @FALSE
+objExplorer.visible = @TRUE
+objExplorer.Width = 1024
+objExplorer.Height = 768
+objExplorer.Left = 0
+objExplorer.Top = 0
+
+objExplorer.navigate("http://localhost:3000/BigFixDSS/dss.swf?rhorn:foobar:%target_id%")
+
+; Wait until page loads...
+While ( (objExplorer.busy) || (objExplorer.readystate <> 4) )
+   TimeDelay(0.5)
+EndWhile
+
+;Message( "Debug", "Waiting...")
+
+; Note: This only works if the OS can be made to tell the server when a file has arrived...
+; This also only works assuming the target file does not exist before we get here...
+
+_ticks = 0
+_maxTicks = 300
+while @True
+	if (FileExist( targetFileName)) then
+		break
+	else
+		TimeDelay( 1)
+	endif
+	_ticks = _ticks + 1
+	if (_ticks > _maxTicks) then
+		break
+	endif
+endwhile
+
+; Do something.
+objExplorer.quit
+objExplorer = ""
+
+

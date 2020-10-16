@@ -1,0 +1,97 @@
+:doExecSQLForCustomerName
+;CONNECTS TO THE _datasource DATA SOURCE
+; param1 ............ input - the name of the string variable that holds the SQL statement (sql_stmnt2)
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+If param0 <> 1
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for doExecSQLForCustomerName</B></FONT>', _html_crlf)
+    return
+Endif
+
+retcode = qConnect(hdbc2, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">qConnect failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt2 = qAllocStmt(hdbc2)
+
+If hstmt2 == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">qAllocStmt failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt2, %param1%)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt=', _html_crlf)
+  WebOut(sql_stmnt, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+retcode = qFetch(hstmt2)
+
+If (sql_fetch == @TRUE) && (retcode <> @qNoData)
+    custnameBuf = BinaryAlloc(260)
+    If custnameBuf == @FALSE
+        WebOut('<BR><B><FONT COLOR="RED">BinaryAlloc failed for custnameBuf</FONT></B><BR>', _html_crlf)
+        Exit
+    Endif
+
+    While @TRUE
+        If retcode == @qNoData Then Break
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qFetch failed %retcode%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        customer_id = 0
+        retcode = qGetData(hstmt2, 1, "customer_id", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for _id</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        retcode = qGetData(hstmt2, 2, "custnameBuf", 255)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for custnameBuf</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        If (retcode == @qSuccessInfo)  ; if the field was too small (This is how to handle errors)
+            msg = qError(hstmt2, 2)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData error/status %msg% for custnameBuf</FONT></B><BR>', _html_crlf)
+        Endif
+
+        customer_custname = BinaryPeekStr(custnameBuf, 0, BinaryEodGet(custnameBuf))
+
+        sql_fetched = @TRUE
+
+        retcode = qFetch(hstmt2)
+
+    EndWhile
+
+    BinaryFree(custnameBuf)
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt2, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+return
+

@@ -1,0 +1,31 @@
+[Main]
+Type=1
+Src=swf-viewer.WBT
+Targ=Z:\#wDisk\WinBatch-Dev\swf-viewer\swf-viewer.exe
+Icon=Z:\#wDisk\WinBatch-Dev\python-switch\MS-DOS Application_ico_5.ico
+CmpVersion=4
+[Options]
+TechWebPage=http://www.ez-ajax.com
+UACManifestSelection=asInvoker
+UACManifestUI=false
+CodeSign=0
+CodeSignDetails=~~
+RunHidden=0
+LargeExtractDest=0
+PreventAutoExtract=0
+[Version Info]
+Comments=
+CompanyName=Hierarchical Applications Limited, Inc.
+FileDescription=swf-viewer
+FileVersion=1.0
+InternalName=swf-viewer.exe
+LegalCopyright=(c)1980-2007 Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c)1980-2007 Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=swf-viewer.exe
+ProductName=swf-viewer
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=1
+File001=WWODB44I.DLL

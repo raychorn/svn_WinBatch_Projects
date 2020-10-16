@@ -1,0 +1,247 @@
+;************************************************************************
+; tibco-ftp-runner.wbt
+;
+;************************************************************************
+
+_wname = "Tibco FTP Downloader Job Runner v1.0.3.3"
+wname = '%_wname% [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved.'
+
+AddExtender("WWINT33I.DLL")
+
+IntControl (1001, 1, 0, 0, 0) ; behave as a service
+
+;_temp_html_path = "C:\@temp"
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+; BEGIN: Simulate the effect of running this code on CFDev2 for debugging purposes.
+;_myPath = "\\cfdev2\C$\Program Files\tibco-ftp-runner"
+; END! Simulate the effect of running this code on CFDev2 for debugging purposes.
+
+_iniPath = '%_myPath%\tibco-ftp-runner.INI'
+
+_myPath = -1
+
+if FileExist(_iniPath) == @False
+	IniWritePvt("Main", "hostname", "localhost", _iniPath)
+	IniWritePvt("Main", "tempfolder", "C:\@temp", _iniPath)
+;	IniWritePvt("Main", "myPath", "C:\@temp", _iniPath) ; this path is assumed to be the the folder we are launched from unless otherwise specified.
+endif
+_hostName = IniReadPvt ("Main", "hostname", "localhost", _iniPath)
+_temp_html_path = IniReadPvt ("Main", "tempfolder", "C:\@temp", _iniPath)
+_myPath = IniReadPvt ("Main", "myPath", FilePath( IntControl( 1004, 0, 0, 0, 0)), _iniPath)
+
+if (StrSub(_myPath, StrLen(_myPath), 1) == "\") then _myPath = StrSub(_myPath, 1, StrLen(_myPath) - 1)
+
+Cr = Num2Char(13)
+CrLf = StrCat(Cr, Num2Char(10))
+_crlf = CrLf
+
+bool_wasAnyWorkDone = @False
+
+_box_text = ""
+
+_last_shortName = ""
+
+; Perform a sanity check to ensure the folder specified by _temp_html_path, exists
+if DirExist(_temp_html_path) == @False then DirMake(_temp_html_path)
+
+_shortName = ""
+_procCnt = 0
+Goto mainLoop2a
+
+:mainLoop
+bool_wasAnyWorkDone = @True
+
+:mainLoop2
+_shortName = ""
+_procCnt = 1
+:mainLoop2a
+Gosub processRequest
+
+if (StrLen(_last_shortName) > 0) && (_last_shortName == _shortName)
+	Goto AbendProcess
+endif
+
+_last_shortName = _shortName
+
+if (StrLen(_shortName) > 0) || (_procCnt == 0) then Goto mainLoop
+
+Goto EndProcess
+
+:AbendProcess
+; Send an Email and exit...
+_procCnt = 4
+Gosub processRequest2
+
+Goto EndProcessAbort
+
+:EndProcess
+if bool_wasAnyWorkDone == @True
+	_procCnt = 3
+	Gosub processRequest2
+endif
+
+:EndProcessAbort
+exit
+
+
+:processRequest
+	_text = 'iBegin (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	tophandle%_procCnt% = iBegin(0,"","")
+	_text = 'iHostConnect (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	connecthandle%_procCnt% = iHostConnect(tophandle%_procCnt%, _hostName,@HTTP,"", "")
+	
+	if _procCnt == 0
+		_url2 = StrCat("/visioneer/tibco-ftp-downloader-analysis.cfm?nocache=", Random(65535))
+	else
+		if _procCnt == 1
+			_url2 = StrCat("/visioneer/tibco-ftp-downloader-status-new.cfm?nocache=", Random(65535))
+		else
+			if _procCnt == 2
+				_url2 = StrCat("/visioneer/tibco-ftp-downloader-process-new.cfm?nocache=", Random(65535))
+			endif
+		endif
+	endif
+
+	_text = 'iHttpInit (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	datahandle%_procCnt% = iHttpInit(connecthandle%_procCnt%, "GET", _url2, "",0)
+	
+	myheader = strcat("", @CRLF, "tibco-ftp-runner: 1.0")
+	_text = 'iHttpOpen (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	rslt = iHttpOpen(datahandle%_procCnt%, myheader , 0, 0)
+
+	xx_fname = StrCat(_temp_html_path, '\tibco-ftp_%_shortName%%_procCnt%.html')
+	if FileExist(xx_fname) <> @FALSE then FileDelete(xx_fname)
+	_text = 'iReadData (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	xx = iReadData(datahandle%_procCnt%, xx_fname)
+
+	if _procCnt == 1
+		if xx == @True
+			fHand = FileOpen(xx_fname, "READ")
+			while @TRUE             ; Loop till break do us end
+				x = FileRead(fHand)
+				If x == "*EOF*" Then Break
+				yLen = StrLen(x)
+				y1 = ItemCount(x, "&")
+				y2 = ItemCount(x, "=")
+				if (y1 > 1) && (y2 > 1)
+					y3 = ItemExtract( 2, x, "&")
+					y4 = StrTrim(ItemExtract( 2, y3, "="))
+					if StrLen(y4) > 0
+						_shortName = y4
+						_procCnt = _procCnt + 1
+						Gosub processRequest
+						_procCnt = _procCnt - 1
+					else
+						_shortName = ""
+					endif
+				endif
+			endwhile
+			FileClose(fHand)
+		endif
+	endif
+
+	_text = 'iClose :: datahandle%_procCnt% (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	iClose(datahandle%_procCnt%)
+	_text = 'iClose :: connecthandle%_procCnt% (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	iClose(connecthandle%_procCnt%)
+	_text = 'iClose :: tophandle%_procCnt% (%_shortName%/%_procCnt%)'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	iClose(tophandle%_procCnt%)
+	_box_text = ""
+return
+
+
+:processRequest2
+	_procName = "Undefined"
+	if _procCnt == 3
+		_procName = "ClearCache"
+	else
+		if _procCnt == 4
+			_procName = "ProcAbend"
+		endif
+	endif
+
+	_text = 'iBegin %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	tophandle%_procCnt% = iBegin(0,"","")
+	_text = 'iHostConnect %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	connecthandle%_procCnt% = iHostConnect(tophandle%_procCnt%, _hostName,@HTTP,"", "")
+	
+	if _procCnt == 3
+		_url2 = StrCat("/visioneer/cfinclude_reset_AppScope_qGetFTPReportsData.cfm?nocache=", Random(65535))
+	else
+		if _procCnt == 4
+			_url2 = StrCat("/visioneer/tibco-ftp-downloader-abend-new.cfm?nocache=", Random(65535))
+		endif
+	endif
+
+	_text = 'iHttpInit %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	datahandle%_procCnt% = iHttpInit(connecthandle%_procCnt%, "GET", _url2, "",0)
+	
+	myheader = strcat("", @CRLF, "tibco-ftp-runner: 1.0")
+	_text = 'iHttpOpen %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	rslt = iHttpOpen(datahandle%_procCnt%, myheader , 0, 0)
+
+	xx_fname = StrCat(_temp_html_path, "\tibco-ftp_%_procName%.html")
+	if FileExist(xx_fname) <> @FALSE then FileDelete(xx_fname)
+	_text = 'iReadData %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	xx = iReadData(datahandle%_procCnt%, xx_fname)
+
+	_text = 'iClose :: datahandle%_procCnt% %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	iClose(datahandle%_procCnt%)
+	_text = 'iClose :: connecthandle%_procCnt% %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	iClose(connecthandle%_procCnt%)
+	_text = 'iClose :: tophandle%_procCnt% %_procName%'
+	_box_text = StrCat(_box_text, _text, Cr)
+	BoxTitle(_text)
+	BoxText(_box_text)
+	iClose(tophandle%_procCnt%)
+	_box_text = ""
+return
+
+

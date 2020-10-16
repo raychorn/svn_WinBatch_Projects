@@ -1,0 +1,92 @@
+:InsertNameValueIntoDb
+; _name ....... input - the setting name
+; _value ...... input - the setting value
+; _id ......... input - the file id for the dirname from the database
+; _fname ...... input - the file name for the dir name from the database
+; __debug . input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Gosub beginSQL
+
+sql_fetch = @TRUE
+sql_stmnt = StrCat( "SELECT * FROM settings WHERE (fileid = %_id% AND cname = '", _name, "' AND cvalue = '", _value, "')")
+Gosub doQuery2
+
+Gosub endSQL
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+If sql_fetched <> @TRUE
+    Gosub beginSQL
+
+    sql_fetch = @FALSE
+    sql_stmnt = StrCat( "INSERT INTO settings (fileid, cname, cvalue) VALUES (%_id%, '", _name, "', '", _value, "')")
+    Gosub doQuery2
+
+    Gosub endSQL
+
+
+    Gosub beginSQL
+
+    sql_fetch = @TRUE
+    sql_stmnt = StrCat( "SELECT * FROM settings WHERE (fileid = %_id% AND cname = '", _name, "' AND cvalue = '", _value, "')")
+    Gosub doQuery2
+
+    Gosub endSQL
+
+    If __debug <> @FALSE
+        If sql_fetched <> @TRUE
+            WebOut('<BR><B><FONT COLOR="RED">(2) sql_stmnt=', _html_crlf)
+            WebOut(sql_stmnt, _html_crlf)
+            WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+        Else
+            WebOut('<BR><B><FONT COLOR="BLUE">', _html_crlf)
+            WebOut('(2) __id=(', _html_crlf)
+            WebOut(__id, _html_crlf)
+            WebOut('), ', _html_crlf)
+            WebOut('__fileid=(', _html_crlf)
+            WebOut(__fileid, _html_crlf)
+            WebOut('), ', _html_crlf)
+            WebOut('__cname=(', _html_crlf)
+            WebOut(__cname, _html_crlf)
+            WebOut('), ', _html_crlf)
+            WebOut('__cvalue=(', _html_crlf)
+            WebOut(__cvalue, _html_crlf)
+            WebOut('), ', _html_crlf)
+            WebOut('__used=(', _html_crlf)
+            WebOut(__used, _html_crlf)
+            WebOut(')', _html_crlf)
+            WebOut('</FONT></B><BR>', _html_crlf)
+        Endif
+    Endif
+
+Else
+    If __debug <> @FALSE
+        WebOut('<BR><B><FONT COLOR="BLUE">', _html_crlf)
+        WebOut('(1) __id=(', _html_crlf)
+        WebOut(__id, _html_crlf)
+        WebOut('), ', _html_crlf)
+        WebOut('__fileid=(', _html_crlf)
+        WebOut(__fileid, _html_crlf)
+        WebOut('), ', _html_crlf)
+        WebOut('__cname=(', _html_crlf)
+        WebOut(__cname, _html_crlf)
+        WebOut('), ', _html_crlf)
+        WebOut('__cvalue=(', _html_crlf)
+        WebOut(__cvalue, _html_crlf)
+        WebOut('), ', _html_crlf)
+        WebOut('__used=(', _html_crlf)
+        WebOut(__used, _html_crlf)
+        WebOut(')', _html_crlf)
+        WebOut('</FONT></B><BR>', _html_crlf)
+    Endif
+Endif
+
+return
+

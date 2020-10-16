@@ -1,0 +1,9 @@
+:endSQL
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc)
+
+Drop( hdbc)
+return
+

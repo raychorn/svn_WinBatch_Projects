@@ -1,0 +1,148 @@
+; NT-Services.wbt
+;
+; Purposes: Provides the means to determine when certain NT Services are running and then kills them.
+
+AddExtender("WWWNT32I.DLL");
+
+_wname = "NT-Services v1.0"
+wname = "%_wname% (c)2005 Ray C Horn, All Rights Reserved."
+
+CR = StrCat(Num2Char(13),Num2Char(10))
+_crlf = CR
+
+SERVICE_CONTROL_STOP = 1;     	Requests the service to stop.
+SERVICE_CONTROL_PAUSE = 2;    	Requests the service to pause.
+SERVICE_CONTROL_CONTINUE = 3; 	Requests the paused service to resume.
+SERVICE_CONTROL_INTERROGATE = 4; Get Service Status.
+
+SERVICE_STOPPED = 1;				The service is not running.
+SERVICE_START_PENDING = 2;		The service is starting.
+SERVICE_STOP_PENDING = 3;		The service is stopping.
+SERVICE_RUNNING = 4;				The service is running.
+SERVICE_CONTINUE_PENDING = 5;	The service continue is pending.
+SERVICE_PAUSE_PENDING = 6;		The service pause is pending.
+SERVICE_PAUSED = 7;				The service is paused.
+
+_myMachineName = "";
+
+_myServiceNameN = 23;
+_myServiceName1 = "SMS Agent Host";
+_myServiceName2 = "SMS Remote Control Agent";
+_myServiceName3 = "Remote Registry Service";
+_myServiceName4 = "Pharos Systems ComTaskMaster";
+_myServiceName5 = "Alerter";
+_myServiceName6 = "Auto-Reboot";
+_myServiceName7 = "CIAagent";
+_myServiceName8 = "Computer Browser";
+_myServiceName9 = "Distributed Transaction Coordinator";
+_myServiceName10 = "Fax Service";
+_myServiceName11 = "Indexing Service";
+_myServiceName12 = "Internet Connection Sharing";
+_myServiceName13 = "Macromedia Licensing Service";
+_myServiceName14 = "Messenger";
+_myServiceName15 = "NetMeeting Remote Desktop Sharing";
+_myServiceName16 = "Network DDE";
+_myServiceName17 = "Network DDE DSDM";
+_myServiceName18 = "Remote Access Auto Connection Manager";
+_myServiceName19 = "Remote Administrator Service";
+_myServiceName20 = "Remote Command Server";
+_myServiceName21 = "Remote Command Service";
+_myServiceName22 = "Remote Procedure Call (RPC) Locator";
+_myServiceName23 = "Telnet";
+
+;_retVal = wntSvcControl(_myMachineName, _myServiceName, 0, SERVICE_CONTROL_INTERROGATE);
+
+_looper = 1
+
+If param0 > 0
+	_looper = 2
+Endif
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+_now = TimeYmdHms()	; YYYY:MM:DD:HH:MM:SS
+_nowBegin = _now
+
+_yyyy = ItemExtract( 1, _now, ":")
+_mm = ItemExtract( 2, _now, ":")
+_dd = ItemExtract( 3, _now, ":")
+
+_logFilename = "%_myPath%%_wname%_%_mm%-%_dd%-%_yyyy%.log"
+
+_fhandLog = FileOpen( _logFilename, "APPEND")
+
+FileWrite( _fhandLog, "================================================================================ %_crlf%")
+
+while _looper
+	for num = 1 to _myServiceNameN
+		svcName = _myServiceName%num%
+		if StrLen(svcName) > 0 then
+			state = wntSvcStatus(_myMachineName, svcName, 0, 2);
+			_state = "unknown"
+			if state == SERVICE_STOPPED then
+				_state = "SERVICE_STOPPED"
+			endif
+			if state == SERVICE_START_PENDING then
+				_state = "SERVICE_START_PENDING"
+			endif
+			if state == SERVICE_STOP_PENDING then
+				_state = "SERVICE_STOP_PENDING"
+			endif
+			if state == SERVICE_RUNNING then
+				_state = "SERVICE_RUNNING"
+			endif
+			if state == SERVICE_CONTINUE_PENDING then
+				_state = "SERVICE_CONTINUE_PENDING"
+			endif
+			if state == SERVICE_PAUSE_PENDING then
+				_state = "SERVICE_PAUSE_PENDING"
+			endif
+			if state == SERVICE_PAUSED then
+				_state = "SERVICE_PAUSED"
+			endif
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_now% :: %wname% :: Service State (%svcName%) (%state%) (%_state%)%_crlf%")
+			if state == SERVICE_RUNNING then
+				wntSvcControl(_myMachineName, svcName, 0, SERVICE_CONTROL_STOP)
+				_now = TimeYmdHms()
+				FileWrite( _fhandLog, "%_now% :: %wname% :: Service Running (%svcName%) -- Attempted STOP COMMAND. %_crlf%")
+			endif
+		endif
+	next
+
+	if _looper == 2 then TimeDelay(60)
+	if _looper < 2 then break
+end while
+
+_today = TimeDate()
+_now = TimeYmdHms()
+_ds = TimeDiffSecs(_now, _nowBegin)
+_dsv = _ds
+_dv = 60 * 60
+_hh = Int(_dsv / _dv)
+_dsv = _dsv - (_hh * _dv)
+_dv = 60
+_mm = Int(_dsv / _dv)
+_dsv = _dsv - (_mm * _dv)
+_ss = _dsv
+if _hh <= 9
+	_hh = "0%_hh%"
+endif
+if _mm <= 9
+	_mm = "0%_mm%"
+endif
+if _ss <= 9
+	_ss = "0%_ss%"
+endif
+_t = "%_hh%:%_mm%:%_ss%"
+FileWrite( _fhandLog, "%_today% END :: %wname% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS) %_crlf%")
+
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_now% :: %wname% :: Run Completed. %_crlf%")
+
+FileClose(_fhandLog)
+
+exit
+
+
+

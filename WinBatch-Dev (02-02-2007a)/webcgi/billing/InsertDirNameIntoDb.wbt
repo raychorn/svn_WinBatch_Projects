@@ -1,0 +1,158 @@
+:InsertDirNameIntoDb
+; param1 ............ input - the name of the variable that holds the datasource name
+; param2 ............ input - the name of the variable that holds the d - the dir name to insert into the database
+; param3 ............ input - the name of the variable that holds the _cgi_dir value
+; param4 ............ input - the name of the variable that holds the d_YmdHms value
+; __debug . input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+; _id ..... output - the file id for the dirname from the database
+; _fname .. output - the file name for the dir name from the database
+If param0 <> 4
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for InsertDirNameIntoDb</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( _param2) == @YES
+    _param2_IDNID = _param2
+Endif
+
+If IsDefined( sql_fetch) == @YES
+    sql_fetch_IDNID = sql_fetch
+Endif
+
+If IsDefined( sql_stmnt) == @YES
+    sql_stmnt_IDNID = sql_stmnt
+Endif
+
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+If IsDefined( _html_crlf) == @NO
+    _html_crlf = 2
+Endif
+
+If IsDefined( _cgi_dir) == @YES
+    _cgi_dir_IDNID = _cgi_dir
+Endif
+
+If IsDefined( d) == @YES
+    d_IDNID = d
+Endif
+
+If IsDefined( datasource) == @YES
+    datasource_IDNID = datasource
+Endif
+
+If IsDefined( d_YmdHms) == @YES
+    d_YmdHms_IDNID = d_YmdHms
+Endif
+
+_param3 = %param3%
+_cgi_dir = "%_param3%"
+
+Call( StrCat( _cgi_dir, "beginSQL.wbc"), "")
+
+_param2 = %param2%
+d = "%_param2%"
+
+_param1 = %param1%
+datasource = "%_param1%"
+
+_param4 = %param4%
+d_YmdHms = "%_param4%"
+
+__debug = @TRUE
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">InsertDirNameIntoDb: DEBUG hdbc=%hdbc%, DSN=%datasource%</FONT></B><BR>', _html_crlf)
+    WebOut('<BR><B><FONT COLOR="BLUE">DEBUG fname=%d% (param2=%param2%)(_param2=%_param2%)</FONT></B><BR>', _html_crlf)
+    WebOut('<BR><B><FONT COLOR="BLUE">DEBUG _cgi_dir=%_cgi_dir% (param3=%param3%)(_param3=%_param3%)</FONT></B><BR>', _html_crlf)
+    WebOut('<BR><B><FONT COLOR="BLUE">DEBUG d_YmdHms=%d_YmdHms% (param4=%param4%)(_param4=%_param4%)</FONT></B><BR>', _html_crlf)
+Endif
+
+sql_fetch = @TRUE
+sql_stmnt = "SELECT * FROM files WHERE (fname = '%d%')"
+Call( StrCat( _cgi_dir, "doQuery.wbc"), "datasource hdbc sql_stmnt sql_fetch")
+
+Call( StrCat( _cgi_dir, "endSQL.wbc"), "")
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+If sql_fetched <> @TRUE
+    Call( StrCat( _cgi_dir, "beginSQL.wbc"), "")
+
+    sql_fetch = @FALSE
+    sql_stmnt = "INSERT INTO files (fname) VALUES ('%d%')"
+;    Call( StrCat( _cgi_dir, "doQuery.wbc"), "datasource hdbc sql_stmnt sql_fetch")
+
+    Call( StrCat( _cgi_dir, "endSQL.wbc"), "")
+
+    Call( StrCat( _cgi_dir, "beginSQL.wbc"), "")
+
+    sql_fetch = @TRUE
+    sql_stmnt = "SELECT * FROM files WHERE (fname = '%d%')"
+    Call( StrCat( _cgi_dir, "doQuery.wbc"), "datasource hdbc sql_stmnt sql_fetch")
+
+    Call( StrCat( _cgi_dir, "endSQL.wbc"), "")
+
+    If __debug <> @FALSE
+        If sql_fetched <> @TRUE
+            WebOut('<BR><B><FONT COLOR="RED">(2) sql_stmnt=', _html_crlf)
+            WebOut(sql_stmnt, _html_crlf)
+            WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+        Else
+            WebOut('<BR><B><FONT COLOR="BLUE">(2) _id=(%_id%), _fname=(%_fname%)</FONT></B><BR>', _html_crlf)
+        Endif
+    Endif
+
+Else
+    If __debug <> @FALSE
+        WebOut('<BR><B><FONT COLOR="BLUE">(1) _id=(%_id%), _fname=(%_fname%)</FONT></B><BR>', _html_crlf)
+    Endif
+Endif
+
+Drop( _param2, sql_fetch, sql_stmnt, _cgi_dir, _param3, d, datasource, _param4)
+
+If IsDefined( _param2_IDNID) == @YES
+    _param2 = _param2_IDNID
+    Drop( _param2_IDNID)
+Endif
+
+If IsDefined( sql_fetch_IDNID) == @YES
+    sql_fetch = sql_fetch_IDNID
+    Drop( sql_fetch_IDNID)
+Endif
+
+If IsDefined( sql_stmnt_IDNID) == @YES
+    sql_stmnt = sql_stmnt_IDNID
+    Drop( sql_stmnt_IDNID)
+Endif
+
+If IsDefined( _cgi_dir_IDNID) == @YES
+    _cgi_dir = _cgi_dir_IDNID
+    Drop( _cgi_dir_IDNID)
+Endif
+
+If IsDefined( d_IDNID) == @YES
+    d = d_IDNID
+    Drop( d_IDNID)
+Endif
+
+If IsDefined( datasource_IDNID) == @YES
+    datasource = datasource_IDNID
+    Drop( datasource_IDNID)
+Endif
+
+If IsDefined( d_YmdHms_IDNID) == @YES
+    d_YmdHms = d_YmdHms_IDNID
+    Drop( d_YmdHms_IDNID)
+Endif
+
+return
+
+
+
+

@@ -1,0 +1,7 @@
+Service Guarantee
+
+If for any reason you feel our ezAJAX(tm) Community Edition Framework does not live up to your expectations just let us know and we will work very hard to add features or make required improvements to ensure you are completely satisified.
+
+Keep in mind the Community Edition is meant to be a low-cost entry-level product that may not be as optimized as may be required for more intensive uses of this product.  We do have an Enterprise Edition in development that is far more optimized than the Community Edition with many more features.
+
+We want your experience with this product to be as beneficial as possible and we want to be your number one supplier of AJAX Development Tools.

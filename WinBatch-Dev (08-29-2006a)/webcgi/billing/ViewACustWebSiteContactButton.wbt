@@ -1,0 +1,34 @@
+:ViewACustWebSiteContactButton
+_sql_alias_var_name = sql_alias%sql_level%
+
+WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="', 0)
+
+WebOut(StrFix( %_sql_alias_var_name%2%sql_level%, "-", 26), 0)
+WebOut(' ', 0)
+WebOut(StrFix( %_sql_alias_var_name%3%sql_level%, " ", 20), 0)
+
+WebOut('"></B>', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomerWebSite%">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_table" VALUE="%_table%">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_edit_mode" VALUE="%_edit_mode%">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_custid" VALUE="', 0)
+WebOut(%_sql_alias_var_name%1%sql_level%, 0)
+WebOut('">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_domain_name" VALUE="', 0)
+WebOut(%_sql_alias_var_name%2%sql_level%, 0)
+WebOut('">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_ip" VALUE="', 0)
+WebOut(%_sql_alias_var_name%3%sql_level%, 0)
+WebOut('">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_id" VALUE="', 0)
+WebOut(%_sql_alias_var_name%4%sql_level%, 0)
+WebOut('">', 0)
+WebOut('</FORM>', _html_crlf)
+
+If _edit_mode == @FALSE
+Else
+Endif
+
+return
+

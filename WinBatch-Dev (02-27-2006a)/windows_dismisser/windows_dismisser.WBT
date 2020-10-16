@@ -1,0 +1,46 @@
+;************************************************************************
+; windows_dismisser.wbt
+; 
+;************************************************************************
+
+_wname = "Windows Dismisser v1.0.0"
+wname = "%_wname% (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved."
+
+_myPathName = IntControl( 1004, 0, 0, 0, 0)
+_myPath = FilePath( _myPathName)
+_myName = StrReplace( _myPathName, _myPath, "")
+_myName = StrReplace( _myName, StrCat( ".", ItemExtract( ItemCount( _myName, "."), _myName, ".")), "")
+_wname_ = StrReplace( StrReplace( _wname, ".", "_"), " ", "_")
+_iniPath = '%_myPath%%_wname_%.INI'
+
+if FileExist(_iniPath) == @True
+	FileDelete(_iniPath)
+endif
+
+If param0 > 0
+	_dismissTarget = param1
+Else
+	_dismissTarget = AskLine("Input", "Please enter your Dismiss Target (the partial name of the window to be dismissed)", "ERROR")
+Endif
+
+If param0 > 1
+	_sleepInterval = param2
+Else
+	_sleepInterval = AskLine("Input", "Please enter your Sleep Interval (the number of seconds to sleep each cycle)", "60")
+	if _sleepInterval > 3600 then _sleepInterval = 3600
+Endif
+
+while 1
+	if WinExist(_dismissTarget) == @TRUE
+		WinActivate(_dismissTarget)
+		SendKeysTo(_dismissTarget, "{ENTER}")
+		TimeDelay(1)
+	else
+		TimeDelay(_sleepInterval - 1)
+	endif
+endwhile
+
+exit
+
+
+

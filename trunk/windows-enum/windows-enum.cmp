@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=windows-enum.wbt
+Targ=W:\WinBatch-Dev\windows-enum\windows-enum.exe
+Icon=W:\WinBatch-Dev\windows-enum\013.ico
+CmpVersion=3
+[Options]
+TechWebPage=http://rabid.contentopia.net/blog
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=
+CompanyName=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=windows-enum aka. 1st Monitor (Laptop Utility to Move Windows to 1st Monitor from 2nd Monitor)
+FileVersion=1.2
+InternalName=windows-enum.exe
+LegalCopyright=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=windows-enum.exe
+ProductName=windows-enum
+ProductVersion=1.2
+[Other Files]
+Count=0
+[Extenders]
+Count=0

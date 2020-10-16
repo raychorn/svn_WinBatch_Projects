@@ -1,0 +1,561 @@
+; ServerRescue.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+;sr_basedir = "F:\208.128.219.19\winbatch\ServerRescue\watchdog\"
+
+sr_basedir = "C:\Program Files\serverrescue-911\"
+
+sr_wName = "Remote Power Manager"
+
+sr_isServerLIVE_exit_value = @TRUE
+sr_isServerLIVE_stay_value = @FALSE
+
+; comment out the next 2 lines when running live - these lines reverse the logic for live server testing
+;sr_isServerLIVE_exit_value = @FALSE
+;sr_isServerLIVE_stay_value = @TRUE
+
+connectWinName = "Connect"
+
+serverRestartDelay = 6
+
+go_for_it = @FALSE
+
+If param0 > 0
+	server = param1
+Else
+	server = AskLine("ServerRescue", "Which Server do you want to rescue? (R)iker, (P)icard2, (D)ata2, (Z)one1 or (K)irk", "")
+Endif
+
+server = StrLower( server)
+
+Gosub determineServerParms
+
+If param0 > 1
+	If DirExist(param2) == @TRUE
+		sr_basedir = param2
+	Endif
+Endif
+
+If param0 > 2
+	sr_cr_reps = param3
+Endif
+
+; Read the init files
+Gosub readInitFile
+
+;Message( "DEBUG Message", "sr_basedir=|%sr_basedir%|, dialer=|%dialer%|" )
+
+If FileExist(dialer) == @FALSE
+	dialer = "C:\Program Files\Windows NT\HYPERTRM.EXE"
+Endif
+
+If FileExist(dialerFile) == @FALSE
+	dialerFile = "C:\WINNT\Profiles\Administrator\Start Menu\Programs\Accessories\hyperterminal\Remote Power Manager.ht"
+Endif
+
+If FileExist(tracertCMD) == @FALSE
+	tracertCMD = "F:\208.128.219.19\winbatch\ServerRescue\tracert.cmd"
+Endif
+
+If WinExist(sr_wName) == @TRUE 
+	If WinExist(connectWinName) == @TRUE
+		WinActivate(connectWinName)
+		SendKeysTo(connectWinName, `{ESC}`)
+	Endif
+	
+	Gosub quitRemotePowerManager
+Else
+Endif
+
+; Always assume we have to start the Remote Power Manager to get the correct state
+Run(dialer, dialerFile)
+
+Delay( 5)  ; we need to wait a while here but not sure how long - sometimes the dialer misses for some ?!? reason...
+
+;DEBUG( @ON)
+
+Gosub isServerLIVE
+If isServerLIVE == sr_isServerLIVE_exit_value
+
+	Gosub isServerDEAD
+	If isServerLIVE == sr_isServerLIVE_exit_value
+		Delay( 120)	 ; we need to wait a while here but not sure how long - Q: Is website dead but the server alive ?
+
+		Gosub isServerDEAD
+		If isServerLIVE == sr_isServerLIVE_exit_value
+			go_for_it = @TRUE
+		Endif
+	Endif
+Endif
+
+If WinExist(sr_wName) == @TRUE
+	WinActivate(sr_wName)
+	WinTitle(sr_wName, "%sr_wName% (1) (waiting... max 30 seconds)...")
+Endif
+
+_begin = TimeYmdHms( )
+while WinExist(connectWinName) == @FALSE
+	_todayNow = TimeYmdHms( )
+	_secs = Abs(Int(TimeDiffSecs( _todayNow, _begin)))
+
+	If WinExist(connectWinName) == @TRUE
+		break
+	Endif
+
+	If WinExist(sr_wName) == @TRUE
+		WinActivate(sr_wName)
+		WinTitle(sr_wName, "%sr_wName% (1a) (waiting... max 60 seconds) at %_secs% seconds!")
+	Endif
+
+	If _secs > 60
+		break
+	Endif
+
+	If go_for_it <> @TRUE
+		Gosub isServerLIVE
+		If isServerLIVE == sr_isServerLIVE_exit_value
+			Goto the_end_and_exit
+		Endif
+
+		Gosub isServerDEAD
+		If isServerLIVE == sr_isServerLIVE_exit_value
+			Goto the_end_and_exit
+		Endif
+	Endif
+
+	Delay(1)
+endwhile
+
+If go_for_it <> @TRUE
+	Gosub isServerLIVE
+	If isServerLIVE == sr_isServerLIVE_exit_value
+		Goto the_end_and_exit
+	Endif
+Endif
+
+; Got here!
+If go_for_it <> @TRUE
+	Gosub isServerDEAD
+	If isServerLIVE == sr_isServerLIVE_exit_value
+		Goto the_end_and_exit
+	Endif
+Endif
+
+Gosub isServerDEAD
+If isServerLIVE == sr_isServerLIVE_stay_value
+:already_dialed
+	If go_for_it <> @TRUE
+		Gosub isServerDEAD
+		If isServerLIVE == sr_isServerLIVE_exit_value
+			Goto the_end_and_exit
+		Endif
+	Endif
+
+	If WinExist(connectWinName) == @TRUE
+		WinActivate(connectWinName)
+		SendKeysTo(connectWinName, `{ENTER}`)
+		
+		Delay( 30)	; we need to wait a while here but not sure how long - sometimes the dialer misses for some ?!? reason...
+
+		_begin = TimeYmdHms( )
+		while WinExist(connectWinName) == @TRUE
+			_secs = Abs(Int(TimeDiffSecs( TimeYmdHms( ), _begin)))
+
+			If WinExist(connectWinName) == @FALSE
+				break
+			Endif
+
+			If WinExist(connectWinName) == @TRUE
+				WinActivate(connectWinName)
+				WinTitle(connectWinName, "%connectWinName% (1a) waiting... %_secs% seconds!")
+			Endif
+
+			If _secs > 90  ; hold here for a while to see if the dialer will do it's thing before giving up or proceeding
+                break
+            Endif
+
+            If go_for_it <> @TRUE
+                Gosub isServerDEAD
+                If isServerLIVE == sr_isServerLIVE_exit_value
+                    Goto the_end_and_exit
+                Endif
+            Endif
+
+            Delay(1)
+
+            If WinExist(connectWinName) == @TRUE
+                WinActivate(connectWinName)
+                SendKeysTo(connectWinName, `{ENTER}`)
+            Endif
+        endwhile
+    Endif
+
+:go_for_it
+    If WinExist(sr_wName) == @TRUE
+        WinActivate(sr_wName)
+        WinTitle(sr_wName, "%sr_wName% (3) (go_for_it)!")
+    Endif
+
+    Delay(10)
+
+    ; Sign-On to the Remote Power manager and Show the opening page
+    cr = StrCat(Num2Char(13))
+    ; copy some text to the clipboard
+    ;ClipPut("%cr%%cr%peek@boo%cr%show%cr%")
+
+    _foundIt = @FALSE
+    while _foundIt <> @TRUE
+
+        If WinExist(connectWinName) == @TRUE
+            WinActivate(connectWinName)
+            SendKeysTo(connectWinName, `{ENTER}`)
+        Endif
+
+        For cr_i = 1 to cr_reps
+            ClipPut("%cr%")
+            Delay( 2)
+
+            If WinExist(sr_wName) == @TRUE
+                WinActivate(sr_wName)
+                WinTitle(sr_wName, "%sr_wName% (3a) (Sending 2 carriage-returns)!")
+
+                WinActivate(sr_wName)
+                SendKey(`!E{ALT}!Ep`)
+
+                If WinExist(sr_wName) == @TRUE
+                    WinActivate(sr_wName)
+                    WinTitle(sr_wName, "%sr_wName% (3b) (waiting for Enter Password prompt)!")
+                Endif
+            Endif
+        Next
+
+        _secs = 0
+        _begin = TimeYmdHms( )
+        while _secs < 5
+            WinActivate(sr_wName)
+            SendKey(`{HOME}+{DOWN}+{DOWN}+{DOWN}!E!Ec`)
+            Delay( 1)
+            _clipboard = StrTrim(ClipGet( ))
+            If StrIndexNc(_clipboard, "Enter Password:", 1, @FWDSCAN) > 0
+                _foundIt = @TRUE
+                break
+            Endif
+            _secs = Abs(Int(TimeDiffSecs( TimeYmdHms( ), _begin)))
+            WinTitle(sr_wName, "%sr_wName% (3b) (waiting for Enter Password prompt) at %_secs% secs!")
+
+            Gosub isServerDEAD
+            If isServerLIVE == sr_isServerLIVE_exit_value
+                Goto the_end_and_exit
+            Endif
+        endwhile
+
+    endwhile
+
+    If _foundIt == @FALSE
+        Goto the_end_and_exit
+    Endif
+
+    ClipPut("peek@boo%cr%")
+
+    If WinExist(sr_wName) == @TRUE
+        WinActivate(sr_wName)
+        WinTitle(sr_wName, "%sr_wName% (3c) (Sending password)!")
+
+        WinActivate(sr_wName)
+        SendKey(`!E{ALT}!Ep`)
+    Endif
+
+    _foundIt = @FALSE
+    _secs = 0
+    _begin = TimeYmdHms( )
+    while _secs < 60
+        WinActivate(sr_wName)
+        SendKey(`{HOME}+{DOWN}+{DOWN}+{DOWN}+{DOWN}+{DOWN}+{DOWN}+{DOWN}!Ec`)
+        Delay( 1)
+        _clipboard = StrTrim(ClipGet( ))
+        If StrIndexNc(_clipboard, "Sentry:", 1, @FWDSCAN) > 0
+            _foundIt = @TRUE
+            break
+        Endif
+        _secs = Abs(Int(TimeDiffSecs( TimeYmdHms( ), _begin)))
+        WinTitle(sr_wName, "%sr_wName% (3b) (waiting for Sentry prompt) at %_secs% secs!")
+
+        Gosub isServerDEAD
+        If isServerLIVE == sr_isServerLIVE_exit_value
+            Goto the_end_and_exit
+        Endif
+    endwhile
+
+    Gosub isServerDEAD
+    If (_foundIt == @FALSE) && (isServerLIVE == sr_isServerLIVE_exit_value)
+        Goto the_end_and_exit
+    Endif
+
+    ClipPut("REBOOT %portName%%cr%")
+
+    If WinExist(sr_wName) == @TRUE
+        WinActivate(sr_wName)
+        WinTitle(sr_wName, "%sr_wName% (3e) (Sending REBOOT command)!")
+
+        WinActivate(sr_wName)
+        SendKey(`!E{ALT}!Ep`)
+    Endif
+
+    WinActivate(sr_wName)
+
+;    Delay( 5)
+
+;    ClipPut("SHOW%cr%")
+
+;    If WinExist(sr_wName) == @TRUE
+;        WinActivate(sr_wName)
+;        WinTitle(sr_wName, "%sr_wName% (3e) (Sending SHOW command)!")
+
+;        WinActivate(sr_wName)
+;        SendKey(`!E{ALT}!Ep`)
+;    Endif
+
+    ClipPut("quit%cr%")
+
+    If WinExist(sr_wName) == @TRUE
+        WinActivate(sr_wName)
+        WinTitle(sr_wName, "%sr_wName% (3e) (Sending QUIT command)!")
+
+        WinActivate(sr_wName)
+        SendKey(`!E{ALT}!Ep`)
+    Endif
+
+    If WinExist(connectWinName) == @TRUE
+        WinActivate(connectWinName)
+        SendKeysTo(connectWinName, `{ESC}`)
+        Delay(5)
+    Endif
+
+; try to figure out if the reboot command worked...
+
+    mins = serverRestartDelay ; time to wait for the server to restart
+    _delay_secs = 1
+    _keys_to_send = 'show{ENTER}'
+    _delay_secs2 = 9
+    _keys_to_send2 = 'c'
+    Gosub dumdedum
+
+Goto the_end_and_exit  ; this should be removed when doing recoveries from servers in Dallas, if possible.
+
+    Goto are_we_done_yet
+
+:are_we_done_yet
+    Gosub isServerDEAD
+    If isServerLIVE == sr_isServerLIVE_stay_value
+        WinActivate(sr_wName)
+
+        WinTitle(sr_wName, "%sr_wName% (6) (Wait 30 secs for retry...)!")
+
+        Gosub isServerDEAD
+        If isServerLIVE == sr_isServerLIVE_exit_value
+            Goto the_end_and_exit
+        Endif
+
+;        Delay( 30)
+        
+        Gosub isServerDEAD
+        If isServerLIVE == sr_isServerLIVE_exit_value
+            Goto the_end_and_exit
+        Endif
+
+;        Goto reboot_again
+    Endif
+
+    ; Okay, the server is back online so let's do what it takes to get back on track...
+	Gosub quitRemotePowerManager
+
+	; Rescue ALL the important PCAnywhere windows to save extra work for the poor overworked webAdmin staff
+	;RunShell("C:\Program Files\WinBatch\system\WinBatch.exe", "F:\208.128.219.19\winbatch\ServerRescue\PCAnywhereRescue.wbt", "F:\208.128.219.19\winbatch\ServerRescue", @NORMAL, @NOWAIT)
+Endif
+Goto done_so_exit
+
+:the_end_and_exit
+If WinExist(connectWinName) == @TRUE
+	WinActivate(connectWinName)
+	SendKeysTo(connectWinName, `{ESC}`)
+	Delay(5)
+Endif
+
+Gosub quitRemotePowerManager
+
+:done_so_exit
+Return
+;exit
+
+:dumdedum
+; _delay_secs = 1
+; _keys_to_send = '{DOWN}'
+; _delay_secs2 = 1
+; _keys_to_send2 = '{UP}'
+goal = mins * 60
+_time_begin = TimeYmdHms( )
+secs = 0
+While secs < goal
+	secs = Abs(Int(TimeDiffSecs( TimeYmdHms( ), _time_begin)))
+
+	remain = goal - secs
+	if WinExist(sr_wName)	 ; Make user user did not close it manually
+;		 WinTitle(sr_wName, "%sr_wName% %ip% (%remain% seconds left)")
+	else
+		return
+	endif
+	Delay( _delay_secs)
+;	 WinActivate(sr_wName)
+;	 SendKey( _keys_to_send) ; twiddle the Remote Power Manager so the phone line will remain open
+
+	Delay( _delay_secs2)
+;	 WinActivate(sr_wName)
+;	 SendKey( _keys_to_send2) ; twiddle the Remote Power Manager so the phone line will remain open
+	
+	; Eventually we will check the ODBC database to see if the server's status has changed back to online and if it has we will exit this loop early, etc.
+
+	Gosub isServerLIVE
+	If isServerLIVE == sr_isServerLIVE_exit_value
+		break
+	Endif
+EndWhile
+Return
+
+:quitRemotePowerManager
+;SendKey(`quit{ENTER}`)
+If WinExist(connectWinName) == @TRUE
+	WinActivate(connectWinName)
+	SendKeysTo(connectWinName, `{ESC}`)
+	Delay(5)
+Endif
+
+If WinExist(sr_wName) == @TRUE
+	WinActivate(sr_wName)
+	WinTitle(sr_wName, "%sr_wName% (7) (Exiting the dialer)!")
+
+	WinActivate(sr_wName)
+	SendKeysTo(sr_wName, `{ESC}`)
+	Delay(5)
+	SendKeysTo(sr_wName, `q!Fx`)
+	Delay(5)
+;	 SendKeysTo(sr_wName, `{ENTER}`)
+	SendKeysTo(sr_wName, `Y`)
+Endif
+Return
+
+
+:readInitFile
+init_file = "%sr_basedir%init.txt"
+
+keywords0 = 5
+keywords1 = "dialer="
+keywords2 = "dialerFile="
+keywords3 = "sr_wName="
+keywords4 = "tracertCMD="
+keywords5 = "serverRestartDelay="
+
+handle = FileOpen( init_file, "READ")
+If handle > 0
+	while @TRUE				; Loop till break do us end
+		data = FileRead(handle)
+		If data == "*EOF*" Then Break
+
+		For _i = 1 to keywords0
+			i = StrIndexNc(data, keywords%_i%, 1, @FWDSCAN)
+			If i > 0
+				keyword = StrReplace(keywords%_i%, "=", "")
+				%keyword% = StrSub(data, i + StrLen( keywords%_i%), -1)
+			Endif
+		Next
+
+	endwhile
+	FileClose(handle)
+Endif
+return
+
+
+:determineServerParms
+webpage = "http://x-rated.xxx-sex.com/super-girls/_index.iHTML"
+webpage_resultsFile = "c:\temp\ServerRescue-xratedxxxsexcom-webpage2.html"
+
+If server == "r"
+	; Riker
+	ip = "cybercash-net.com"
+	pcAnywhere = "Server 1.CHF"
+	portName = "Riker"
+	keys = "{DOWN}{DOWN}"
+	webpage = "http://e-servers.net/web-hosting/index.iHTML"
+	webpage_resultsFile = "c:\temp\ServerRescue-eserversnet-webpage2.html"
+Else
+	If server == "p"
+		;Picard2
+		ip = "e-servers.net"
+		pcAnywhere = "Server 2.CHF"
+		portName = "Picard2"
+		keys = "{RIGHT}{DOWN}{DOWN}"
+	Else
+		If server == "d"
+			;Data2
+			ip = "adultservers.net"
+			pcAnywhere = "Server3.CHF"
+			portName = "Data2"
+			keys = "{RIGHT}{RIGHT}{DOWN}{DOWN}"
+		Else
+			If server == "z"
+				;Zone1
+				ip = "adult-zone.com"
+				pcAnywhere = "Zone1.CHF"
+				portName = "Zone1"
+				keys = "{RIGHT}{RIGHT}{RIGHT}{DOWN}{DOWN}"
+			Else
+				If server == "s"
+					;Zone1
+					ip = "xxx-sex.com"
+					pcAnywhere = "Zone1.CHF"
+					portName = "SISKO"
+					keys = "{RIGHT}{RIGHT}{RIGHT}{DOWN}{DOWN}"
+					webpage = "http://x-rated.xxx-sex.com/super-girls/_index.iHTML"
+					webpage_resultsFile = "c:\temp\ServerRescue-xratedxxxsexcom-webpage2.html"
+				Else
+				Endif
+			Endif
+		Endif
+	Endif
+Endif
+
+webpages_domain_name = httpGetServer( webpage, "")
+webpage_path = httpGetpath( webpage, "")
+return
+
+
+:isServerDEAD ; If isServerLIVE == sr_isServerLIVE_exit_value
+	Gosub determineServerParms
+	ErrorMode(@OFF)
+	isServerLIVE = wxPing( ip)
+	ErrorMode(@CANCEL)
+
+	If isServerLIVE == @TRUE
+		ErrorMode(@OFF)
+		_response_code = httpRecvQryF( webpages_domain_name, webpage_path, "", webpage_resultsFile, @hMethodGet)
+		ErrorMode(@CANCEL)
+
+		If _response_code == 200
+			isServerLIVE = @TRUE
+		Else
+			isServerLIVE = @FALSE
+		Endif
+	Endif
+
+return
+
+
+:isServerLIVE ; If isServerLIVE == sr_isServerLIVE_exit_value
+	Gosub determineServerParms
+	ErrorMode(@OFF)
+	isServerLIVE = wxPing( ip)
+	ErrorMode(@CANCEL)
+return
+
+
+

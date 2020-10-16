@@ -1,0 +1,1213 @@
+; ispawn.wbt
+
+; T2Chameleon.Com Registration - 
+; PayPal Id resolves to a single qsX which is then logged as actively in-use for a single instance of a single utility program
+; 20 minute default window of use in case the util has to be killed before it can be closed in a clean manner
+; Util fails to operate unless it is registered for each use
+; 1st time registered it is flagged for FREE usage
+; after 30 days of FREE usage it is flagged for a monthly fee which is required to be paid via PayPal
+
+; Open issues :
+; ** Test the server shutdown and restart - still getting duplicate server windows...
+; ** Add the Current Mission readout...
+; * HTML output - ask user about HTML output
+; * Ask user to choose a server from the public list
+; * Track Stats via an .INI file or something
+; ** ALlow qstat parms to be set via the command line and prompts
+; ** Ask user if shortcuts should be made and if so where do put them...
+; ...then Publish it !
+
+AddExtender("wwipg32i.dll")
+
+wName = "Tribes2 Infinite Spawn Vers 2.0.5 - (c). Copyright 1990-2001 HAL Smalltalker, Inc."
+
+_folderPath = IntControl(1004, 0, 0, 0, 0)
+_folder = FilePath( _folderPath)
+
+_inputFileType = ".txt"
+inputFilePath = "%_folder%qstat%_inputFileType%"
+
+ActivityLogFilePath = "%_folder%Activity-Log%_inputFileType%"
+
+__firstTimeFlag = "1st"
+
+_commandLineParmsFilePath = ""
+If (IsDefined( Param1))
+	If (FileExist( Param1) == @TRUE)
+		_commandLineParmsFilePath = Param1
+		Gosub ReadParamsFile
+	endif
+else
+	_commandLineParmsFilePath = "%_folder%params.txt"
+	Gosub DeleteParamsFile
+endif
+
+bExit = 1   
+
+_commandLineParms = ""
+
+_webBrowser = "C:\Program Files\Internet Explorer\IEXPLORE.EXE"
+
+_wwwURL = "http://t2chameleon.com"
+
+_serverResetElapsedMaxSecs = 60
+
+_crLf = StrCat(Num2Char(13), Num2Char(10))
+
+__quote = Num2Char(34)
+_quote = ""
+
+_ServerNoResponseToken = "NR"
+_ServerNoServerToken = "NS"
+_ServerUPToken = "UP"
+_ServerDownToken = "DN"
+_ServerRestartToken = "RS"
+
+_ADDRESS_Symbol = "ADDRESS"
+_PLAYERS_Symbol = "PLAYERS"
+_MAP_Symbol = "MAP"
+_RESPONSE_TIME_Symbol = "RESPONSE TIME"
+_NAME_Symbol = "NAME"
+
+_botCountSymbol = "bot_count="
+
+_qstatRawDelim = "`"
+_qstatParms = "-t2s"
+_qstatParmsList = ""
+_qstatParmsList = StrCat( _qstatParmsList, "-t2s=Tribes2", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-tbs=Tribes1", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-qs=Quake", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-h2s=Hexen II", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-qws=QuakeWorld", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-hws=HexenWorld", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-q2s=Quake II", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-uns=Unreal", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-hls=Half-Life", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-sns=Sin", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-sgs=Shogo: Mobile Armor Division", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-q3s=Quake III", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-bfs=BFRIS", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-kps=Kingpin", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-hrs=Heretic II", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-sfs=Soldier of Fortune", @tab)
+;	_qstatParmsList = StrCat( _qstatParmsList, "-t2m=Tribes 2 master", @tab)
+;	_qstatParmsList = StrCat( _qstatParmsList, "-tbm=Tribes master", @tab)
+;	_qstatParmsList = StrCat( _qstatParmsList, "-qwm=QuakeWorld master", @tab)
+;	_qstatParmsList = StrCat( _qstatParmsList, "-q2m=Quake II master", @tab)
+;	_qstatParmsList = StrCat( _qstatParmsList, "-hlm=Half-Life master", @tab)
+;	_qstatParmsList = StrCat( _qstatParmsList, "-q3m=Quake III master", @tab)
+;	_qstatParmsList = StrCat( _qstatParmsList, "-gsm=Gamespy master", @tab)
+
+_ignoreInitialRestart = 0
+_skipActivityBar = 1
+
+_noResponseSymbol1 = "no response"
+_noResponseSymbol2 = "TIMEOUT"
+
+_queryversionSymbol = "queryversion="
+_missionSymbol = "mission="
+_gameSymbol = "game="
+
+_minNoResponsesToReset = 3
+_numNoResponsesToReset = 0
+
+_maxNoResponsesToReset = 5
+
+_TestStack = ""
+_stackMax = 32
+
+_maxWaitSecs = 60
+_maxWaitSecsMin = 60        ; Lets' get real here... do we really need to poll the server any faster than once per minute ?
+
+_initWaitSecsMin = 60       ; this should be based on the relative speed of the CPU - slower CPUs need more time (1 Ghz or faster 30 secs, 500 Mhz PIII or slower 90 secs)
+_initWaitSecs = 90
+
+_serverAddress = "192.168.1.10:28000"
+_serverAddressIsLocal = @FALSE
+
+_exeFileName = "Tribes2.exe"
+
+_cmd = "E:\Tribes2\GameData\{USB}Mayhem_v168\TestMayhemDedicatedServer.cmd"
+
+_dir = "D:\tribes2"
+
+If IsDefined( _Param0)
+;	message("%wName%", "_Param0 is %_Param0%")
+endif
+
+If IsDefined( _Param1)
+	_val = int(_Param1)
+	if (StrLen(_Param1) > 0) && (_val < _maxWaitSecsMin)
+		_maxWaitSecs = _val
+	endif
+;	message("%wName%", "_Param1 is %_Param1%")
+Else
+	_val = AskLine( wName, "Max Wait Secs ? (How long should ispawn wait before checking to see if the server is alive ?  The Minimum allowed value is %_maxWaitSecsMin%)", _maxWaitSecs)
+	if (StrLen(_val) > 0) && (int(_val) < _maxWaitSecsMin)
+		_maxWaitSecs = int(_val)
+	endif
+	_commandLineParms = StrCat( _commandLineParms, "%_maxWaitSecs%", @TAB)
+	Gosub AppendParamsFile
+Endif
+
+If IsDefined( _Param2)
+	_serverAddress = _Param2
+;	message("%wName%", "_Param3 is %_Param3%")
+Else
+	_val = AskLine( wName, "Server Address ? (192.168.1.10:28000) You may enter any valid server address here if you wish...", _serverAddress)
+	if StrLen(_val) > 0
+		_serverAddress = _val
+		_commandLineParms = StrCat( _commandLineParms, "%_serverAddress%", @TAB)
+		Gosub AppendParamsFile
+	endif
+Endif
+
+_ips = ipGetAddress()
+Gosub CheckIPs
+
+if _serverAddressIsLocal == @TRUE
+	If IsDefined( _Param3)
+		_val = int(_Param3)
+		if (StrLen(_Param3) > 0) && (_val > _initWaitSecsMin)
+			_initWaitSecs = _val
+		endif
+	;	message("%wName%", "_Param2 is %_Param2%")
+	Else
+		_val = AskLine( wName, "Initial Wait Secs ? (How long should ispawn wait before checking to see if the server is alive the first time ?  The Minimum allowed value is %_initWaitSecsMin%)", _initWaitSecs)
+		if (StrLen(_val) > 0) && (int(_val) > _initWaitSecsMin)
+			_initWaitSecs = int(_val)
+		endif
+		_commandLineParms = StrCat( _commandLineParms, "%_initWaitSecs%", @TAB)
+		Gosub AppendParamsFile
+	Endif
+endif
+
+if _serverAddressIsLocal == @TRUE
+	If IsDefined( _Param4)
+		_cmd = _Param4
+	;	message("%wName%", "_Param4 is %_Param4%")
+	Else
+		_val = AskLine( wName, "Command Line ? (TestMayhemDedicatedServer.cmd)", _cmd)
+		if StrLen(_val) > 0
+			_cmd = _val
+			_commandLineParms = StrCat( _commandLineParms, _quote, _cmd, _quote, @TAB)
+			Gosub AppendParamsFile
+		else
+			exit
+		endif
+	Endif
+endif
+
+if _serverAddressIsLocal == @TRUE
+	_cmdFolder = FilePath( _cmd)
+	exeRootPath = "%_cmdFolder%\GameData\"
+	exeFilePath = "%exeRootPath%%_exeFileName%"
+	if ( (DirExist(_cmdFolder) == @FALSE) && (FileExist( exeFilePath) == @FALSE) )
+		If IsDefined( _Param5)
+			_dir = _Param5
+	;		message("%wName%", "_Param5 is %_Param5%")
+			exeRootPath = "%_dir%\GameData\"
+			exeFilePath = "%exeRootPath%%_exeFileName%"
+			if (FileExist( exeFilePath) == @FALSE)
+				exit
+			endif
+		Else
+			while 1
+				_dir = AskDirectory( "Tribes2 Root Folder ? %_dir%", "", "", "Tribes2 Root Folder is", 2) 
+				exeRootPath = "%_dir%\GameData\"
+				exeFilePath = "%exeRootPath%%_exeFileName%"
+				if (FileExist( exeFilePath) == @TRUE)
+					_commandLineParms = StrCat( _commandLineParms, _quote, _dir, _quote, @TAB)
+					Gosub AppendParamsFile
+					break;
+				endif
+			endwhile
+		Endif
+	else
+		if StrLen(_commandLineParms) > 0
+			_commandLineParms = StrCat( _commandLineParms, _quote, _dir, _quote, @TAB)
+			Gosub AppendParamsFile
+		endif
+	endif
+endif
+
+if _serverAddressIsLocal == @TRUE
+	If IsDefined( _Param6)
+		_minNoResponsesToReset = _Param6
+	;	message("%wName%", "_Param6 is %_Param6%")
+	Else
+		_val = AskLine( wName, "Minimum number of No Responses to trigger a Server Reset ? (False No Responses can result from Mission Loads and normal server resets)", _minNoResponsesToReset)
+		if (StrLen(_val) > 0) && (int(_val) > 0)
+			_minNoResponsesToReset = int(_val)
+			if _minNoResponsesToReset > _maxNoResponsesToReset
+				_minNoResponsesToReset = _maxNoResponsesToReset
+			endif
+			_commandLineParms = StrCat( _commandLineParms, "%_minNoResponsesToReset%", @TAB)
+			Gosub AppendParamsFile
+		else
+			exit
+		endif
+	Endif
+endif
+
+if _serverAddressIsLocal == @TRUE
+	If IsDefined( _Param7)
+		_val = int(_Param7)
+	;	message("%wName%", "_Param7 is %_Param7%")
+		if (_val == 0) || (_val == 1)
+			_ignoreInitialRestart = _val
+		else
+			_ignoreInitialRestart = 1
+		endif
+	Else
+		_val = AskLine( wName, "Bypass initial Server Restart ? (1 = Yes, do not perform the initial restart such as if the server is currently running otherwise 0 = No, perform the initial restart)", _ignoreInitialRestart)
+		if (StrLen(_val) > 0)
+			if (_val == 0) || (_val == 1)
+				_ignoreInitialRestart = _val
+			else
+				_ignoreInitialRestart = 1
+			endif
+			_commandLineParms = StrCat( _commandLineParms, "%_ignoreInitialRestart%", @TAB)
+			Gosub AppendParamsFile
+		else
+			exit
+		endif
+	Endif
+endif
+
+If IsDefined( _Param8)
+	_val = int(_Param8)
+;	message("%wName%", "_Param8 is %_Param8%")
+	if (_val == 0) || (_val == 1)
+		_skipActivityBar = _val
+	else
+		_skipActivityBar = 1
+	endif
+Else
+	_val = AskLine( wName, "Bypass activity bar ? (1 = Yes, do not display the activity bar to use fewer CPU cycles; button clicks may not be processed in real-time otherwise 0 = No, display the activity bar cuz my CPU rocks)", _skipActivityBar)
+	if (StrLen(_val) > 0)
+		if (_val == 0) || (_val == 1)
+			_skipActivityBar = _val
+		else
+			_skipActivityBar = 1
+		endif
+		_commandLineParms = StrCat( _commandLineParms, "%_skipActivityBar%", @TAB)
+		Gosub AppendParamsFile
+	else
+		exit
+	endif
+Endif
+
+If IsDefined( _Param9)
+	_qstatParms = _Param9
+;	message("%wName%", "_Param9 is %_Param9%")
+Else
+	_val = AskItemList( "QStat Parms ? Hit okay button to use the Default Tribes2...", _qstatParmsList, @tab, @unsorted, @single)
+	if (StrLen(_val) > 0) && (ItemCount( _val, "=") == 2)
+		_qstatParms = ItemExtract( 1, _val, "=")
+	endif
+	_commandLineParms = StrCat( _commandLineParms, _quote, _qstatParms, _quote, @TAB)
+	Gosub AppendParamsFile
+Endif
+
+if _serverAddressIsLocal == @TRUE
+	If IsDefined( _Param10)
+		_exeFileName = _Param10
+	;	message("%wName%", "_Param10 is %_Param10%")
+	Else
+		_val = AskLine( wName, "Game Server .EXE Name ? Hit okay button to use the Default %_exeFileName% ...", _exeFileName)
+		if StrLen(_val) > 0
+			_exeFileName = _val
+			_commandLineParms = StrCat( _commandLineParms, "%_exeFileName%", @TAB)
+			Gosub AppendParamsFile
+		endif
+	Endif
+endif
+
+i0 = StrIndexNc( _folder, " ", 1, @FWDSCAN)
+if i0 > 0
+	message(wName, "You have installed %wName% into a folder with a space in the name - PLS reinstall or rename this folder to remove the errant spaces.")
+	exit
+endif
+
+_comspec = Environment("COMSPEC")
+
+_textValues = ""
+
+_serverTitle = ""
+
+_inputFilePath = StrReplace( inputFilePath, _inputFileType, StrCat( "_", StrReplace( _serverAddress, ":", "+"), _inputFileType))
+
+_ActivityLogFilePath = StrReplace( ActivityLogFilePath, _inputFileType, StrCat( "_", StrReplace( _serverAddress, ":", "+"), _inputFileType))
+
+_serverRestarts = 0
+_serverNoResponses = 0
+
+_serverLastMission = ""
+_serverLastGame = ""
+_serverLastMissionType = ""
+_serverMissions = 0
+
+_beginTestingTime = TimeYmdHms()
+_serverRestartTime = _beginTestingTime
+
+_maxUpTime = -1
+
+_avgUpTime = -1
+
+__totalTime = ""
+__upTime = ""
+__maxUpTime = ""
+__avgUpTime = ""
+_QoS = ""
+_totalPlayers = ""
+_numPlayers = ""
+_botPlayers = ""
+
+Gosub MakeShortCuts
+
+Gosub InitGraphics
+Gosub GraphicsA
+
+_okayToRestartServer = __firstTimeFlag
+
+_commandLine = StrCat(_quote, _folder, "qstat", _quote, " -raw %_qstatRawDelim% -R %_qstatParms% ", _serverAddress)
+_fullCommandLine = StrCat("/c ", _commandLine, " > ", _quote, _inputFilePath, _quote)
+
+Gosub RestartServer
+
+_okayToRestartServer = @FALSE
+
+while 1
+	_ret = RunHideWait( _comspec, _fullCommandLine)
+
+	if _ret <> @TRUE
+		message(wName, "Error executing (%_comspec%, %_fullCommandLine%)")
+		exit
+	endif
+	
+	Gosub ReadInputFile
+	Gosub ReadInputFile00
+
+	_serverStatus = _ServerUPToken
+	if ( (_noResponseRetCode == @TRUE) || ( (_serverAddressIsLocal == @TRUE) && (StrLen(_serverTitle) == 0) ) || ( (_serverAddressIsLocal == @TRUE) && ( (StrLen(_serverTitle) > 0) && (WinExist(_serverTitle) == @FALSE) ) ) )
+		; the server is down so we need to take care of it...
+		if ( (_serverAddressIsLocal == @TRUE) && ( (StrLen(_serverTitle) == 0) || ( (StrLen(_serverTitle) > 0) && (WinExist(_serverTitle) == @FALSE) ) ) )
+			_stackI = ItemCount( _TestStack, @TAB)
+			_TestStack = ItemInsert( _ServerNoServerToken, _stackI + 1, _TestStack, @TAB)
+			Gosub AppendActivityLog
+			Gosub CheckStackOverrun
+			Gosub GraphicsA
+			_serverRestarts = _serverRestarts + 1
+			_okayToRestartServer = @TRUE
+		else
+			_stackI = ItemCount( _TestStack, @TAB)
+			_TestStack = ItemInsert( _ServerNoResponseToken, _stackI + 1, _TestStack, @TAB)
+			Gosub AppendActivityLog
+			Gosub CheckStackOverrun
+			Gosub GraphicsA
+
+			_numNoResponsesToReset = 0
+			_kx = ItemCount( _TestStack, @TAB)
+			if _kx > _minNoResponsesToReset
+				__kx = _kx - _minNoResponsesToReset + 1
+				for _jx = _kx to __kx by -1
+					_ch = ItemExtract( _jx, _TestStack, @TAB)
+					if _ch == _ServerNoResponseToken
+						_numNoResponsesToReset = _numNoResponsesToReset + 1
+					endif
+				next
+			endif
+			if _numNoResponsesToReset >= _minNoResponsesToReset
+				_serverNoResponses = _serverNoResponses + 1
+				_okayToRestartServer = @TRUE
+				_stackI = ItemCount( _TestStack, @TAB)
+				_TestStack = ItemInsert( _ServerRestartToken, _stackI + 1, _TestStack, @TAB)
+				Gosub AppendActivityLog
+				Gosub CheckStackOverrun
+				Gosub GraphicsA
+			endif
+		endif
+		_serverStatus = _ServerDownToken
+		_serverDownTime = TimeYmdHms()
+
+		_totalTime = TimeDiffSecs( _serverDownTime, _beginTestingTime)
+		__xTimex = _totalTime
+		Gosub SecsToHHMMSS
+		__totalTime = __sTimex
+
+		_upTime = TimeDiffSecs( _serverDownTime, _serverRestartTime)
+		__xTimex = _upTime
+		Gosub SecsToHHMMSS
+		__upTime = __sTimex
+
+		_maxUpTime = Max( _maxUpTime, _upTime)
+		__xTimex = _maxUpTime
+		Gosub SecsToHHMMSS
+		__maxUpTime = __sTimex
+
+		_avgUpTime = _maxUpTime / (_serverNoResponses + _serverRestarts + 1)
+		__xTimex = _avgUpTime
+		Gosub SecsToHHMMSS
+		__avgUpTime = __sTimex
+
+		if (_serverNoResponses + _serverRestarts) == 0
+			_QoS = 999
+		else
+			_QoS = _serverMissions / (_serverNoResponses + _serverRestarts)
+		endif
+		_textValues = ""
+		_textValues = StrCat( _textValues, "%_serverAddress%", ",")
+		_textValues = StrCat( _textValues, "%__totalTime%", ",")
+		_textValues = StrCat( _textValues, "%__upTime%", ",")
+		_textValues = StrCat( _textValues, "%__maxUpTime%", ",")
+		_textValues = StrCat( _textValues, "%__avgUpTime%", ",")
+		_textValues = StrCat( _textValues, "%_serverRestarts%", ",")
+		_textValues = StrCat( _textValues, "%_serverNoResponses%", ",")
+		_textValues = StrCat( _textValues, "%_QoS%", ",")
+		_textValues = StrCat( _textValues, "%_serverMissions% (P %_totalPlayers% / # %_numPlayers% / B %_botPlayers%)", ",")
+		if ( (StrLen(_serverLastMissionType) > 0) && (StrLen(_serverLastGame) > 0) )
+			_tvi = StrIndexNc( _serverLastMission, _serverLastMissionType, 1, @FWDSCAN)
+			if _tvi > 0
+				_textValues = StrCat( _textValues, "%_serverLastMission%")
+			else
+				_textValues = StrCat( _textValues, "%_serverLastMission% %_serverLastMissionType%")
+			endif
+		else
+			if (StrLen(_serverLastMissionType) > 0)
+				_textValues = StrCat( _textValues, "%_serverLastMission% %_serverLastMissionType%")
+			else
+				if (StrLen(_serverLastGame) > 0)
+					_textValues = StrCat( _textValues, "%_serverLastMission% %_serverLastGame%")
+				else
+				endif
+			endif
+		endif
+		if _okayToRestartServer == @TRUE
+			; ReStart the server here...
+			_serverRestartTime = TimeYmdHms()
+			if _serverAddressIsLocal == @TRUE
+				if ( (StrLen(_serverTitle) > 0) && (WinExist(_serverTitle) == @TRUE) )
+					_serverResetBeginsNOW = TimeYmdHms()
+					_serverResetElapsedTime = -1
+					while ( (_serverResetElapsedTime < _serverResetElapsedMaxSecs) && (WinExist(_serverTitle) == @TRUE) )
+						if WinExist(_serverTitle) == @TRUE
+							WinClose( _serverTitle)
+						endif
+						TimeDelay(Random(1.0))   ;Fake passage of time
+						_serverResetTimeNOW = TimeYmdHms()
+						_serverResetElapsedTime = TimeDiffSecs( _serverResetTimeNOW, _serverResetBeginsNOW)
+					endwhile
+					if ( (_serverResetElapsedTime >= _serverResetElapsedMaxSecs) && (WinExist(_serverTitle) == @TRUE) )
+						if (_serverResetElapsedTime >= _serverResetElapsedMaxSecs)
+							message("%wName% #1", "Server could NOT be shutdown within %_serverResetElapsedMaxSecs% seconds ! Contact technical support at halsmalltalker@hotmail.com")
+							exit
+						else
+							if (WinExist(_serverTitle) == @TRUE)
+								message("%wName% #2", "Server could NOT be shutdown within %_serverResetElapsedMaxSecs% seconds ! Contact technical support at halsmalltalker@hotmail.com")
+								exit
+							endif
+						endif
+					endif
+				endif
+				Gosub RestartServer
+			endif
+			_okayToRestartServer = @FALSE
+		endif
+	else
+		_stackI = ItemCount( _TestStack, @TAB)
+		_TestStack = ItemInsert( _ServerUPToken, _stackI + 1, _TestStack, @TAB)
+		Gosub AppendActivityLog
+		Gosub CheckStackOverrun
+		Gosub GraphicsA
+
+		_now = TimeYmdHms()
+		_totalTime = TimeDiffSecs( _now, _beginTestingTime)
+		__xTimex = _totalTime
+		Gosub SecsToHHMMSS
+		__totalTime = __sTimex
+
+		_upTime = TimeDiffSecs( _now, _serverRestartTime)
+		__xTimex = _upTime
+		Gosub SecsToHHMMSS
+		__upTime = __sTimex
+
+		_maxUpTime = Max( _maxUpTime, _upTime)
+		__xTimex = _maxUpTime
+		Gosub SecsToHHMMSS
+		__maxUpTime = __sTimex
+
+		_avgUpTime = _maxUpTime / (_serverNoResponses + _serverRestarts + 1)
+		__xTimex = _avgUpTime
+		Gosub SecsToHHMMSS
+		__avgUpTime = __sTimex
+
+		if (_serverNoResponses + _serverRestarts) == 0
+			_QoS = 999
+		else
+			_QoS = _serverMissions / (_serverNoResponses + _serverRestarts)
+		endif
+		_textValues = ""
+		_textValues = StrCat( _textValues, "%_serverAddress%", ",")
+		_textValues = StrCat( _textValues, "%__totalTime%", ",")
+		_textValues = StrCat( _textValues, "%__upTime%", ",")
+		_textValues = StrCat( _textValues, "%__maxUpTime%", ",")
+		_textValues = StrCat( _textValues, "%__avgUpTime%", ",")
+		_textValues = StrCat( _textValues, "%_serverRestarts%", ",")
+		_textValues = StrCat( _textValues, "%_serverNoResponses%", ",")
+		_textValues = StrCat( _textValues, "%_QoS%", ",")
+		_textValues = StrCat( _textValues, "%_serverMissions% (P %_totalPlayers% / # %_numPlayers% / B %_botPlayers%)", ",")
+		if ( (StrLen(_serverLastMissionType) > 0) && (StrLen(_serverLastGame) > 0) )
+			_tvi = StrIndexNc( _serverLastMission, _serverLastMissionType, 1, @FWDSCAN)
+			if _tvi > 0
+				_textValues = StrCat( _textValues, "%_serverLastMission%")
+			else
+				_textValues = StrCat( _textValues, "%_serverLastMission% %_serverLastMissionType%")
+			endif
+		else
+			if (StrLen(_serverLastMissionType) > 0)
+				_textValues = StrCat( _textValues, "%_serverLastMission% %_serverLastMissionType%")
+			else
+				if (StrLen(_serverLastGame) > 0)
+					_textValues = StrCat( _textValues, "%_serverLastMission% %_serverLastGame%")
+				else
+				endif
+			endif
+		endif
+	endif
+	
+	Gosub GraphicsA
+
+	_TotalUnits = _maxWaitSecs
+	for j = 1 to _maxWaitSecs
+		_CurrentUnit = j
+		_delayTime = "0000:00:00:00:00:01"
+		_now = TimeYmdHms()
+		_newTime = TimeAdd( _now, _delayTime)
+		TimeWait( _newTime)
+		if _skipActivityBar == 0
+			Gosub DOTHERM
+		endif
+		Gosub PollButton
+	next
+
+endwhile
+
+BoxShut()
+
+exit
+
+
+
+:ReadInputFile
+if FileExist( _inputFilePath) == @TRUE
+	_noResponseRetCode = @FALSE
+	_fLine = 0
+	fIN = FileOpen( _inputFilePath, "READ")
+	while @TRUE                                         ; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		_fLine = _fLine + 1
+		if _fLine == 1
+			if ItemCount( x, _qstatRawDelim) > 4
+				_serverLastMap = ItemExtract( 4, x, _qstatRawDelim)
+				 if StrLen(_serverLastMission) == 0
+				 	_serverLastMission = _serverLastMap
+					_serverMissions = _serverMissions + 1
+				 else
+					 if _serverLastMission <> _serverLastMap
+					 	_serverLastMission = _serverLastMap
+						_serverMissions = _serverMissions + 1
+					 else
+					 endif
+				 endif
+			endif
+		else
+			for ii = 1 to ItemCount( x, _qstatRawDelim)
+				_tok = ItemExtract( ii, x, _qstatRawDelim)
+				i2 = StrIndexNc( _tok, _missionSymbol, 1, @FWDSCAN)
+				if i2 > 0
+					_serverLastMapType = ItemExtract( 2, _tok, "=")
+					 if StrLen(_serverLastMissionType) == 0
+					 	_serverLastMissionType = _serverLastMapType
+					 else
+						 if _serverLastMissionType <> _serverLastMapType
+						 	_serverLastMissionType = _serverLastMapType
+						 else
+						 endif
+					 endif
+				else
+					i2 = StrIndexNc( _tok, _gameSymbol, 1, @FWDSCAN)
+					if i2 > 0
+						_serverLastGameType = ItemExtract( 2, _tok, "=")
+						 if StrLen(_serverLastGame) == 0
+						 	_serverLastGame = _serverLastGameType
+						 else
+							 if _serverLastGame <> _serverLastGameType
+							 	_serverLastGame = _serverLastGameType
+							 else
+							 endif
+						 endif
+					else
+					endif
+				endif
+			next
+		endif
+		i = StrIndexNc( x, _noResponseSymbol1, 1, @FWDSCAN)
+		If i > 0
+			_noResponseRetCode = @TRUE
+		Else
+			i = StrIndexNc( x, _noResponseSymbol2, 1, @FWDSCAN)
+			If i > 0
+				_noResponseRetCode = @TRUE
+			Else
+			Endif
+		Endif
+	endwhile
+	FileClose(fIN)
+else
+	_serverLastMission = ""
+	_serverLastGame = ""
+	_serverLastMissionType = ""
+endif
+return
+
+
+
+:ReadInputFile00
+if FileExist( _inputFilePath) == @TRUE
+	_totalPlayers = 0
+	_numPlayers = 0
+	_botPlayers = 0
+	_fLine = 0
+	_t2Type = ItemExtract( 1, _qstatParmsList, @tab)
+	_t1Type = ItemExtract( 2, _qstatParmsList, @tab)
+	fIN = FileOpen( _inputFilePath, "READ")
+	while @TRUE                                         ; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		_fLine = _fLine + 1
+		if _fLine == 1
+			if ItemCount( x, _qstatRawDelim) > 5
+				_gameType = ItemExtract( 1, x, _qstatRawDelim)
+				_gi = StrIndexNc( _t2Type, _gameType, 1, @FWDSCAN)
+				if _gi > 0
+					; t2
+					_totalPlayers = ItemExtract( 5, x, _qstatRawDelim)
+					_numPlayers = ItemExtract( 6, x, _qstatRawDelim)
+				else
+					_gi = StrIndexNc( _t1Type, _gameType, 1, @FWDSCAN)
+					if _gi > 0
+						; t1
+						_numPlayers = ItemExtract( 5, x, _qstatRawDelim)
+						_totalPlayers = ItemExtract( 6, x, _qstatRawDelim)
+					endif
+				endif
+			else
+			endif
+		else
+			for ii = 1 to ItemCount( x, _qstatRawDelim)
+				_tok = ItemExtract( ii, x, _qstatRawDelim)
+				i2 = StrIndexNc( _tok, _botCountSymbol, 1, @FWDSCAN)
+				if i2 > 0
+					_botPlayers = ItemExtract( 2, _tok, "=")
+				else
+				endif
+			next
+		endif
+	endwhile
+	FileClose(fIN)
+else
+endif
+return
+
+
+
+:RestartServer
+	if _serverAddressIsLocal == @TRUE
+		if _ignoreInitialRestart == 0
+			_cmdParms = ""
+			if _okayToRestartServer == __firstTimeFlag
+				_cmdParms = "."
+			endif
+			_procID = RunShell( _cmd, _cmdParms, _cmdFolder, @NORMAL, @GETPROCID)
+			_text = "ProcID %_procID%"
+			__initWaitSecs = _initWaitSecs
+		else
+			_procID = -1
+			_ignoreInitialRestart = 0
+			__initWaitSecs = _maxWaitSecs
+		endif
+	
+		_targetTitle = ""
+		_serverTitle = ""
+	
+		_TotalUnits = __initWaitSecs
+		for j = 1 to __initWaitSecs
+			_CurrentUnit = j
+			_delayTime = "0000:00:00:00:00:01"
+			_now = TimeYmdHms()
+			_newTime = TimeAdd( _now, _delayTime)
+			TimeWait( _newTime)
+			if _skipActivityBar == 0
+				Gosub DOTHERM
+			endif
+			Gosub PollButton
+			if _CurrentUnit > (_TotalUnits / 2)
+				_ret = RunHideWait( _comspec, _fullCommandLine)
+				if _ret <> @TRUE
+					message(wName, "Error executing (%_comspec%, %_fullCommandLine%)")
+					exit
+				endif
+				Gosub ReadInputFile
+				if (_noResponseRetCode == @FALSE)
+					_CurrentUnit = _initWaitSecs
+					if _skipActivityBar == 0
+						Gosub DOTHERM
+					endif
+					Gosub PollButton
+					break
+				endif
+			else
+			endif
+			if _CurrentUnit > (_TotalUnits / 4)
+				If (_procID != 0) && (_procID != 1)
+					if _procID != -1
+						_winids = WinItemProcId(_procID, 1, 0)
+						BoxCaption(1,"(%_procID%) %wName%")
+					else
+						_winids = ""
+					endif
+					_winlist = WinItemNameId( )
+					for i = 1 to ItemCount( _winlist, "|") by 2
+						_winName = ItemExtract( i, _winlist, "|")
+						_winID = ItemExtract( i + 1, _winlist, "|")
+						if StrLen(_targetTitle) == 0
+							if _winids == _winID
+								_targetTitle = _winName
+							endif
+						endif
+						if (StrLen(_serverTitle) == 0)
+							if StrIndexNc( _winName, _exeFileName, 1, @FWDSCAN) > 0
+								_serverID = _winID
+								_serverTitle = _winName
+								Gosub RepositionServerWindow
+							endif
+						else
+	;						Gosub RepositionServerWindow
+						endif
+					next
+					if ( ( (StrLen(_targetTitle) > 0) && (WinExist(_targetTitle) == @TRUE) ) && ( (StrLen(_serverTitle) > 0) && (WinExist(_serverTitle) == @TRUE) ) )
+						WinClose( _targetTitle)
+					endif
+				Endif
+			endif
+		next
+	endif
+return
+
+
+
+:InitGraphics
+	;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+	IntControl(1008,1,0,0,0)
+	IntControl(12,5,0,0,0)
+	;;;;;;;; Assorted Colors ;;;;;;;;;
+	DKBLUE="0,0,128"
+	BLUE="0,0,255"
+	LTGRAY="192,192,192"
+	GRAY="128,128,128"
+	DKGRAY="64,64,64"
+	GREEN="0,255,0"
+	RED="255,0,0"
+	BLACK="0,0,0"
+	WHITE="255,255,255"
+	YELLOW="255,255,0"
+	
+	
+	;;;;;  Generic code for drawing a box and  adding text to it.
+	
+	        ;Get title on screen
+	             ;wbid = 99
+	             ;BoxNew(wbid,rectTitle,1)
+	             ;BoxColor(wbid,BLACK,0)
+	             ;BoxDrawRect(wbid,"0,0,1000,1000",2)
+	             ;BoxTextFont(wbid,"Arial",TitleHeight,170,0)   ; san-srif, ariel, size 20, bold, noitalic
+	             ;BoxTextColor(wbid,RED)
+	             ;BoxDrawText(wbid,rectTitleText,"Acme Aardvarks",0,32)
+	
+	;;;;;;;;;;;; This Example  ;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;; Drawing the Main Box ;;;;;;;;
+	;; Note the use of while 1. This use of while maintains
+	;; the boxes until a user clicks on a button and exits 
+	;; the while construction
+	BoxesUp("0,0,450,200",@NORMAL)
+return
+
+
+
+:GraphicsA
+	BoxButtonDraw(1,bExit, "E&xit", "750,800,950,950" )
+	BoxButtonDraw(1,bExit + 1, "&WWW", "750,600,950,750" )
+	BoxDataTag(1,"RAY")
+	BoxColor(1,"0,0,128",4)
+	if isDefined(_procID)
+		BoxCaption(1,"(%_procID%) %wName%")
+	else
+		BoxCaption(1,"%wName%")
+	endif
+;; Note: Here we specify 8 buttons numbered 1 to 8.
+;; You can change this. Edit the list of buttons here,
+;; go to the "Select a button" routine and add or subtract
+;; your button selection information. Then create a subroutine
+;; at the end of this script to do what you need done when
+;; the button is pushed. There is a sample for you to use.
+ 
+	BoxDrawRect(1,"0,0,1000,1000",2)
+
+	_textLabels = StrCat( "Server:", ",", "Total:", ",", "Time:", ",", "Max:", ",", "Avg:", ",", "Restarts:", ",", "NoResponse:", ",", "QoS:", ",", "Missions:", ",", "Mission:")
+
+	if StrLen(_textValues) < 1
+		_textValues = StrCat( "%_serverAddress%", ",", "0", ",", "0", ",", "0", ",", "0", ",", "0", ",", "0", ",", "999", ",", "0", ",", "")
+	endif
+
+	if StrLen(_TestStack) < 1
+		_TestStack = StrCat( "??", @TAB)
+;		_TestStack = StrCat( "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB)
+;		_TestStack = StrCat( _TestStack, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB, "NR", @TAB, "UP", @TAB)
+;		_TestStack = StrCat( "01", @TAB, "02", @TAB, "03", @TAB, "04", @TAB, "05", @TAB, "06", @TAB, "07", @TAB, "08", @TAB, "09", @TAB, "10", @TAB, "11", @TAB, "12", @TAB, "13", @TAB, "14", @TAB, "15", @TAB, "16", @TAB)
+;		_TestStack = StrCat( _TestStack, "17", @TAB, "18", @TAB, "19", @TAB, "20", @TAB, "21", @TAB, "22", @TAB, "23", @TAB, "24", @TAB, "25", @TAB, "26", @TAB, "27", @TAB, "28", @TAB, "29", @TAB, "30", @TAB, "31", @TAB, "32", @TAB)
+	endif
+	
+	BoxTextFont(1,"Comic Sans MS",80,70,0|0)
+	BoxTextColor(1,"255,255,0")
+
+	BoxDrawText(1,"5,5,950,950","%wName%",0,0)
+
+	BoxTextFont(1,"Comic Sans MS",65,60,0|0)
+
+	_y = 110
+	_x = 5
+	_x2 = 150
+	_ix = ItemCount( _textLabels, ",")
+	for i = 1 to _ix
+		_txt = ItemExtract( i, _textLabels, ",")
+		BoxDrawText(1,"%_x%,%_y%,950,950",_txt,0,0)
+		BoxDataClear(1,"RAY")
+		if StrLen(_textValues) > 0
+			_val = ItemExtract( i, _textValues, ",")
+			BoxDrawText(1,"%_x2%,%_y%,950,950",_val,0,0)
+			BoxDataClear(1,"RAY")
+		endif
+		_y = _y + 72
+	next
+
+	_x = 5
+	BoxDrawText(1,"%_x%,%_y%,950,950","Status:",0,0)
+	BoxDataClear(1,"RAY")
+
+	_x = _x + 100
+	_iMin = 1
+	_iMax = ItemCount( _TestStack, @TAB)
+	if _iMax > 16
+		_iMax = 16
+	endif
+	for i = _iMin to _iMax
+		_txt = ItemExtract( i, _TestStack, @TAB)
+		BoxDrawText(1,"%_x%,%_y%,950,950",_txt,0,0)
+		BoxDataClear(1,"RAY")
+		_x = _x + 40
+	next
+
+	_x = 105
+	_y = _y + 72
+	_iMax = ItemCount( _TestStack, @TAB)
+	if _iMax > 16
+		_iMin = 17
+		for i = _iMin to _iMax
+			_txt = ItemExtract( i, _TestStack, @TAB)
+			BoxDrawText(1,"%_x%,%_y%,950,950",_txt,0,0)
+			BoxDataClear(1,"RAY")
+			_x = _x + 40
+		next
+	endif
+
+	BoxDataClear(1,"RAY")
+
+	Gosub PollButton
+   
+return
+
+
+:PollButton
+	iBox=0
+;	BoxButtonWait()
+;	while iBox==0
+		for x=1 to bExit + 1
+			ErrorMode(@OFF)
+			if BoxButtonStat(1,x) then iBox=x
+			ErrorMode(@CANCEL)
+		next
+;	end while
+
+;;; Select a button  ;;;;
+    
+	if iBox
+		BoxDataClear(1,"TOP")
+		switch iBox
+			case bExit
+				exit
+				break
+			case bExit + 1
+				Run( _webBrowser, _wwwURL)
+				break
+		end switch
+	endif
+return
+
+
+:DOTHERM
+; _TotalUnits is the total units for the thermometer readout
+; _CurrentUnit is the current unit being displayed
+	rectNote="400,120,950,190"
+	rectTherm="400,120,950,190"
+	
+	Thermid=3
+	Noteid=4
+	if _CurrentUnit == 1
+		BoxNew(Noteid,rectNote,1)
+		BoxColor(Noteid,YELLOW,0)
+		BoxDrawRect(Noteid,"",2)
+	endif
+	BoxDataTag(Noteid,"NOTE")
+
+	;Draw thermoneter outline
+	BoxNew(Thermid,rectTherm,1)
+	if _CurrentUnit == 1
+		BoxUpdates(Thermid,0)
+		BoxColor(Thermid,YELLOW,0)
+		BoxDrawRect(Thermid,"",2)
+	endif
+	; Draw updating thermometer here
+	; there are 3 virtual pixels per percent
+	; we have to draw 3 boxes and some text...
+	BoxDataTag(Thermid,"FRED")
+
+		BoxDataClear(Thermid,"FRED")
+		BoxUpdates(Thermid,0)
+		BoxColor(Thermid,GREEN,0)
+		_xx = 0
+		xxx= _xx + ((1000 * _CurrentUnit) / _TotalUnits)
+		per=(100.0 * _CurrentUnit) / _TotalUnits
+		per=Int(per)
+		_y1 = 0
+		_y2 = 1000
+		_rectNote="%_xx%,%_y1%,%xxx%,%_y2%"
+		BoxDrawRect(Thermid,_rectNote,2)
+		BoxColor(Thermid,YELLOW,0)
+		
+;		if per<50 then BoxTextColor(Thermid,YELLOW)
+		BoxColor(Thermid,YELLOW,0)
+		BoxDataClear(NoteId,"NOTE")
+		BoxUpdates(Thermid,2)
+
+	if _CurrentUnit == _TotalUnits
+		BoxTextColor(Noteid,GREEN)
+		BoxDestroy(Noteid)
+		BoxDestroy(Thermid)
+		BoxColor(1,"0,0,128",4)
+	endif
+	Gosub GraphicsA
+return
+
+
+:SecsToHHMMSS
+; __xTimex (in)
+; __sTimex (out)
+	_perDay = (60 * 60 * 24)
+	_perHour = (60 * 60)
+	_perMin = 60
+	_v = __xTimex / _perDay
+	_dd = int(_v)
+	__xTimex = __xTimex - (_dd * _perDay)
+	_v = __xTimex / _perHour
+	_hh = int(_v)
+	__xTimex = __xTimex - (_hh * _perHour)
+	_v = __xTimex / _perMin
+	_mm = int(_v)
+	__xTimex = __xTimex - (_mm * _perMin)
+	_ss = int(__xTimex)
+	__sTimex = "%_dd% day"
+	if (_dd == 0) || (_dd > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+	__sTimex = StrCat( __sTimex, " %_hh% hour")
+	if (_hh == 0) || (_hh > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+	__sTimex = StrCat( __sTimex, " %_mm% minute")
+	if (_mm == 0) || (_mm > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+	__sTimex = StrCat( __sTimex, " %_ss% second")
+	if (_ss == 0) || (_ss > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+return
+
+
+:RepositionServerWindow
+if (WinExist(_serverTitle) == @TRUE)
+	_serverWinPos = WinPlaceGet( @NORMAL, _serverTitle)
+	if ItemCount( _serverWinPos, " ") == 4
+		_x1 = ItemExtract( 1, _serverWinPos, " ")
+		_y1 = ItemExtract( 2, _serverWinPos, " ")
+		_x2 = ItemExtract( 3, _serverWinPos, " ")
+		_y2 = ItemExtract( 4, _serverWinPos, " ")
+		_xx1 = 0
+		_yy1 = 200
+		_xx2 = _xx1 + (_x2 - _x1)
+		_yy2 = _yy1 + (_y2 - _y1)
+		WinActivate( _serverTitle)
+		WinPlaceSet( @NORMAL, _serverTitle, "%_xx1% %_yy1% %_xx2% %_yy2%")
+	endif
+endif
+return
+
+
+
+:CheckStackOverrun
+	_stackK = ItemCount( _TestStack, @TAB)
+	if _stackK > _stackMax
+		_TestStack = ItemRemove( 1, _TestStack, @TAB)
+	endif
+return
+
+
+
+:CheckIPs
+count = ItemCount(_ips,@tab)
+
+bestaddr=""
+bestsubnet=""
+
+for xx = 1 to count
+
+	thisipstring = ItemExtract(xx,_ips,@tab)
+	ip = ItemExtract(1,thisipstring,"|")
+	sub = ItemExtract(2,thisipstring,"|")
+	brd = ItemExtract(3,thisipstring,"|")
+	flags = ItemExtract(4,thisipstring,"|")
+	
+	show = strcat(ip,@crlf,sub,@crlf,brd,@crlf,strreplace(flags," ",@crlf))
+;	Message(xx,show)
+	
+	;fish out a usable IP address
+	;a) no better address already found
+	;b) ip address not 0.0.0.0
+	;c) LOOPBACK bot set
+	
+	if bestaddr != "" then continue
+	if ip == "0.0.0.0" then continue
+	if ItemExtract(1,flags," ") == "DOWN" then continue
+	if ItemExtract(4,flags," ") == "LOOPBACK" then continue
+	bestaddr = ip
+	bestsubnet = sub
+	xix = StrIndexNc( _serverAddress, bestaddr, 1, @FWDSCAN)
+	if xix > 0
+		_serverAddressIsLocal = @TRUE
+	endif
+next
+return
+
+
+
+:MakeShortCuts
+	if FileExist( "%_folder%QStat Read-Me.LNK") == @FALSE
+		_rc = ShortcutMake( "%_folder%QStat Read-Me.LNK", "%_folder%qstat-readme.txt", "", _folder, @NORMAL)
+	endif
+	If (!IsDefined( Param1))
+		if FileExist( "%_folder%iSpawn.LNK") == @TRUE
+			FileDelete( "%_folder%iSpawn.LNK")
+		endif
+		if StrLen(_commandLineParms) > 0
+			_rc = ShortcutMake( "%_folder%iSpawn.LNK", "%_folder%ispawn.exe", _commandLineParmsFilePath, _folder, @NORMAL)
+		endif
+	endif
+	if FileExist( "%_folder%User's Manual.LNK") == @FALSE
+		_ie = "C:\Program Files\Internet Explorer\iexplore.exe"
+		if FileExist( _ie) == @FALSE
+			_idF = FilePath( _ie)
+			while 1
+				_ieF = AskDirectory( "Internet Explorer Root Folder ? %_ieF%", "", "", "Internet Explorer Root Folder is", 2) 
+				_ieExe = "%_ieF%iexplore.exe"
+				if (FileExist( _ieExe) == @TRUE)
+					_ie = _ieExe
+					break;
+				endif
+			endwhile
+		endif
+		_rc = ShortcutMake( "%_folder%User's Manual.LNK", _ie, "%_folder%index.html", _folder, @NORMAL)
+	endif
+return
+
+
+
+:AppendParamsFile
+fOUT = FileOpen( _commandLineParmsFilePath, "APPEND")
+FileWrite( fOUT, ItemExtract( ItemCount( _commandLineParms, @TAB), _commandLineParms, @TAB))
+FileClose(fOUT)
+return
+
+
+
+:DeleteParamsFile
+if FileExist( _commandLineParmsFilePath) == @TRUE
+	FileDelete( _commandLineParmsFilePath)
+endif
+return
+
+
+
+:ReadParamsFile
+if FileExist( _commandLineParmsFilePath) == @TRUE
+	_Param0 = 0
+	fIN = FileOpen( _commandLineParmsFilePath, "READ")
+	while @TRUE                                         ; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		_Param0 = _Param0 + 1
+		_Param%_Param0% = x
+;		message("%wName% _Param%_Param0%", _Param%_Param0%)
+	endwhile
+	FileClose(fIN)
+endif
+return
+
+
+
+:AppendActivityLog
+fOUT = FileOpen( _ActivityLogFilePath, "APPEND")
+__sI = ItemCount( _TestStack, @TAB)
+__S = ItemExtract( __sI, _TestStack, @TAB)
+__Sx = TimeYmdHms()
+__Sx = StrCat( __Sx, " - ")
+__Sx = StrCat( __Sx, __S, ", ")
+__Sx = StrCat( __Sx, _serverAddress, ", ")
+__Sx = StrCat( __Sx, __totalTime, ", ")
+__Sx = StrCat( __Sx, __upTime, ", ")
+__Sx = StrCat( __Sx, __maxUpTime, ", ")
+__Sx = StrCat( __Sx, __avgUpTime, ", ")
+__Sx = StrCat( __Sx, "%_serverRestarts%, ")
+__Sx = StrCat( __Sx, "%_serverNoResponses%, ")
+__Sx = StrCat( __Sx, "%_QoS%, ")
+__Sx = StrCat( __Sx, "%_serverMissions%, ")
+__Sx = StrCat( __Sx, _serverLastMission, ", ")
+__Sx = StrCat( __Sx, _serverLastMissionType, ", ")
+__Sx = StrCat( __Sx, "%_totalPlayers%, ")
+__Sx = StrCat( __Sx, "%_numPlayers%, ")
+__Sx = StrCat( __Sx, "%_botPlayers%, ")
+FileWrite( fOUT, __Sx)
+FileClose(fOUT)
+return
+

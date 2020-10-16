@@ -1,0 +1,33 @@
+Quick readme on this release of Tribes2Missions.EXE - The Tribes2 Utilities to Randomize the default Mission.
+
+-------------------
+Installation
+-------------------
+
+Make a folder under C:\Program Files or the like and then double click tribes2misions.exe
+
+You will be asked for your Tribes2 root folder and then the root folder for the mod for which you want to use this util.
+
+Tribes2Missions assumes the following is true :
+
+* The mod is {USB}Mayhem Mod vers 1.65+23669 or later
+* bwadmin 1.04 or later is being used
+* The dedicated server is running
+
+Tribes2Missions then waits 10 mins and modifies your prefs\serverPrefs.cs file with a randomly selected Mission 
+to be used as the default Mission whenever the server resets. The mission list is taken from the scripts\bwadmin\bwadminMapRotation.cs
+file - this assumes bwadmin 1.04 is being used.
+
+Note : This Utility program works ONLY with the {USB}Mayhem Mod vers 1.65+23669 or later.
+
+Tribes2Missions assumes your Tribes2 Server is currently running.
+
+---------------------
+Contact
+---------------------
+
+This is an early release, more features to come.  
+Please send comments and bug reports to 
+halsmalltalker@hotmail.com
+
+Thank you and enjoy!

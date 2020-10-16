@@ -1,0 +1,238 @@
+; http-hammer.wbt
+
+AddExtender("WWWSK44I.DLL")
+AddExtender("WWINT44I.DLL")
+
+#DefineFunction explainHTTPResponseCode(_HTTPResponseCodeVar)
+	IntControl(73, 2,0,0,0)
+	; _HTTPResponseCodeVar ........... the name of the variabe that holds the HTTPResponseCode
+	; _HTTPResponse_descVar ... the name of the variabe that holds the HTTPResponse_description text
+	
+	Switch _HTTPResponseCodeVar
+		case 200
+				_HTTPResponseCodeVar = "OK"
+				break
+		case 201
+				_HTTPResponseCodeVar = "Created - Following a POST command, this indicates success, but the text of the response line indicates the URL of the new document. "
+				break
+		case 202
+				_HTTPResponseCodeVar = "Accepted - Request accepted for asynchronous processing. "
+				break
+		case 203
+				_HTTPResponseCodeVar = "Partial Information - Returned information may be cached or private. "
+				break
+		case 204
+				_HTTPResponseCodeVar = "No Response - Used for scripts that don't return a visible result. "
+				break
+		case 301
+				_HTTPResponseCodeVar = "Moved - Browsers with link editing capabilities should automatically link to the new reference. The response contains one or more header lines of the form URI: <url> string CrLf which specify "
+				_HTTPResponseCodeVar = StrCat( _HTTPResponseCodeVar, "alternative addresses for the object in question.")
+				break
+		case 302
+				_HTTPResponseCodeVar = "Found - Same as move, except that linking to the found address doesn't make much sense, since the document URL is expected to change. This is the code that the httpd returns for a cgi script "
+				_HTTPResponseCodeVar = StrCat( _HTTPResponseCodeVar, "whose output contained a Location: header. ")
+				break
+		case 303
+				_HTTPResponseCodeVar = "Method - Same as found, but a different method may be used to access the document; details about the method are sent in the message body. "
+				break
+		case 304
+				_HTTPResponseCodeVar = "Not modified - Use the local copy if it was cached. "
+				break
+		case 400
+				_HTTPResponseCodeVar = "Bad Request - Impossible request or syntax error "
+				break
+		case 401
+				_HTTPResponseCodeVar = "Unauthorized - Request should be retried with proper authorization header. "
+				break
+		case 402
+				_HTTPResponseCodeVar = "Payment Required - Request should be retried with proper charge-to header. "
+				break
+		case 403
+				_HTTPResponseCodeVar = "Forbidden - Authorization will not help "
+				break
+		case 404
+				_HTTPResponseCodeVar = "Not found - A document with that URL doesn't exist. "
+				break
+		case 407
+				_HTTPResponseCodeVar = "Proxy Authentication Required - Must first authenticate with the proxy"
+				break
+		case 408
+				_HTTPResponseCodeVar = "Request Timeout - did not produce a request within the time that the server was prepared to wait"
+				break
+		case 409
+				_HTTPResponseCodeVar = "Conflict - request could not be completed due to a conflict with the current state of the resource."
+				break
+		case 410
+				_HTTPResponseCodeVar = "Gone - The requested resource is no longer available at the server and no forwarding address is known. "
+				break
+		case 411
+				_HTTPResponseCodeVar = "No such group - (NCSA httpd) the newsgroup in news:newsgroup doesn't exist. "
+				break
+		case 500
+				_HTTPResponseCodeVar = "Internal Error "
+				break
+		case 501
+				_HTTPResponseCodeVar = "Not implemented - ``I'm sorry, Dave, I can't do that.'' "
+				break
+		case 502
+				_HTTPResponseCodeVar = "Timed out - (Seen in practice, not in the specification.) "
+				break
+		case 503
+				_HTTPResponseCodeVar = "Service Unavailable - The server is currently unable to handle the request due to a temporary overloading or maintenance of the server."
+				break
+		case 504
+				_HTTPResponseCodeVar = "Gateway Timeout -  The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server it accessed in attempting to complete the request."
+				break
+		case 505
+				_HTTPResponseCodeVar = "HTTP Version Not Supported - The server does not support, or refuses to support, the HTTP protocol version that was used in the request message."
+				break
+	EndSwitch
+
+	return (_HTTPResponseCodeVar)
+
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction fetchFromHttp(_wname, _url, _outfile)
+	IntControl(73, 2,0,0,0)
+	beginMs = GetTickCount()
+	host = httpGetServer(_url, "")
+	geturl = httpGetpath(_url, "")
+	
+	; Basic web page fetch script
+	tophandle=iBegin(0,"","")
+	connecthandle=iHostConnect(tophandle, host, @HTTP, "", "")
+	
+	datahandle=iHttpInit(connecthandle,"GET",geturl,"", 4)
+	if datahandle==0
+	   err=iGetLastError()
+	   Message("Last Error",err)
+	   iClose(tophandle)
+	   exit
+	endif
+	rslt = iHttpOpen(datahandle, "", 0, 0);
+	if rslt=="ERROR" || rslt!=200 
+	   if rslt == "ERROR" 
+	       errstr = "WinInet Error"
+	       rslt = iGetLastError()
+	   else
+	       errstr = "HTTP Error"
+	   endif
+	   Message(errstr,rslt)
+	   iClose(tophandle)
+	   exit
+	endif 
+	xx=iReadData(datahandle,_outfile)
+	iClose(datahandle)
+	iClose(connecthandle)
+	iClose(tophandle)
+	endMs = GetTickCount()
+	etMs = endMs - beginMs
+	
+	_error_cond = ""
+	If rslt <> 200
+		_error_cond = " ERROR"
+	Endif
+	
+	_sometext = explainHTTPResponseCode(rslt)
+	
+	fsize = FileSize(_outfile)
+	
+	Return (StrCat("%_wname% :: %_error_cond%|","rslt=%rslt%|","fsize=%fsize%|","outfile=%_outfile%|etMs=%etMs%|url=%_url%|",_sometext))
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+;Debug( @ON)
+
+_wname = "http-hammer"
+wname = "%_wname%.wbt"
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+timeSig = StrReplace( TimeYmdHms(), ":", "-")
+myStatsFile = "%_myPath%%_wname%_.txt"
+myIniFile = "%_myPath%%_wname%.ini"
+
+count = AskLine("Number of Iterations", "Number of iterations ?", "")
+count = Int(count)
+
+:getServerNum
+serverNum = AskLine("Server Number", "Server Number (1 or 2) ?", "")
+if (serverNum < 1) || (serverNum > 2)
+	Goto getServerNum
+endif
+
+urlArrayCount = 0
+if FileExist(myIniFile) == @True
+	_count = IniReadPvt("Main", "count", "-1", myIniFile)
+	if _count < 0
+		IniWritePvt("Main", "count", 0, myIniFile)
+	else
+		for i = 1 to _count
+			urlArrayCount = urlArrayCount + 1
+			urlArray%urlArrayCount% = IniReadPvt("Main", "%i%", "", myIniFile)
+		next
+	endif
+endif
+
+myDir = "%_myPath%data"
+DirMake(myDir)
+outfile = "%myDir%\%_wname%1.txt"
+
+_dataArrayCount = 0
+totalMs = 0
+
+for loopCount = 1 to count
+	if FileExist(outfile) <> @FALSE
+		for i = 1 to 1000
+			outfile = "%myDir%\%_wname%%i%.txt"
+			if FileExist(outfile) == @FALSE
+				break
+			endif
+		next
+	endif
+	
+	if urlArrayCount > 0
+		for iURL = 1 to urlArrayCount
+			_data = fetchFromHttp(wname, urlArray%iURL%, outfile)
+		next
+	else
+		URL = "http://www.%serverNum%.ez-ajax.com/index.cfm"
+		_data = fetchFromHttp(wname, URL, outfile)
+	endif
+	_dataArrayCount = _dataArrayCount + 1
+	_dataArray%_dataArrayCount% = _data
+	iMs = ItemExtract(2, ItemExtract(5, _data, "|"), "=")
+	totalMs = totalMs + iMs
+next
+
+averageMs = totalMs / _dataArrayCount
+
+_statsAnalysis = "%_dataArrayCount% iterations were executed on Server %serverNum% in %totalMs% Ms or %averageMs% on average."
+
+fHandle = fileopen(myStatsFile, "write")
+filewrite(fHandle, _statsAnalysis)
+for j = 1 to _dataArrayCount
+	filewrite(fHandle, _dataArray%j%)
+next
+fileclose(fHandle)
+
+Message("Stats Display",_statsAnalysis)
+
+exit
+
+
+

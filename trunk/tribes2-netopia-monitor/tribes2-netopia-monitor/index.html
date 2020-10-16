@@ -1,0 +1,209 @@
+<HTML><!-- #BeginTemplate "/Templates/menus.dwt" -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+
+<TITLE>Tribes2 Netopia Monitor Vers 1.0.0 - (c). Copyright 1990-2001 HAL Smalltalker, Inc.</TITLE>
+
+<!-- #EndEditable -->
+<meta http-equiv="Content-Type" content="text/html; charset=">
+</HEAD>
+
+<body bgcolor="#000000" text="#99FF00" link="#00FFFF" vlink="#FFFF00" alink="#FF0000" leftmargin="3" topmargin="3" marginwidth="3" marginheight="3">
+<!-- #BeginEditable "body" --> 
+<div align="right"> </div>
+<div align="right"> </div>
+<p align="center"><font size="5"><b><font face="Verdana, Arial, Helvetica, sans-serif" color="#009900">{</font><font size="5" face="Verdana, Arial, Helvetica, sans-serif">Netopia 
+ Monitor Vers 1.0.0</font><font face="Verdana, Arial, Helvetica, sans-serif"><font color="#006600">}<br>
+ </font></font></b></font><b><font size="5" face="Verdana, Arial, Helvetica, sans-serif"><font size="2">(c). 
+ Copyright 1990-2001 HAL Smalltalker, Inc.</font></font></b></p>
+<hr noshade align="center" width="90%" size="1" color="ff0000">
+<p align="center"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b><font color="#FFFFFF" size="4">User's 
+ Manual </font></b></font></p>
+<p align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2">Tribes2 
+ Netopia Monitor Vers 1.0.0 is a GUI-driven utility program that allows the user 
+ to monitor up to 4 game servers to collect certain statistics about each server 
+ such as the numbers of Players Allowed, the number of BOTs allowed and the numbers 
+ of Players actually connected as well as how full the servers are as a group 
+ based on the numbers of Players connected out of the total Allowed. </font></p>
+<p align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2">Tribes2 
+ Netopia Monitor Vers 1.0.0 can monitor the following types of game servers:</font></p>
+<ol>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Starsiege: 
+  Tribes</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Tribes 
+  2</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Quake</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Hexen 
+  II</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">QuakeWorld</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">HexenWorld</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Quake 
+  II</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Unreal</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Half-Life</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Sin</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Shogo: 
+  Mobile Armor Division</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Quake 
+  III</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">BFRIS</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Kingpin</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Heretic 
+  II</font></li>
+ <li><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF">Soldier 
+  of Fortune</font></li>
+</ol>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b><font color="#FF0000">Step 
+ #1: Installation</font></b></font> </p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="2">Install Tribes2 
+ Netopia Monitor Vers 1.0.0 in a folder named c:\Tribes2-Netopia-Monitor\ or something 
+ similar. Just be sure the folder name you use does NOT contain any special characters 
+ or spaces otherwise you may encounter errant program behaviors.</font> </p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b><font color="#FF0000">Step 
+ #2: Running Tribes2 Netopia Monitor Vers 1.0.0</font></b></font> </p>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-1.gif" width="356" height="189" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2">Max 
+   wait seconds - this specifies how long Tribes2 Netopia Monitor Vers 1.0.0 should 
+   wait between polling the specified servers to collect stats. Typically 10 secs 
+   is a reasonable time to wait. Click OK to accept the value that appears in 
+   the edit field or click CANCEL to quit the program. </font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-2.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Server Address List - this specifies the IP address(es) and Port Number(s) 
+   Tribes2 Netopia Monitor Vers 1.0.0 should use when polling server(s) to collect 
+   stats. Specify a Tribes1 server using the format of: -tbs+192.168.1.6:31001` 
+   where -tbs is the QStat flag for a Tribes1 Server, 192.168.1.6:31001 is the 
+   IP Address and Port Number for a Tribes1 Server and (`) is the separator that 
+   allows another server to be added to the list. Specify a Tribes2 Server using 
+   the format of: -t2s+192.168.1.2:28000`where -t2s is the QStat flag for a Tribes2 
+   Server, 192.168.1.2:28000 is the IP Address and Port Number for a Tribes2 Server 
+   and (`) is the separator that allows another server to be added to the list. 
+   You may specify as many as 4 servers in this manner using the standard identifiers 
+   found in the QStat-ReadMe text file. Click OK to accept the value that appears 
+   in the edit field or click CANCEL to quit the program. </font><br>
+  </td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-2a.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Alternatively you may clear this server list to cause the Tribes2 Netopia Monitor 
+   Vers 1.0.0 to collect a list of game servers from a suitable Master Server. 
+   See the documentation for your game to determine the Master Server Address. 
+   Click OK at this point to accept the value that appears in the edit field or 
+   click CANCEL to quit the program.</font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-3.gif" align="left"> <font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Select the type of Master Server you want to use - Tribes2 Netopia Monitor 
+   Vers 1.0.0 can query from a side variety of Master Servers as you can see in 
+   the list. Choose an item and click OK to accept the highlighted Master Server 
+   or click CANCEL to quit the program.</font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-4.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Game Server Master Server Address - this specifies the IP address and Port 
+   Number for the Master Server Tribes2 Netopia Monitor Vers 1.0.0 will use to 
+   query for the list of available game servers. Click OK to accept the value 
+   that appears in the edit field or click CANCEL to quit the program. </font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-5.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Additional QStat Parms - this allows the user to specify some possibly required 
+   additional QStat Parms Tribes2 Netopia Monitor Vers 1.0.0 should use to query 
+   for the list of available game servers. Refer to the QStat-ReadMe text file 
+   for more detailed information about what these parms might be for your specific 
+   uses. Click OK to accept the value that appears in the edit field or click 
+   CANCEL to quit the program.</font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-6.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Working... - this tells the user Tribes2 Netopia Monitor Vers 1.0.0 is working 
+   to query for the list of available game servers using the specified QStat parms. 
+   In case the specified Master Server is either unavailable or there is no available 
+   list of game servers the user will be prompted for the Master Server Address 
+   again and again until a list of servers can be queried or the user clicks the 
+   Cancel button to stop the madness.</font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-7.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Choose up to 4 Game Servers from the list or choose the Sort by Server Name 
+   or Sort by Server IP to resort the list - Tribes2 Netopia Monitor Vers 1.0.0 
+   will ignore any servers selected beyond the initial 4 it detects from those 
+   highlighted from the list. Click OK to accept the selected servers that appears 
+   in the listbox or click CANCEL to quit the program.</font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-7a.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Yup, you can resort the list by Server Name to make it easier to choose the 
+   desired servers from the list. Click OK to accept the selected servers that 
+   appears in the listbox or click CANCEL to quit the program.</font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-8.gif" align="left"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   Wanna watch Tribes2 Netopia Monitor Vers 1.0.0 display an animated activity 
+   bar whenever it's not doing anything then enter a 0 otherwise enter a 1. Click 
+   OK to accept the value that appears in the edit field or click CANCEL to quit 
+   the program.</font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><font face="Verdana, Arial, Helvetica, sans-serif" size="2"> <img src="tribes2-netopia-monitor-9.gif" align="left">This 
+   is the COOL display you will see after Tribes2 Netopia Monitor Vers 1.0.0 has 
+   run the initial game server query ! Notice the garbage looking characters on 
+   the right of the window - this is normal albeit perhaps annoying. Very soon 
+   this garbage will be replaced by the next display. </font></td>
+ </tr>
+</table>
+<table width="98%" border="0" cellspacing="1" cellpadding="1">
+ <tr> 
+  <td><img src="tribes2-netopia-monitor-9a.gif" align="left"> <font face="Verdana, Arial, Helvetica, sans-serif" size="2"> 
+   This is the COOL display you will see after Tribes2 Netopia Monitor Vers 1.0.0 
+   has been running for a while.</font></td>
+ </tr>
+</table>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="2">One last item, 
+ Tribes2 Netopia Monitor Vers 1.0.0 will save a log file every night at 12a so 
+ you will have a history of what your 4 favorite game servers have been doing 
+ every hour of the day.</font></p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="2">Enjoy !</font> 
+</p>
+<p>&nbsp; </p>
+<!-- #EndEditable -->
+<p align="center"><font face="LiquidCrystal, LCD, Verdana, Arial" size="4">This 
+ site was updated on <font color="#00FF00">August-03-2001</font> 16:20 PST</font></p>
+<p align="center"><font size="2" face="Arial, Helvetica, sans-serif"><b></b><font size="1"><a href="../press.html" target="_self">Press 
+  / News</a> </font></font><font size="1" face="Arial, Helvetica, sans-serif"><a href="../mayhemconfig.html" target="_self">Config 
+  Util</a> <a href="../windows-stay.html" target="_self">Windows Stay</a> 
+  </font><font face="Arial, Helvetica, sans-serif" size="1"><b><a href="../release-notes.html" target="_self">Mayhem 
+  Mod</a></b> <a href="../screenshots.html" target="_self">Screenshots</a> 
+  <a href="ftp://edgenetwk.com/tribes-universe.com/usbmayhem/%7BUSB%7DMayhem-Setup.exe" target="_blank">Download</a> 
+  <a href="../release-notes.html" target="_self">Notes</a></font><font face="Arial, Helvetica, sans-serif" size="1" color="#00FF00"> 
+  </font><font face="Arial, Helvetica, sans-serif" size="1" color="#FF0000"><a href="../items.html" target="_self">Items</a> 
+  </font><font face="Arial, Helvetica, sans-serif" size="1"><a href="../scripts.html" target="_self">Scripts</a><br>
+  </font><font face="Verdana, Arial, Helvetica, sans-serif" size="1">Mayhem Mod 
+  by <a href="mailto:halsmalltalker@hotmail.com">{USB}Spiderman</a> + <a href="mailto:Hypn0tik@hotmail.com">{USB}|Hypn0tik|</a>, 
+  Website by <a href="mailto:terrox@team4o4.cjb.net">TerroX [4o4]</a><br>
+  Copyright 2001<br>
+  <a href="http://tribes2.rocks.it/" target="_top">Mayhem Website http://tribes2.rocks.it/</a></font></p>
+</BODY>
+<!-- #EndTemplate --></HTML>

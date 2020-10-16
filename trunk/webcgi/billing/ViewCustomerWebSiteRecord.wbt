@@ -1,0 +1,32 @@
+:ViewCustomerWebSiteRecord
+; sql_level ............. input - the sql level 2-10 (optional)
+; sql_html_file ......... input - the name of the html file
+
+If IsDefined( sql_level) == @NO
+    sql_level = ""
+Endif
+
+WebOut('<TABLE WIDTH="*" BORDER="1"><SQTBODY><COLDEFS><COLDEF></COLDEFS><ROWS><TR><TD COLSTART="1">', 0)
+WebOut('<B>WebSite Info:</B>', 0)
+
+_table = "website"
+Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+sql_stmnt%sql_level% = "SELECT * FROM %_table% WHERE custid = %_custid%"
+sql_fetch_gosub%sql_level% = "ViewACustWebSiteContactRecord"
+sql_html_file = _viewCustWebSiteRecord_html
+sql_fetch = @TRUE
+sql_alias%sql_level% = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+WebOut('</TD></TR></ROWS></SQTBODY></TABLE>', _html_crlf)
+
+If IsDefined( sql_level) == @YES
+    If StrLen( sql_level) == 0
+        Drop( sql_level)
+    Endif
+Endif
+
+return
+

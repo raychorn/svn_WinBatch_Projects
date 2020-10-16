@@ -1,0 +1,49 @@
+:ListCustomerRecords
+
+;__debug = @TRUE
+;__debug = @FALSE
+
+_record_count = 1
+d_record_count = 0
+d_total = 0
+
+WebOut('<FONT SIZE="4"><SELECT NAME="%_CustomerList%" SIZE="%_selection_list_height%">', _html_crlf)
+
+_table = "customer"
+sql_fetch_map = "N,S65"
+If b_show_domain_ip_names
+    sql_fetch_map = StrCat( sql_fetch_map, ",S128,S32,I")
+Endif
+sql_level = ""
+sql_fetch_gosub = "ListCustRecordsOneByOne"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+WebOut('</SELECT></FONT>', _html_crlf)
+
+_record_count = _record_count - 1
+
+WebOut('<BR><SMALL><B>%_record_count% Customer', 0)
+
+If b_show_domain_ip_names
+    WebOut(' Domain', 0)
+Endif
+
+WebOut('s Listed', 0)
+
+If b_show_delinquency_status
+    _d = Decimals( 2)
+
+    WebOut('<FONT COLOR="RED">, %d_record_count% DELINQUENT $%d_total% <FONT COLOR="BLUE"><SMALL>(Does <U>NOT</U> include Finance Fees!)</SMALL></FONT></FONT>', 0)
+
+    Decimals( _d)
+        
+    Drop( _d)
+Endif
+
+WebOut('</B></SMALL>', _html_crlf)
+
+return
+

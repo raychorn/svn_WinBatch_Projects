@@ -1,0 +1,3 @@
+T2S`208.62.89.166:27270`{ÐÐ} Dark Arena`Sanctuary`20`0`90`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game=bwadmin`mission=Capture the Flag`status=51`dedicated=1`password=1`no_aliases=1`bot_count=0`cpu_speed=990`info=Welcome to the Ðark Ðemons Tribes 2 Server running bwadmin. Contact Killerattiude to report server issues. Email: thedarkdemons@yahoo.com`numteams=2
+

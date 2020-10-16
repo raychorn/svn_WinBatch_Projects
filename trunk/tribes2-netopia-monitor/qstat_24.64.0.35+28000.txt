@@ -1,0 +1,3 @@
+T2S`24.64.0.35:28000`NeDs Tribes 2 Server`Dust to Dust`32`0`60`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game=base`mission=Capture the Flag`status=69`dedicated=1`linux=1`bot_count=0`cpu_speed=933`info=www.neds.ca`numteams=2
+

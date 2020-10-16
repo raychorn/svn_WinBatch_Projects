@@ -1,0 +1,3634 @@
+================================================================================ 
+
+2005:07:15:16:02:56 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=3608) 
+
+2005:07:15:16:02:56 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:02:56 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:07:15:16:02:56 BEGIN :: Tibco FTP Downloader v1.0.4 [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved. 
+
+2005:07:15:16:02:56 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=46583) 
+
+2005:07:15:16:02:57 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:02:57 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:07:15:16:03:04 STATUS :: #1 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     19149       82 Jun 09 01:03 SRP740PCD0001.WED) 
+
+2005:07:15:16:03:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41561) 
+
+2005:07:15:16:03:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:03:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:03:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22598&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2019149%20%20%20%20%20%20%2082%20Jun%2009%2001:03%20SRP740PCD0001.WED) 
+
+2005:07:15:16:03:18 STATUS :: rslt=(200) 
+
+2005:07:15:16:03:18 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:03:18 STATUS :: #2 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     13212      358 Jun 09 01:03 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:03:18 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=21838) 
+
+2005:07:15:16:03:18 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:03:18 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:03:18 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=11784&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2013212%20%20%20%20%20%20358%20Jun%2009%2001:03%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:03:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:03:44 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:03:44 STATUS :: #3 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     72097      358 Jun 09 01:03 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:03:44 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=13853) 
+
+2005:07:15:16:03:44 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:03:44 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:03:44 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=52540&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2072097%20%20%20%20%20%20358%20Jun%2009%2001:03%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:04:07 STATUS :: rslt=(200) 
+
+2005:07:15:16:04:08 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:04:08 STATUS :: #4 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    131763        0 Jun 09 01:07 SRP720PCD0001.WED) 
+
+2005:07:15:16:04:08 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=55185) 
+
+2005:07:15:16:04:08 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:04:08 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:04:08 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22486&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20131763%20%20%20%20%20%20%20%200%20Jun%2009%2001:07%20SRP720PCD0001.WED) 
+
+2005:07:15:16:04:21 STATUS :: rslt=(200) 
+
+2005:07:15:16:04:21 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:04:22 STATUS :: #5 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    120551      150 Jun 09 01:11 SRP739PCD0001.WED) 
+
+2005:07:15:16:04:22 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=55091) 
+
+2005:07:15:16:04:22 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:04:22 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:04:22 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=54222&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20120551%20%20%20%20%20%20150%20Jun%2009%2001:11%20SRP739PCD0001.WED) 
+
+2005:07:15:16:04:35 STATUS :: rslt=(200) 
+
+2005:07:15:16:04:35 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:04:35 STATUS :: #6 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    131350        0 Jun 09 02:01 SRP922PCD0001.WED) 
+
+2005:07:15:16:04:35 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14366) 
+
+2005:07:15:16:04:35 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:04:35 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:04:35 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=24012&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20131350%20%20%20%20%20%20%20%200%20Jun%2009%2002:01%20SRP922PCD0001.WED) 
+
+2005:07:15:16:04:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:04:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:04:48 STATUS :: #7 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     89494    81287 Jun 09 04:23 SRP600PCD0001.WED) 
+
+2005:07:15:16:04:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=24117) 
+
+2005:07:15:16:04:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:04:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:04:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=31329&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2089494%20%20%20%2081287%20Jun%2009%2004:23%20SRP600PCD0001.WED) 
+
+2005:07:15:16:05:04 STATUS :: rslt=(200) 
+
+2005:07:15:16:05:05 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:05:05 STATUS :: #8 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      7242       82 Jun 10 01:02 SRP740PCD0001.THU) 
+
+2005:07:15:16:05:05 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=16063) 
+
+2005:07:15:16:05:05 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:05:05 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:05:05 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27550&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%207242%20%20%20%20%20%20%2082%20Jun%2010%2001:02%20SRP740PCD0001.THU) 
+
+2005:07:15:16:05:19 STATUS :: rslt=(200) 
+
+2005:07:15:16:05:19 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:05:20 STATUS :: #9 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     62118      358 Jun 10 01:03 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:05:20 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=55401) 
+
+2005:07:15:16:05:20 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:05:20 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:05:20 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=60583&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2062118%20%20%20%20%20%20358%20Jun%2010%2001:03%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:05:43 STATUS :: rslt=(200) 
+
+2005:07:15:16:05:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:05:43 STATUS :: #10 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    126587      358 Jun 10 01:03 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:05:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14275) 
+
+2005:07:15:16:05:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:05:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:05:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27239&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20126587%20%20%20%20%20%20358%20Jun%2010%2001:03%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:06:08 STATUS :: rslt=(200) 
+
+2005:07:15:16:06:09 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:06:09 STATUS :: #11 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     65696        0 Jun 10 01:08 SRP720PCD0001.THU) 
+
+2005:07:15:16:06:09 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40862) 
+
+2005:07:15:16:06:09 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:06:09 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:06:09 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=16496&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2065696%20%20%20%20%20%20%20%200%20Jun%2010%2001:08%20SRP720PCD0001.THU) 
+
+2005:07:15:16:06:22 STATUS :: rslt=(200) 
+
+2005:07:15:16:06:23 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:06:23 STATUS :: #12 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    112642      150 Jun 10 01:15 SRP739PCD0001.THU) 
+
+2005:07:15:16:06:23 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23280) 
+
+2005:07:15:16:06:23 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:06:23 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:06:23 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19057&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20112642%20%20%20%20%20%20150%20Jun%2010%2001:15%20SRP739PCD0001.THU) 
+
+2005:07:15:16:06:36 STATUS :: rslt=(200) 
+
+2005:07:15:16:06:36 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:06:36 STATUS :: #13 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     34946        0 Jun 10 02:00 SRP922PCD0001.THU) 
+
+2005:07:15:16:06:36 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41632) 
+
+2005:07:15:16:06:36 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:06:36 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:06:36 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=41125&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2034946%20%20%20%20%20%20%20%200%20Jun%2010%2002:00%20SRP922PCD0001.THU) 
+
+2005:07:15:16:06:49 STATUS :: rslt=(200) 
+
+2005:07:15:16:06:50 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:06:50 STATUS :: #14 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    108637    81287 Jun 10 05:32 SRP600PCD0001.THU) 
+
+2005:07:15:16:06:50 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=58505) 
+
+2005:07:15:16:06:50 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:06:50 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:06:50 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=35664&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20108637%20%20%20%2081287%20Jun%2010%2005:32%20SRP600PCD0001.THU) 
+
+2005:07:15:16:07:06 STATUS :: rslt=(200) 
+
+2005:07:15:16:07:06 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:07:06 STATUS :: #15 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     59197      358 Jun 11 00:47 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:07:06 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=21110) 
+
+2005:07:15:16:07:06 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:07:06 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:07:07 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=50976&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2059197%20%20%20%20%20%20358%20Jun%2011%2000:47%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:07:30 STATUS :: rslt=(200) 
+
+2005:07:15:16:07:30 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:07:30 STATUS :: #16 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    101148      358 Jun 11 00:47 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:07:30 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=59416) 
+
+2005:07:15:16:07:30 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:07:30 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:07:30 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=51355&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20101148%20%20%20%20%20%20358%20Jun%2011%2000:47%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:07:55 STATUS :: rslt=(200) 
+
+2005:07:15:16:07:57 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:07:57 STATUS :: #17 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     73070       82 Jun 11 01:00 SRP740PCD0001.FRI) 
+
+2005:07:15:16:07:57 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41129) 
+
+2005:07:15:16:07:57 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:07:57 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:07:57 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=40222&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2073070%20%20%20%20%20%20%2082%20Jun%2011%2001:00%20SRP740PCD0001.FRI) 
+
+2005:07:15:16:08:08 STATUS :: rslt=(200) 
+
+2005:07:15:16:08:08 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:08:08 STATUS :: #18 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    129866        0 Jun 11 01:04 SRP720PCD0001.FRI) 
+
+2005:07:15:16:08:08 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=7680) 
+
+2005:07:15:16:08:08 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:08:08 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:08:08 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=51907&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20129866%20%20%20%20%20%20%20%200%20Jun%2011%2001:04%20SRP720PCD0001.FRI) 
+
+2005:07:15:16:08:19 STATUS :: rslt=(200) 
+
+2005:07:15:16:08:20 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:08:20 STATUS :: #19 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    119793      150 Jun 11 01:21 SRP739PCD0001.FRI) 
+
+2005:07:15:16:08:20 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14915) 
+
+2005:07:15:16:08:20 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:08:20 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:08:20 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=56758&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20119793%20%20%20%20%20%20150%20Jun%2011%2001:21%20SRP739PCD0001.FRI) 
+
+2005:07:15:16:08:31 STATUS :: rslt=(200) 
+
+2005:07:15:16:08:31 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:08:31 STATUS :: #20 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      2890        0 Jun 11 01:58 SRP922PCD0001.FRI) 
+
+2005:07:15:16:08:31 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=55890) 
+
+2005:07:15:16:08:32 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:08:32 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:08:32 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43070&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%202890%20%20%20%20%20%20%20%200%20Jun%2011%2001:58%20SRP922PCD0001.FRI) 
+
+2005:07:15:16:08:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:08:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:08:43 STATUS :: #21 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     55970    81287 Jun 11 03:53 SRP600PCD0001.FRI) 
+
+2005:07:15:16:08:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=43582) 
+
+2005:07:15:16:08:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:08:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:08:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=16976&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2055970%20%20%20%2081287%20Jun%2011%2003:53%20SRP600PCD0001.FRI) 
+
+2005:07:15:16:08:56 STATUS :: rslt=(200) 
+
+2005:07:15:16:08:57 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:08:57 STATUS :: #22 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     93212       82 Jun 12 04:42 SRP740PCD0001.SAT) 
+
+2005:07:15:16:08:57 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=12611) 
+
+2005:07:15:16:08:57 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:08:58 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:08:58 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=50713&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2093212%20%20%20%20%20%20%2082%20Jun%2012%2004:42%20SRP740PCD0001.SAT) 
+
+2005:07:15:16:09:09 STATUS :: rslt=(200) 
+
+2005:07:15:16:09:09 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:09:09 STATUS :: #23 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     41754        0 Jun 12 05:13 SRP720PCD0001.SAT) 
+
+2005:07:15:16:09:09 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=46501) 
+
+2005:07:15:16:09:09 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:09:09 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:09:09 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=26736&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2041754%20%20%20%20%20%20%20%200%20Jun%2012%2005:13%20SRP720PCD0001.SAT) 
+
+2005:07:15:16:09:21 STATUS :: rslt=(200) 
+
+2005:07:15:16:09:21 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:09:22 STATUS :: #24 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     56135      716 Jun 12 05:20 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:09:22 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=50261) 
+
+2005:07:15:16:09:22 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:09:22 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:09:22 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=36053&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2056135%20%20%20%20%20%20716%20Jun%2012%2005:20%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:09:47 STATUS :: rslt=(200) 
+
+2005:07:15:16:09:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:09:48 STATUS :: #25 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    101883        0 Jun 12 06:53 SRP922PCD0001.SAT) 
+
+2005:07:15:16:09:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=30624) 
+
+2005:07:15:16:09:48 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:09:48 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:09:48 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=10277&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20101883%20%20%20%20%20%20%20%200%20Jun%2012%2006:53%20SRP922PCD0001.SAT) 
+
+2005:07:15:16:09:59 STATUS :: rslt=(200) 
+
+2005:07:15:16:09:59 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:09:59 STATUS :: #26 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     19730      150 Jun 12 06:53 SRP739PCD0001.SAT) 
+
+2005:07:15:16:09:59 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=45670) 
+
+2005:07:15:16:09:59 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:09:59 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:09:59 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=58048&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2019730%20%20%20%20%20%20150%20Jun%2012%2006:53%20SRP739PCD0001.SAT) 
+
+2005:07:15:16:10:10 STATUS :: rslt=(200) 
+
+2005:07:15:16:10:11 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:10:11 STATUS :: #27 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     30618    81287 Jun 12 07:26 SRP600PCD0001.SAT) 
+
+2005:07:15:16:10:11 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=43795) 
+
+2005:07:15:16:10:11 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:10:11 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:10:11 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=54563&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2030618%20%20%20%2081287%20Jun%2012%2007:26%20SRP600PCD0001.SAT) 
+
+2005:07:15:16:10:24 STATUS :: rslt=(200) 
+
+2005:07:15:16:10:25 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:10:25 STATUS :: #28 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     18828      358 Jun 14 01:01 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:10:25 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=42733) 
+
+2005:07:15:16:10:25 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:10:25 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:10:25 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=4354&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2018828%20%20%20%20%20%20358%20Jun%2014%2001:01%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:10:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:10:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:10:48 STATUS :: #29 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     62333      358 Jun 14 01:01 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:10:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23899) 
+
+2005:07:15:16:10:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:10:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:10:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=8734&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2062333%20%20%20%20%20%20358%20Jun%2014%2001:01%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:11:13 STATUS :: rslt=(200) 
+
+2005:07:15:16:11:14 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:11:14 STATUS :: #30 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     57127       82 Jun 14 01:02 SRP740PCD0001.MON) 
+
+2005:07:15:16:11:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=46005) 
+
+2005:07:15:16:11:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:11:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:11:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=11421&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2057127%20%20%20%20%20%20%2082%20Jun%2014%2001:02%20SRP740PCD0001.MON) 
+
+2005:07:15:16:11:23 STATUS :: rslt=(200) 
+
+2005:07:15:16:11:23 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:11:23 STATUS :: #31 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     42007        0 Jun 14 01:08 SRP720PCD0001.MON) 
+
+2005:07:15:16:11:23 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=26954) 
+
+2005:07:15:16:11:24 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:11:24 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:11:24 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19491&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2042007%20%20%20%20%20%20%20%200%20Jun%2014%2001:08%20SRP720PCD0001.MON) 
+
+2005:07:15:16:11:32 STATUS :: rslt=(200) 
+
+2005:07:15:16:11:33 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:11:33 STATUS :: #32 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    130923      150 Jun 14 01:13 SRP739PCD0001.MON) 
+
+2005:07:15:16:11:33 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23203) 
+
+2005:07:15:16:11:33 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:11:33 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:11:33 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=18677&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20130923%20%20%20%20%20%20150%20Jun%2014%2001:13%20SRP739PCD0001.MON) 
+
+2005:07:15:16:11:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:11:42 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:11:42 STATUS :: #33 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    102896        0 Jun 14 02:12 SRP922PCD0001.MON) 
+
+2005:07:15:16:11:42 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=5344) 
+
+2005:07:15:16:11:42 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:11:42 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:11:42 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=47314&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20102896%20%20%20%20%20%20%20%200%20Jun%2014%2002:12%20SRP922PCD0001.MON) 
+
+2005:07:15:16:11:51 STATUS :: rslt=(200) 
+
+2005:07:15:16:11:52 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:11:52 STATUS :: #34 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     44837   104001 Jun 14 04:33 SRP600PCD0001.MON) 
+
+2005:07:15:16:11:52 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=60328) 
+
+2005:07:15:16:11:52 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:11:52 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:11:52 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=52844&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2044837%20%20%20104001%20Jun%2014%2004:33%20SRP600PCD0001.MON) 
+
+2005:07:15:16:12:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:12:03 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:12:03 STATUS :: #35 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox       773       82 Jun 15 01:03 SRP740PCD0001.TUE) 
+
+2005:07:15:16:12:03 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=38568) 
+
+2005:07:15:16:12:03 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:12:03 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:12:03 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=37784&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%20%20773%20%20%20%20%20%20%2082%20Jun%2015%2001:03%20SRP740PCD0001.TUE) 
+
+2005:07:15:16:12:14 STATUS :: rslt=(200) 
+
+2005:07:15:16:12:14 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:12:14 STATUS :: #36 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    110890       82 Jun 15 01:08 SRP720PCD0001.TUE) 
+
+2005:07:15:16:12:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=36528) 
+
+2005:07:15:16:12:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:12:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:12:15 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21420&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20110890%20%20%20%20%20%20%2082%20Jun%2015%2001:08%20SRP720PCD0001.TUE) 
+
+2005:07:15:16:12:25 STATUS :: rslt=(200) 
+
+2005:07:15:16:12:26 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:12:26 STATUS :: #37 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     83892      716 Jun 15 01:14 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:12:26 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=15247) 
+
+2005:07:15:16:12:26 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:12:26 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:12:26 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=34883&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2083892%20%20%20%20%20%20716%20Jun%2015%2001:14%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:12:49 STATUS :: rslt=(200) 
+
+2005:07:15:16:12:49 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:12:49 STATUS :: #38 : remote_srcfile=(/US112544/-AR-EM----TCP A mailbox    117655      421 Jun 15 01:16 SRP739PCD0001.TUE) 
+
+2005:07:15:16:12:49 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=27680) 
+
+2005:07:15:16:12:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:12:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:12:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=31591&filename=/US112544/-AR-EM----TCP%20A%20mailbox%20%20%20%20117655%20%20%20%20%20%20421%20Jun%2015%2001:16%20SRP739PCD0001.TUE) 
+
+2005:07:15:16:13:00 STATUS :: rslt=(200) 
+
+2005:07:15:16:13:01 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:13:01 STATUS :: #39 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      3665        0 Jun 15 02:35 SRP922PCD0001.TUE) 
+
+2005:07:15:16:13:01 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=18114) 
+
+2005:07:15:16:13:01 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:13:01 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:13:01 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=50779&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%203665%20%20%20%20%20%20%20%200%20Jun%2015%2002:35%20SRP922PCD0001.TUE) 
+
+2005:07:15:16:13:12 STATUS :: rslt=(200) 
+
+2005:07:15:16:13:12 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:13:12 STATUS :: #40 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     94612   107748 Jun 15 04:49 SRP600PCD0001.TUE) 
+
+2005:07:15:16:13:12 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=44480) 
+
+2005:07:15:16:13:12 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:13:12 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:13:12 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19075&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2094612%20%20%20107748%20Jun%2015%2004:49%20SRP600PCD0001.TUE) 
+
+2005:07:15:16:13:25 STATUS :: rslt=(200) 
+
+2005:07:15:16:13:26 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:13:26 STATUS :: #41 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    123794       82 Jun 16 01:02 SRP720PCD0001.WED) 
+
+2005:07:15:16:13:26 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23862) 
+
+2005:07:15:16:13:26 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:13:26 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:13:26 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21786&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20123794%20%20%20%20%20%20%2082%20Jun%2016%2001:02%20SRP720PCD0001.WED) 
+
+2005:07:15:16:13:39 STATUS :: rslt=(200) 
+
+2005:07:15:16:13:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:13:39 STATUS :: #42 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    123272       82 Jun 16 01:03 SRP740PCD0001.WED) 
+
+2005:07:15:16:13:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=19479) 
+
+2005:07:15:16:13:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:13:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:13:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=51579&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20123272%20%20%20%20%20%20%2082%20Jun%2016%2001:03%20SRP740PCD0001.WED) 
+
+2005:07:15:16:13:52 STATUS :: rslt=(200) 
+
+2005:07:15:16:13:52 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:13:52 STATUS :: #43 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    111792      716 Jun 16 01:05 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:13:52 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14560) 
+
+2005:07:15:16:13:52 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:13:52 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:13:52 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=46121&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20111792%20%20%20%20%20%20716%20Jun%2016%2001:05%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:14:17 STATUS :: rslt=(200) 
+
+2005:07:15:16:14:18 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:14:18 STATUS :: #44 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     57682      421 Jun 16 01:12 SRP739PCD0001.WED) 
+
+2005:07:15:16:14:18 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=19044) 
+
+2005:07:15:16:14:18 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:14:18 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:14:18 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=26636&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2057682%20%20%20%20%20%20421%20Jun%2016%2001:12%20SRP739PCD0001.WED) 
+
+2005:07:15:16:14:31 STATUS :: rslt=(200) 
+
+2005:07:15:16:14:31 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:14:31 STATUS :: #45 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    105274        0 Jun 16 02:13 SRP922PCD0001.WED) 
+
+2005:07:15:16:14:31 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=24712) 
+
+2005:07:15:16:14:31 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:14:31 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:14:31 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=33837&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20105274%20%20%20%20%20%20%20%200%20Jun%2016%2002:13%20SRP922PCD0001.WED) 
+
+2005:07:15:16:14:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:14:44 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:14:44 STATUS :: #46 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    126676   108322 Jun 16 04:48 SRP600PCD0001.WED) 
+
+2005:07:15:16:14:44 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=42175) 
+
+2005:07:15:16:14:45 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:14:45 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:14:45 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22901&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20126676%20%20%20108322%20Jun%2016%2004:48%20SRP600PCD0001.WED) 
+
+2005:07:15:16:15:00 STATUS :: rslt=(200) 
+
+2005:07:15:16:15:00 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:15:00 STATUS :: #47 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     21105      156 Jun 17 02:02 SRP720PCD0001.THU) 
+
+2005:07:15:16:15:00 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23198) 
+
+2005:07:15:16:15:00 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:15:00 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:15:00 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=53385&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2021105%20%20%20%20%20%20156%20Jun%2017%2002:02%20SRP720PCD0001.THU) 
+
+2005:07:15:16:15:13 STATUS :: rslt=(200) 
+
+2005:07:15:16:15:13 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:15:13 STATUS :: #48 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     20667      338 Jun 17 02:03 SRP739PCD0001.THU) 
+
+2005:07:15:16:15:13 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=3294) 
+
+2005:07:15:16:15:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:15:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:15:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=54429&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2020667%20%20%20%20%20%20338%20Jun%2017%2002:03%20SRP739PCD0001.THU) 
+
+2005:07:15:16:15:27 STATUS :: rslt=(200) 
+
+2005:07:15:16:15:27 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:15:27 STATUS :: #49 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    102224       82 Jun 17 02:05 SRP740PCD0001.THU) 
+
+2005:07:15:16:15:27 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23444) 
+
+2005:07:15:16:15:27 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:15:27 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:15:27 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=41971&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20102224%20%20%20%20%20%20%2082%20Jun%2017%2002:05%20SRP740PCD0001.THU) 
+
+2005:07:15:16:15:40 STATUS :: rslt=(200) 
+
+2005:07:15:16:15:40 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:15:40 STATUS :: #50 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     76271      358 Jun 17 02:05 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:15:40 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=37452) 
+
+2005:07:15:16:15:40 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:15:40 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:15:40 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19734&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2076271%20%20%20%20%20%20358%20Jun%2017%2002:05%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:16:05 STATUS :: rslt=(200) 
+
+2005:07:15:16:16:06 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:16:06 STATUS :: #51 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    113686      358 Jun 17 02:05 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:16:06 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=20389) 
+
+2005:07:15:16:16:06 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:16:06 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:16:06 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=55395&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20113686%20%20%20%20%20%20358%20Jun%2017%2002:05%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:16:29 STATUS :: rslt=(200) 
+
+2005:07:15:16:16:29 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:16:29 STATUS :: #52 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    102762        0 Jun 17 02:37 SRP922PCD0001.THU) 
+
+2005:07:15:16:16:29 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=32830) 
+
+2005:07:15:16:16:30 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:16:30 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:16:30 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59852&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20102762%20%20%20%20%20%20%20%200%20Jun%2017%2002:37%20SRP922PCD0001.THU) 
+
+2005:07:15:16:16:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:16:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:16:43 STATUS :: #53 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     49454   108322 Jun 17 04:57 SRP600PCD0001.THU) 
+
+2005:07:15:16:16:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=5218) 
+
+2005:07:15:16:16:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:16:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:16:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=23031&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2049454%20%20%20108322%20Jun%2017%2004:57%20SRP600PCD0001.THU) 
+
+2005:07:15:16:16:58 STATUS :: rslt=(200) 
+
+2005:07:15:16:16:58 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:16:59 STATUS :: #54 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    103152        0 Jun 18 00:55 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:16:59 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23204) 
+
+2005:07:15:16:16:59 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:16:59 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:16:59 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=13635&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20103152%20%20%20%20%20%20%20%200%20Jun%2018%2000:55%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:17:22 STATUS :: rslt=(200) 
+
+2005:07:15:16:17:22 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:17:22 STATUS :: #55 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     99634      358 Jun 18 00:55 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:17:22 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=59857) 
+
+2005:07:15:16:17:22 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:17:22 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:17:22 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=63040&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2099634%20%20%20%20%20%20358%20Jun%2018%2000:55%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:17:47 STATUS :: rslt=(200) 
+
+2005:07:15:16:17:47 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:17:47 STATUS :: #56 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     12562       82 Jun 18 01:06 SRP740PCD0001.FRI) 
+
+2005:07:15:16:17:47 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=60316) 
+
+2005:07:15:16:17:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:17:48 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:17:48 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=63541&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2012562%20%20%20%20%20%20%2082%20Jun%2018%2001:06%20SRP740PCD0001.FRI) 
+
+2005:07:15:16:17:58 STATUS :: rslt=(200) 
+
+2005:07:15:16:17:59 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:17:59 STATUS :: #57 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     90917       82 Jun 18 01:10 SRP720PCD0001.FRI) 
+
+2005:07:15:16:17:59 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=19127) 
+
+2005:07:15:16:17:59 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:17:59 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:17:59 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=34442&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2090917%20%20%20%20%20%20%2082%20Jun%2018%2001:10%20SRP720PCD0001.FRI) 
+
+2005:07:15:16:18:37 STATUS :: rslt=(200) 
+
+2005:07:15:16:18:37 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:18:37 STATUS :: #58 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     34288      338 Jun 18 01:19 SRP739PCD0001.FRI) 
+
+2005:07:15:16:18:37 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=16997) 
+
+2005:07:15:16:18:37 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:18:37 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:18:37 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=58761&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2034288%20%20%20%20%20%20338%20Jun%2018%2001:19%20SRP739PCD0001.FRI) 
+
+2005:07:15:16:18:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:18:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:18:48 STATUS :: #59 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     17751        0 Jun 18 01:44 SRP922PCD0001.FRI) 
+
+2005:07:15:16:18:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=22221) 
+
+2005:07:15:16:18:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:18:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:18:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=1534&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2017751%20%20%20%20%20%20%20%200%20Jun%2018%2001:44%20SRP922PCD0001.FRI) 
+
+2005:07:15:16:19:00 STATUS :: rslt=(200) 
+
+2005:07:15:16:19:00 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:19:00 STATUS :: #60 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     44307   108322 Jun 18 03:16 SRP600PCD0001.FRI) 
+
+2005:07:15:16:19:00 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23415) 
+
+2005:07:15:16:19:00 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:19:00 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:19:00 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22776&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2044307%20%20%20108322%20Jun%2018%2003:16%20SRP600PCD0001.FRI) 
+
+2005:07:15:16:19:13 STATUS :: rslt=(200) 
+
+2005:07:15:16:19:13 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:19:13 STATUS :: #61 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     73271      716 Jun 19 06:02 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:19:13 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=64567) 
+
+2005:07:15:16:19:13 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:19:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:19:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=56478&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2073271%20%20%20%20%20%20716%20Jun%2019%2006:02%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:19:39 STATUS :: rslt=(200) 
+
+2005:07:15:16:19:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:19:39 STATUS :: #62 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     27689       82 Jun 19 06:08 SRP740PCD0001.SAT) 
+
+2005:07:15:16:19:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=33053) 
+
+2005:07:15:16:19:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:19:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:19:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21172&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2027689%20%20%20%20%20%20%2082%20Jun%2019%2006:08%20SRP740PCD0001.SAT) 
+
+2005:07:15:16:19:50 STATUS :: rslt=(200) 
+
+2005:07:15:16:19:51 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:19:51 STATUS :: #63 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     42127       82 Jun 19 06:09 SRP720PCD0001.SAT) 
+
+2005:07:15:16:19:51 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=12618) 
+
+2005:07:15:16:19:51 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:19:51 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:19:51 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=42438&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2042127%20%20%20%20%20%20%2082%20Jun%2019%2006:09%20SRP720PCD0001.SAT) 
+
+2005:07:15:16:20:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:20:02 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:20:02 STATUS :: #64 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    114235      421 Jun 19 06:14 SRP739PCD0001.SAT) 
+
+2005:07:15:16:20:02 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=48866) 
+
+2005:07:15:16:20:02 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:20:02 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:20:02 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=42298&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20114235%20%20%20%20%20%20421%20Jun%2019%2006:14%20SRP739PCD0001.SAT) 
+
+2005:07:15:16:20:14 STATUS :: rslt=(200) 
+
+2005:07:15:16:20:14 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:20:14 STATUS :: #65 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     54217        0 Jun 19 10:44 SRP922PCD0001.SAT) 
+
+2005:07:15:16:20:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=27750) 
+
+2005:07:15:16:20:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:20:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:20:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=5894&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2054217%20%20%20%20%20%20%20%200%20Jun%2019%2010:44%20SRP922PCD0001.SAT) 
+
+2005:07:15:16:20:25 STATUS :: rslt=(200) 
+
+2005:07:15:16:20:25 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:20:25 STATUS :: #66 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    107133   108322 Jun 19 11:07 SRP600PCD0001.SAT) 
+
+2005:07:15:16:20:25 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=60018) 
+
+2005:07:15:16:20:26 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:20:26 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:20:26 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=29478&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20107133%20%20%20108322%20Jun%2019%2011:07%20SRP600PCD0001.SAT) 
+
+2005:07:15:16:20:38 STATUS :: rslt=(200) 
+
+2005:07:15:16:20:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:20:39 STATUS :: #67 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     38268       82 Jun 21 00:54 SRP740PCD0001.MON) 
+
+2005:07:15:16:20:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=47582) 
+
+2005:07:15:16:20:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:20:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:20:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=14880&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2038268%20%20%20%20%20%20%2082%20Jun%2021%2000:54%20SRP740PCD0001.MON) 
+
+2005:07:15:16:20:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:20:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:20:48 STATUS :: #68 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    103659      716 Jun 21 00:56 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:20:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=16916) 
+
+2005:07:15:16:20:48 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:20:48 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:20:48 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=46691&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20103659%20%20%20%20%20%20716%20Jun%2021%2000:56%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:21:13 STATUS :: rslt=(200) 
+
+2005:07:15:16:21:14 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:21:14 STATUS :: #69 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     63035       82 Jun 21 00:58 SRP720PCD0001.MON) 
+
+2005:07:15:16:21:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=35574) 
+
+2005:07:15:16:21:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:21:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:21:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=63403&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2063035%20%20%20%20%20%20%2082%20Jun%2021%2000:58%20SRP720PCD0001.MON) 
+
+2005:07:15:16:21:23 STATUS :: rslt=(200) 
+
+2005:07:15:16:21:24 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:21:25 STATUS :: #70 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    116138      421 Jun 21 01:06 SRP739PCD0001.MON) 
+
+2005:07:15:16:21:25 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=19639) 
+
+2005:07:15:16:21:25 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:21:25 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:21:25 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=12016&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20116138%20%20%20%20%20%20421%20Jun%2021%2001:06%20SRP739PCD0001.MON) 
+
+2005:07:15:16:21:34 STATUS :: rslt=(200) 
+
+2005:07:15:16:21:34 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:21:34 STATUS :: #71 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     92953        0 Jun 21 02:01 SRP922PCD0001.MON) 
+
+2005:07:15:16:21:34 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=42832) 
+
+2005:07:15:16:21:34 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:21:34 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:21:34 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=55120&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2092953%20%20%20%20%20%20%20%200%20Jun%2021%2002:01%20SRP922PCD0001.MON) 
+
+2005:07:15:16:21:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:21:45 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:21:46 STATUS :: #72 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     26741   108322 Jun 21 04:18 SRP600PCD0001.MON) 
+
+2005:07:15:16:21:46 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23073) 
+
+2005:07:15:16:21:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:21:47 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:21:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22985&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2026741%20%20%20108322%20Jun%2021%2004:18%20SRP600PCD0001.MON) 
+
+2005:07:15:16:21:59 STATUS :: rslt=(200) 
+
+2005:07:15:16:22:00 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:22:00 STATUS :: #73 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     22701      440 Jun 22 01:03 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:22:00 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=18511) 
+
+2005:07:15:16:22:00 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:22:00 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:22:00 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=54169&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2022701%20%20%20%20%20%20440%20Jun%2022%2001:03%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:22:23 STATUS :: rslt=(200) 
+
+2005:07:15:16:22:24 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:22:24 STATUS :: #74 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    112649      440 Jun 22 01:03 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:22:24 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41307) 
+
+2005:07:15:16:22:24 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:22:24 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:22:24 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=61136&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20112649%20%20%20%20%20%20440%20Jun%2022%2001:03%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:22:49 STATUS :: rslt=(200) 
+
+2005:07:15:16:22:49 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:22:49 STATUS :: #75 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     16945       82 Jun 22 01:09 SRP740PCD0001.TUE) 
+
+2005:07:15:16:22:49 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=6109) 
+
+2005:07:15:16:22:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:22:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:22:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=45278&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2016945%20%20%20%20%20%20%2082%20Jun%2022%2001:09%20SRP740PCD0001.TUE) 
+
+2005:07:15:16:23:00 STATUS :: rslt=(200) 
+
+2005:07:15:16:23:00 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:23:00 STATUS :: #76 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     85077       82 Jun 22 01:14 SRP720PCD0001.TUE) 
+
+2005:07:15:16:23:00 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=43745) 
+
+2005:07:15:16:23:01 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:23:01 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:23:01 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19599&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2085077%20%20%20%20%20%20%2082%20Jun%2022%2001:14%20SRP720PCD0001.TUE) 
+
+2005:07:15:16:23:11 STATUS :: rslt=(200) 
+
+2005:07:15:16:23:12 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:23:13 STATUS :: #77 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     12733      421 Jun 22 01:23 SRP739PCD0001.TUE) 
+
+2005:07:15:16:23:13 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=22830) 
+
+2005:07:15:16:23:13 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:23:13 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:23:13 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19511&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2012733%20%20%20%20%20%20421%20Jun%2022%2001:23%20SRP739PCD0001.TUE) 
+
+2005:07:15:16:23:24 STATUS :: rslt=(200) 
+
+2005:07:15:16:23:24 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:23:24 STATUS :: #78 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     97515       82 Jun 22 02:12 SRP922PCD0001.TUE) 
+
+2005:07:15:16:23:24 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=29684) 
+
+2005:07:15:16:23:24 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:23:24 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:23:24 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59669&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2097515%20%20%20%20%20%20%2082%20Jun%2022%2002:12%20SRP922PCD0001.TUE) 
+
+2005:07:15:16:23:35 STATUS :: rslt=(200) 
+
+2005:07:15:16:23:35 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:23:35 STATUS :: #79 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    110820   108322 Jun 22 04:58 SRP600PCD0001.TUE) 
+
+2005:07:15:16:23:35 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=60420) 
+
+2005:07:15:16:23:35 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:23:35 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:23:35 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=60606&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20110820%20%20%20108322%20Jun%2022%2004:58%20SRP600PCD0001.TUE) 
+
+2005:07:15:16:23:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:23:49 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:23:49 STATUS :: #80 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     23214       82 Jun 23 00:56 SRP740PCD0001.WED) 
+
+2005:07:15:16:23:49 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=13991) 
+
+2005:07:15:16:23:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:23:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:23:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=44477&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2023214%20%20%20%20%20%20%2082%20Jun%2023%2000:56%20SRP740PCD0001.WED) 
+
+2005:07:15:16:24:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:24:02 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:24:02 STATUS :: #81 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    116985       82 Jun 23 01:01 SRP720PCD0001.WED) 
+
+2005:07:15:16:24:02 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=44551) 
+
+2005:07:15:16:24:03 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:24:03 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:24:03 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=14444&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20116985%20%20%20%20%20%20%2082%20Jun%2023%2001:01%20SRP720PCD0001.WED) 
+
+2005:07:15:16:24:15 STATUS :: rslt=(200) 
+
+2005:07:15:16:24:16 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:24:16 STATUS :: #82 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    120785      440 Jun 23 01:06 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:24:16 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=53725) 
+
+2005:07:15:16:24:16 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:24:16 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:24:16 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59469&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20120785%20%20%20%20%20%20440%20Jun%2023%2001:06%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:24:39 STATUS :: rslt=(200) 
+
+2005:07:15:16:24:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:24:39 STATUS :: #83 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     97715      440 Jun 23 01:06 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:24:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40525) 
+
+2005:07:15:16:24:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:24:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:24:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=64473&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2097715%20%20%20%20%20%20440%20Jun%2023%2001:06%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:25:04 STATUS :: rslt=(200) 
+
+2005:07:15:16:25:05 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:25:05 STATUS :: #84 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    116507      421 Jun 23 01:11 SRP739PCD0001.WED) 
+
+2005:07:15:16:25:05 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=53577) 
+
+2005:07:15:16:25:05 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:25:05 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:25:05 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=757&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20116507%20%20%20%20%20%20421%20Jun%2023%2001:11%20SRP739PCD0001.WED) 
+
+2005:07:15:16:25:18 STATUS :: rslt=(200) 
+
+2005:07:15:16:25:18 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:25:19 STATUS :: #85 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     61392       82 Jun 23 02:17 SRP922PCD0001.WED) 
+
+2005:07:15:16:25:19 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=63885) 
+
+2005:07:15:16:25:19 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:25:19 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:25:19 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=52353&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2061392%20%20%20%20%20%20%2082%20Jun%2023%2002:17%20SRP922PCD0001.WED) 
+
+2005:07:15:16:25:32 STATUS :: rslt=(200) 
+
+2005:07:15:16:25:32 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:25:32 STATUS :: #86 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     86477   108322 Jun 23 05:09 SRP600PCD0001.WED) 
+
+2005:07:15:16:25:32 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=640) 
+
+2005:07:15:16:25:32 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:25:32 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:25:32 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43742&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2086477%20%20%20108322%20Jun%2023%2005:09%20SRP600PCD0001.WED) 
+
+2005:07:15:16:25:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:25:49 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:25:49 STATUS :: #87 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    128834       82 Jun 24 01:07 SRP740PCD0001.THU) 
+
+2005:07:15:16:25:49 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=34491) 
+
+2005:07:15:16:25:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:25:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:25:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=28074&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20128834%20%20%20%20%20%20%2082%20Jun%2024%2001:07%20SRP740PCD0001.THU) 
+
+2005:07:15:16:26:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:26:03 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:26:03 STATUS :: #88 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     43718      156 Jun 24 01:11 SRP720PCD0001.THU) 
+
+2005:07:15:16:26:03 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=57160) 
+
+2005:07:15:16:26:05 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:26:05 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:26:05 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=9124&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2043718%20%20%20%20%20%20156%20Jun%2024%2001:11%20SRP720PCD0001.THU) 
+
+2005:07:15:16:26:19 STATUS :: rslt=(200) 
+
+2005:07:15:16:26:19 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:26:19 STATUS :: #89 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      4299      440 Jun 24 01:16 SRP911PCD0001I.TXT) 
+
+2005:07:15:16:26:20 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=54310) 
+
+2005:07:15:16:26:20 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:26:20 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:26:20 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=1417&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%204299%20%20%20%20%20%20440%20Jun%2024%2001:16%20SRP911PCD0001I.TXT) 
+
+2005:07:15:16:26:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:26:44 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TXT.html) 
+
+2005:07:15:16:26:44 STATUS :: #90 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     52809      440 Jun 24 01:16 SRP911PCD0001M.TXT) 
+
+2005:07:15:16:26:44 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=64915) 
+
+2005:07:15:16:26:44 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:26:44 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:26:44 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=53894&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2052809%20%20%20%20%20%20440%20Jun%2024%2001:16%20SRP911PCD0001M.TXT) 
+
+2005:07:15:16:27:09 STATUS :: rslt=(200) 
+
+2005:07:15:16:27:10 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TXT.html) 
+
+2005:07:15:16:27:10 STATUS :: #91 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     31272      421 Jun 24 01:20 SRP739PCD0001.THU) 
+
+2005:07:15:16:27:10 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=15882) 
+
+2005:07:15:16:27:10 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:27:10 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:27:11 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=30672&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2031272%20%20%20%20%20%20421%20Jun%2024%2001:20%20SRP739PCD0001.THU) 
+
+2005:07:15:16:27:24 STATUS :: rslt=(200) 
+
+2005:07:15:16:27:24 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:27:24 STATUS :: #92 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     56369       82 Jun 24 02:27 SRP922PCD0001.THU) 
+
+2005:07:15:16:27:24 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=42726) 
+
+2005:07:15:16:27:24 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:27:24 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:27:24 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=53528&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2056369%20%20%20%20%20%20%2082%20Jun%2024%2002:27%20SRP922PCD0001.THU) 
+
+2005:07:15:16:27:37 STATUS :: rslt=(200) 
+
+2005:07:15:16:27:37 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:27:38 STATUS :: #93 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     33323      391 Jun 24 03:11 SRP519PCD0001.THU) 
+
+2005:07:15:16:27:38 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=48290) 
+
+2005:07:15:16:27:38 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:27:38 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:27:38 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=54314&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2033323%20%20%20%20%20%20391%20Jun%2024%2003:11%20SRP519PCD0001.THU) 
+
+2005:07:15:16:27:47 STATUS :: rslt=(200) 
+
+2005:07:15:16:27:47 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:27:47 STATUS :: #94 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    108783   108322 Jun 24 05:09 SRP600PCD0001.THU) 
+
+2005:07:15:16:27:47 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=13237) 
+
+2005:07:15:16:27:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:27:47 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:27:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27305&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20108783%20%20%20108322%20Jun%2024%2005:09%20SRP600PCD0001.THU) 
+
+2005:07:15:16:28:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:28:03 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:28:04 STATUS :: #95 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     26482      440 Jun 25 01:00 SRP911PCD0001M.FRI) 
+
+2005:07:15:16:28:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=13493) 
+
+2005:07:15:16:28:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:28:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.FRI.html) 
+
+2005:07:15:16:28:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27196&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2026482%20%20%20%20%20%20440%20Jun%2025%2001:00%20SRP911PCD0001M.FRI) 
+
+2005:07:15:16:28:11 STATUS :: rslt=(200) 
+
+2005:07:15:16:28:11 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.FRI.html) 
+
+2005:07:15:16:28:11 STATUS :: #96 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    109443      440 Jun 25 01:00 SRP911PCD0001I.FRI) 
+
+2005:07:15:16:28:11 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=43448) 
+
+2005:07:15:16:28:11 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:28:11 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.FRI.html) 
+
+2005:07:15:16:28:11 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=16667&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20109443%20%20%20%20%20%20440%20Jun%2025%2001:00%20SRP911PCD0001I.FRI) 
+
+2005:07:15:16:28:19 STATUS :: rslt=(200) 
+
+2005:07:15:16:28:19 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.FRI.html) 
+
+2005:07:15:16:28:19 STATUS :: #97 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     68932       82 Jun 25 01:13 SRP740PCD0001.FRI) 
+
+2005:07:15:16:28:19 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40512) 
+
+2005:07:15:16:28:20 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:28:20 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:28:20 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=16630&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2068932%20%20%20%20%20%20%2082%20Jun%2025%2001:13%20SRP740PCD0001.FRI) 
+
+2005:07:15:16:28:30 STATUS :: rslt=(200) 
+
+2005:07:15:16:28:31 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:28:31 STATUS :: #98 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     20887       82 Jun 25 01:18 SRP720PCD0001.FRI) 
+
+2005:07:15:16:28:31 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14284) 
+
+2005:07:15:16:28:31 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:28:31 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:28:31 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=37584&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2020887%20%20%20%20%20%20%2082%20Jun%2025%2001:18%20SRP720PCD0001.FRI) 
+
+2005:07:15:16:28:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:28:44 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:28:44 STATUS :: #99 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     29100      421 Jun 25 01:27 SRP739PCD0001.FRI) 
+
+2005:07:15:16:28:44 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=5450) 
+
+2005:07:15:16:28:44 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:28:44 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:28:44 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21058&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2029100%20%20%20%20%20%20421%20Jun%2025%2001:27%20SRP739PCD0001.FRI) 
+
+2005:07:15:16:28:55 STATUS :: rslt=(200) 
+
+2005:07:15:16:28:55 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:28:55 STATUS :: #100 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     85955       82 Jun 25 01:52 SRP922PCD0001.FRI) 
+
+2005:07:15:16:28:55 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=27212) 
+
+2005:07:15:16:28:55 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:28:55 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:28:55 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=17313&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2085955%20%20%20%20%20%20%2082%20Jun%2025%2001:52%20SRP922PCD0001.FRI) 
+
+2005:07:15:16:29:06 STATUS :: rslt=(200) 
+
+2005:07:15:16:29:06 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:29:06 STATUS :: #101 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     26887      391 Jun 25 02:22 SRP519PCD0001.FRI) 
+
+2005:07:15:16:29:06 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=65204) 
+
+2005:07:15:16:29:06 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:29:07 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.FRI.html) 
+
+2005:07:15:16:29:07 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=45176&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2026887%20%20%20%20%20%20391%20Jun%2025%2002:22%20SRP519PCD0001.FRI) 
+
+2005:07:15:16:29:14 STATUS :: rslt=(200) 
+
+2005:07:15:16:29:14 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.FRI.html) 
+
+2005:07:15:16:29:14 STATUS :: #102 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     31275   108896 Jun 25 03:38 SRP600PCD0001.FRI) 
+
+2005:07:15:16:29:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=23378) 
+
+2005:07:15:16:29:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:29:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:29:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59189&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2031275%20%20%20108896%20Jun%2025%2003:38%20SRP600PCD0001.FRI) 
+
+2005:07:15:16:29:28 STATUS :: rslt=(200) 
+
+2005:07:15:16:29:29 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:29:29 STATUS :: #103 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    120953      440 Jun 26 04:30 SRP911PCD0001M.SAT) 
+
+2005:07:15:16:29:29 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=36912) 
+
+2005:07:15:16:29:29 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:29:29 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:29:29 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22567&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20120953%20%20%20%20%20%20440%20Jun%2026%2004:30%20SRP911PCD0001M.SAT) 
+
+2005:07:15:16:29:38 STATUS :: rslt=(200) 
+
+2005:07:15:16:29:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:29:39 STATUS :: #104 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     66871      440 Jun 26 04:30 SRP911PCD0001I.SAT) 
+
+2005:07:15:16:29:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=20655) 
+
+2005:07:15:16:29:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:29:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:29:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=55176&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2066871%20%20%20%20%20%20440%20Jun%2026%2004:30%20SRP911PCD0001I.SAT) 
+
+2005:07:15:16:29:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:29:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:29:48 STATUS :: #105 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     15900       82 Jun 26 04:31 SRP740PCD0001.SAT) 
+
+2005:07:15:16:29:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=21768) 
+
+2005:07:15:16:29:48 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:29:48 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:29:48 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=42578&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2015900%20%20%20%20%20%20%2082%20Jun%2026%2004:31%20SRP740PCD0001.SAT) 
+
+2005:07:15:16:29:59 STATUS :: rslt=(200) 
+
+2005:07:15:16:29:59 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:29:59 STATUS :: #106 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     92402       82 Jun 26 04:33 SRP720PCD0001.SAT) 
+
+2005:07:15:16:29:59 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=63814) 
+
+2005:07:15:16:30:00 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:30:00 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:30:00 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=62543&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2092402%20%20%20%20%20%20%2082%20Jun%2026%2004:33%20SRP720PCD0001.SAT) 
+
+2005:07:15:16:30:10 STATUS :: rslt=(200) 
+
+2005:07:15:16:30:11 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:30:11 STATUS :: #107 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      2642      421 Jun 26 04:42 SRP739PCD0001.SAT) 
+
+2005:07:15:16:30:11 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=19024) 
+
+2005:07:15:16:30:11 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:30:11 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:30:11 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=10190&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%202642%20%20%20%20%20%20421%20Jun%2026%2004:42%20SRP739PCD0001.SAT) 
+
+2005:07:15:16:30:22 STATUS :: rslt=(200) 
+
+2005:07:15:16:30:23 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:30:23 STATUS :: #108 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     45735       82 Jun 26 05:23 SRP922PCD0001.SAT) 
+
+2005:07:15:16:30:23 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=16207) 
+
+2005:07:15:16:30:23 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:30:23 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:30:23 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=17251&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2045735%20%20%20%20%20%20%2082%20Jun%2026%2005:23%20SRP922PCD0001.SAT) 
+
+2005:07:15:16:30:34 STATUS :: rslt=(200) 
+
+2005:07:15:16:30:34 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:30:35 STATUS :: #109 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      6993      391 Jun 26 05:48 SRP519PCD0001.SAT) 
+
+2005:07:15:16:30:35 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=25531) 
+
+2005:07:15:16:30:35 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:30:35 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.SAT.html) 
+
+2005:07:15:16:30:35 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=23651&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%206993%20%20%20%20%20%20391%20Jun%2026%2005:48%20SRP519PCD0001.SAT) 
+
+2005:07:15:16:30:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:30:42 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.SAT.html) 
+
+2005:07:15:16:30:42 STATUS :: #110 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     85159   108609 Jun 26 06:47 SRP600PCD0001.SAT) 
+
+2005:07:15:16:30:42 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=5128) 
+
+2005:07:15:16:30:42 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:30:42 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:30:42 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=15490&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2085159%20%20%20108609%20Jun%2026%2006:47%20SRP600PCD0001.SAT) 
+
+2005:07:15:16:30:56 STATUS :: rslt=(200) 
+
+2005:07:15:16:30:57 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:30:57 STATUS :: #111 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     55458      440 Jun 28 01:03 SRP911PCD0001I.MON) 
+
+2005:07:15:16:30:57 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=62318) 
+
+2005:07:15:16:30:57 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:30:57 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.MON.html) 
+
+2005:07:15:16:30:57 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=36175&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2055458%20%20%20%20%20%20440%20Jun%2028%2001:03%20SRP911PCD0001I.MON) 
+
+2005:07:15:16:31:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:31:02 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.MON.html) 
+
+2005:07:15:16:31:02 STATUS :: #112 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     62423      440 Jun 28 01:03 SRP911PCD0001M.MON) 
+
+2005:07:15:16:31:02 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=29254) 
+
+2005:07:15:16:31:02 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:31:02 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.MON.html) 
+
+2005:07:15:16:31:02 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=58425&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2062423%20%20%20%20%20%20440%20Jun%2028%2001:03%20SRP911PCD0001M.MON) 
+
+2005:07:15:16:31:07 STATUS :: rslt=(200) 
+
+2005:07:15:16:31:08 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.MON.html) 
+
+2005:07:15:16:31:08 STATUS :: #113 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     50417       82 Jun 28 01:15 SRP740PCD0001.MON) 
+
+2005:07:15:16:31:08 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=62349) 
+
+2005:07:15:16:31:08 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:31:08 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:31:08 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=55478&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2050417%20%20%20%20%20%20%2082%20Jun%2028%2001:15%20SRP740PCD0001.MON) 
+
+2005:07:15:16:31:17 STATUS :: rslt=(200) 
+
+2005:07:15:16:31:17 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:31:17 STATUS :: #114 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     29622       82 Jun 28 01:19 SRP720PCD0001.MON) 
+
+2005:07:15:16:31:17 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=51055) 
+
+2005:07:15:16:31:17 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:31:17 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:31:17 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19440&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2029622%20%20%20%20%20%20%2082%20Jun%2028%2001:19%20SRP720PCD0001.MON) 
+
+2005:07:15:16:31:27 STATUS :: rslt=(200) 
+
+2005:07:15:16:31:27 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:31:27 STATUS :: #115 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     44262      421 Jun 28 01:31 SRP739PCD0001.MON) 
+
+2005:07:15:16:31:27 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=21687) 
+
+2005:07:15:16:31:28 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:31:28 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:31:28 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=16005&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2044262%20%20%20%20%20%20421%20Jun%2028%2001:31%20SRP739PCD0001.MON) 
+
+2005:07:15:16:31:37 STATUS :: rslt=(200) 
+
+2005:07:15:16:31:37 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:31:37 STATUS :: #116 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     55423       82 Jun 28 02:34 SRP922PCD0001.MON) 
+
+2005:07:15:16:31:37 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=62448) 
+
+2005:07:15:16:31:37 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:31:37 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:31:37 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=23608&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2055423%20%20%20%20%20%20%2082%20Jun%2028%2002:34%20SRP922PCD0001.MON) 
+
+2005:07:15:16:31:46 STATUS :: rslt=(200) 
+
+2005:07:15:16:31:51 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:31:51 STATUS :: #117 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     55251      391 Jun 28 02:52 SRP519PCD0001.MON) 
+
+2005:07:15:16:31:51 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=10690) 
+
+2005:07:15:16:31:51 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:31:51 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.MON.html) 
+
+2005:07:15:16:31:51 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43805&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2055251%20%20%20%20%20%20391%20Jun%2028%2002:52%20SRP519PCD0001.MON) 
+
+2005:07:15:16:31:56 STATUS :: rslt=(200) 
+
+2005:07:15:16:31:56 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.MON.html) 
+
+2005:07:15:16:31:56 STATUS :: #118 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     54219   108609 Jun 28 05:50 SRP600PCD0001.MON) 
+
+2005:07:15:16:31:56 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=53952) 
+
+2005:07:15:16:31:57 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:31:57 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:31:57 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=37664&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2054219%20%20%20108609%20Jun%2028%2005:50%20SRP600PCD0001.MON) 
+
+2005:07:15:16:32:08 STATUS :: rslt=(200) 
+
+2005:07:15:16:32:13 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:32:14 STATUS :: #119 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     74242      440 Jun 29 01:11 SRP911PCD0001I.TUE) 
+
+2005:07:15:16:32:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=3314) 
+
+2005:07:15:16:32:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:32:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TUE.html) 
+
+2005:07:15:16:32:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=58192&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2074242%20%20%20%20%20%20440%20Jun%2029%2001:11%20SRP911PCD0001I.TUE) 
+
+2005:07:15:16:32:20 STATUS :: rslt=(200) 
+
+2005:07:15:16:32:21 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TUE.html) 
+
+2005:07:15:16:32:21 STATUS :: #120 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     10431      440 Jun 29 01:11 SRP911PCD0001M.TUE) 
+
+2005:07:15:16:32:21 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=43681) 
+
+2005:07:15:16:32:21 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:32:21 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TUE.html) 
+
+2005:07:15:16:32:21 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=39964&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2010431%20%20%20%20%20%20440%20Jun%2029%2001:11%20SRP911PCD0001M.TUE) 
+
+2005:07:15:16:32:28 STATUS :: rslt=(200) 
+
+2005:07:15:16:32:28 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TUE.html) 
+
+2005:07:15:16:32:29 STATUS :: #121 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     47309       82 Jun 29 01:23 SRP740PCD0001.TUE) 
+
+2005:07:15:16:32:29 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40285) 
+
+2005:07:15:16:32:29 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:32:29 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:32:29 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21369&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2047309%20%20%20%20%20%20%2082%20Jun%2029%2001:23%20SRP740PCD0001.TUE) 
+
+2005:07:15:16:32:40 STATUS :: rslt=(200) 
+
+2005:07:15:16:32:41 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:32:41 STATUS :: #122 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      5605       82 Jun 29 01:27 SRP720PCD0001.TUE) 
+
+2005:07:15:16:32:41 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=20856) 
+
+2005:07:15:16:32:41 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:32:41 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:32:41 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=15322&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%205605%20%20%20%20%20%20%2082%20Jun%2029%2001:27%20SRP720PCD0001.TUE) 
+
+2005:07:15:16:32:52 STATUS :: rslt=(200) 
+
+2005:07:15:16:32:52 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:32:52 STATUS :: #123 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    106382      421 Jun 29 01:39 SRP739PCD0001.TUE) 
+
+2005:07:15:16:32:52 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=44513) 
+
+2005:07:15:16:32:52 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:32:52 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:32:52 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=25430&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20106382%20%20%20%20%20%20421%20Jun%2029%2001:39%20SRP739PCD0001.TUE) 
+
+2005:07:15:16:33:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:33:04 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:33:04 STATUS :: #124 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     56284       82 Jun 29 02:52 SRP922PCD0001.TUE) 
+
+2005:07:15:16:33:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=12527) 
+
+2005:07:15:16:33:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:33:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:33:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=310&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2056284%20%20%20%20%20%20%2082%20Jun%2029%2002:52%20SRP922PCD0001.TUE) 
+
+2005:07:15:16:33:15 STATUS :: rslt=(200) 
+
+2005:07:15:16:33:17 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:33:22 STATUS :: #125 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     85800     1312 Jun 29 03:17 SRP519PCD0001.TUE) 
+
+2005:07:15:16:33:23 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=48276) 
+
+2005:07:15:16:33:25 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:33:25 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.TUE.html) 
+
+2005:07:15:16:33:25 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22032&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2085800%20%20%20%20%201312%20Jun%2029%2003:17%20SRP519PCD0001.TUE) 
+
+2005:07:15:16:33:32 STATUS :: rslt=(200) 
+
+2005:07:15:16:33:32 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.TUE.html) 
+
+2005:07:15:16:33:32 STATUS :: #126 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    112432   108609 Jun 29 08:02 SRP600PCD0001.TUE) 
+
+2005:07:15:16:33:32 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=33569) 
+
+2005:07:15:16:33:32 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:33:32 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:33:32 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=31931&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20112432%20%20%20108609%20Jun%2029%2008:02%20SRP600PCD0001.TUE) 
+
+2005:07:15:16:33:45 STATUS :: rslt=(200) 
+
+2005:07:15:16:33:46 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:33:46 STATUS :: #127 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      7116      440 Jun 30 01:23 SRP911PCD0001I.WED) 
+
+2005:07:15:16:33:46 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40176) 
+
+2005:07:15:16:33:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:33:47 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.WED.html) 
+
+2005:07:15:16:33:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43019&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%207116%20%20%20%20%20%20440%20Jun%2030%2001:23%20SRP911PCD0001I.WED) 
+
+2005:07:15:16:33:54 STATUS :: rslt=(200) 
+
+2005:07:15:16:33:54 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.WED.html) 
+
+2005:07:15:16:33:55 STATUS :: #128 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    108129      440 Jun 30 01:23 SRP911PCD0001M.WED) 
+
+2005:07:15:16:33:55 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=26045) 
+
+2005:07:15:16:33:55 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:33:55 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.WED.html) 
+
+2005:07:15:16:33:55 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=31336&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20108129%20%20%20%20%20%20440%20Jun%2030%2001:23%20SRP911PCD0001M.WED) 
+
+2005:07:15:16:34:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:34:02 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.WED.html) 
+
+2005:07:15:16:34:02 STATUS :: #129 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     55723       82 Jun 30 01:26 SRP740PCD0001.WED) 
+
+2005:07:15:16:34:02 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=61208) 
+
+2005:07:15:16:34:02 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:34:02 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:34:02 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43075&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2055723%20%20%20%20%20%20%2082%20Jun%2030%2001:26%20SRP740PCD0001.WED) 
+
+2005:07:15:16:34:15 STATUS :: rslt=(200) 
+
+2005:07:15:16:34:16 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:34:16 STATUS :: #130 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     87243       82 Jun 30 01:30 SRP720PCD0001.WED) 
+
+2005:07:15:16:34:16 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=22851) 
+
+2005:07:15:16:34:16 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:34:16 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:34:16 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=53984&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2087243%20%20%20%20%20%20%2082%20Jun%2030%2001:30%20SRP720PCD0001.WED) 
+
+2005:07:15:16:34:29 STATUS :: rslt=(200) 
+
+2005:07:15:16:34:29 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:34:29 STATUS :: #131 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     95475      421 Jun 30 01:41 SRP739PCD0001.WED) 
+
+2005:07:15:16:34:29 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=12672) 
+
+2005:07:15:16:34:29 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:34:29 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:34:29 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=3553&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2095475%20%20%20%20%20%20421%20Jun%2030%2001:41%20SRP739PCD0001.WED) 
+
+2005:07:15:16:34:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:34:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:34:43 STATUS :: #132 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     96052       82 Jun 30 02:50 SRP922PCD0001.WED) 
+
+2005:07:15:16:34:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=49533) 
+
+2005:07:15:16:34:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:34:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:34:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=47402&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2096052%20%20%20%20%20%20%2082%20Jun%2030%2002:50%20SRP922PCD0001.WED) 
+
+2005:07:15:16:34:56 STATUS :: rslt=(200) 
+
+2005:07:15:16:34:56 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:34:56 STATUS :: #133 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    123876      391 Jun 30 03:17 SRP519PCD0001.WED) 
+
+2005:07:15:16:34:56 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=3097) 
+
+2005:07:15:16:34:56 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:34:56 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.WED.html) 
+
+2005:07:15:16:34:56 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=32227&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20123876%20%20%20%20%20%20391%20Jun%2030%2003:17%20SRP519PCD0001.WED) 
+
+2005:07:15:16:35:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:35:04 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.WED.html) 
+
+2005:07:15:16:35:04 STATUS :: #134 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     50749   108609 Jun 30 06:57 SRP600PCD0001.WED) 
+
+2005:07:15:16:35:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=38896) 
+
+2005:07:15:16:35:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:35:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:35:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=10812&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2050749%20%20%20108609%20Jun%2030%2006:57%20SRP600PCD0001.WED) 
+
+2005:07:15:16:35:20 STATUS :: rslt=(200) 
+
+2005:07:15:16:35:20 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:35:21 STATUS :: #135 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    113211       82 Jul 01 01:31 SRP740PCD0001.THU) 
+
+2005:07:15:16:35:21 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=3119) 
+
+2005:07:15:16:35:21 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:35:21 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:35:21 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=41937&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20113211%20%20%20%20%20%20%2082%20Jul%2001%2001:31%20SRP740PCD0001.THU) 
+
+2005:07:15:16:35:33 STATUS :: rslt=(200) 
+
+2005:07:15:16:35:34 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:35:34 STATUS :: #136 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     52779       82 Jul 01 01:35 SRP720PCD0001.THU) 
+
+2005:07:15:16:35:34 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=34492) 
+
+2005:07:15:16:35:34 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:35:34 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:35:34 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=48886&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2052779%20%20%20%20%20%20%2082%20Jul%2001%2001:35%20SRP720PCD0001.THU) 
+
+2005:07:15:16:35:47 STATUS :: rslt=(200) 
+
+2005:07:15:16:35:47 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:35:47 STATUS :: #137 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     46702      440 Jul 01 01:46 SRP911PCD0001M.THU) 
+
+2005:07:15:16:35:47 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=12696) 
+
+2005:07:15:16:35:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:35:47 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.THU.html) 
+
+2005:07:15:16:35:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=34792&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2046702%20%20%20%20%20%20440%20Jul%2001%2001:46%20SRP911PCD0001M.THU) 
+
+2005:07:15:16:35:54 STATUS :: rslt=(200) 
+
+2005:07:15:16:35:55 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.THU.html) 
+
+2005:07:15:16:35:55 STATUS :: #138 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    110782      440 Jul 01 01:46 SRP911PCD0001I.THU) 
+
+2005:07:15:16:35:55 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=48315) 
+
+2005:07:15:16:35:55 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:35:55 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.THU.html) 
+
+2005:07:15:16:35:55 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=30690&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20110782%20%20%20%20%20%20440%20Jul%2001%2001:46%20SRP911PCD0001I.THU) 
+
+2005:07:15:16:36:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:36:02 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.THU.html) 
+
+2005:07:15:16:36:02 STATUS :: #139 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     93281      421 Jul 01 01:47 SRP739PCD0001.THU) 
+
+2005:07:15:16:36:02 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=48799) 
+
+2005:07:15:16:36:02 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:36:02 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:36:02 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59284&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2093281%20%20%20%20%20%20421%20Jul%2001%2001:47%20SRP739PCD0001.THU) 
+
+2005:07:15:16:36:15 STATUS :: rslt=(200) 
+
+2005:07:15:16:36:16 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:36:16 STATUS :: #140 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     74539       82 Jul 01 03:13 SRP922PCD0001.THU) 
+
+2005:07:15:16:36:16 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=34531) 
+
+2005:07:15:16:36:16 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:36:16 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:36:16 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=41562&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2074539%20%20%20%20%20%20%2082%20Jul%2001%2003:13%20SRP922PCD0001.THU) 
+
+2005:07:15:16:36:29 STATUS :: rslt=(200) 
+
+2005:07:15:16:36:29 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:36:29 STATUS :: #141 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      5694      391 Jul 01 03:55 SRP519PCD0001.THU) 
+
+2005:07:15:16:36:29 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=25767) 
+
+2005:07:15:16:36:29 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:36:29 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:36:29 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=17296&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%205694%20%20%20%20%20%20391%20Jul%2001%2003:55%20SRP519PCD0001.THU) 
+
+2005:07:15:16:36:38 STATUS :: rslt=(200) 
+
+2005:07:15:16:36:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:36:39 STATUS :: #142 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    108200   108609 Jul 01 10:11 SRP600PCD0001.THU) 
+
+2005:07:15:16:36:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41077) 
+
+2005:07:15:16:36:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:36:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:36:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=44539&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20108200%20%20%20108609%20Jul%2001%2010:11%20SRP600PCD0001.THU) 
+
+2005:07:15:16:36:55 STATUS :: rslt=(200) 
+
+2005:07:15:16:36:55 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:36:55 STATUS :: #143 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    108725      440 Jul 02 01:05 SRP911PCD0001M.FRI) 
+
+2005:07:15:16:36:55 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=57162) 
+
+2005:07:15:16:36:56 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:36:56 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.FRI.html) 
+
+2005:07:15:16:36:56 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=60055&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20108725%20%20%20%20%20%20440%20Jul%2002%2001:05%20SRP911PCD0001M.FRI) 
+
+2005:07:15:16:37:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:37:03 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.FRI.html) 
+
+2005:07:15:16:37:04 STATUS :: #144 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    122021      440 Jul 02 01:05 SRP911PCD0001I.FRI) 
+
+2005:07:15:16:37:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=65187) 
+
+2005:07:15:16:37:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:37:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.FRI.html) 
+
+2005:07:15:16:37:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=4753&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20122021%20%20%20%20%20%20440%20Jul%2002%2001:05%20SRP911PCD0001I.FRI) 
+
+2005:07:15:16:37:10 STATUS :: rslt=(200) 
+
+2005:07:15:16:37:11 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.FRI.html) 
+
+2005:07:15:16:37:11 STATUS :: #145 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    115470       82 Jul 02 01:12 SRP740PCD0001.FRI) 
+
+2005:07:15:16:37:11 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=19477) 
+
+2005:07:15:16:37:11 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:37:11 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:37:11 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=26605&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20115470%20%20%20%20%20%20%2082%20Jul%2002%2001:12%20SRP740PCD0001.FRI) 
+
+2005:07:15:16:37:22 STATUS :: rslt=(200) 
+
+2005:07:15:16:37:22 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:37:22 STATUS :: #146 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     77760       82 Jul 02 01:16 SRP720PCD0001.FRI) 
+
+2005:07:15:16:37:22 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=37954) 
+
+2005:07:15:16:37:22 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:37:22 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:37:22 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43456&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2077760%20%20%20%20%20%20%2082%20Jul%2002%2001:16%20SRP720PCD0001.FRI) 
+
+2005:07:15:16:37:33 STATUS :: rslt=(200) 
+
+2005:07:15:16:37:34 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:37:34 STATUS :: #147 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     60169    18290 Jul 02 01:28 SRP739PCD0001.FRI) 
+
+2005:07:15:16:37:34 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=50761) 
+
+2005:07:15:16:37:34 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:37:34 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:37:34 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22361&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2060169%20%20%20%2018290%20Jul%2002%2001:28%20SRP739PCD0001.FRI) 
+
+2005:07:15:16:37:45 STATUS :: rslt=(200) 
+
+2005:07:15:16:37:46 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:37:46 STATUS :: #148 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     84788       82 Jul 02 02:01 SRP922PCD0001.FRI) 
+
+2005:07:15:16:37:46 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41155) 
+
+2005:07:15:16:37:46 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:37:46 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:37:46 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=48541&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2084788%20%20%20%20%20%20%2082%20Jul%2002%2002:01%20SRP922PCD0001.FRI) 
+
+2005:07:15:16:37:57 STATUS :: rslt=(200) 
+
+2005:07:15:16:37:57 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:37:57 STATUS :: #149 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     63557      391 Jul 02 02:30 SRP519PCD0001.FRI) 
+
+2005:07:15:16:37:57 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=63818) 
+
+2005:07:15:16:37:57 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:37:57 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.FRI.html) 
+
+2005:07:15:16:37:57 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19187&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2063557%20%20%20%20%20%20391%20Jul%2002%2002:30%20SRP519PCD0001.FRI) 
+
+2005:07:15:16:38:04 STATUS :: rslt=(200) 
+
+2005:07:15:16:38:05 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.FRI.html) 
+
+2005:07:15:16:38:05 STATUS :: #150 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     59807   108609 Jul 02 03:50 SRP600PCD0001.FRI) 
+
+2005:07:15:16:38:05 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=30550) 
+
+2005:07:15:16:38:05 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:38:05 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:38:05 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=44592&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2059807%20%20%20108609%20Jul%2002%2003:50%20SRP600PCD0001.FRI) 
+
+2005:07:15:16:38:18 STATUS :: rslt=(200) 
+
+2005:07:15:16:38:19 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:38:19 STATUS :: #151 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     16215      440 Jul 03 00:46 SRP911PCD0001I.SAT) 
+
+2005:07:15:16:38:19 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40074) 
+
+2005:07:15:16:38:19 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:38:19 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:38:19 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59437&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2016215%20%20%20%20%20%20440%20Jul%2003%2000:46%20SRP911PCD0001I.SAT) 
+
+2005:07:15:16:38:28 STATUS :: rslt=(200) 
+
+2005:07:15:16:38:28 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:38:28 STATUS :: #152 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     47840      440 Jul 03 00:46 SRP911PCD0001M.SAT) 
+
+2005:07:15:16:38:28 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=50792) 
+
+2005:07:15:16:38:28 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:38:28 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:38:28 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=31670&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2047840%20%20%20%20%20%20440%20Jul%2003%2000:46%20SRP911PCD0001M.SAT) 
+
+2005:07:15:16:38:37 STATUS :: rslt=(200) 
+
+2005:07:15:16:38:37 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:38:38 STATUS :: #153 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     29920      440 Jul 03 00:47 SRP911PCD0001M.SAT) 
+
+2005:07:15:16:38:38 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=16989) 
+
+2005:07:15:16:38:38 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:38:38 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:38:38 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=39150&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2029920%20%20%20%20%20%20440%20Jul%2003%2000:47%20SRP911PCD0001M.SAT) 
+
+2005:07:15:16:38:46 STATUS :: rslt=(200) 
+
+2005:07:15:16:38:47 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:38:47 STATUS :: #154 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    113735      440 Jul 03 00:47 SRP911PCD0001I.SAT) 
+
+2005:07:15:16:38:47 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14897) 
+
+2005:07:15:16:38:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:38:47 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:38:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59069&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20113735%20%20%20%20%20%20440%20Jul%2003%2000:47%20SRP911PCD0001I.SAT) 
+
+2005:07:15:16:38:56 STATUS :: rslt=(200) 
+
+2005:07:15:16:38:56 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:38:56 STATUS :: #155 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     71653       82 Jul 03 00:51 SRP740PCD0001.SAT) 
+
+2005:07:15:16:38:56 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=38322) 
+
+2005:07:15:16:38:56 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:38:56 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:38:56 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=29532&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2071653%20%20%20%20%20%20%2082%20Jul%2003%2000:51%20SRP740PCD0001.SAT) 
+
+2005:07:15:16:39:07 STATUS :: rslt=(200) 
+
+2005:07:15:16:39:08 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:39:08 STATUS :: #156 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     16800       82 Jul 03 00:52 SRP720PCD0001.SAT) 
+
+2005:07:15:16:39:08 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=63824) 
+
+2005:07:15:16:39:09 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:39:09 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:39:09 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27669&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2016800%20%20%20%20%20%20%2082%20Jul%2003%2000:52%20SRP720PCD0001.SAT) 
+
+2005:07:15:16:39:19 STATUS :: rslt=(200) 
+
+2005:07:15:16:39:20 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:39:20 STATUS :: #157 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     69681      421 Jul 03 01:03 SRP739PCD0001.SAT) 
+
+2005:07:15:16:39:20 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=11341) 
+
+2005:07:15:16:39:20 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:39:20 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:39:20 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=2763&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2069681%20%20%20%20%20%20421%20Jul%2003%2001:03%20SRP739PCD0001.SAT) 
+
+2005:07:15:16:39:31 STATUS :: rslt=(200) 
+
+2005:07:15:16:39:31 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:39:31 STATUS :: #158 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     12192       82 Jul 03 01:33 SRP922PCD0001.SAT) 
+
+2005:07:15:16:39:31 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=63408) 
+
+2005:07:15:16:39:32 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:39:32 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:39:32 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=14291&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2012192%20%20%20%20%20%20%2082%20Jul%2003%2001:33%20SRP922PCD0001.SAT) 
+
+2005:07:15:16:39:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:39:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:39:43 STATUS :: #159 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     13244      391 Jul 03 02:06 SRP519PCD0001.SAT) 
+
+2005:07:15:16:39:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=44768) 
+
+2005:07:15:16:39:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:39:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.SAT.html) 
+
+2005:07:15:16:39:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21789&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2013244%20%20%20%20%20%20391%20Jul%2003%2002:06%20SRP519PCD0001.SAT) 
+
+2005:07:15:16:39:50 STATUS :: rslt=(200) 
+
+2005:07:15:16:39:50 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.SAT.html) 
+
+2005:07:15:16:39:50 STATUS :: #160 : remote_srcfile=(/US112544/-AR-EM----TCP A mailbox     87090    79335 Jul 03 03:25 SRP600PCD0001.SAT) 
+
+2005:07:15:16:39:51 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=38056) 
+
+2005:07:15:16:39:51 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:39:51 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:39:51 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=15251&filename=/US112544/-AR-EM----TCP%20A%20mailbox%20%20%20%20%2087090%20%20%20%2079335%20Jul%2003%2003:25%20SRP600PCD0001.SAT) 
+
+2005:07:15:16:40:04 STATUS :: rslt=(200) 
+
+2005:07:15:16:40:04 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:40:04 STATUS :: #161 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     89848      440 Jul 06 00:51 SRP911PCD0001I.TUE) 
+
+2005:07:15:16:40:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14873) 
+
+2005:07:15:16:40:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:40:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TUE.html) 
+
+2005:07:15:16:40:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=13318&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2089848%20%20%20%20%20%20440%20Jul%2006%2000:51%20SRP911PCD0001I.TUE) 
+
+2005:07:15:16:40:11 STATUS :: rslt=(200) 
+
+2005:07:15:16:40:11 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TUE.html) 
+
+2005:07:15:16:40:11 STATUS :: #162 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     32473      440 Jul 06 00:51 SRP911PCD0001M.TUE) 
+
+2005:07:15:16:40:11 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=27630) 
+
+2005:07:15:16:40:12 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:40:12 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TUE.html) 
+
+2005:07:15:16:40:12 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=15347&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2032473%20%20%20%20%20%20440%20Jul%2006%2000:51%20SRP911PCD0001M.TUE) 
+
+2005:07:15:16:40:19 STATUS :: rslt=(200) 
+
+2005:07:15:16:40:20 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TUE.html) 
+
+2005:07:15:16:40:20 STATUS :: #163 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     74554       82 Jul 06 00:56 SRP740PCD0001.TUE) 
+
+2005:07:15:16:40:20 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=59804) 
+
+2005:07:15:16:40:20 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:40:20 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:40:20 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=52675&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2074554%20%20%20%20%20%20%2082%20Jul%2006%2000:56%20SRP740PCD0001.TUE) 
+
+2005:07:15:16:40:31 STATUS :: rslt=(200) 
+
+2005:07:15:16:40:31 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:40:31 STATUS :: #164 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    110968       82 Jul 06 00:59 SRP720PCD0001.TUE) 
+
+2005:07:15:16:40:32 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40435) 
+
+2005:07:15:16:40:32 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:40:32 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:40:32 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=10398&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20110968%20%20%20%20%20%20%2082%20Jul%2006%2000:59%20SRP720PCD0001.TUE) 
+
+2005:07:15:16:40:43 STATUS :: rslt=(200) 
+
+2005:07:15:16:40:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:40:43 STATUS :: #165 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     82893      882 Jul 06 01:02 SRP739PCD0001.TUE) 
+
+2005:07:15:16:40:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=18858) 
+
+2005:07:15:16:40:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:40:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:40:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=55881&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2082893%20%20%20%20%20%20882%20Jul%2006%2001:02%20SRP739PCD0001.TUE) 
+
+2005:07:15:16:40:54 STATUS :: rslt=(200) 
+
+2005:07:15:16:40:55 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:40:55 STATUS :: #166 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    100604       82 Jul 06 02:32 SRP922PCD0001.TUE) 
+
+2005:07:15:16:40:55 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=53150) 
+
+2005:07:15:16:40:55 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:40:55 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:40:55 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=47032&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20100604%20%20%20%20%20%20%2082%20Jul%2006%2002:32%20SRP922PCD0001.TUE) 
+
+2005:07:15:16:41:06 STATUS :: rslt=(200) 
+
+2005:07:15:16:41:06 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:41:07 STATUS :: #167 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     16181      391 Jul 06 02:51 SRP519PCD0001.TUE) 
+
+2005:07:15:16:41:07 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=6017) 
+
+2005:07:15:16:41:07 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:41:07 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.TUE.html) 
+
+2005:07:15:16:41:07 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=9538&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2016181%20%20%20%20%20%20391%20Jul%2006%2002:51%20SRP519PCD0001.TUE) 
+
+2005:07:15:16:41:13 STATUS :: rslt=(200) 
+
+2005:07:15:16:41:14 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.TUE.html) 
+
+2005:07:15:16:41:14 STATUS :: #168 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     43303    79335 Jul 06 04:37 SRP600PCD0001.TUE) 
+
+2005:07:15:16:41:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=35887) 
+
+2005:07:15:16:41:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:41:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:41:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=23542&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2043303%20%20%20%2079335%20Jul%2006%2004:37%20SRP600PCD0001.TUE) 
+
+2005:07:15:16:41:29 STATUS :: rslt=(200) 
+
+2005:07:15:16:41:29 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:41:29 STATUS :: #169 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     66069       82 Jul 07 01:11 SRP740PCD0001.WED) 
+
+2005:07:15:16:41:29 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=24058) 
+
+2005:07:15:16:41:29 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:41:29 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:41:29 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19075&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2066069%20%20%20%20%20%20%2082%20Jul%2007%2001:11%20SRP740PCD0001.WED) 
+
+2005:07:15:16:41:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:41:42 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:41:42 STATUS :: #170 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    106462      440 Jul 07 01:12 SRP911PCD0001M.WED) 
+
+2005:07:15:16:41:42 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=21937) 
+
+2005:07:15:16:41:42 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:41:42 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.WED.html) 
+
+2005:07:15:16:41:42 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=45898&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20106462%20%20%20%20%20%20440%20Jul%2007%2001:12%20SRP911PCD0001M.WED) 
+
+2005:07:15:16:41:49 STATUS :: rslt=(200) 
+
+2005:07:15:16:41:49 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.WED.html) 
+
+2005:07:15:16:41:49 STATUS :: #171 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     11913      440 Jul 07 01:12 SRP911PCD0001I.WED) 
+
+2005:07:15:16:41:49 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14484) 
+
+2005:07:15:16:41:49 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:41:49 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.WED.html) 
+
+2005:07:15:16:41:49 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=4706&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2011913%20%20%20%20%20%20440%20Jul%2007%2001:12%20SRP911PCD0001I.WED) 
+
+2005:07:15:16:41:57 STATUS :: rslt=(200) 
+
+2005:07:15:16:41:58 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.WED.html) 
+
+2005:07:15:16:41:58 STATUS :: #172 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      6290       82 Jul 07 01:16 SRP720PCD0001.WED) 
+
+2005:07:15:16:41:58 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=10438) 
+
+2005:07:15:16:41:58 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:41:58 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:41:58 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=41060&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%206290%20%20%20%20%20%20%2082%20Jul%2007%2001:16%20SRP720PCD0001.WED) 
+
+2005:07:15:16:42:11 STATUS :: rslt=(200) 
+
+2005:07:15:16:42:11 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:42:12 STATUS :: #173 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    104669      882 Jul 07 01:24 SRP739PCD0001.WED) 
+
+2005:07:15:16:42:12 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=46998) 
+
+2005:07:15:16:42:12 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:42:12 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:42:12 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=56203&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20104669%20%20%20%20%20%20882%20Jul%2007%2001:24%20SRP739PCD0001.WED) 
+
+2005:07:15:16:42:24 STATUS :: rslt=(200) 
+
+2005:07:15:16:42:25 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:42:25 STATUS :: #174 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     94566       82 Jul 07 02:36 SRP922PCD0001.WED) 
+
+2005:07:15:16:42:25 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=17344) 
+
+2005:07:15:16:42:25 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:42:25 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:42:25 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=9205&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2094566%20%20%20%20%20%20%2082%20Jul%2007%2002:36%20SRP922PCD0001.WED) 
+
+2005:07:15:16:42:38 STATUS :: rslt=(200) 
+
+2005:07:15:16:42:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:42:39 STATUS :: #175 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    123906      391 Jul 07 02:57 SRP519PCD0001.WED) 
+
+2005:07:15:16:42:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=52198) 
+
+2005:07:15:16:42:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:42:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.WED.html) 
+
+2005:07:15:16:42:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=48738&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20123906%20%20%20%20%20%20391%20Jul%2007%2002:57%20SRP519PCD0001.WED) 
+
+2005:07:15:16:42:46 STATUS :: rslt=(200) 
+
+2005:07:15:16:42:46 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.WED.html) 
+
+2005:07:15:16:42:46 STATUS :: #176 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     81554    79335 Jul 07 05:06 SRP600PCD0001.WED) 
+
+2005:07:15:16:42:46 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=62626) 
+
+2005:07:15:16:42:46 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:42:46 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:42:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=44048&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2081554%20%20%20%2079335%20Jul%2007%2005:06%20SRP600PCD0001.WED) 
+
+2005:07:15:16:43:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:43:03 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:43:03 STATUS :: #177 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    100121      440 Jul 08 00:48 SRP911PCD0001M.THU) 
+
+2005:07:15:16:43:03 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=38507) 
+
+2005:07:15:16:43:03 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:43:03 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.THU.html) 
+
+2005:07:15:16:43:03 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=31054&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20100121%20%20%20%20%20%20440%20Jul%2008%2000:48%20SRP911PCD0001M.THU) 
+
+2005:07:15:16:43:10 STATUS :: rslt=(200) 
+
+2005:07:15:16:43:11 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.THU.html) 
+
+2005:07:15:16:43:11 STATUS :: #178 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     59735      440 Jul 08 00:48 SRP911PCD0001I.THU) 
+
+2005:07:15:16:43:11 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=56652) 
+
+2005:07:15:16:43:11 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:43:11 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.THU.html) 
+
+2005:07:15:16:43:11 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27055&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2059735%20%20%20%20%20%20440%20Jul%2008%2000:48%20SRP911PCD0001I.THU) 
+
+2005:07:15:16:43:17 STATUS :: rslt=(200) 
+
+2005:07:15:16:43:18 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.THU.html) 
+
+2005:07:15:16:43:18 STATUS :: #179 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      5719       82 Jul 08 01:03 SRP740PCD0001.THU) 
+
+2005:07:15:16:43:18 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41895) 
+
+2005:07:15:16:43:18 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:43:18 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:43:18 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27548&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%205719%20%20%20%20%20%20%2082%20Jul%2008%2001:03%20SRP740PCD0001.THU) 
+
+2005:07:15:16:43:31 STATUS :: rslt=(200) 
+
+2005:07:15:16:43:31 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:43:31 STATUS :: #180 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    101958     3744 Jul 08 01:07 SRP720PCD0001.THU) 
+
+2005:07:15:16:43:31 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=38589) 
+
+2005:07:15:16:43:31 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:43:31 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:43:31 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=54009&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20101958%20%20%20%20%203744%20Jul%2008%2001:07%20SRP720PCD0001.THU) 
+
+2005:07:15:16:43:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:43:45 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:43:45 STATUS :: #181 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     95393     3602 Jul 08 01:29 SRP739PCD0001.THU) 
+
+2005:07:15:16:43:45 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=34790) 
+
+2005:07:15:16:43:45 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:43:45 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:43:45 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43081&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2095393%20%20%20%20%203602%20Jul%2008%2001:29%20SRP739PCD0001.THU) 
+
+2005:07:15:16:44:00 STATUS :: rslt=(200) 
+
+2005:07:15:16:44:00 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:44:01 STATUS :: #182 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     53965       82 Jul 08 02:54 SRP922PCD0001.THU) 
+
+2005:07:15:16:44:01 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=35228) 
+
+2005:07:15:16:44:01 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:44:01 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:44:01 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=4552&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2053965%20%20%20%20%20%20%2082%20Jul%2008%2002:54%20SRP922PCD0001.THU) 
+
+2005:07:15:16:44:14 STATUS :: rslt=(200) 
+
+2005:07:15:16:44:14 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:44:14 STATUS :: #183 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     22816      810 Jul 08 03:12 SRP519PCD0001.THU) 
+
+2005:07:15:16:44:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=47097) 
+
+2005:07:15:16:44:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:44:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:44:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=1867&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2022816%20%20%20%20%20%20810%20Jul%2008%2003:12%20SRP519PCD0001.THU) 
+
+2005:07:15:16:44:23 STATUS :: rslt=(200) 
+
+2005:07:15:16:44:23 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:44:23 STATUS :: #184 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     79432    79335 Jul 08 05:04 SRP600PCD0001.THU) 
+
+2005:07:15:16:44:23 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=18720) 
+
+2005:07:15:16:44:23 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:44:23 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:44:23 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=48147&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2079432%20%20%20%2079335%20Jul%2008%2005:04%20SRP600PCD0001.THU) 
+
+2005:07:15:16:44:38 STATUS :: rslt=(200) 
+
+2005:07:15:16:44:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:44:39 STATUS :: #185 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     97708      440 Jul 09 00:51 SRP911PCD0001I.FRI) 
+
+2005:07:15:16:44:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=2136) 
+
+2005:07:15:16:44:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:44:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.FRI.html) 
+
+2005:07:15:16:44:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=42732&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2097708%20%20%20%20%20%20440%20Jul%2009%2000:51%20SRP911PCD0001I.FRI) 
+
+2005:07:15:16:44:46 STATUS :: rslt=(200) 
+
+2005:07:15:16:44:46 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.FRI.html) 
+
+2005:07:15:16:44:47 STATUS :: #186 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     36381      440 Jul 09 00:51 SRP911PCD0001M.FRI) 
+
+2005:07:15:16:44:47 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=52405) 
+
+2005:07:15:16:44:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:44:47 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.FRI.html) 
+
+2005:07:15:16:44:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=13634&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2036381%20%20%20%20%20%20440%20Jul%2009%2000:51%20SRP911PCD0001M.FRI) 
+
+2005:07:15:16:44:54 STATUS :: rslt=(200) 
+
+2005:07:15:16:44:54 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.FRI.html) 
+
+2005:07:15:16:44:54 STATUS :: #187 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox       596       82 Jul 09 01:22 SRP740PCD0001.FRI) 
+
+2005:07:15:16:44:54 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=5826) 
+
+2005:07:15:16:44:54 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:44:54 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:44:54 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=35258&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%20%20596%20%20%20%20%20%20%2082%20Jul%2009%2001:22%20SRP740PCD0001.FRI) 
+
+2005:07:15:16:45:05 STATUS :: rslt=(200) 
+
+2005:07:15:16:45:05 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.FRI.html) 
+
+2005:07:15:16:45:05 STATUS :: #188 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    103356     2340 Jul 09 01:29 SRP720PCD0001.FRI) 
+
+2005:07:15:16:45:05 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=15616) 
+
+2005:07:15:16:45:05 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:45:05 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:45:05 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=26016&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20103356%20%20%20%20%202340%20Jul%2009%2001:29%20SRP720PCD0001.FRI) 
+
+2005:07:15:16:45:17 STATUS :: rslt=(200) 
+
+2005:07:15:16:45:17 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.FRI.html) 
+
+2005:07:15:16:45:17 STATUS :: #189 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     88059    73234 Jul 09 01:33 SRP739PCD0001.FRI) 
+
+2005:07:15:16:45:17 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=57598) 
+
+2005:07:15:16:45:17 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:45:17 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:45:17 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=16222&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2088059%20%20%20%2073234%20Jul%2009%2001:33%20SRP739PCD0001.FRI) 
+
+2005:07:15:16:45:29 STATUS :: rslt=(200) 
+
+2005:07:15:16:45:29 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.FRI.html) 
+
+2005:07:15:16:45:29 STATUS :: #190 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     48440       82 Jul 09 02:03 SRP922PCD0001.FRI) 
+
+2005:07:15:16:45:29 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41412) 
+
+2005:07:15:16:45:29 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:45:29 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:45:30 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=24453&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2048440%20%20%20%20%20%20%2082%20Jul%2009%2002:03%20SRP922PCD0001.FRI) 
+
+2005:07:15:16:45:40 STATUS :: rslt=(200) 
+
+2005:07:15:16:45:41 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.FRI.html) 
+
+2005:07:15:16:45:41 STATUS :: #191 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     67808     1061 Jul 09 02:34 SRP519PCD0001.FRI) 
+
+2005:07:15:16:45:41 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=55729) 
+
+2005:07:15:16:45:41 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:45:41 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.FRI.html) 
+
+2005:07:15:16:45:41 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=49498&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2067808%20%20%20%20%201061%20Jul%2009%2002:34%20SRP519PCD0001.FRI) 
+
+2005:07:15:16:45:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:45:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.FRI.html) 
+
+2005:07:15:16:45:48 STATUS :: #192 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     77514    79333 Jul 09 03:48 SRP600PCD0001.FRI) 
+
+2005:07:15:16:45:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=58320) 
+
+2005:07:15:16:45:48 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:45:48 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:45:48 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=55375&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2077514%20%20%20%2079333%20Jul%2009%2003:48%20SRP600PCD0001.FRI) 
+
+2005:07:15:16:46:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:46:03 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.FRI.html) 
+
+2005:07:15:16:46:03 STATUS :: #193 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     26436       82 Jul 10 04:49 SRP740PCD0001.SAT) 
+
+2005:07:15:16:46:03 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=35424) 
+
+2005:07:15:16:46:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:46:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:46:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=23199&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2026436%20%20%20%20%20%20%2082%20Jul%2010%2004:49%20SRP740PCD0001.SAT) 
+
+2005:07:15:16:46:14 STATUS :: rslt=(200) 
+
+2005:07:15:16:46:15 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.SAT.html) 
+
+2005:07:15:16:46:15 STATUS :: #194 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     20940       82 Jul 10 04:50 SRP720PCD0001.SAT) 
+
+2005:07:15:16:46:15 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=22961) 
+
+2005:07:15:16:46:15 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:46:15 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:46:15 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=48801&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2020940%20%20%20%20%20%20%2082%20Jul%2010%2004:50%20SRP720PCD0001.SAT) 
+
+2005:07:15:16:46:26 STATUS :: rslt=(200) 
+
+2005:07:15:16:46:27 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.SAT.html) 
+
+2005:07:15:16:46:28 STATUS :: #195 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     92055     2514 Jul 10 04:52 SRP739PCD0001.SAT) 
+
+2005:07:15:16:46:28 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=18845) 
+
+2005:07:15:16:46:29 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:46:29 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:46:29 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22525&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2092055%20%20%20%20%202514%20Jul%2010%2004:52%20SRP739PCD0001.SAT) 
+
+2005:07:15:16:46:41 STATUS :: rslt=(200) 
+
+2005:07:15:16:46:41 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.SAT.html) 
+
+2005:07:15:16:46:42 STATUS :: #196 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     56576      440 Jul 10 05:21 SRP911PCD0001I.SAT) 
+
+2005:07:15:16:46:42 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=13282) 
+
+2005:07:15:16:46:42 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:46:42 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:46:42 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=10820&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2056576%20%20%20%20%20%20440%20Jul%2010%2005:21%20SRP911PCD0001I.SAT) 
+
+2005:07:15:16:46:52 STATUS :: rslt=(200) 
+
+2005:07:15:16:46:52 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.SAT.html) 
+
+2005:07:15:16:46:52 STATUS :: #197 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     13642      440 Jul 10 05:21 SRP911PCD0001M.SAT) 
+
+2005:07:15:16:46:52 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=59526) 
+
+2005:07:15:16:46:53 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:46:53 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:46:53 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=48822&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2013642%20%20%20%20%20%20440%20Jul%2010%2005:21%20SRP911PCD0001M.SAT) 
+
+2005:07:15:16:47:01 STATUS :: rslt=(200) 
+
+2005:07:15:16:47:02 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.SAT.html) 
+
+2005:07:15:16:47:02 STATUS :: #198 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     87701       82 Jul 10 05:21 SRP922PCD0001.SAT) 
+
+2005:07:15:16:47:02 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=25910) 
+
+2005:07:15:16:47:02 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:47:02 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:47:02 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=15016&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2087701%20%20%20%20%20%20%2082%20Jul%2010%2005:21%20SRP922PCD0001.SAT) 
+
+2005:07:15:16:47:13 STATUS :: rslt=(200) 
+
+2005:07:15:16:47:13 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.SAT.html) 
+
+2005:07:15:16:47:13 STATUS :: #199 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      6546      391 Jul 10 06:06 SRP519PCD0001.SAT) 
+
+2005:07:15:16:47:13 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=32347) 
+
+2005:07:15:16:47:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:47:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.SAT.html) 
+
+2005:07:15:16:47:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=65232&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%206546%20%20%20%20%20%20391%20Jul%2010%2006:06%20SRP519PCD0001.SAT) 
+
+2005:07:15:16:47:20 STATUS :: rslt=(200) 
+
+2005:07:15:16:47:21 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.SAT.html) 
+
+2005:07:15:16:47:21 STATUS :: #200 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     67125    79046 Jul 10 06:57 SRP600PCD0001.SAT) 
+
+2005:07:15:16:47:21 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41716) 
+
+2005:07:15:16:47:21 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:47:21 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:47:21 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=14855&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2067125%20%20%20%2079046%20Jul%2010%2006:57%20SRP600PCD0001.SAT) 
+
+2005:07:15:16:47:34 STATUS :: rslt=(200) 
+
+2005:07:15:16:47:34 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.SAT.html) 
+
+2005:07:15:16:47:34 STATUS :: #201 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    122203      440 Jul 12 00:55 SRP911PCD0001M.MON) 
+
+2005:07:15:16:47:34 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=38434) 
+
+2005:07:15:16:47:34 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:47:34 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.MON.html) 
+
+2005:07:15:16:47:34 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=45579&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20122203%20%20%20%20%20%20440%20Jul%2012%2000:55%20SRP911PCD0001M.MON) 
+
+2005:07:15:16:47:39 STATUS :: rslt=(200) 
+
+2005:07:15:16:47:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.MON.html) 
+
+2005:07:15:16:47:39 STATUS :: #202 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     16674      440 Jul 12 00:55 SRP911PCD0001I.MON) 
+
+2005:07:15:16:47:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=44228) 
+
+2005:07:15:16:47:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:47:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.MON.html) 
+
+2005:07:15:16:47:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=35275&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2016674%20%20%20%20%20%20440%20Jul%2012%2000:55%20SRP911PCD0001I.MON) 
+
+2005:07:15:16:47:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:47:45 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.MON.html) 
+
+2005:07:15:16:47:45 STATUS :: #203 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     41203       82 Jul 12 01:09 SRP740PCD0001.MON) 
+
+2005:07:15:16:47:45 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=65200) 
+
+2005:07:15:16:47:45 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:47:45 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:47:45 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=44063&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2041203%20%20%20%20%20%20%2082%20Jul%2012%2001:09%20SRP740PCD0001.MON) 
+
+2005:07:15:16:47:54 STATUS :: rslt=(200) 
+
+2005:07:15:16:47:54 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.MON.html) 
+
+2005:07:15:16:47:54 STATUS :: #204 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    106173     2028 Jul 12 01:14 SRP720PCD0001.MON) 
+
+2005:07:15:16:47:54 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=1197) 
+
+2005:07:15:16:47:54 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:47:55 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:47:55 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=30688&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20106173%20%20%20%20%202028%20Jul%2012%2001:14%20SRP720PCD0001.MON) 
+
+2005:07:15:16:48:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:48:04 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.MON.html) 
+
+2005:07:15:16:48:04 STATUS :: #205 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    122591    10946 Jul 12 01:22 SRP739PCD0001.MON) 
+
+2005:07:15:16:48:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=56394) 
+
+2005:07:15:16:48:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:48:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:48:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=19818&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20122591%20%20%20%2010946%20Jul%2012%2001:22%20SRP739PCD0001.MON) 
+
+2005:07:15:16:48:12 STATUS :: rslt=(200) 
+
+2005:07:15:16:48:13 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.MON.html) 
+
+2005:07:15:16:48:13 STATUS :: #206 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    104784       82 Jul 12 03:16 SRP922PCD0001.MON) 
+
+2005:07:15:16:48:13 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=22350) 
+
+2005:07:15:16:48:13 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:48:13 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:48:13 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=5906&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20104784%20%20%20%20%20%20%2082%20Jul%2012%2003:16%20SRP922PCD0001.MON) 
+
+2005:07:15:16:48:22 STATUS :: rslt=(200) 
+
+2005:07:15:16:48:22 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.MON.html) 
+
+2005:07:15:16:48:22 STATUS :: #207 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox       317      391 Jul 12 03:35 SRP519PCD0001.MON) 
+
+2005:07:15:16:48:22 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=31005) 
+
+2005:07:15:16:48:23 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:48:23 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.MON.html) 
+
+2005:07:15:16:48:23 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=59395&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%20%20317%20%20%20%20%20%20391%20Jul%2012%2003:35%20SRP519PCD0001.MON) 
+
+2005:07:15:16:48:27 STATUS :: rslt=(200) 
+
+2005:07:15:16:48:28 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.MON.html) 
+
+2005:07:15:16:48:28 STATUS :: #208 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    101801    85936 Jul 12 05:28 SRP600PCD0001.MON) 
+
+2005:07:15:16:48:28 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=46064) 
+
+2005:07:15:16:48:28 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:48:28 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:48:28 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=46812&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20101801%20%20%20%2085936%20Jul%2012%2005:28%20SRP600PCD0001.MON) 
+
+2005:07:15:16:48:38 STATUS :: rslt=(200) 
+
+2005:07:15:16:48:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.MON.html) 
+
+2005:07:15:16:48:39 STATUS :: #209 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     79292      440 Jul 13 01:24 SRP911PCD0001I.TUE) 
+
+2005:07:15:16:48:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=45027) 
+
+2005:07:15:16:48:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:48:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.TUE.html) 
+
+2005:07:15:16:48:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=1433&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2079292%20%20%20%20%20%20440%20Jul%2013%2001:24%20SRP911PCD0001I.TUE) 
+
+2005:07:15:16:48:46 STATUS :: rslt=(200) 
+
+2005:07:15:16:48:46 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.TUE.html) 
+
+2005:07:15:16:48:46 STATUS :: #210 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     43660      440 Jul 13 01:24 SRP911PCD0001M.TUE) 
+
+2005:07:15:16:48:46 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=49660) 
+
+2005:07:15:16:48:46 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:48:46 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.TUE.html) 
+
+2005:07:15:16:48:46 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=62068&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2043660%20%20%20%20%20%20440%20Jul%2013%2001:24%20SRP911PCD0001M.TUE) 
+
+2005:07:15:16:48:53 STATUS :: rslt=(200) 
+
+2005:07:15:16:48:53 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.TUE.html) 
+
+2005:07:15:16:48:54 STATUS :: #211 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      2222       82 Jul 13 01:25 SRP740PCD0001.TUE) 
+
+2005:07:15:16:48:54 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=48349) 
+
+2005:07:15:16:48:54 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:48:54 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:48:54 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=20045&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%202222%20%20%20%20%20%20%2082%20Jul%2013%2001:25%20SRP740PCD0001.TUE) 
+
+2005:07:15:16:49:05 STATUS :: rslt=(200) 
+
+2005:07:15:16:49:05 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.TUE.html) 
+
+2005:07:15:16:49:05 STATUS :: #212 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     54734      156 Jul 13 01:28 SRP720PCD0001.TUE) 
+
+2005:07:15:16:49:05 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=31676) 
+
+2005:07:15:16:49:05 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:49:05 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:49:05 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=10338&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2054734%20%20%20%20%20%20156%20Jul%2013%2001:28%20SRP720PCD0001.TUE) 
+
+2005:07:15:16:49:16 STATUS :: rslt=(200) 
+
+2005:07:15:16:49:16 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.TUE.html) 
+
+2005:07:15:16:49:16 STATUS :: #213 : remote_srcfile=(/US112544/-AR-EM----TCP A mailbox    116010    24146 Jul 13 01:36 SRP739PCD0001.TUE) 
+
+2005:07:15:16:49:16 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=39353) 
+
+2005:07:15:16:49:16 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:49:16 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:49:16 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=42974&filename=/US112544/-AR-EM----TCP%20A%20mailbox%20%20%20%20116010%20%20%20%2024146%20Jul%2013%2001:36%20SRP739PCD0001.TUE) 
+
+2005:07:15:16:49:27 STATUS :: rslt=(200) 
+
+2005:07:15:16:49:27 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.TUE.html) 
+
+2005:07:15:16:49:27 STATUS :: #214 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    107867     2420 Jul 13 02:23 SRP922PCD0001.TUE) 
+
+2005:07:15:16:49:27 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=57571) 
+
+2005:07:15:16:49:27 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:49:27 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:49:27 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=10324&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20107867%20%20%20%20%202420%20Jul%2013%2002:23%20SRP922PCD0001.TUE) 
+
+2005:07:15:16:49:38 STATUS :: rslt=(200) 
+
+2005:07:15:16:49:39 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.TUE.html) 
+
+2005:07:15:16:49:39 STATUS :: #215 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    130922      391 Jul 13 02:47 SRP519PCD0001.TUE) 
+
+2005:07:15:16:49:39 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=17165) 
+
+2005:07:15:16:49:39 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:49:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.TUE.html) 
+
+2005:07:15:16:49:39 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=45643&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20130922%20%20%20%20%20%20391%20Jul%2013%2002:47%20SRP519PCD0001.TUE) 
+
+2005:07:15:16:49:46 STATUS :: rslt=(200) 
+
+2005:07:15:16:49:47 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.TUE.html) 
+
+2005:07:15:16:49:47 STATUS :: #216 : remote_srcfile=(/US112544/-AR-EM----TCP A mailbox     29354    86519 Jul 13 04:48 SRP600PCD0001.TUE) 
+
+2005:07:15:16:49:47 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=12432) 
+
+2005:07:15:16:49:47 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:49:47 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:49:47 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43083&filename=/US112544/-AR-EM----TCP%20A%20mailbox%20%20%20%20%2029354%20%20%20%2086519%20Jul%2013%2004:48%20SRP600PCD0001.TUE) 
+
+2005:07:15:16:50:00 STATUS :: rslt=(200) 
+
+2005:07:15:16:50:01 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.TUE.html) 
+
+2005:07:15:16:50:01 STATUS :: #217 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     96601      440 Jul 14 01:00 SRP911PCD0001I.WED) 
+
+2005:07:15:16:50:01 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=59210) 
+
+2005:07:15:16:50:01 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:50:01 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.WED.html) 
+
+2005:07:15:16:50:01 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=28510&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2096601%20%20%20%20%20%20440%20Jul%2014%2001:00%20SRP911PCD0001I.WED) 
+
+2005:07:15:16:50:08 STATUS :: rslt=(200) 
+
+2005:07:15:16:50:09 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.WED.html) 
+
+2005:07:15:16:50:09 STATUS :: #218 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     24606      440 Jul 14 01:01 SRP911PCD0001M.WED) 
+
+2005:07:15:16:50:09 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=5216) 
+
+2005:07:15:16:50:09 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:50:09 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.WED.html) 
+
+2005:07:15:16:50:09 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=18893&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2024606%20%20%20%20%20%20440%20Jul%2014%2001:01%20SRP911PCD0001M.WED) 
+
+2005:07:15:16:50:16 STATUS :: rslt=(200) 
+
+2005:07:15:16:50:16 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.WED.html) 
+
+2005:07:15:16:50:16 STATUS :: #219 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      6935       82 Jul 14 01:17 SRP740PCD0001.WED) 
+
+2005:07:15:16:50:16 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=65509) 
+
+2005:07:15:16:50:16 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:50:16 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:50:16 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=23524&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%206935%20%20%20%20%20%20%2082%20Jul%2014%2001:17%20SRP740PCD0001.WED) 
+
+2005:07:15:16:50:29 STATUS :: rslt=(200) 
+
+2005:07:15:16:50:30 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.WED.html) 
+
+2005:07:15:16:50:30 STATUS :: #220 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     67066     3900 Jul 14 01:24 SRP720PCD0001.WED) 
+
+2005:07:15:16:50:30 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=46044) 
+
+2005:07:15:16:50:30 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:50:30 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:50:30 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=2096&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2067066%20%20%20%20%203900%20Jul%2014%2001:24%20SRP720PCD0001.WED) 
+
+2005:07:15:16:50:43 STATUS :: rslt=(200) 
+
+2005:07:15:16:50:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.WED.html) 
+
+2005:07:15:16:50:43 STATUS :: #221 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     29029    35802 Jul 14 01:58 SRP739PCD0001.WED) 
+
+2005:07:15:16:50:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=19089) 
+
+2005:07:15:16:50:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:50:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:50:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=22019&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2029029%20%20%20%2035802%20Jul%2014%2001:58%20SRP739PCD0001.WED) 
+
+2005:07:15:16:50:56 STATUS :: rslt=(200) 
+
+2005:07:15:16:50:57 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.WED.html) 
+
+2005:07:15:16:50:57 STATUS :: #222 : remote_srcfile=(/US112544/-AR-EM----TCP A mailbox     93223     1452 Jul 14 02:38 SRP922PCD0001.WED) 
+
+2005:07:15:16:50:57 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=60377) 
+
+2005:07:15:16:50:57 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:50:57 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:50:57 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=160&filename=/US112544/-AR-EM----TCP%20A%20mailbox%20%20%20%20%2093223%20%20%20%20%201452%20Jul%2014%2002:38%20SRP922PCD0001.WED) 
+
+2005:07:15:16:51:10 STATUS :: rslt=(200) 
+
+2005:07:15:16:51:10 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.WED.html) 
+
+2005:07:15:16:51:10 STATUS :: #223 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     99600      810 Jul 14 03:08 SRP519PCD0001.WED) 
+
+2005:07:15:16:51:10 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=17234) 
+
+2005:07:15:16:51:11 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:51:11 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.WED.html) 
+
+2005:07:15:16:51:11 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=55682&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2099600%20%20%20%20%20%20810%20Jul%2014%2003:08%20SRP519PCD0001.WED) 
+
+2005:07:15:16:51:17 STATUS :: rslt=(200) 
+
+2005:07:15:16:51:18 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.WED.html) 
+
+2005:07:15:16:51:18 STATUS :: #224 : remote_srcfile=(/US112544/-AR-EM----TCP A mailbox     52033    86519 Jul 14 05:43 SRP600PCD0001.WED) 
+
+2005:07:15:16:51:18 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=40382) 
+
+2005:07:15:16:51:18 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:51:18 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:51:18 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=1089&filename=/US112544/-AR-EM----TCP%20A%20mailbox%20%20%20%20%2052033%20%20%20%2086519%20Jul%2014%2005:43%20SRP600PCD0001.WED) 
+
+2005:07:15:16:51:33 STATUS :: rslt=(200) 
+
+2005:07:15:16:51:33 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.WED.html) 
+
+2005:07:15:16:51:34 STATUS :: #225 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     48467    67890 Jul 14 11:38 SRP900PCD0001P.WED) 
+
+2005:07:15:16:51:34 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=5537) 
+
+2005:07:15:16:51:34 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:51:34 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.WED.html) 
+
+2005:07:15:16:51:34 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=50669&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2048467%20%20%20%2067890%20Jul%2014%2011:38%20SRP900PCD0001P.WED) 
+
+2005:07:15:16:51:39 STATUS :: rslt=(200) 
+
+2005:07:15:16:51:40 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.WED.html) 
+
+2005:07:15:16:51:40 STATUS :: #226 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     39803   377850 Jul 14 11:38 SRP900PCD0001N.WED) 
+
+2005:07:15:16:51:40 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=32131) 
+
+2005:07:15:16:51:40 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:51:40 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.WED.html) 
+
+2005:07:15:16:51:40 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=62326&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2039803%20%20%20377850%20Jul%2014%2011:38%20SRP900PCD0001N.WED) 
+
+2005:07:15:16:51:47 STATUS :: rslt=(200) 
+
+2005:07:15:16:51:50 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.WED.html) 
+
+2005:07:15:16:51:50 STATUS :: #227 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     29800      978 Jul 14 12:15 SRP900PCD0001P.TUE) 
+
+2005:07:15:16:51:50 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=21478) 
+
+2005:07:15:16:51:50 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:51:50 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.TUE.html) 
+
+2005:07:15:16:51:50 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=57266&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2029800%20%20%20%20%20%20978%20Jul%2014%2012:15%20SRP900PCD0001P.TUE) 
+
+2005:07:15:16:51:55 STATUS :: rslt=(200) 
+
+2005:07:15:16:51:56 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.TUE.html) 
+
+2005:07:15:16:51:56 STATUS :: #228 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     89578    32466 Jul 14 12:16 SRP900PCD0001N.TUE) 
+
+2005:07:15:16:51:56 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=48963) 
+
+2005:07:15:16:51:56 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:51:56 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.TUE.html) 
+
+2005:07:15:16:51:56 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=43154&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2089578%20%20%20%2032466%20Jul%2014%2012:16%20SRP900PCD0001N.TUE) 
+
+2005:07:15:16:52:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:07 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.TUE.html) 
+
+2005:07:15:16:52:07 STATUS :: #229 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     19473      978 Jul 14 12:25 SRP900PCD0001P.WED) 
+
+2005:07:15:16:52:07 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=34371) 
+
+2005:07:15:16:52:07 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:08 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.WED.html) 
+
+2005:07:15:16:52:08 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=35851&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2019473%20%20%20%20%20%20978%20Jul%2014%2012:25%20SRP900PCD0001P.WED) 
+
+2005:07:15:16:52:13 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:13 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.WED.html) 
+
+2005:07:15:16:52:13 STATUS :: #230 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     50103    31980 Jul 14 12:25 SRP900PCD0001N.WED) 
+
+2005:07:15:16:52:13 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41911) 
+
+2005:07:15:16:52:14 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:14 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.WED.html) 
+
+2005:07:15:16:52:14 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=26774&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2050103%20%20%20%2031980%20Jul%2014%2012:25%20SRP900PCD0001N.WED) 
+
+2005:07:15:16:52:21 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:24 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.WED.html) 
+
+2005:07:15:16:52:24 STATUS :: #231 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     27685     5892 Jul 14 12:32 SRP900PCD0001P.THU) 
+
+2005:07:15:16:52:24 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=51496) 
+
+2005:07:15:16:52:24 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:24 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.THU.html) 
+
+2005:07:15:16:52:24 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=28104&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2027685%20%20%20%20%205892%20Jul%2014%2012:32%20SRP900PCD0001P.THU) 
+
+2005:07:15:16:52:29 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:30 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.THU.html) 
+
+2005:07:15:16:52:30 STATUS :: #232 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    109169    27552 Jul 14 12:32 SRP900PCD0001N.THU) 
+
+2005:07:15:16:52:30 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=22459) 
+
+2005:07:15:16:52:31 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:31 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.THU.html) 
+
+2005:07:15:16:52:31 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=63143&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20109169%20%20%20%2027552%20Jul%2014%2012:32%20SRP900PCD0001N.THU) 
+
+2005:07:15:16:52:37 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:41 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.THU.html) 
+
+2005:07:15:16:52:41 STATUS :: #233 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    129292    10320 Jul 14 12:39 SRP900PCD0001P.FRI) 
+
+2005:07:15:16:52:41 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41990) 
+
+2005:07:15:16:52:41 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:41 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.FRI.html) 
+
+2005:07:15:16:52:41 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=20786&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20129292%20%20%20%2010320%20Jul%2014%2012:39%20SRP900PCD0001P.FRI) 
+
+2005:07:15:16:52:44 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:44 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.FRI.html) 
+
+2005:07:15:16:52:44 STATUS :: #234 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     75271    23124 Jul 14 12:39 SRP900PCD0001N.FRI) 
+
+2005:07:15:16:52:44 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=17243) 
+
+2005:07:15:16:52:45 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:45 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.FRI.html) 
+
+2005:07:15:16:52:45 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21345&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2075271%20%20%20%2023124%20Jul%2014%2012:39%20SRP900PCD0001N.FRI) 
+
+2005:07:15:16:52:48 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:48 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.FRI.html) 
+
+2005:07:15:16:52:48 STATUS :: #235 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox      6747     6876 Jul 14 12:43 SRP900PCD0001P.SAT) 
+
+2005:07:15:16:52:48 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14558) 
+
+2005:07:15:16:52:48 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:48 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.SAT.html) 
+
+2005:07:15:16:52:48 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=49672&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%20%206747%20%20%20%20%206876%20Jul%2014%2012:43%20SRP900PCD0001P.SAT) 
+
+2005:07:15:16:52:51 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:52 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.SAT.html) 
+
+2005:07:15:16:52:52 STATUS :: #236 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    110796    26568 Jul 14 12:43 SRP900PCD0001N.SAT) 
+
+2005:07:15:16:52:52 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=55358) 
+
+2005:07:15:16:52:52 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:52 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.SAT.html) 
+
+2005:07:15:16:52:52 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=65214&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20110796%20%20%20%2026568%20Jul%2014%2012:43%20SRP900PCD0001N.SAT) 
+
+2005:07:15:16:52:55 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:55 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.SAT.html) 
+
+2005:07:15:16:52:56 STATUS :: #237 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    118052    11310 Jul 14 12:52 SRP900PCD0001P.MON) 
+
+2005:07:15:16:52:56 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=46136) 
+
+2005:07:15:16:52:56 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:56 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.MON.html) 
+
+2005:07:15:16:52:56 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=34270&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20118052%20%20%20%2011310%20Jul%2014%2012:52%20SRP900PCD0001P.MON) 
+
+2005:07:15:16:52:59 STATUS :: rslt=(200) 
+
+2005:07:15:16:52:59 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.MON.html) 
+
+2005:07:15:16:52:59 STATUS :: #238 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     48220    73800 Jul 14 12:52 SRP900PCD0001N.MON) 
+
+2005:07:15:16:52:59 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=50232) 
+
+2005:07:15:16:52:59 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:52:59 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.MON.html) 
+
+2005:07:15:16:52:59 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=49704&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2048220%20%20%20%2073800%20Jul%2014%2012:52%20SRP900PCD0001N.MON) 
+
+2005:07:15:16:53:02 STATUS :: rslt=(200) 
+
+2005:07:15:16:53:03 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.MON.html) 
+
+2005:07:15:16:53:03 STATUS :: #239 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     59771    67890 Jul 14 13:23 SRP900PCD0001P.TUE) 
+
+2005:07:15:16:53:03 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=8774) 
+
+2005:07:15:16:53:03 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:53:03 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.TUE.html) 
+
+2005:07:15:16:53:03 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=21018&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2059771%20%20%20%2067890%20Jul%2014%2013:23%20SRP900PCD0001P.TUE) 
+
+2005:07:15:16:53:08 STATUS :: rslt=(200) 
+
+2005:07:15:16:53:09 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.TUE.html) 
+
+2005:07:15:16:53:09 STATUS :: #240 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     78124   370476 Jul 14 13:23 SRP900PCD0001N.TUE) 
+
+2005:07:15:16:53:09 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=27314) 
+
+2005:07:15:16:53:09 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:53:09 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.TUE.html) 
+
+2005:07:15:16:53:09 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=27154&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2078124%20%20%20370476%20Jul%2014%2013:23%20SRP900PCD0001N.TUE) 
+
+2005:07:15:16:53:16 STATUS :: rslt=(200) 
+
+2005:07:15:16:53:18 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.TUE.html) 
+
+2005:07:15:16:53:18 STATUS :: #241 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    125446    96918 Jul 15 01:00 SRP900PCD0001P.THU) 
+
+2005:07:15:16:53:18 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41375) 
+
+2005:07:15:16:53:18 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:53:18 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001P.THU.html) 
+
+2005:07:15:16:53:18 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=30946&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20125446%20%20%20%2096918%20Jul%2015%2001:00%20SRP900PCD0001P.THU) 
+
+2005:07:15:16:53:24 STATUS :: rslt=(200) 
+
+2005:07:15:16:53:26 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001P.THU.html) 
+
+2005:07:15:16:53:26 STATUS :: #242 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     52049   348822 Jul 15 01:00 SRP900PCD0001N.THU) 
+
+2005:07:15:16:53:26 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=60830) 
+
+2005:07:15:16:53:26 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:53:26 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP900PCD0001N.THU.html) 
+
+2005:07:15:16:53:26 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=2365&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2052049%20%20%20348822%20Jul%2015%2001:00%20SRP900PCD0001N.THU) 
+
+2005:07:15:16:53:33 STATUS :: rslt=(200) 
+
+2005:07:15:16:53:35 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP900PCD0001N.THU.html) 
+
+2005:07:15:16:53:35 STATUS :: #243 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     86368      440 Jul 15 01:01 SRP911PCD0001I.THU) 
+
+2005:07:15:16:53:36 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=42307) 
+
+2005:07:15:16:53:36 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:53:36 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001I.THU.html) 
+
+2005:07:15:16:53:36 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=49009&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2086368%20%20%20%20%20%20440%20Jul%2015%2001:01%20SRP911PCD0001I.THU) 
+
+2005:07:15:16:53:42 STATUS :: rslt=(200) 
+
+2005:07:15:16:53:43 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001I.THU.html) 
+
+2005:07:15:16:53:43 STATUS :: #244 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     89816      440 Jul 15 01:01 SRP911PCD0001M.THU) 
+
+2005:07:15:16:53:43 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=3968) 
+
+2005:07:15:16:53:43 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:53:43 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP911PCD0001M.THU.html) 
+
+2005:07:15:16:53:43 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=45860&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2089816%20%20%20%20%20%20440%20Jul%2015%2001:01%20SRP911PCD0001M.THU) 
+
+2005:07:15:16:53:50 STATUS :: rslt=(200) 
+
+2005:07:15:16:53:50 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP911PCD0001M.THU.html) 
+
+2005:07:15:16:53:50 STATUS :: #245 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     95551       82 Jul 15 01:05 SRP740PCD0001.THU) 
+
+2005:07:15:16:53:50 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=6759) 
+
+2005:07:15:16:53:51 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:53:51 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:53:51 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=64844&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2095551%20%20%20%20%20%20%2082%20Jul%2015%2001:05%20SRP740PCD0001.THU) 
+
+2005:07:15:16:54:03 STATUS :: rslt=(200) 
+
+2005:07:15:16:54:04 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP740PCD0001.THU.html) 
+
+2005:07:15:16:54:04 STATUS :: #246 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    120000     9048 Jul 15 01:10 SRP720PCD0001.THU) 
+
+2005:07:15:16:54:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=26455) 
+
+2005:07:15:16:54:04 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:54:04 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:54:04 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=12920&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20120000%20%20%20%20%209048%20Jul%2015%2001:10%20SRP720PCD0001.THU) 
+
+2005:07:15:16:54:17 STATUS :: rslt=(200) 
+
+2005:07:15:16:54:17 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP720PCD0001.THU.html) 
+
+2005:07:15:16:54:18 STATUS :: #247 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox    104980    51674 Jul 15 01:16 SRP739PCD0001.THU) 
+
+2005:07:15:16:54:18 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=14760) 
+
+2005:07:15:16:54:18 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:54:18 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:54:18 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=56760&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20104980%20%20%20%2051674%20Jul%2015%2001:16%20SRP739PCD0001.THU) 
+
+2005:07:15:16:54:31 STATUS :: rslt=(200) 
+
+2005:07:15:16:54:31 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP739PCD0001.THU.html) 
+
+2005:07:15:16:54:31 STATUS :: #248 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     78626      391 Jul 15 02:58 SRP519PCD0001.THU) 
+
+2005:07:15:16:54:31 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=27835) 
+
+2005:07:15:16:54:31 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:54:31 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:54:31 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=3322&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2078626%20%20%20%20%20%20391%20Jul%2015%2002:58%20SRP519PCD0001.THU) 
+
+2005:07:15:16:54:40 STATUS :: rslt=(200) 
+
+2005:07:15:16:54:41 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP519PCD0001.THU.html) 
+
+2005:07:15:16:54:41 STATUS :: #249 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     39851    86519 Jul 15 04:36 SRP600PCD0001.THU) 
+
+2005:07:15:16:54:41 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=41173) 
+
+2005:07:15:16:54:41 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:54:41 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:54:41 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=6125&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2039851%20%20%20%2086519%20Jul%2015%2004:36%20SRP600PCD0001.THU) 
+
+2005:07:15:16:54:58 STATUS :: rslt=(200) 
+
+2005:07:15:16:55:05 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP600PCD0001.THU.html) 
+
+2005:07:15:16:55:05 STATUS :: #250 : remote_srcfile=(/US112544/-AR--M----TCP A mailbox     92810     1947 Jul 15 07:27 SRP922PCD0001.THU) 
+
+2005:07:15:16:55:05 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=6090) 
+
+2005:07:15:16:55:05 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:55:05 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:55:05 STATUS :: _url2=(/visioneer/ftp-download2.cfm?nocache=28669&filename=/US112544/-AR--M----TCP%20A%20mailbox%20%20%20%20%2092810%20%20%20%20%201947%20Jul%2015%2007:27%20SRP922PCD0001.THU) 
+
+2005:07:15:16:55:18 STATUS :: rslt=(200) 
+
+2005:07:15:16:55:19 STATUS :: xx_fname=(C:\@temp\tibco-ftp_SRP922PCD0001.THU.html) 
+
+2005:07:15:16:55:19 END :: No More Files... Processed 250 files. 
+
+2005:07:15:16:55:19 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=18577) 
+
+2005:07:15:16:55:19 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:55:19 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+Fri  7/15/2005  4:55:19 PM END :: Tibco FTP Downloader v1.0.4 [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved. :: Run-Time 3143 seconds or 00:52:23 (HH:MM:SS) 
+
+2005:07:15:16:55:19 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=50624) 
+
+2005:07:15:16:55:19 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:15:16:55:19 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_SRP922PCD0001.THU.html) 
+
+================================================================================ 
+
+2005:07:21:13:25:51 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=22539) 
+
+2005:07:21:13:25:52 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:21:13:25:52 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:07:21:13:25:52 BEGIN :: Tibco FTP Downloader v1.0.4 [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved. 
+
+2005:07:21:13:25:52 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=17577) 
+
+2005:07:21:13:25:52 (appendToLog) STATUS :: rslt=(200) 
+
+2005:07:21:13:25:52 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:07:21:13:26:00 STATUS :: #1 : remote_srcfile=(/US112544/SRP740PCD0001.WED) 
+
+2005:07:21:13:26:00 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=56386) 
+
+2005:07:21:13:26:00 (appendToLog) STATUS :: rslt=(200) 
+
+================================================================================ 
+
+2005:09:23:08:03:04 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=21376) 
+
+2005:09:23:08:03:15 (appendToLog) STATUS :: rslt=(200) 
+
+2005:09:23:08:03:15 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:09:23:08:03:15 BEGIN :: Tibco FTP Downloader v1.0.4 [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved. 
+
+2005:09:23:08:03:15 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=42974) 
+
+2005:09:23:08:03:15 (appendToLog) STATUS :: rslt=(200) 
+
+2005:09:23:08:03:15 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:09:23:08:03:17 STATUS :: #1 : remote_srcfile=(/US112544/SRP900PCD0001P.MON) 
+
+2005:09:23:08:03:17 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=15817) 
+
+2005:09:23:08:03:17 (appendToLog) STATUS :: rslt=(200) 
+
+================================================================================ 
+
+2005:09:23:08:05:27 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=47104) 
+
+2005:09:23:08:05:27 (appendToLog) STATUS :: rslt=(200) 
+
+2005:09:23:08:05:27 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:09:23:08:05:27 BEGIN :: Tibco FTP Downloader v1.0.4 [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved. 
+
+2005:09:23:08:05:55 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=17501) 
+
+2005:09:23:08:06:08 (appendToLog) STATUS :: rslt=(200) 
+
+2005:09:23:08:06:32 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log_.html) 
+
+2005:09:23:08:08:00 STATUS :: #1 : remote_srcfile=(/US112544/SRP900PCD0001P.MON) 
+
+2005:09:23:08:08:21 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=51528) 
+
+2005:09:23:08:08:27 (appendToLog) STATUS :: rslt=(200) 
+
+================================================================================ 
+
+2005:09:23:08:12:12 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=24565) 
+
+2005:09:23:08:12:12 (appendToLog) STATUS :: rslt=(200) 
+
+================================================================================ 
+
+2005:09:23:08:13:14 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=36512) 
+
+2005:09:23:08:13:14 (appendToLog) STATUS :: rslt=(200) 
+
+================================================================================ 
+
+2005:09:23:08:14:23 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=32792) 
+
+2005:09:23:08:14:23 (appendToLog) STATUS :: rslt=(200) 
+
+2005:09:23:08:14:23 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log.html) 
+
+2005:09:23:08:14:24 BEGIN :: Tibco FTP Downloader v1.0.4 [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved. 
+
+2005:09:23:08:14:34 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=43936) 
+
+2005:09:23:08:14:36 (appendToLog) STATUS :: rslt=(200) 
+
+2005:09:23:08:14:39 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log.html) 
+
+2005:09:23:08:15:24 STATUS :: #1 : remote_srcfile=(/US112544/SRP900PCD0001P.MON) 
+
+2005:09:23:08:15:30 (appendToLog) STATUS :: _url2=(/visioneer/tibco-append-log.cfm?nocache=17436) 
+
+2005:09:23:08:15:33 (appendToLog) STATUS :: rslt=(200) 
+
+2005:09:23:08:15:40 (appendToLog) STATUS :: xx_fname=(C:\@temp\tibco-append-log+US112544+SRP900PCD0001P.MON.html) 
+

@@ -1,0 +1,258 @@
+;*****************************************************************************
+; zipFiles2Archive.wbt
+;
+; Purpose:  Zip the latest file and move it to the dest folder on another server.
+;
+;*****************************************************************************
+
+_wname = "zipFiles2Archive v1.1.3"
+wname = "%_wname% [Zip Files to Archive] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved."
+
+Cr = Num2Char(13)
+CrLf = StrCat(Cr, Num2Char(10))
+_crlf = CrLf
+
+bool_abstract = @FALSE
+pattern_abstract = "*.bak"
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+If param0 > 0
+	_pathSource = param1
+Else
+	_pathSource = AskLine("Input", "Please enter your Source pathName (on this server, maybe ?!?)", "\\Sql2005\c$\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Backup")
+Endif
+
+If param0 > 1
+	_filePattern = param2
+Else
+	_filePattern = AskLine("Input", "Please enter the file pattern to Zip-up", pattern_abstract)
+Endif
+
+If param0 > 2
+	_pathTarget = param3
+Else
+	_pathTarget = AskLine("Input", "Please enter your Target path name (on a different server, maybe ?!?)", "\\stayme\C$\@Db-Backups")
+Endif
+
+_default_zgPath = "C:\Program Files\ZipGenius 6"
+_zgEXE = StrCat(_default_zgPath,"\zg.exe")
+:GetZGPath
+if FileExist(_zgEXE) == @FALSE
+	If param0 > 3
+		_zgPath = param4
+	Else
+		_zgPath = AskLine("Input", "Please enter path for ZipGenius (on this server, maybe ?!?)", _default_zgPath)
+	Endif
+else
+	_zgPath = _default_zgPath
+endif
+
+_zgEXE = StrCat(_zgPath,"\zg.exe")
+if FileExist(_zgEXE) == @FALSE
+	Goto GetZGPath
+endif
+
+
+;logName = StrCat(_myPath,_wname, "_", StrReplace(TimeYmdHms(), ":", "-"),".log")
+logName = StrCat(_myPath,_wname, ".log")
+
+_now = TimeYmdHms()
+_nowBegin = _now
+
+fHandLog = FileOpen(logName, "APPEND")
+FileWrite(fHandLog, "%_now% BEGIN :: %wname% %_crlf%")
+FileWrite(fHandLog, "_pathSource = [%_pathSource%]")
+FileWrite(fHandLog, "_filePattern = [%_filePattern%]")
+FileWrite(fHandLog, "_pathTarget = [%_pathTarget%]")
+FileWrite(fHandLog, "_zgPath = [%_zgPath%]")
+
+if StriCmp(_filePattern, pattern_abstract) == 0
+	bool_abstract = @TRUE
+endif
+
+_dName = StrCat(_pathSource, "\", _filePattern)
+lst = FileItemize(_dName)
+num_lst = ItemCount(lst, @TAB)
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% _dName = [%_dName%]")
+
+_latestDt = ""
+_latestFName = ""
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% num_lst = [%num_lst%], _dName = [%_dName%]")
+
+n = ItemCount(lst, @TAB)
+for i = 1 to n
+	_fn = ItemExtract(i, lst, @TAB)
+	_fName = StrCat(_pathSource, "\", _fn)
+	dt = FileTimeGet(_fName)
+	nn = ItemCount(dt, " ")
+	mmddyyyy = ItemExtract(1, dt, " ")
+	hhmmss = ItemExtract(nn, dt, " ")
+	if ( (StrUpper(hhmmss) == "AM") || (StrUpper(hhmmss) == "PM") ) then
+		amPm = hhmmss
+		hhmmss = ItemExtract(nn - 1, dt, " ")
+	else
+		amPm = StrSub( hhmmss, StrLen(hhmmss) - 1, 2)
+	endif
+;	Message( "Debug", "dt = [%dt%], hhmmss = [%hhmmss%]")
+	_hoursAdjust = 0
+	if StrUpper(amPm) == "PM" then _hoursAdjust = 12
+	hh = Int(ItemExtract(1, hhmmss, ":")) + _hoursAdjust
+	dt = StrCat(ItemExtract(3, mmddyyyy, "/"),":",ItemExtract(1, mmddyyyy, "/"),":",ItemExtract(2, mmddyyyy, "/"),":","%hh%",":",StrReplace(ItemExtract(2, hhmmss, ":"), amPm, ""),":00"); YYYY:MM:DD:HH:MM:SS from 10/16/2005   2:31AM
+	if StrLen(_latestDt) == 0
+		_latestDt = dt
+		_latestFName = _fName
+	endif
+	if (StrLen(_latestDt) > 0) && (_latestDt <> dt)
+	;	Message( "Debug", "_latestDt = [%_latestDt%], dt = [%dt%]")
+		_dtDiff = TimeDiffDays( _latestDt, dt)
+		if (_dtDiff < 0)
+			_latestDt = dt
+			_latestFName = _fName
+		endif
+	endif
+next
+
+
+_fnG = FileExtension(_latestFName)
+_fnGn = FileRoot(_latestFName)
+_zgName = StrCat(_pathSource, "\", _fnGn, ".ZIP")
+_zgNameT = StrCat(_pathTarget, "\", _fnGn, ".ZIP")
+_cmdG = '"%_zgPath%\zg" -add "%_zgName%" CB R0 +%_latestFName%'
+
+if (StrLen(_fnGn) == 0) then _fnGn = "doZIPs"
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% ZIP-up _latestFName = [%_latestFName%], _fnGn = [%_fnGn%]")
+
+_cmdName = StrCat(_myPath, _fnGn, ".CMD")
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% ZIP-up _cmdName = [%_cmdName%], _myPath = [%_myPath%]")
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, '%_now% ZIP-up _cmdG = [%_cmdG%]')
+
+fHand = FileOpen(_cmdName, "WRITE")
+FileWrite(fHand, _cmdG)
+FileClose(fHand)
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% ZIP-up lst = [%lst%]")
+
+if bool_abstract
+	FileDelete(_cmdName)
+	; collect up the list of files from the same date as the date from _latestDt
+	files_lst = ""
+	for i = 1 to n
+		_fn = ItemExtract(i, lst, @TAB)
+		_fName = StrCat(_pathSource, "\", _fn)
+		dt = FileTimeGet(_fName)
+		nn = ItemCount(dt, " ")
+		mmddyyyy = ItemExtract(1, dt, " ")
+		dt = StrCat(ItemExtract(3, mmddyyyy, "/"),":",ItemExtract(1, mmddyyyy, "/"),":",ItemExtract(2, mmddyyyy, "/"))
+
+		_dtDiff = TimeDiffDays( _latestDt, dt)
+		if (_dtDiff == 0)
+			files_lst = ItemInsert( _fn, ItemCount(files_lst, @TAB), files_lst, @TAB)
+		endif
+	next
+
+	mmddyyyy = ItemExtract(1, _latestDt, " ")
+	dt = StrCat(ItemExtract(1, mmddyyyy, ":"),"_",ItemExtract(2, mmddyyyy, ":"),"_",ItemExtract(3, mmddyyyy, ":"))
+	_cmdName = StrCat(_myPath, dt, ".CMD")
+	_zgName = StrCat(_pathTarget, "\DbBackups_", dt, ".ZIP")
+	nn = ItemCount(files_lst, @TAB)
+
+	_now = TimeYmdHms()
+	FileWrite( fHandLog, "%_now% ZIP-up files_lst = [%files_lst%]")
+
+	_now = TimeYmdHms()
+	FileWrite( fHandLog, '%_now% ZIP-up dt = [%dt%], _cmdName = [%_cmdName%], _zgName = [%_zgName%], nn = [%nn%]')
+
+	for i = 1 to nn
+		_fn = ItemExtract(i, files_lst, @TAB)
+		_fName = StrCat(_pathSource, "\", _fn)
+		_cmdG = '"%_zgPath%\zg" -add "%_zgName%" CB R0 +"%_fName%"'
+
+		if i == 1
+			fHand = FileOpen(_cmdName, "WRITE")
+		else
+			fHand = FileOpen(_cmdName, "APPEND")
+		endif
+		FileWrite(fHand, _cmdG)
+		FileClose(fHand)
+	next
+
+endif
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% _cmdName = [%_cmdName%]")
+
+RunShell(_cmdName, "", _myPath, @NORMAL, @WAIT)
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% FileDelete(%_cmdName%)")
+
+FileDelete(_cmdName)
+
+if bool_abstract == @FALSE
+	if (FileExist( _zgName) <> @FALSE)
+		_now = TimeYmdHms()
+		FileWrite( fHandLog, "%_now% FileCopy (%_zgName%, %_zgNameT%, @FALSE)")
+		FileCopy (_zgName, _zgNameT, @FALSE)
+	endif
+	
+	if (FileExist( _zgNameT) <> @FALSE)
+		_zgSize = FileSize(_zgName)
+		_zgSizeT = FileSize(_zgNameT)
+		_now = TimeYmdHms()
+		FileWrite( fHandLog, "%_now% _zgSize = [%_zgSize%], _zgSizeT = [%_zgSizeT%]")
+		if (_zgSize == _zgSizeT)
+			_now = TimeYmdHms()
+			FileWrite( fHandLog, "%_now% FileDelete(%_zgName%)")
+			FileDelete(_zgName)
+		endif
+	endif
+else
+	; count the number of Zips in the target folder and remove those when there are more than 5...
+	:LoopDelete
+	_dName = StrCat(_pathTarget, "\DbBackups_*.ZIP")
+	lst = FileItemize(_dName)
+	num_lst = ItemCount(lst, @TAB)
+
+	FileWrite( fHandLog, "%_now% LoopDelete (num_lst=%num_lst%)")
+
+	if num_lst > 5
+		for i = 1 to num_lst
+			_fn = ItemExtract(i, lst, @TAB)
+			_fName = StrCat(_pathTarget, "\", _fn)
+			dt = FileTimeGet(_fName)
+			nn = ItemCount(dt, " ")
+			mmddyyyy = ItemExtract(1, dt, " ")
+			dt = StrCat(ItemExtract(3, mmddyyyy, "/"),":",ItemExtract(1, mmddyyyy, "/"),":",ItemExtract(2, mmddyyyy, "/"))
+			if StrLen(_latestDt) == 0
+				_latestDt = dt
+				_latestFName = _fName
+			endif
+			if (StrLen(_latestDt) > 0) && (_latestDt <> dt)
+				_dtDiff = TimeDiffDays( _latestDt, dt)
+				if (_dtDiff > 0)
+					_latestDt = dt
+					_latestFName = _fName
+				endif
+			endif
+		next
+		FileWrite( fHandLog, "%_now% Auto-Delete (_latestFName=%_latestFName%), (_latestDt=%_latestDt%)")
+		FileDelete(_latestFName)
+	endif
+endif
+
+FileClose(fHandLog)
+
+exit
+

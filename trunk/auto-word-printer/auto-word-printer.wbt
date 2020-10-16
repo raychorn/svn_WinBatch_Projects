@@ -1,0 +1,32 @@
+; auto-word-printer.wbt
+
+;Debug( @ON)
+
+_wname = "auto-word-printer"
+wname = "%_wname%.wbt"
+
+_docWinName = "Sales Doc.doc"
+
+_count = 40
+
+:again
+
+r = WinActivate (_docWinName)
+
+if r == @TRUE
+	SendKeysTo(_docWinName, "{ALT}")
+	SendKeysTo(_docWinName, "F")
+	SendKeysTo(_docWinName, "p")
+	SendKeysTo(_docWinName, "{ENTER}")
+endif
+
+;exit
+
+TimeDelay(420)
+
+_count = _count - 1
+if _count > 0 then goto again
+
+exit
+
+

@@ -1,0 +1,753 @@
+;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(41, 1, 0, 0, 0) ; Y2K to 4 digit YYYY
+
+IntControl(1001, 1, 0, 0, 0) ; run as a service
+
+WinBatch = "C:\Program Files\WinBatch\system\WinBatch.exe"
+
+scriptDir = "F:\208.128.219.19\winbatch\ServerRescue\"
+
+basedir = "%scriptDir%watchdog\"
+
+_dead_server_time_limit = (4.5 * 60) ; in seconds
+
+;basedir = "C:\Program Files\serverrescue-911\"
+
+If param0 > 0
+	If DirExist(param1) == @TRUE
+		basedir = StrReplace( StrCat( param1, "\"), "\\", "\")
+	Endif
+Endif
+
+If param0 > 1
+	If DirExist(param2) == @FALSE
+		DirMake(param2)
+	Endif
+
+	logdir = StrReplace( StrCat( param2, "\"), "\\", "\")
+Else
+	logdir = basedir
+Endif
+
+activityLogFile = "%logdir%ActivityLog.txt"
+
+Gosub cycleActivityLogFile
+
+; Read the init files
+Gosub readInitFile
+
+__dead_server_time_limit = _dead_server_time_limit
+
+_dead_server_time_limit = __dead_server_time_limit + Random( 90) ; next time wait a little longer to keep from getting into a sync problem
+
+; _RunShell .. @TRUE if using RunShell or @FALSE if using Call
+; WinBatch ... file name for WinBatch
+; scriptDir .. path name for the WinBatch script if using RunShell mode
+
+If FileExist(WinBatch) == @FALSE
+	WinBatch = "C:\Program Files\WinBatch\system\WinBatch.exe"
+Endif
+
+If DirExist(scriptDir) == @FALSE
+	scriptDir = "F:\208.128.219.19\winbatch\ServerRescue\"
+Endif
+
+wName = "ServerRescue-911"
+
+pagerCode_connection_down = "000#"
+
+pagerCode_server_down = "911#"
+
+_waiting = @FALSE
+
+isConnectionLIVE_threshold = 3
+
+;Message( "activityLogFile", "%activityLogFile%" )
+
+IntControl(12,5,0,0,0)
+;;;;;;;; Assorted Colors ;;;;;;;;;
+DKBLUE="0,0,128"
+BLUE="0,0,255"
+LTGRAY="192,192,192"
+GRAY="128,128,128"
+DKGRAY="64,64,64"
+GREEN="0,255,0"
+RED="255,0,0"
+BLACK="0,0,0"
+WHITE="255,255,255"
+YELLOW="255,255,0"
+
+
+;;;;;  Generic code for drawing a box and  adding text to it.
+
+		;Get title on screen
+			 ;wbid = 99
+			 ;BoxNew(wbid,rectTitle,1)
+			 ;BoxColor(wbid,BLACK,0)
+			 ;BoxDrawRect(wbid,"0,0,1000,1000",2)
+			 ;BoxTextFont(wbid,"Arial",TitleHeight,170,0)	; san-srif, ariel, size 20, bold, noitalic
+			 ;BoxTextColor(wbid,RED)
+			 ;BoxDrawText(wbid,rectTitleText,"Acme Aardvarks",0,32)
+
+;;;;;;;;;;;; This Example  ;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; Drawing the Main Box ;;;;;;;;
+;; Note the use of while 1. This use of while maintains
+;; the boxes until a user clicks on a button and exits 
+;; the while construction
+BoxesUp("100,100,900,900",@NORMAL)
+
+while 1
+
+   BoxColor(1,"0,0,128",4)
+   BoxCaption(1,wName)
+;; Note: Here we specify 8 buttons numbered 1 to 8.
+;; You can change this. Edit the list of buttons here,
+;; go to the "Select a button" routine and add or subtract
+;; your button selection information. Then create a subroutine
+;; at the end of this script to do what you need done when
+;; the button is pushed. There is a sample for you to use.
+ 
+   bExit=1	 
+   bHelp=2
+
+   bTherm=3
+   bDots=4	 
+   bBoxes=5
+   bLines=6
+   bDraw=7
+   bText=8
+   bEmpty=9
+
+   BoxDrawRect(1,"0,0,1000,1000",2)
+
+   BoxTextFont(1,"Times",150,80,0|0)
+   BoxTextColor(1,"255,255,0")
+;	BoxDrawText(1,"325,550,1000,1000","Pick a Demo",0,0);;;
+
+;;;;; This section creates the fancy banner headline in a box
+			   rectNote="100,30,900,270"
+			   NoteHeight=200
+			   rectNoteText="70,200,950,800"
+			   
+			   rectnoteline1="0,0,1000,0"
+			   rectNoteline2="1000,1000,1000,0"
+			   rectNoteLine3="0,1000,1000,1000"
+			   rectNoteLine4="0,0,0,1000"
+			   notepenwidth=20
+			   rectnoteline1b="40,150,960,150"
+			   rectNoteline2b="960,840,960,150"
+			   rectNoteLine3b="40,840,960,840"
+			   rectNoteLine4b="40,150,40,840"
+			   notepenwidthb=10
+			   wbid=2
+			   Thermid=3
+			   Noteid=4
+		BoxNew(Noteid,rectNote,1)
+		BoxColor(Noteid,LTGRAY,0)		; Light Gray no gradient
+		BoxDrawRect(Noteid,"",2)
+;;;;;  --------- This line changes the headline font -----------------		  
+		BoxTextFont(Noteid,"Arial",NoteHeight,170,0)
+		BoxTextColor(Noteid,RED)
+		
+		BoxPen(Noteid,WHITE,notepenwidth)
+		boxdrawline(Noteid,rectNoteLine1)
+		boxdrawline(Noteid,rectNoteLine4)
+		BoxPen(Noteid,GRAY,notepenwidth)
+		boxdrawline(Noteid,rectNoteLine2)
+		boxdrawline(Noteid,rectNoteLine3)
+		BoxPen(Noteid,WHITE,notepenwidthb)
+		boxdrawline(Noteid,rectNoteLine2b)
+		boxdrawline(Noteid,rectNoteLine3b)
+		BoxPen(Noteid,GRAY,notepenwidthb)
+		boxdrawline(Noteid,rectNoteLine1b)
+		boxdrawline(Noteid,rectNoteLine4b)
+		
+		;BoxDataTag(Noteid,"NOTE")
+
+		;	BoxDataClear(NoteId,"NOTE")
+
+
+;;;;;  ----------- The BoxDrawText	line creates the headline text. Copy (don't move)
+;;;;; this line anywhere in this script you need to change the headline text.
+
+
+
+        BoxDrawText(Noteid,rectNoteText,"(c). 1990-1998 HAL Smalltalker, Inc.",1,4)
+
+
+;   BoxButtonDraw(1,bTherm,   "&Progress",  "100,320,250,390")
+;   BoxButtonDraw(1,bDots,    "&Dots",  "100,410,250,480")    
+;   BoxButtonDraw(1,bBoxes,   "&Boxes", "100,500,250,570")    
+;   BoxButtonDraw(1,bLines,   "&Lines", "100,590,250,660")    
+;   BoxButtonDraw(1,bDraw,    "&Draw",  "100,680,250,750")                                                                                
+;   BoxButtonDraw(1,bText,    "&Text",  "100,770,250,840")    
+;   BoxButtonDraw(1,bEmpty,  "&Spare", "100,860,250,930")           
+;   BoxButtonDraw(1,bHelp,    "&Help",  "550,860,700,930")  
+   BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930")
+   num_buttons = 1
+
+    line = "(1) %wName% Program Init!"
+    Gosub appendToActivityLog
+
+    ping_timeout = wxParmGet( 2) ; PING timeout
+    line = "(2) %wName% PING timeout %ping_timeout%"
+    Gosub appendToActivityLog
+
+    socket_timeout = wxParmGet( 5) ; SOCKET timeout
+    line = "(3) %wName% SOCKET timeout %socket_timeout%"
+    Gosub appendToActivityLog
+
+    while 1
+   
+        iBox=0
+;   BoxButtonWait()
+        while iBox==0
+            for x=1 to num_buttons
+                if BoxButtonStat(1,x) then iBox=x
+            next
+
+            ; Now we scan the network to see what's what...
+			; (1) Determine if the connection is LIVE so we can tell if the results are valid
+			Gosub isConnectionLIVE
+
+			line = "(4) %wName% isConnectionLIVE=%isConnectionLIVE%!"
+			Gosub appendToActivityLog
+
+			If isConnectionLIVE > 0
+				; (2) Figure out which server(s) is down and restart the right one
+				Gosub findDeadServer
+
+				If isServerLIVE == @FALSE
+					server_down_time_begin = TimeYmdHms( )
+					dead_ip = ip
+					dead_name = name
+					dead_server_letter = server_letter
+
+					while iBox==0
+						for x=1 to num_buttons
+							if BoxButtonStat(1,x)
+								iBox=x
+								break
+							endif
+						next
+
+						Gosub isConnectionLIVE
+						If isConnectionLIVE < 1
+							break
+						Else ; connection is LIVE here!
+							ip = dead_ip
+							name = dead_name
+		
+							Gosub isServerDEAD
+
+							If isServerLIVE == @FALSE
+								todayNow = TimeYmdHms( )
+								secs = Abs(Int(TimeDiffSecs( todayNow, server_down_time_begin)))
+								
+								s = "PING: %wName% secs=%secs% i=%i% ip=%dead_ip% name=%dead_name% DEAD isServerLIVE=%isServerLIVE%!"
+								line = "(4a) %s%"
+								Gosub appendToActivityLog
+
+								Gosub _BoxDrawText
+
+								If secs > _dead_server_time_limit
+									line = "(5) "
+									Gosub appendToActivityLog
+
+									line = "(6) ==================================================================="
+									Gosub appendToActivityLog
+
+									line = "(7) ==================================================================="
+									Gosub appendToActivityLog
+
+									line = "(8) %wName% i=%i% ip=%dead_ip% name=%dead_name% DEAD isServerLIVE=%isServerLIVE%!"
+									Gosub appendToActivityLog
+
+									t = TimeDate()
+;									 Message( "name=%dead_name% DEAD", "t=%t% i=%i% ip=%dead_ip% isServerLIVE=%isServerLIVE%!" )
+
+									line = "(9) "
+									Gosub appendToActivityLog
+
+									line = "(10) ==================================================================="
+									Gosub appendToActivityLog
+
+									line = "(11) ==================================================================="
+									Gosub appendToActivityLog
+
+									line = "(12) "
+									Gosub appendToActivityLog
+
+									s = "PING: %wName% dead_server_letter=%dead_server_letter% secs=%secs% i=%i% ip=%dead_ip% name=%dead_name% DEAD isServerLIVE=%isServerLIVE%!"
+									Gosub _BoxDrawText
+									
+									If _RunShell == @TRUE
+;										 RunShell( WinBatch, "%scriptDir%\%ServerRescue% %dead_server_letter%", scriptDir, @NORMAL, @WAIT)
+									Else
+										s = "ServerRescue Dialer: cr_reps=%cr_reps%!"
+										Gosub _BoxDrawText
+										Call("%scriptDir%\%ServerRescue%", "%dead_server_letter% %scriptDir%")
+									Endif
+
+;									 inum = StrFixLeft("%i%", "0", 3)
+;									 RunShell( WinBatch, "%scriptDir%\Pager.wbt %basedir% %inum%0%pagerCode_server_down%", scriptDir, @NORMAL, @WAIT)
+
+									; Server may be dead - s we go into a loop for 60 secs or we count the number of times a server tests dead, etc. - not sure yet
+					
+;									 server_down_time_begin = TimeYmdHms( )
+;									Delay(30)
+
+									_secs = 30
+									_someText = "...waiting after server (%dead_server_letter%) restart..."
+									Gosub _dumdedum
+
+									Gosub isServerDEAD
+
+									If isServerLIVE == @TRUE
+										break ; server was down but at this point we would have restarted it so we can go look for another... 
+											  ; we might have to wait here until this server comes back and then page someone if it won't come back in say 5 mins or so
+                                              ; the current strategy is to simply allow the system to detect the down server again - the ServerRescue module will handle a rescue retry
+                                    Else
+                                        secs = 0  ; the server is supposed to be online NOW so we give it 30 seconds to get LIVE on it's own before we take further action
+									Endif
+									
+									_dead_server_time_limit = __dead_server_time_limit + Random( 90) ; next time wait a little longer to keep from getting into a sync problem
+								Endif
+							Else ; server is back online so we break-off and try again
+								for x=1 to num_buttons
+									if BoxButtonStat(1,x)
+										iBox=x
+										break
+									endif
+								next
+								break
+							Endif
+						Endif
+
+					endwhile
+				Else
+					line = "(13) %wName% ip=%ip% name=%name% LIVE isServerLIVE=%isServerLIVE%!"
+					Gosub appendToActivityLog
+				Endif
+				
+				If isServerLIVE > -1
+					mins = 1
+					someText = "...waiting... just killing some time..."
+					Gosub dumdedum
+				Else
+					BoxButtonWait()
+					for x=1 to num_buttons
+						if BoxButtonStat(1,x) then iBox=x
+					next
+				Endif
+			Else ; The connection is down so we have to page someone and then we keep going...
+				line = "(14) "
+				Gosub appendToActivityLog
+
+				line = "(15) +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+				Gosub appendToActivityLog
+
+				line = "(16) +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+				Gosub appendToActivityLog
+
+				line = "(17) "
+				Gosub appendToActivityLog
+
+				line = "(18) %wName% Connection DOWN!"
+				Gosub appendToActivityLog
+
+				i_wName = StrIndex(WinGetActive( ), wName, 1, @FWDSCAN)
+				If i_wName > 0
+					t = TimeDate()
+					Message( "Connection DOWN!", "t=%t% i=%i% ip=%ip% isServerLIVE=%isServerLIVE%!" )
+				Endif
+
+				line = "(19) "
+				Gosub appendToActivityLog
+
+				line = "(20) +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+				Gosub appendToActivityLog
+
+				line = "(21) +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+				Gosub appendToActivityLog
+
+				line = "(22) "
+				Gosub appendToActivityLog
+
+;				 RunShell( WinBatch, "%scriptDir%\Pager.wbt %basedir% %pagerCode_connection_down%", scriptDir, @NORMAL, @WAIT)
+				mins = 1
+				someText = "...waiting for connection to come back... sent page %pagerCode_connection_down%..."
+				Gosub dumdedum
+			Endif
+		end while
+
+;;; Select a button	 ;;;;
+	
+		if iBox
+			BoxDataClear(1,"TOP")
+			switch iBox
+				case bExit
+					exit
+				break
+			end switch
+		endif
+		
+	end while
+end while
+exit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+:findDeadServer
+;	b_server0 = 4
+;	b_server1 = "207.55.200.2,Riker"
+;	b_server2 = "207.55.210.2,Picard2"
+;	b_server3 = "207.55.215.2,Data2"
+;	b_server4 = "207.55.200.254,Zone1"
+;	b_server5 = "207.55.200.252,Kirk"
+
+	b_server0 = 3
+	b_server1 = "207.55.210.7,Picard2"
+	b_server2 = "207.55.215.2,Data2"
+	b_server3 = "207.55.200.252,Kirk"
+
+	isServerLIVE = @TRUE
+	For i = 1 to b_server0
+		ip = ItemExtract (1, b_server%i%, ",")
+		name = ItemExtract (2, b_server%i%, ",")
+		server_letter = StrLower( StrSub(name, 1, 1))
+		
+		Gosub isServerDEAD
+
+		If isServerLIVE == @FALSE
+			break
+		Endif
+	Next
+
+	line = "(23) PING: ALL...LIVE"
+	Gosub appendToActivityLog
+
+;	 isServerLIVE = -1
+;	 BoxDrawText(Noteid,rectNoteText,"PING: ALL DEAD!",1,4)
+
+return
+
+
+:isServerDEAD
+;		 WinActivate(wName)
+		if WinExist(wName)	  ; Make user user did not close it manually
+			WinTitle(wName, "%wName% (%name%) %ip%...")
+		endif
+
+		s = "PING: (%name%) %ip%..."
+		Gosub _BoxDrawText
+
+		ErrorMode(@OFF)
+		isServerLIVE = wxPing( ip)
+		ErrorMode(@CANCEL)
+
+		If isServerLIVE == @TRUE
+			line = "(24) PING: (%name%) %ip%...LIVE! %isServerLIVE%"
+			s = line
+			Gosub appendToActivityLog
+
+			Gosub _BoxDrawText
+		Else
+			line = "(25) PING: (%name%) %ip%...DEAD %isServerLIVE%"
+			s = line
+			Gosub appendToActivityLog
+
+			Gosub _BoxDrawText
+
+			; (1) Determine if the connection is LIVE so we can tell if the results are valid
+			Gosub isConnectionLIVE
+
+			line = "(26) %wName% isConnectionLIVE=%isConnectionLIVE%!"
+			Gosub appendToActivityLog
+
+			If isConnectionLIVE < 1
+;				 isServerLIVE = @FALSE
+				line = "(27) %wName% VERIFIED isConnectionLIVE=%isConnectionLIVE%, isServerLIVE=%isServerLIVE%!"
+				Gosub appendToActivityLog
+				; The connection is LIVE so we can accept that the server is DOWN
+			Endif
+
+			return
+		Endif
+		
+;		 WinActivate(wName)
+		if WinExist(wName)	  ; Make user user did not close it manually
+			WinTitle(wName, "%wName% (%name%) %ip% - Delay 5 secs")
+		endif
+
+		Delay(5)
+
+;		 WinActivate(wName)
+		if WinExist(wName)	  ; Make user user did not close it manually
+			WinTitle(wName, "%wName% (%name%) %ip%")
+		endif
+
+return
+
+
+:isConnectionLIVE
+	b_name0 = 5
+	b_name1 = "rs.internic.net"
+	b_name2 = "nkn.dfw.verio.net"
+	b_name3 = "altavista.digital.com"
+	b_name4 = "disney.com"
+	b_name5 = "nkn.net"
+
+;	 b_name5 = "persiankitty.com"
+;	 b_name4 = "tnt.turner.com"
+;	 b_name5 = "yahoo.com"
+;	 b_name6 = "hotmail.com"
+;	 b_name8 = "apache.org"
+;	 b_name9 = "ipswitch.com"
+;	 b_name10 = "ora.com"
+
+	isConnectionLIVE = 0
+	For i = 1 to b_name0
+		_name = b_name%i%
+
+		ErrorMode(@OFF)
+		value = wxHost2Addr(b_name%i%)
+		ErrorMode(@CANCEL)
+
+		s = "DNS LOOKUP: %_name%=%value%..."
+		Gosub _BoxDrawText
+		line = "(28a) %s%"
+		Gosub appendToActivityLog
+
+;		 ErrorMode(@OFF)
+;		 value = wxAddr2Host(b_name%i%)
+;		 ErrorMode(@CANCEL)
+
+;		 s = "REVERSE DNS LOOKUP: %_name%=%value%..."
+;		 Gosub _BoxDrawText
+;		 line = "(28b) %s%"
+;		 Gosub appendToActivityLog
+
+		s = "PING: %_name%..."
+		Gosub _BoxDrawText
+
+		ErrorMode(@OFF)
+		value = wxPing( b_name%i%)
+		ErrorMode(@CANCEL)
+
+		If value == @TRUE
+			isConnectionLIVE = isConnectionLIVE + 1
+			line = "(28c) PING: %_name%...LIVE"
+			s = line
+			Gosub appendToActivityLog
+
+			Gosub _BoxDrawText
+;			 break
+		Else
+			line = "(28d) PING: %_name%...DEAD?"
+			s = line
+			Gosub appendToActivityLog
+
+			Gosub _BoxDrawText
+		Endif
+	Next
+
+	s = "PING: Counted isConnectionLIVE=%isConnectionLIVE%!"
+	Gosub _BoxDrawText
+	line = "(29) %s%"
+	Gosub appendToActivityLog
+
+	If isConnectionLIVE < isConnectionLIVE_threshold
+		s = "PING: Count BELOW threshold (%isConnectionLIVE_threshold%) isConnectionLIVE=%isConnectionLIVE% assume connection is DEAD!"
+		Gosub _BoxDrawText
+		line = "(29a) %s%"
+		Gosub appendToActivityLog
+
+		isConnectionLIVE = -1 ; not enough LIVE to tell... except yahoo.com which seems to always be live ?!?
+	Endif
+	
+	s = "PING: PING: isConnectionLIVE=%isConnectionLIVE%!"
+	Gosub _BoxDrawText
+	line = "(30) %s%"
+	Gosub appendToActivityLog
+return
+
+
+:dumdedum
+goal = mins * 60
+timer = 0
+If IsDefined(someText) == @NO
+	someText = "...waiting... just killing some time..."
+Endif
+While timer < goal
+	remain = goal - timer
+;	 WinActivate(wName)
+	if WinExist(wName)	  ; Make user user did not close it manually
+		WinTitle(wName, "%wName% %someText% (%remain% seconds left)")
+	else
+		return
+	endif
+
+	for x=1 to num_buttons
+		If BoxButtonStat(1,x)
+			iBox=x
+			return
+		Endif
+	next
+	
+	Delay(1)
+	timer = timer + 1
+EndWhile
+Return
+
+
+:_dumdedum
+_goal = _secs
+_timer = 0
+While _timer < _goal
+	_remain = _goal - _timer
+	if WinExist(wName)	  ; Make user user did not close it manually
+		WinTitle(wName, "%wName% %_someText% (%remain% seconds left)")
+	else
+		return
+	endif
+
+	for x=1 to num_buttons
+		If BoxButtonStat(1,x)
+			iBox=x
+			return
+		Endif
+	next
+	
+	Delay(1)
+	_timer = _timer + 1
+EndWhile
+Return
+
+
+:appendToActivityLog
+	_handle = FileOpen( activityLogFile, "APPEND")
+	If _handle > 0
+		line = StrCat( TimeDate(), ", ", line, @CR)
+		FileWrite(_handle, line)
+		FileClose(_handle)
+	Endif
+return
+
+
+:_BoxDrawText
+	; BoxDrawText() was causing problems for a long running program such as this so we shall try to avoid it completely
+	i_wName = StrIndex(WinGetActive( ), wName, 1, @FWDSCAN)
+	If i_wName > 0
+;		 BoxDrawText(Noteid,rectNoteText,s,1,4)
+		_waiting = @FALSE
+	Else
+		If _waiting == @FALSE
+;			 BoxDrawText(Noteid,rectNoteText,"...waiting for this window to be active...",1,4)
+			_waiting = @TRUE
+		Endif
+	Endif
+
+	if WinExist(wName)	  ; Make user user did not close it manually
+		WinTitle(wName, "%wName% %s%")
+	endif
+return
+
+
+:readInitFile
+init_file = "%basedir%init-911.txt"
+
+keywords0 = 6
+keywords1 = "_RunShell="
+keywords2 = "WinBatch="
+keywords3 = "scriptDir="
+keywords4 = "_dead_server_time_limit="
+keywords5 = "ServerRescue="
+keywords6 = "cr_reps="
+
+;keywords3 = "WinBatch="
+;keywords3 = "WinBatch="
+;keywords3 = "WinBatch="
+;keywords3 = "WinBatch="
+
+handle = FileOpen( init_file, "READ")
+If handle > 0
+	line = "(*) init_file=<%init_file%>"
+	Gosub appendToActivityLog
+
+	while @TRUE				; Loop till break do us end
+		data = FileRead(handle)
+		If data == "*EOF*" Then Break
+
+		For _i = 1 to keywords0
+			i = StrIndexNc(data, keywords%_i%, 1, @FWDSCAN)
+
+			line = "(*) data=<%data%>"
+			Gosub appendToActivityLog
+
+			If i > 0
+				keyword = StrReplace(keywords%_i%, "=", "")
+;Debug(@ON)
+				%keyword% = StrSub(data, i + StrLen( keywords%_i%), -1)
+;Debug(@OFF)
+				If StrCmp( %keyword%, "@TRUE") == 0
+					%keyword% = @TRUE
+				Else
+					If StrCmp( %keyword%, "@FALSE") == 0
+						%keyword% = @FALSE
+					Endif
+				Endif
+
+				v = %keyword%
+				line = "(*) keyword=<%keyword%>, %keyword%=<%v%>"
+				Gosub appendToActivityLog
+
+			Endif
+		Next
+
+	endwhile
+	FileClose(handle)
+
+	line = "(*) <*EOF*>"
+	Gosub appendToActivityLog
+Endif
+return
+
+
+:cycleActivityLogFile
+fex = FileExist( activityLogFile)
+
+Switch fex
+	case @TRUE
+		; cycle the current log file - look for an open slot and use it
+		i = 1
+		_found = @TRUE
+		while _found == @TRUE
+			_activityLogFile = "%logdir%ActivityLog-%i%.txt"
+			_fex = FileExist( _activityLogFile)
+			If _fex == @FALSE ; the candidate file does not exist so use it!
+				_found = _fex
+				If FileRename( activityLogFile, _activityLogFile) == @FALSE
+					; current log file cannot be renamed so we can't cycle it and... make one up using today's date, etc.
+					_token = StrReplace( TimeYmdHms( ), ":", "_")
+					activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+				Endif
+				break
+			Else
+				i = i + 1
+			Endif
+		endwhile
+	break
+	case 2
+		; current log file is in use so make one up using today's date, etc.
+		_token = StrReplace( TimeYmdHms( ), ":", "_")
+		activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+	break
+EndSwitch
+return
+

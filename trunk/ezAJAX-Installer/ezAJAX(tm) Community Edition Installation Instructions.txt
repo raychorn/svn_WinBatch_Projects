@@ -1,0 +1,22 @@
+This product currently supports Windows 2003, Windows 2000 or Windows XP.  Contact our Support Department (support@ez-ajax.com) if you wish to install this product using a different OS than the ones we currently support.  If there is enough interest we may support other OS's than those currently supported.
+
+(1). Create a folder on your web server where the product is to be installed.  This folder can be in the root for your web server which is sometimes named "wwwroot" for IIS, for instance, or this folder can be a sub-folder below your web root folder.
+
+(2). Download the ezAJAX™ Installer program to your web server in a folder other than the one that was created or set aside for Step (1). The ezAJAX™ Installer program MUST be executed using the same Physical Server as the one to which you are installing the ezAJAX™ product. You cannot do a remote installation across a network, this will not work. Additionally, the ezAJAX™ Installer program works much better when it is running from a folder that has nothing it in but the ezAJAX™ Installer program.
+
+(3). Double-Click on the ezAJAX(tm) Installer program and click on the "I Agree" button to begin the Installation Process.
+
+(4). The first question prompts you for your valid Internet email address.  This is the email address where you will receive the Runtime License we will send to you once the Registration Process has successfully created a Runtime License for your physical server.  There is a limit of one Runtime License per physical server for the Trial period.  You may purchase Long-Term Runtime Licenses that are less restrictive however each Runtime License will specific one domain name or server name for each physical server.  Contact our Sales Department (sales@ez-ajax.com) for whatever your Runtime Licensing needs may be and we will take care of your specific needs.
+
+(5). The second question prompt you for your server name or domain name.  This is the specific server name or domain name that matches the server name or domain name for your specific web server.  This could be "localhost" or "127.0.0.1" or "laptop.mydomain.com" or whatever domain name you wish to use when forming URLs for the web server for which you wish to use this product.  There is a limit of one server name or domain name per physical server during the Trial period.  Contact our Sales Department (sales@ez-ajax.com) to have your specific Runtime Licensing needs resolved.
+
+(6). After the second prompt has been responded to the ezAJAX(tm) Installer program will contact our Registration Server(s) to create the Runtime License that matches your specific installation.  If successful, you will see a prompt that states your Registration was successful and a Runtime License file has been emailed to you using the email address entered in Step (4).
+
+(7). If you need your Runtime License resent to your email address or a different email address, assuming the original email address was incorrect, simply restart the ezAJAX(tm) Installer program and respond to all the prompts.  The Runtime License that was originally created in Step (6) will be resent to the email address you entered during the Installation Process.
+
+(8). If you encounter any problems during the Installation Process simply contact our Support Department (support@ez-ajax.com) to get the problem resolved.  Our Support Department will not be able to send you a Runtime License file but they will be able to tell you what went wrong during the Installation Process so you can resolve the problem and achieve a successful installation.
+
+(9). You may install this product on as many physical servers as you wish however there is a limit of one Trial per physical server.  And "yes" you can also install this product on a workstation if desired however workstation OS's typically don't provide the level of support required for robust web apps such as those that are created using this product.
+
+(10). The ezAJAX(tm) Community Edition supports any version of ColdFusion MX 7 using any web server supported by ColdFusion MX 7.  Be sure to let our Support Department (support@ez-ajax.com) know if you encounter anything that differs from this.
+

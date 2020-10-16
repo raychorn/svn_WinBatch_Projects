@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=mySQL-Analysis.wbt
+Targ=W:\WinBatch-Dev\mySQL-Analysis\mySQL-Analysis.exe
+Icon=W:\WinBatch-Dev\mySQL-Analysis\Progress2mySQL.ico
+CmpVersion=3
+[Options]
+TechWebPage=http://www.ez-ajax.com
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=
+CompanyName=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=mySQL-Analysis
+FileVersion=1.0
+InternalName=mySQL-Analysis.exe
+LegalCopyright=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=mySQL-Analysis.exe
+ProductName=mySQL-Analysis
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=0

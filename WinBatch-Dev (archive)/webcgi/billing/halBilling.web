@@ -1,0 +1,598 @@
+_html_crlf = 1
+
+_admin_ip = "192.168.1.4"
+
+http_prefix = "http://sisko.cybercash-net.com"
+this_cgi = "/cgi-win/billing/webcgi/webbatch.exe?billing/halBilling.web"
+_this_cgi = StrCat( http_prefix, this_cgi)
+
+this_import_cgi = "/cgi-win/billing/webcgi/webbatch.exe?billing/halBilling-import.web"
+_this_import_cgi = StrCat( http_prefix, this_import_cgi)
+
+_title = "HAL Smalltalker, Inc. Billing System v2.0"
+_background = "/professi.jpg"
+
+reply_to_address = "webAdmin@cybercash-net.com"
+;mailhost = "sisko.cybercash-net.com"
+;mailhost = "mail.e-servers.net"
+mailhost = "209.233.167.2"
+cc_address = "customersupport-messages@cybercash-net.com"
+
+_SENDemail_path = "/billing/system/SENDemail.iHTML"
+
+_email_preamble_file = "c:\WebSite\support\e-mail\preamble.txt"
+_email_preamble_file2 = "c:\WebSite\support\e-mail\_preamble.txt"
+
+_username = "smalltalker"
+_password = "peek@boo"
+
+__debug = @FALSE
+
+datasource = "billing"
+
+_datasource = datasource
+
+_max_string_len = 30
+
+_selection_list_height = 28
+
+_cr = StrCat( Num2Char(13), Num2Char(10))
+
+_db_fields_separator = "@"
+_date_field_separator = "-"
+
+_action_ListCustRecords = "Customer Name List"
+_action_ListDomainRecords = "Domain Name List"
+_action_ListIPRecords = "IP Address List"
+
+_action_EMailCustRecords = "EMail Customer List"
+
+_action_ListMissingCC = "Missing CC Name List"
+_action_ListExpiringCC = "Expiring CC Name List"
+
+_action_EMailExpiringCC = "E-Mail Expiring CC Names"
+_action_EMailExpiringCC_URL = "%http_prefix%/billing/system/scan-for-cc-exp.iHTML"
+
+_action_ViewBPPELogs = "View BPPE Logs"
+_action_ViewBPPELogs_URL = "%http_prefix%/bppe-logs/"
+ 
+_action_AddReceivable = "Add-Receivable"
+_action_AddPrePayment = "Add-PrePayment"
+_action_EditReceivable = "Edit-Receivable"
+
+_action_ListZone1CustRecords = "Zone1 Customer Name List"
+_action_ListZone1DomainRecords = "Zone1 Domain Name List"
+_action_EMailZone1Records = "EMail Zone1 Domain Name List"
+
+_action_ListZone1MissingCC = "Missing Zone1 CC Name List"
+
+_action_ViewCustomer = "View-Record"
+_action_EditCustomer = "Edit-Record"
+_action_SaveCustomer = "Save-Record"
+_action_EMailCustomer = "E-Mail-Record(s)"
+
+_action_MarkReceivablePaid = "Mark Receivable Paid"
+
+_action_ImportOldCustDb = "Import Old Cust Db"
+
+_action_ViewCustomerWebSite = "View WebSite Record"
+
+_option_ShowDelinquencyStatus = "ShowDelinquencyStatus"
+_option_ShowDomains = "ShowDomains"
+_option_ShowOnlyDelinquencies = "ShowOnlyDelinquencies"
+
+__id__ = "__id__"
+__website__ = "__website__"
+__contact__ = "__contact__"
+__email__ = "__email__"
+__email_html = '<A HREF="mailto:__email__" TARGET="">__email__</A> via your default e-mail client!'
+__custid__ = "__@custid__"
+___custid__ = "__custid__"
+
+_customer_table = "customer"
+_website_table = "website"
+_receivables_table = "receivables"
+
+_CustomerList = 'CustomerList'
+_WebSiteList = "WebSiteList"
+_CustomerList_delimiter = "@"
+
+_Subject = "Subject"
+_MessageText = "MessageText"
+
+website__activation__ = "%_website_table%%_db_fields_separator%__activation__"
+website__termination__ = "%_website_table%%_db_fields_separator%__termination__"
+
+AddExtender( "wwodb32i.dll")
+AddExtender( "wwwsk32i.dll")
+
+WebSetTimeout( 20 * 60)
+
+IntControl(29, @TAB, 0, 0, 0)
+
+Call( "c:\website\support\webcgi\extra_headers.wbc", "")
+
+_cgi_dir = StrReplace( StrCat( DirGet(), "\"), "\\", "\")
+
+_slashi = StrIndex( QUERY_STRING, "/", StrLen( QUERY_STRING), @BACKSCAN)
+If _slashi > 0
+    _cgi_dir = StrReplace( StrCat( _cgi_dir, StrSub( QUERY_STRING, 1, _slashi)), "/", "\")
+Endif
+
+_copyrightNotice_html = StrCat( _cgi_dir, "halCopyright.html")
+_viewCustomerRecord_html = StrCat( _cgi_dir, "viewCustomerRecord.html")
+_viewCustWebSiteRecord_html = StrCat( _cgi_dir, "viewCustomerRecordWebSite.html")
+_viewCustContactRecord_html = StrCat( _cgi_dir, "viewCustomerRecordContact.html")
+_viewReceivablesRecord_html = StrCat( _cgi_dir, "viewReceivablesRecord.html")
+_viewPaymentsRecord_html = StrCat( _cgi_dir, "viewPaymentsRecord.html")
+__viewReceivablesRecord_html = StrCat( _cgi_dir, "_viewReceivablesRecord.html")
+_editReceivablesRecord_html = StrCat( _cgi_dir, "editReceivablesRecord.html")
+viewPrePaymentRecords_html = StrCat( _cgi_dir, "viewPrePaymentRecords.html")
+
+b_is_admin_ip = (StrCmp( REMOTE_ADDR, "192.168.1.4") == 0)
+
+;_title = StrCat( "(%b_is_admin_ip%, %REMOTE_ADDR%)", _title)          
+
+If b_is_admin_ip == @TRUE
+    _title = StrCat( "ADMIN: ", _title)          
+Endif
+
+WebOut('Content-type: text/html',2)    ; Output Content Type
+
+WebOut('<HTML><HEAD><TITLE>%_title%</TITLE></HEAD>', _html_crlf)
+
+WebOut('<BODY BACKGROUND="%_background%">', _html_crlf)
+
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+;ErrorMode(@OFF)
+henv = qAllocEnv()
+;ErrorMode(@CANCEL)
+
+;WebOut('<B><FONT COLOR="BLUE">qAllocEnv %retcode% and henv=%henv%</FONT></B>', _html_crlf)
+If henv == -1
+  ;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+  retcode = qLastCode()
+  WebOut('<B><FONT COLOR="RED">qAllocEnv failed %retcode% </FONT></B>', _html_crlf)
+  Exit
+Endif
+
+;Call( "c:\website\support\webcgi\extra_headers-debug.wbc", "")
+
+If (StrCmp( REMOTE_ADDR, "192.168.1.3") <> 0) && (StrCmp( REMOTE_ADDR, "192.168.1.4") <> 0)
+    WebOut('<H2>Unauthorized Use: (%REFERER%) Your IP address (%REMOTE_ADDR%) has been reported to your local law enforcement authorities for investigation.</H2>', _html_crlf)
+    Goto thats_all_folks
+Endif
+
+WebOut('', _html_crlf)
+
+WebOut('<TABLE WIDTH="100%%" BORDER="0">', 0)
+WebOut('<TR>', _html_crlf)
+
+_delim = @TAB
+s = WebParamNames()
+Call( "c:\website\support\webcgi\ParseFieldsToArray.wbc", "s field _delim")
+Drop( _delim)
+
+; Navigation Bar
+WebOut('<TD VALIGN="TOP">', 0)
+_action = ""
+_show_delinquency_status = ""
+If field0 > 0
+    _action = WebParamData('_action')
+    b_show_delinquency_status = WebParamData(_option_ShowDelinquencyStatus) == _option_ShowDelinquencyStatus
+    b_show_only_delinquencies = WebParamData(_option_ShowOnlyDelinquencies) == _option_ShowOnlyDelinquencies
+    b_show_domain_ip_names = WebParamData(_option_ShowDomains) == _option_ShowDomains
+    
+    If b_show_only_delinquencies
+        b_show_delinquency_status = @TRUE
+    Endif
+
+    If b_show_only_delinquencies || b_show_delinquency_status
+        WebSetTimeout( 20 * 60)
+    Endif
+    
+Endif
+
+Call( StrCat( _cgi_dir, "NavigationBar.wbc"), "")
+
+WebOut('</TD>', _html_crlf)
+
+; Data Area
+WebOut('<TD VALIGN="TOP" HEIGHT="100%%">', 0)
+
+If field0 > 0
+    _WebParamNames = s
+    
+    If StrLen( _action) > 0
+        If b_is_admin_ip == @TRUE
+;            This is a POST and we process the fields, etc.
+           WebOut('<B><FONT COLOR="BLUE">WebParamNames=', 0)
+           WebOut(_WebParamNames, 0)
+           WebOut('</FONT></B><BR>', _html_crlf)
+
+            WebOut('<HR WIDTH="75%%">', _html_crlf)
+;            Call( "c:\website\support\webcgi\DebugFieldsArray.wbc", "")
+;            WebOut('<HR WIDTH="75%%">', _html_crlf)
+
+            WebOut('<B><FONT COLOR="BLUE">_action=', 0)
+            WebOut(_action, 0)
+            WebOut('</FONT></B><BR>', _html_crlf)
+
+            WebOut('<B><FONT COLOR="BLUE">b_show_delinquency_status=', 0)
+            WebOut(b_show_delinquency_status, 0)
+            WebOut('</FONT></B><BR>', _html_crlf)
+
+            WebOut('<B><FONT COLOR="BLUE">b_show_domain_ip_names=', 0)
+            WebOut(b_show_domain_ip_names, 0)
+            WebOut('</FONT></B><BR>', _html_crlf)
+        Endif
+
+        WebOut('<HR>', _html_crlf)
+
+        _edit_mode = @FALSE
+        
+        If StrCmp( _action, _action_ListCustRecords) == 0
+
+            WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+            If b_show_domain_ip_names
+                sql_stmnt = "SELECT c.id, c.custname, w.domain_name, w.ip, w.id FROM customer c, website w WHERE c.id=w.custid AND c.termination IS NULL ORDER BY c.custname, w.domain_name, w.ip ;"
+            Else
+                sql_stmnt = "SELECT c.id, c.custname FROM customer c WHERE c.termination IS NULL ORDER BY c.custname ;"
+            Endif
+            Call( StrCat( _cgi_dir, "ListCustomerRecords.wbc"), "")
+
+            WebOut('<BR><BR>', 0)
+            WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+            If b_is_admin_ip == @TRUE
+                WebOut('<SPACER SIZE="10">', 0)
+                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                WebOut('<SPACER SIZE="10"><BR><BR>', 0)
+                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_AddReceivable%" VALUE="%_action_AddReceivable%">', 0)
+                WebOut('<SPACER SIZE="10">', 0)
+                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_AddPrePayment%" VALUE="%_action_AddPrePayment%">', 0)
+                WebOut('<BR><BR>', 0)
+                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditReceivable%" VALUE="%_action_EditReceivable%">', 0)
+            Endif
+            WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+            WebOut('</FORM>', _html_crlf)
+        Else
+            If StrCmp( _action, _action_ListDomainRecords) == 0
+                WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                sql_stmnt = "SELECT custid, domain_name, ip FROM website WHERE termination IS NULL ORDER BY domain_name, ip;"
+                Call( StrCat( _cgi_dir, "ListDomainRecords.wbc"), "")
+
+                WebOut('<BR><BR>', 0)
+                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+                If b_is_admin_ip == @TRUE
+                    WebOut('<SPACER SIZE="10">', 0)
+                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                    WebOut('<SPACER SIZE="10"><BR><BR>', 0)
+                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_AddReceivable%" VALUE="%_action_AddReceivable%">', 0)
+                    WebOut('<SPACER SIZE="10">', 0)
+                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_AddPrePayment%" VALUE="%_action_AddPrePayment%">', 0)
+                    WebOut('<BR><BR>', 0)
+                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditReceivable%" VALUE="%_action_EditReceivable%">', 0)
+                Endif
+
+                WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+                WebOut('</FORM>', _html_crlf)
+            Else
+                If StrCmp( _action, _action_SaveCustomer) == 0
+                    WebOut('<BR><FONT COLOR="GREEN"><B>_action_SaveCustomer=%_action_SaveCustomer%</B></FONT>', 0)
+                    Call( StrCat( _cgi_dir, "SaveFieldsToDb.wbc"), "")
+                Else
+                    If StrCmp( _action, _action_ListIPRecords) == 0
+                        WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                        sql_stmnt = "SELECT custid, domain_name, ip FROM website WHERE termination IS NULL ORDER BY ip, domain_name;"
+                        Call( StrCat( _cgi_dir, "ListDomainIPRecords.wbc"), "")
+
+                        WebOut('<BR><BR>', 0)
+                        WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+                        If b_is_admin_ip == @TRUE
+                            WebOut('<SPACER SIZE="10">', 0)
+                            WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                        Endif
+                        WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+                        WebOut('</FORM>', _html_crlf)
+                    Else
+                        If StrCmp( _action, _action_ListZone1CustRecords) == 0
+
+                            WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                            sql_stmnt = "SELECT c.id, c.custname FROM customer c, website w WHERE c.id=w.custid AND w.oid LIKE '%%ZONE1%%' AND c.termination IS NULL ORDER BY c.custname "
+                            Call( StrCat( _cgi_dir, "ListCustomerRecords.wbc"), "")
+
+                            WebOut('<BR><BR>', 0)
+                            WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+                            If b_is_admin_ip == @TRUE
+                                WebOut('<SPACER SIZE="10">', 0)
+                                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                            Endif
+                            WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+                            WebOut('</FORM>', _html_crlf)
+                        Else
+                            If StrCmp( _action, _action_ListZone1DomainRecords) == 0
+                                WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                sql_stmnt = "SELECT w.custid, w.domain_name, w.ip FROM website w WHERE w.oid LIKE '%%ZONE1%%' AND w.termination IS NULL ORDER BY w.domain_name, w.ip;"
+                                Call( StrCat( _cgi_dir, "ListDomainRecords.wbc"), "")
+
+                                WebOut('<BR><BR>', 0)
+                                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+                                If b_is_admin_ip == @TRUE
+                                    WebOut('<SPACER SIZE="10">', 0)
+                                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                                Endif
+                                WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+                                WebOut('</FORM>', _html_crlf)
+                            Else
+                                If StrCmp( _action, _action_EMailZone1Records) == 0
+                                    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                    WebOut('<TABLE WIDTH="100%%">', 0)
+                                    WebOut('<TR>', 0)
+                                    WebOut('<TD>', 0)
+                                    sql_stmnt = "SELECT w.custid, w.domain_name, w.ip FROM website w WHERE w.oid LIKE '%%ZONE1%%' AND w.termination IS NULL ORDER BY w.domain_name, w.ip;"
+                                    Call( StrCat( _cgi_dir, "ListMultiDomainRecords.wbc"), "")
+                                    WebOut('</TD>', 0)
+                                    WebOut('</TR>', 0)
+                                    WebOut('<TR>', 0)
+                                    WebOut('<TD>', 0)
+                                    WebOut('<B>Subject: </B><INPUT TYPE="TEXT" NAME="Subject" SIZE="64" MAXLENGTH="80"><BR>', 0)
+                                    WebOut('<TEXTAREA NAME="MessageText" ROWS="20" COLS="80" WRAP="HARD"></TEXTAREA>', 0)
+                                    WebOut('</TD>', 0)
+                                    WebOut('</TR>', 0)
+                                    WebOut('</TABLE>', 0)
+    
+                                    WebOut('<BR><BR>', 0)
+                                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EMailCustomer%" VALUE="%_action_EMailCustomer%">', 0)
+                                    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_EMailCustomer%">', 0)
+                                    WebOut('</FORM>', _html_crlf)
+                                Else
+                                    If StrCmp( _action, _action_EMailCustRecords) == 0
+                                        WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                        WebOut('<TABLE WIDTH="100%%">', 0)
+                                        WebOut('<TR>', 0)
+                                        WebOut('<TD>', 0)
+                                        sql_stmnt = "SELECT w.custid, w.domain_name, w.ip FROM website w WHERE w.termination IS NULL ORDER BY w.domain_name, w.ip;"
+;sql_stmnt = "SELECT c.id, c.email FROM customer c WHERE c.termination IS NULL ORDER BY c.custname ;"
+                                        Call( StrCat( _cgi_dir, "ListMultiDomainRecords.wbc"), "")
+                                        WebOut('</TD>', 0)
+                                        WebOut('</TR>', 0)
+                                        WebOut('<TR>', 0)
+                                        WebOut('<TD>', 0)
+                                        WebOut('<B>Subject: </B><INPUT TYPE="TEXT" NAME="Subject" SIZE="64" MAXLENGTH="80"><BR>', 0)
+                                        WebOut('<TEXTAREA NAME="MessageText" ROWS="20" COLS="80" WRAP="HARD"></TEXTAREA>', 0)
+                                        WebOut('</TD>', 0)
+                                        WebOut('</TR>', 0)
+                                        WebOut('</TABLE>', 0)
+    
+                                        WebOut('<BR><BR>', 0)
+                                        WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EMailCustomer%" VALUE="%_action_EMailCustomer%">', 0)
+                                        WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_EMailCustomer%">', 0)
+                                        WebOut('</FORM>', _html_crlf)
+                                    Else
+                                        If StrCmp( _action, _action_ViewCustomerWebSite) == 0
+                                            _table = WebParamData('_table')
+                                            _custid = WebParamData('_custid')
+                                            _domain_name = WebParamData('_domain_name')
+                                            _ip = WebParamData('_ip')
+                                            _id = WebParamData('_id')
+                                            _edit_mode = WebParamData('_edit_mode')
+
+                                            If _edit_mode == @FALSE
+                                                Call( StrCat( _cgi_dir, "_ViewCustomerWebSiteRecord.wbc"), "")
+                                            Else
+                                                WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                                Call( StrCat( _cgi_dir, "_ViewCustomerWebSiteRecord.wbc"), "")
+
+                                                WebOut('<BR><BR>', 0)
+                                                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_SaveCustomer%" VALUE="%_action_SaveCustomer%">', 0)
+                                                WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_SaveCustomer%">', 0)
+                                                WebOut('<INPUT TYPE="HIDDEN" NAME="_custid" VALUE="%_custid%">', 0)
+                                                WebOut('</FORM>', _html_crlf)
+                                            Endif
+                                        Else
+                                            If StrCmp( _action, _action_ListMissingCC) == 0
+                                                WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                                sql_stmnt = "SELECT c.id, c.custname FROM customer c WHERE (c.cc='' OR c.cc IS NULL) AND c.termination IS NULL ORDER BY c.custname ;"
+                                                Call( StrCat( _cgi_dir, "ListCustomerRecords.wbc"), "")
+
+                                                WebOut('<BR><BR>', 0)
+                                                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+                                                If b_is_admin_ip == @TRUE
+                                                    WebOut('<SPACER SIZE="10">', 0)
+                                                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                                                Endif
+                                                WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+                                                WebOut('</FORM>', _html_crlf)
+                                            Else
+                                                If StrCmp( _action, _action_ListExpiringCC) == 0
+                                                    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                                    _yy_setting = IntControl(41, 0, 0, 0, 0)
+                                                    _t_this_yy = TimeYmdHms( )
+                                                    t_this_yy = ItemExtract( 1, _t_this_yy, ":")
+                                                    t_this_mm = ItemExtract( 2, _t_this_yy, ":")
+                                                    t_test_mm = Int( t_this_mm) + 3
+                                                    IntControl(41, _yy_setting, 0, 0, 0)
+
+                                                    sql_stmnt = "SELECT c.id, c.custname, c.exp  FROM customer c WHERE c.termination IS NULL AND (c.cc<>'' AND c.cc IS NOT NULL) AND c.exp LIKE '%%/%t_this_yy%' ORDER BY c.custname ;"
+                                                    Call( StrCat( _cgi_dir, "ListCustomerExpRecords.wbc"), "")
+
+                                                    WebOut('<BR><BR>', 0)
+                                                    WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+                                                    If b_is_admin_ip == @TRUE
+                                                        WebOut('<SPACER SIZE="10">', 0)
+                                                        WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                                                    Endif
+                                                    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+                                                    WebOut('</FORM>', _html_crlf)
+                                            
+                                                    Drop( _yy_setting, _t_this_yy, t_this_yy, t_test_mm)
+                                                Else
+                                                    If StrCmp( _action, _action_ListZone1MissingCC) == 0
+                                                        WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                                        sql_stmnt = "SELECT c.id, c.custname FROM customer c, website w WHERE c.id=w.custid AND w.oid LIKE '%%ZONE1%%' AND (c.cc='' OR c.cc IS NULL) AND c.termination IS NULL ORDER BY c.custname ;"
+                                                        Call( StrCat( _cgi_dir, "ListCustomerRecords.wbc"), "")
+
+                                                        WebOut('<BR><BR>', 0)
+                                                        WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_ViewCustomer%" VALUE="%_action_ViewCustomer%">', 0)
+                                                        If b_is_admin_ip == @TRUE
+                                                            WebOut('<SPACER SIZE="10">', 0)
+                                                            WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_EditCustomer%" VALUE="%_action_EditCustomer%">', 0)
+                                                        Endif
+                                                        WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ViewCustomer%">', 0)
+                                                        WebOut('</FORM>', _html_crlf)
+                                                    Else
+                                                        If StrCmp( _action, _action_EMailCustomer) == 0
+                                                            __custids = WebParamData(_CustomerList)
+
+                                                            __count = ItemCount( __custids, @TAB)
+;WebOut('(%__count%) __custids=(', 0)
+;WebOut(__custids, 0)
+;WebOut(')<BR>', _html_crlf)
+
+                                                            WebSetTimeout( __count * 60)
+                                                            
+                                                            Call( StrCat( _cgi_dir, "SendEMailToCusts.wbc"), "__custids _email_preamble_file2")
+                                                        Else
+                                                            If StrCmp( _action, _action_MarkReceivablePaid) == 0
+                                                                _custid = WebParamData('_custid')
+                                                                _webid = WebParamData('_webid')
+                                                                sql_stmnt = "UPDATE receivables SET pid=-1 WHERE custid=%_custid% AND webid=%_webid%"
+                                                                sql_fetch = @FALSE
+                                                                sql_level = ""
+                                                                sql_fetch_gosub = ""
+                                                                sql_alias = ""
+                                                                _datasource = datasource
+                                                                Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+                                                                WebOut('<BR><BR><LI><FONT COLOR="BLUE"><B>sql_stmnt=', 0)
+                                                                WebOut(sql_stmnt, 0)
+                                                                WebOut(', retcode=%retcode%</B></FONT></LI><BR><BR>', _html_crlf)
+                                                            Else
+                                                                _add_receivables_mode = (StrCmp( _action, _action_AddReceivable) == 0)
+                                                                _add_prepayment_mode = (StrCmp( _action, _action_AddPrePayment) == 0)
+                                                                _edit_receivables_mode = (StrCmp( _action, _action_EditReceivable) == 0)
+                                                                If (_add_receivables_mode) || (_add_prepayment_mode) || (_edit_receivables_mode)
+                                                                    _custid = WebParamData(___custid__)
+
+                                                                    _webid = WebParamData(_WebSiteList)
+                                                                    If StrLen( _webid) > 0
+                                                                        Call( StrCat( _cgi_dir, "SaveFieldsToDb.wbc"), "")
+                                                                    Else
+                                                                        WebOut('<BR><FONT COLOR="RED"><B>WARNING: Can''t save record because you didn''t select a WebSite from the list - Please try again!</B></FONT><BR>', _html_crlf)
+                                                                    Endif
+
+                                                                    Drop( _webid)
+                                                                Else ; _action_ViewCustomer is HERE!
+                                                                    _add_receivables_mode = (StrIndex( _WebParamNames, _action_AddReceivable, 1, @FWDSCAN) > 0)
+                                                                    _add_prepayment_mode = (StrIndex( _WebParamNames, _action_AddPrePayment, 1, @FWDSCAN) > 0)
+                                                                    _edit_receivables_mode = (StrIndex( _WebParamNames, _action_EditReceivable, 1, @FWDSCAN) > 0)
+
+                                                                    If (_add_receivables_mode == @TRUE) || (_add_prepayment_mode == @TRUE)
+                                                                        _edit_mode = @TRUE
+
+                                                                        __custid = WebParamData(_CustomerList)
+                                                                        Call( StrCat( _cgi_dir, "SplitCustNameFromID.wbc"), "__custid _custid _custname _CustomerList_delimiter")
+
+                                                                        If StrLen( _custid) > 0
+                                                                            Call( StrCat( _cgi_dir, "AddReceivablesRecord.wbc"), "")
+                                                                        Else
+                                                                            WebOut('<BR><FONT COLOR="RED"><B>WARNING: You didn''t select a Customer from the list - Please try again!</B></FONT><BR>', _html_crlf)
+                                                                        Endif
+                                                                    Else
+                                                                        If _edit_receivables_mode == @TRUE
+                                                                            __custid = WebParamData(_CustomerList)
+                                                                            Call( StrCat( _cgi_dir, "SplitCustNameFromID.wbc"), "__custid _custid _custname _CustomerList_delimiter")
+
+                                                                            Call( StrCat( _cgi_dir, "ListReceivableRecords.wbc"), "")
+                                                                        Else
+                                                                            _edit_mode = (StrIndex( _WebParamNames, _action_EditCustomer, 1, @FWDSCAN) > 0)
+
+                                                                            If _edit_mode == @FALSE
+                                                                                __custid = WebParamData(_CustomerList)
+                                                                                Call( StrCat( _cgi_dir, "SplitCustNameFromID.wbc"), "__custid _custid _custname _CustomerList_delimiter")
+                                                                                If StrLen( _custid) > 0
+                                                                                    Call( StrCat( _cgi_dir, "ViewCustomerRecord.wbc"), "")
+                                                                                    Call( StrCat( _cgi_dir, "ViewCustomerRecordPayments.wbc"), "")
+                                                                                Else
+                                                                                    WebOut('<BR><FONT COLOR="RED"><B>WARNING: You didn''t select a Customer from the list - Please try again!</B></FONT><BR>', _html_crlf)
+                                                                                Endif
+                                                                            Else
+                                                                                WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+                                                                                __custid = WebParamData(_CustomerList)
+                                                                                Call( StrCat( _cgi_dir, "SplitCustNameFromID.wbc"), "__custid _custid _custname _CustomerList_delimiter")
+                                                                                If StrLen( _custid) > 0
+                                                                                    Call( StrCat( _cgi_dir, "ViewCustomerRecord.wbc"), "")
+                                                                                    Call( StrCat( _cgi_dir, "ViewCustomerRecordPayments.wbc"), "")
+                                                                                Else
+                                                                                    WebOut('<BR><FONT COLOR="RED"><B>WARNING: You didn''t select a Customer from the list - Please try again!</B></FONT><BR>', _html_crlf)
+                                                                                Endif
+
+                                                                                WebOut('<BR><BR>', 0)
+                                                                                WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_SaveCustomer%" VALUE="%_action_SaveCustomer%">', 0)
+                                                                                WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_SaveCustomer%">', 0)
+                                                                                WebOut('<INPUT TYPE="HIDDEN" NAME="_custid" VALUE="%_custid%">', 0)
+                                                                                WebOut('</FORM>', _html_crlf)
+                                                                            Endif
+
+                                                                            If StrLen( _custid) > 0
+                                                                                WebOut('<HR>', _html_crlf)
+
+                                                                                sql_level = ""
+                                                                                Call( StrCat( _cgi_dir, "ViewCustomerWebSiteButton.wbc"), "")
+                                                                                Drop( sql_level)
+
+                                                                                sql_level = ""
+                                                                                Call( StrCat( _cgi_dir, "ViewCustomerContactRecord.wbc"), "")
+                                                                                Drop( sql_level)
+                                                                            Endif
+                                                                        Endif
+                                                                    Endif
+                                                                Endif
+                                                            Endif
+                                                        Endif
+                                                    Endif
+                                                Endif
+                                            Endif
+                                        Endif
+                                    Endif
+                                Endif
+                            Endif
+                        Endif
+                    Endif
+                Endif
+            Endif
+        Endif
+    Else
+        Call( StrCat( _cgi_dir, "CopyrightNotice.wbc"), "")
+    Endif
+Else
+    Call( StrCat( _cgi_dir, "CopyrightNotice.wbc"), "")
+Endif
+
+WebOut('</TD>', _html_crlf)
+
+WebOut('</TR>', _html_crlf)
+WebOut('</TABLE>', _html_crlf)
+
+:thats_all_folks
+
+WebOut('</BODY>', _html_crlf)
+WebOut('</HTML>', _html_crlf)
+
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)
+
+exit
+

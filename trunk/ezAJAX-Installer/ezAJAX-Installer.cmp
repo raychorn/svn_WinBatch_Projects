@@ -1,0 +1,41 @@
+[Main]
+Type=1
+Src=ezAJAX-Installer.wbt
+Targ=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\ezAJAX_Community_Edition_v094d_30-Day_Trial.exe
+Icon=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\xp_001.ico
+CmpVersion=4
+[Options]
+TechWebPage=http://www.ez-ajax.com
+RunHidden=0
+LargeExtractDest=0
+UACManifestSelection=asInvoker
+UACManifestUI=false
+CodeSign=0
+CodeSignDetails=~~
+PreventAutoExtract=0
+[Version Info]
+Comments=http://www.ez-ajax.com
+CompanyName=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=ezAJAX-Installer
+FileVersion=0.93
+InternalName=ezAJAX-Installer.exe
+LegalCopyright=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=ezAJAX-Installer.exe
+ProductName=ezAJAX-Installer
+ProductVersion=0.93
+[Other Files]
+Count=7
+File001=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\sources\ezAJAX Logo 08-16-2006a.bmp
+File002=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\sources\ezAJAX(tm) Community Edition Installation Instructions.txt
+File003=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\sources\ezAJAX(tm) Community Edition Privacy Policy.txt
+File004=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\sources\ezAJAX(tm) Community Edition Service Guarantee.txt
+File005=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\sources\ezAJAX_Community_Edition_v094_30-Day_Trial.zip
+File006=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\sources\ezAJAX™ Community Edition License Agreement.txt
+File007=Z:\#wDisk\WinBatch-Dev\ezAJAX-Installer\sources\ezAJAX™ Enterprise Edition License Agreement.txt
+[Extenders]
+Count=4
+File001=WWCPU44I.DLL
+File002=wwint44i.dll
+File003=wwwsk44i.dll
+File004=WWZIP34I.DLL

@@ -1,0 +1,20 @@
+;************************************************************************
+; job-scheduler.wbt
+;
+;************************************************************************
+
+_wname = "Job Scheduler v1.0"
+wname = "%_wname% (c)2005 Hierarchical Applications Limited, All Rights Reserved."
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+fName = "%_myPath%schtasks.txt"
+
+;Message("DEBUG", StrCat(Environment("COMSPEC"), " /c schtasks /Query > %_myPath%schtasks.txt"))
+
+RunWait("%_myPath%qSchTasks.cmd", "")
+
+if FileExist(fName)
+	Message("DEBUG", "%_myPath%schtasks.txt")
+endif
+

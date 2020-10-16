@@ -1,0 +1,3 @@
+T2S`192.168.1.10:28000`{USB}Mayhem R&D`Rimehold`24`10`10`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game={USB}Mayhem_v168`mission=Hunters`status=19`dedicated=1`password=1`no_aliases=1`bot_count=10`cpu_speed=500`info=Tribes2 Dedicated Server running {USB}Mayhem Mod Vers v1.68+23669. RulesSet is . Download Mod from http://Tribes2ModCentral.com or http://usbmayhem.tribes-universe.com/ & Download Missions from http://Tribes2Maps.com`numteams=1
+

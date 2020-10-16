@@ -1,0 +1,127 @@
+; send-fax.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(41, 1, 0, 0, 0) ; Y2K to 4 digit YYYY
+
+_appName = "send-fax"
+
+wname0 = "WBT - send-fax.exe"
+
+_mailServer = "mail.hal-smalltalker.com"
+
+_fromToken = "From "
+_fromColonToken = "From:"
+_receivedColonToken = "Received:"
+_toColonToken = "To:"
+_DateColonToken = "Date:"
+_SubjectColonToken = "Subject:"
+
+_ReceivedN = 1
+
+_messageBody = ""
+
+_beginMessageBody = @FALSE
+
+user = "send-fax"
+pswd = "peek@boo"
+handle = p3Open( _mailServer, user, pswd)
+If handle == @FALSE 
+	err = wxGetLastErr()
+	msg = wxGetErrDesc( err)
+	Message("p3Open", "Open Failed - err=%err%, msg=%msg%")
+else
+	count = p3Count( handle)
+;	message("messages", "There are %count% messages to be read.")
+
+	for _x = 1 to count
+		damsg = p3Peek( handle, _x, 99)
+;		message( "count %count%", damsg)
+		for _y = 1 to ItemCount( damsg, @CRLF)
+			_line = ItemExtract( _y, damsg, @CRLF)
+
+			if _y == 1  ; process the first line of the message
+				_ti = StrIndex( _line, _fromToken, 1, @FWDSCAN)
+				if (_ti > 0)
+					_ti2 = StrLen( _fromToken)
+					_fromAddrs = StrTrim( StrSub( _line, _ti2, StrLen( _line)))
+					_lineCopy = StrCat( "", _fromAddrs)
+					_ti3 = StrIndex( _fromAddrs, " ", 1, @FWDSCAN)
+					if (_ti3 > 0)
+						_fromAddrs = StrTrim( StrSub( _fromAddrs, 1, _ti3))
+						_fromDate = StrTrim( StrSub( _lineCopy, _ti3, StrLen( _lineCopy)))
+					endif
+				endif
+			else
+				if _beginMessageBody == @FALSE
+					_ti = StrIndex( _line, _receivedColonToken, 1, @FWDSCAN)
+					if IsDefined( _Received)
+						if (_ti > 0)
+							_Received%_ReceivedN% = StrTrim( _Received)
+							_ReceivedN = _ReceivedN + 1
+							Drop( _Received)
+							_Received = StrCat( "", StrTrim( _line))
+						else ; determine if the real message has been reached
+							_tiF = StrIndex( _line, _fromColonToken, 1, @FWDSCAN)
+							_tiT = StrIndex( _line, _toColonToken, 1, @FWDSCAN)
+							_tiD = StrIndex( _line, _DateColonToken, 1, @FWDSCAN)
+							_tiS = StrIndex( _line, _SubjectColonToken, 1, @FWDSCAN)
+							if (_tiF > 0) || (_tiT > 0) || (_tiD > 0) || (_tiS > 0)
+								if (_tiF > 0)
+									_tiFLen = StrLen( _fromColonToken)
+									_tiFToken = StrTrim( StrSub( _line, _tiFLen, StrLen( _line)))
+								else
+									if (_tiT > 0)
+										_tiTLen = StrLen( _toColonToken)
+										_tiTToken = StrTrim( StrSub( _line, _tiTLen, StrLen( _line)))
+									else
+										if (_tiD > 0)
+											_tiDLen = StrLen( _DateColonToken)
+											_tiDToken = StrTrim( StrSub( _line, _tiDLen, StrLen( _line)))
+										else
+											if (_tiS > 0)
+												_tiSLen = StrLen( _SubjectColonToken)
+												_tiSToken = StrTrim( StrSub( _line, _tiSLen, StrLen( _line)))
+											else
+											endif
+										endif
+									endif
+								endif
+								_beginMessageBody = @TRUE
+								_Received%_ReceivedN% = StrTrim( _Received)
+								_ReceivedN = _ReceivedN + 1
+								Drop( _Received)
+								_messageBody = StrCat( "", StrTrim( _line))
+							else
+								_Received = StrCat( _Received, StrTrim( _line))
+							endif
+						endif
+					else
+						if (_ti > 0)
+							if IsDefined( _Received)
+								_Received = StrCat( _Received, StrTrim( _line))
+							else
+								_Received = StrCat( "", StrTrim( _line))
+							endif
+						endif
+					endif
+				else ; here we find the actual message text 'til the end of the message
+					_messageBody = StrCat( _messageBody, StrTrim( _line))
+				endif
+			endif
+		next
+	next 
+
+endif
+
+:quit_right_now
+p3Close(handle)
+
+_fhandle = FileOpen( "stuff.txt", "WRITE")
+fileclose( _fhandle)
+
+message( "%_fromAddrs% on %_fromDate%", _messageBody)
+
+exit
+
+

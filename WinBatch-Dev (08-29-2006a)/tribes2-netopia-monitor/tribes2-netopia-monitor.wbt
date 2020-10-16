@@ -1,0 +1,1239 @@
+; tribes2-netopia-monitor.wbt
+
+; Open issues :
+; ...then Publish it !
+
+AddExtender("wwipg32i.dll")
+;AddExtender("wwwsk32i.dll")
+
+wName = "Tribes2 Netopia Monitor Vers 1.0.1 - (c). Copyright 1990-2001 HAL Smalltalker, Inc."
+
+_publicVersion = @TRUE
+_publicVersion = @FALSE
+
+_InitGraphicsCompleted = @FALSE
+
+_yyMax = 400
+
+_telnetTitle5 = "Save As..."
+_telnetTitle4 = "HyperTerminal"
+_telnetTitle3 = "DSL - HyperTerminal"
+_telnetTitle2 = "Connect To"
+_telnetTitle1 = "Connection Description"
+_telnetProg = "C:\Program Files\Windows NT\hypertrm.exe"
+_telnetIP = ""
+_telnetName = "name:"
+_telnetPassword = "password:"
+_telnetUserName = ""
+_telnetUserPwd = ""
+_telnetStatsKey = "internet"
+
+_additionalQStatParms = ",status=dedicated,regions=0x3f"
+
+_resortToken1 = "- Sort List by Server Name -"
+_resortToken2 = "- Sort List by Server IP -"
+_resortMode = 2
+
+_folderPath = IntControl(1004, 0, 0, 0, 0)
+_folder = FilePath( _folderPath)
+
+_inputFileType = ".txt"
+inputFilePath = "%_folder%qstat%_inputFileType%"
+inputServerFilePath = "%_folder%qstatServers%_inputFileType%"
+
+outputFilePath = "%_folder%Activity-Log%_inputFileType%"
+_OkToAppendActivityLog = @TRUE
+
+outputBillingFilePath = "%_folder%Billing-Log%_inputFileType%"
+
+_commandLineParmsFilePath = ""
+If (IsDefined( Param1))
+	If (FileExist( Param1) == @TRUE)
+		_commandLineParmsFilePath = Param1
+		Gosub ReadParamsFile
+	endif
+else
+	_commandLineParmsFilePath = "%_folder%params.txt"
+	Gosub DeleteParamsFile
+endif
+
+bExit = 1   
+
+_commandLineParms = ""
+
+_webBrowser = "C:\Program Files\Internet Explorer\IEXPLORE.EXE"
+
+_wwwURL = "http://usbmayhem.tribes-universe.com"
+
+_cr = Num2Char(13)
+_Lf = Num2Char(10)
+_crLf = StrCat(_cr, _Lf)
+
+__quote = Num2Char(34)
+_quote = ""
+
+_qstatRawDelim = "`"
+_qstatParms = "-t2s"
+_qstatParmsList = ""
+_qstatParmsList = StrCat( _qstatParmsList, "-t2s=Tribes2", @tab)           ; Must be the first item in this list
+_qstatParmsList = StrCat( _qstatParmsList, "-tbs=Tribes1", @tab)           ; Must be the 2nd item in this list
+_qstatParmsList = StrCat( _qstatParmsList, "-qs=Quake", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-h2s=Hexen II", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-qws=QuakeWorld", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-hws=HexenWorld", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-q2s=Quake II", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-uns=Unreal", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-hls=Half-Life", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-sns=Sin", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-sgs=Shogo: Mobile Armor Division", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-q3s=Quake III", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-bfs=BFRIS", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-kps=Kingpin", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-hrs=Heretic II", @tab)
+_qstatParmsList = StrCat( _qstatParmsList, "-sfs=Soldier of Fortune", @tab)
+
+_qstatMasterList = ""
+_qstatMasterList = StrCat( _qstatMasterList, "-t2m|-t2s=Tribes 2 master", @tab)
+_qstatMasterList = StrCat( _qstatMasterList, "-tbm|-tbs=Tribes master", @tab)
+_qstatMasterList = StrCat( _qstatMasterList, "-qwm|-qws=QuakeWorld master", @tab)
+_qstatMasterList = StrCat( _qstatMasterList, "-q2m|-q2s=Quake II master", @tab)
+_qstatMasterList = StrCat( _qstatMasterList, "-hlm|-hls=Half-Life master", @tab)
+_qstatMasterList = StrCat( _qstatMasterList, "-q3m|-q3s=Quake III master", @tab)
+;_qstatMasterList = StrCat( _qstatMasterList, "-gsm=Gamespy master", @tab)
+
+_skipActivityBar = 1
+
+_botCountSymbol = "bot_count="
+
+_maxWaitSecs = 10
+_maxWaitSecsMin = 1        ; Lets' get real here... do we really need to poll the server any faster than once per minute ?
+
+_serverAddressMax = 4
+
+_serverAddress = "-tbs+192.168.1.6:31001@24`-t2s+192.168.1.2:28000@64`-t2s+192.168.1.8:28000@16`-t2s+192.168.1.9:28000@32"
+_serverAddressIsLocal = @FALSE
+
+_comspec = Environment("COMSPEC")
+
+If IsDefined( _Param1)
+	_val = int(_Param1)
+	if (StrLen(_Param1) > 0) && (_val < _maxWaitSecsMin)
+		_maxWaitSecs = _val
+	endif
+;	message("%wName%", "_Param1 is %_Param1%")
+Else
+	_val = AskLine( wName, "Max Wait Secs ? (How long should ispawn wait before checking to see if the server is alive ?  The Minimum allowed value is %_maxWaitSecsMin%)", _maxWaitSecs)
+	if (StrLen(_val) > 0) && (int(_val) < _maxWaitSecsMin)
+		_maxWaitSecs = int(_val)
+	endif
+	_commandLineParms = StrCat( _commandLineParms, "%_maxWaitSecs%", @TAB)
+	Gosub AppendParamsFile
+Endif
+
+If IsDefined( _Param2)
+	_serverAddress = _Param2
+;	message("%wName%", "_Param3 is %_Param3%")
+Else
+	_val = AskLine( wName, "Server Address List ? (-tbs+192.168.1.6:31001@24`) Clear this edit field and hit Okay to choose from a Master Server...", _serverAddress)
+	if StrLen(_val) > 0
+		_serverAddress = _val
+		_commandLineParms = StrCat( _commandLineParms, "%_serverAddress%", @TAB)
+		Gosub AppendParamsFile
+	else
+		_gms = AskItemList( "QStat Master Server ? Hit okay button to use the Default Tribes2...", _qstatMasterList, @tab, @unsorted, @single)
+		if (StrLen(_gms) > 0) && (ItemCount( _gms, "=") == 2)
+			__gms = ItemExtract( 1, _gms, @tab)
+			_qstatMaster = ItemExtract( 1, __gms, "|")
+			_qstatServer = ItemExtract( 1, ItemExtract( 2, __gms, "|"), "=")
+			_qstatMasterName = ItemExtract( 2, __gms, "=")
+		else
+			__gms = ItemExtract( 1, _qstatMasterList, @tab)
+			_qstatMaster = ItemExtract( 1, __gms, "|")
+			_qstatServer = ItemExtract( 1, ItemExtract( 2, __gms, "|"), "=")
+			_qstatMasterName = ItemExtract( 2, __gms, "=")
+		endif
+		_serverAddress00 = "198.74.40.152:28000"
+		_serverAddress = ""
+		__additionalQStatParms = ""
+		while StrLen(_serverAddress) == 0
+			_serverAddress00 = AskLine( wName, "%_qstatMasterName% Master Server Address ? (192.168.1.6:31001) ...", _serverAddress00)
+			if StrLen(_serverAddress00) > 0  ; qstat -raw ` -t2m,status=dedicated,regions=0x3f 63.251.143.245:27999
+				if StrLen(__additionalQStatParms) == 0
+					_val = AskLine( wName, "Additional QStat Parms ? The typical response is to hit the enter key... Refer to the QStat ReadMe for more info about this...", _additionalQStatParms)
+					if StrLen(_val) > 0
+						__additionalQStatParms = _val
+					endif
+				endif
+				_commandLine00 = StrCat(_folder, "qstat -raw %_qstatRawDelim% %_qstatMaster%%__additionalQStatParms% %_serverAddress00%")
+				_inputFilePath00 = StrReplace( inputServerFilePath, _inputFileType, StrCat( "_", StrReplace( _serverAddress00, ":", "+"), _inputFileType))
+				_fullCommandLine00 = StrCat("/c ", _commandLine00, " > ", _quote, _inputFilePath00, _quote)
+
+				Gosub InitGraphics
+				_InitGraphicsCompleted = @TRUE
+				Gosub Graphics0
+
+				_ret00 = RunHideWait( _comspec, _fullCommandLine00)
+			
+				if _ret00 <> @TRUE
+					message(wName, "Error executing (%_comspec%, %_fullCommandLine00%)")
+					exit
+				endif
+				Gosub ReadInputFile00
+				if StrLen(_serverAddress) > 0
+					i0 = 1
+					while i0 > 0
+						_other_resortMode = -1
+						if _resortMode == 1
+							_other_resortMode = 2
+						else
+							_other_resortMode = 1
+						endif
+						_serverAddress = StrCat( _resortToken%_other_resortMode%, @tab, _serverAddress)
+						_gmssList = AskItemList( "Choose %_qstatMasterName% Server ? (Choose up to 4 servers from this list) ", _serverAddress, @tab, @sorted, @multiple)
+						if (StrLen(_gmssList) > 0)
+							i0 = StrIndexNc( _gmssList, _resortToken%_other_resortMode%, 1, @FWDSCAN)
+							if i0 > 0
+								if _other_resortMode == 1
+									__serverAddress = ""
+									for i = 1 to ItemCount( _serverAddress, @tab)
+										if i == 1
+										else
+											_gmss = ItemExtract( i, _serverAddress, @tab)
+											_gmssIP = StrTrim(ItemExtract( 1, _gmss, "|"))
+											_gmssName = StrTrim(ItemExtract( 2, _gmss, "|"))
+											__serverAddress = StrCat( __serverAddress, "%_gmssName%|%_gmssIP%", @tab)
+										endif
+									next
+									_serverAddress = __serverAddress
+								else
+									__serverAddress = ""
+									for i = 1 to ItemCount( _serverAddress, @tab)
+										if i == 1
+										else
+											_gmss = ItemExtract( i, _serverAddress, @tab)
+											_gmssName = StrTrim(ItemExtract( 1, _gmss, "|"))
+											_gmssIP = StrTrim(ItemExtract( 2, _gmss, "|"))
+											__serverAddress = StrCat( __serverAddress, "%_gmssIP%|%_gmssName%", @tab)
+										endif
+									next
+									_serverAddress = __serverAddress
+								endif
+								_resortMode = _other_resortMode
+							else
+								_serverAddress = ""
+								for i = 1 to ItemCount( _gmssList, @tab)
+									_gmss = ItemExtract( i, _gmssList, @tab)
+									if _resortMode == 2
+										_gmssIP = ItemExtract( 1, _gmss, "|")
+									else
+										_gmssIP = ItemExtract( 2, _gmss, "|")
+									endif
+									_serverAddress = StrCat( _serverAddress, "%_qstatServer%+%_gmssIP%%_qstatRawDelim%")
+									if ItemCount( _serverAddress, _qstatRawDelim) == _serverAddressMax
+										break
+									endif
+								next
+							endif
+						endif
+					endwhile
+				else
+					message("%wName% - Warning Message", "Select a different %_qstatMasterName% Master Server from the list.")
+				endif
+			endif
+		endwhile
+	endif
+Endif
+
+; _serverAddress = "-tbs+192.168.1.6:31001@24`-t2s+192.168.1.2:28000@64`-t2s+192.168.1.8:28000@16`-t2s+192.168.1.9:28000@32"
+
+  
+_serverAddress0 = ItemCount( _serverAddress, _qstatRawDelim)
+if _serverAddress0 > _serverAddressMax
+	_serverAddress0 = _serverAddressMax
+endif
+for i = 1 to _serverAddress0
+	_is = ItemExtract( i, _serverAddress, _qstatRawDelim)
+	_serverType%i% = ItemExtract( 1, _is, "+")
+	i0 = StrIndexNc( _is, "@", 1, @FWDSCAN)
+	if i0 > 0
+		_serverAddress%i% = ItemExtract( 1, ItemExtract( 2, _is, "+"), "@")
+		_serverMaxPlayers%i% = ItemExtract( 2, ItemExtract( 2, _is, "+"), "@")
+	else
+		_serverAddress%i% = ItemExtract( 2, _is, "+")
+		_serverMaxPlayers%i% = ""
+	endif
+next
+
+_ips = ipGetAddress()
+Gosub CheckIPs
+
+If IsDefined( _Param3)
+	_val = int(_Param3)
+;	message("%wName%", "_Param8 is %_Param8%")
+	if (_val == 0) || (_val == 1)
+		_skipActivityBar = _val
+	else
+		_skipActivityBar = 1
+	endif
+Else
+	_val = AskLine( wName, "Bypass activity bar ? (1 = Yes, do not display the activity bar to use fewer CPU cycles; button clicks may not be processed in real-time otherwise 0 = No, display the activity bar cuz my CPU rocks)", _skipActivityBar)
+	if (StrLen(_val) > 0)
+		if (_val == 0) || (_val == 1)
+			_skipActivityBar = _val
+		else
+			_skipActivityBar = 1
+		endif
+		_commandLineParms = StrCat( _commandLineParms, "%_skipActivityBar%", @TAB)
+		Gosub AppendParamsFile
+	else
+		exit
+	endif
+Endif
+
+i0 = StrIndexNc( _folder, " ", 1, @FWDSCAN)
+if i0 > 0
+	message(wName, "You have installed %wName% into a folder with a space in the name - PLS reinstall or rename this folder to remove the errant spaces.")
+	exit
+endif
+
+for i = 1 to _serverAddress0
+	_textValues%i% = ""
+	_commandLine%i% = StrCat(_quote, _folder, "qstat", _quote, " -raw %_qstatRawDelim% -R ", _serverType%i%, " ", _serverAddress%i%)
+	_inputFilePath%i% = StrReplace( inputFilePath, _inputFileType, StrCat( "_", StrReplace( _serverAddress%i%, ":", "+"), _inputFileType))
+	_fullCommandLine%i% = StrCat("/c ", _commandLine%i%, " > ", _quote, _inputFilePath%i%, _quote)
+next
+
+Gosub MakeShortCuts
+
+if _InitGraphicsCompleted == @FALSE
+	Gosub InitGraphics
+	_InitGraphicsCompleted = @TRUE
+endif
+
+_ikPcentMax = -1
+_TimeNOW = StrCat( StrSub( TimeYmdHms(), 1, 11), "00:00:00")
+_addTime = "0000:00:00:01:00:00"
+_hh = ItemExtract( 4, _TimeNOW, ":")
+for i = 0 to 23
+	_ikPcentHourlyMax%_hh% = -1
+	_ikPlayersHourlyMax%_hh% = -1
+	_ikHumansHourlyMax%_hh% = -1
+	_ikBOTsHourlyMax%_hh% = -1
+	_newTime = TimeAdd( _TimeNOW, _addTime)
+	_hh = ItemExtract( 4, _newTime, ":")
+	_TimeNOW = _newTime
+next
+
+while 1
+	_textValues = ""
+	_textLabels = ""
+	__totalPlayers = 0
+	__numPlayers = 0
+	__botPlayers = 0
+	for i = 1 to _serverAddress0
+		_ret%i% = RunHideWait( _comspec, _fullCommandLine%i%)
+	
+		if _ret%i% <> @TRUE
+			message(wName, StrCat( "Error executing (%_comspec%, ", _fullCommandLine%i%, ")"))
+			exit
+		endif
+		
+		Gosub ReadInputFile    ; just count the players from all the servers and get me a total
+
+		_textLabels = StrCat( _textLabels, "Server:", ",", "Num Players:", ",", "Players:", ",", "BOTs:", ",")
+		_textValues = StrCat( _textValues, _serverAddress%i%, ",")
+		_textValues = StrCat( _textValues, "%_totalPlayers%", ",")
+		if _totalPlayers%i% > _serverMaxPlayers%i%
+			Gosub AppendBillingLog
+		endif
+		_textValues = StrCat( _textValues, "%_numPlayers%", ",")
+		_textValues = StrCat( _textValues, "%_botPlayers%", ",")
+	next
+
+	decs = Decimals(2)
+
+	_textLabels = StrCat( _textLabels, "--------------------", ",", "Total Players:", ",", "# Players:", ",", "# BOTs:", ",", "# Humans:", ",", "%% Full:")
+	if _publicVersion == @FALSE
+		_textLabels = StrCat( _textLabels, ",", "%% DSL:", ",", "%% DSL Max:")
+	endif
+	_textValues = StrCat( _textValues, "--------------------", ",")
+	_textValues = StrCat( _textValues, "%__totalPlayers%", ",")
+	_textValues = StrCat( _textValues, "%__numPlayers%", ",")
+	_textValues = StrCat( _textValues, "%__botPlayers%", ",")
+	__numHumans = __numPlayers - __botPlayers
+	_textValues = StrCat( _textValues, "%__numHumans%", ",")
+	__realPlayers = (__totalPlayers - __botPlayers) * 1.0
+	if __realPlayers > 0
+		__ratio = ((__numHumans * 1.0) / __realPlayers)
+	else
+		__ratio = 0
+	endif
+	__percentage = __ratio * 100.0
+	_textValues = StrCat( _textValues, "%__percentage%", ",")
+
+	_ikPcent = -1
+	if _publicVersion == @FALSE
+		Gosub telnet
+	endif
+
+	if _ikPcent > -1
+		_textValues = StrCat( _textValues, "%_ikPcent%", ",")
+		_ikPcentMax = Max( _ikPcentMax, _ikPcent)
+		_textValues = StrCat( _textValues, "%_ikPcentMax%", ",")
+	endif
+
+	_TimeNOW = TimeYmdHms()  ; YYYY:MM:DD:HH:MM:SS
+	_hh = ItemExtract( 4, _TimeNOW, ":")
+	_ikPcentHourlyMax%_hh% = Max( _ikPcentHourlyMax%_hh%, _ikPcent)
+
+	_ikPlayersHourlyMax%_hh% = Max( _ikPlayersHourlyMax%_hh%, __realPlayers)
+	_ikHumansHourlyMax%_hh% = Max( _ikHumansHourlyMax%_hh%, __numHumans)
+	_ikBOTsHourlyMax%_hh% = Max( _ikBOTsHourlyMax%_hh%, __botPlayers)
+
+	if (_hh == 0) && (_OkToAppendActivityLog == @TRUE)
+		Gosub AppendActivityLog
+	else
+		if (_hh == 1) && (_OkToAppendActivityLog == @FALSE)
+			_OkToAppendActivityLog = @TRUE
+		endif
+	endif
+
+	_textLabelsHourly = ""
+	_textValuesHourly = ""
+	_TimeNOW = StrCat( StrSub( TimeYmdHms(), 1, 11), "00:00:00")
+	_addTime = "0000:00:00:01:00:00"
+	_hh = ItemExtract( 4, _TimeNOW, ":")
+	for i = 0 to 23
+		_textLabelsHourly = StrCat( _textLabelsHourly, "%_hh%", ",")
+		_value1 = _ikPcentHourlyMax%_hh%
+		_value2 = int(_ikPlayersHourlyMax%_hh%)
+		_value3 = int(_ikHumansHourlyMax%_hh%)
+		_value4 = int(_ikBOTsHourlyMax%_hh%)
+		if _publicVersion == @FALSE
+			_textValuesHourly = StrCat( _textValuesHourly, "%_value1%/")
+		else
+		endif
+		_textValuesHourly = StrCat( _textValuesHourly, "P=%_value2%/H=%_value3%/B=%_value4%", ",")
+		_newTime = TimeAdd( _TimeNOW, _addTime)
+		_hh = ItemExtract( 4, _newTime, ":")
+		_TimeNOW = _newTime
+	next
+
+	Decimals(decs)
+
+	Gosub GraphicsA
+	
+	_TotalUnits = _maxWaitSecs
+	for j = 1 to _maxWaitSecs
+		_CurrentUnit = j
+		_delayTime = "0000:00:00:00:00:01"
+		_now = TimeYmdHms()
+		_newTime = TimeAdd( _now, _delayTime)
+		TimeWait( _newTime)
+		if _skipActivityBar == 0
+			Gosub DOTHERM
+		endif
+		Gosub PollButton
+	next
+
+endwhile
+
+BoxShut()
+
+exit
+
+
+
+
+:ReadInputFile
+if FileExist( _inputFilePath%i%) == @TRUE
+	_totalPlayers = 0
+	_numPlayers = 0
+	_botPlayers = 0
+	_totalPlayers%i% = 0
+	_numPlayers%i% = 0
+	_botPlayers%i% = 0
+	_fLine = 0
+	_t2Type = ItemExtract( 1, _qstatParmsList, @tab)
+	_t1Type = ItemExtract( 2, _qstatParmsList, @tab)
+	fIN = FileOpen( _inputFilePath%i%, "READ")
+	while @TRUE                                         ; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		_fLine = _fLine + 1
+		if _fLine == 1
+			if ItemCount( x, _qstatRawDelim) > 5
+				_gameType = ItemExtract( 1, x, _qstatRawDelim)
+				_gi = StrIndexNc( _t2Type, _gameType, 1, @FWDSCAN)
+				if _gi > 0
+					; t2
+					_totalPlayers = ItemExtract( 5, x, _qstatRawDelim)
+					_totalPlayers%i% = _totalPlayers
+					_numPlayers = ItemExtract( 6, x, _qstatRawDelim)
+					_numPlayers%i% = _numPlayers
+				else
+					_gi = StrIndexNc( _t1Type, _gameType, 1, @FWDSCAN)
+					if _gi > 0
+						; t1
+						_numPlayers = ItemExtract( 5, x, _qstatRawDelim)
+						_numPlayers%i% = _numPlayers
+						_totalPlayers = ItemExtract( 6, x, _qstatRawDelim)
+						_totalPlayers%i% = _totalPlayers
+					endif
+				endif
+			else
+;				message("%wName% - ReadInputFile Error - Insufficient tokens...", x)
+			endif
+		else
+			for ii = 1 to ItemCount( x, _qstatRawDelim)
+				_tok = ItemExtract( ii, x, _qstatRawDelim)
+				i2 = StrIndexNc( _tok, _botCountSymbol, 1, @FWDSCAN)
+				if i2 > 0
+					_botPlayers = ItemExtract( 2, _tok, "=")
+					_botPlayers%i% = _botPlayers
+				else
+				endif
+			next
+		endif
+	endwhile
+	FileClose(fIN)
+	__totalPlayers = __totalPlayers + _totalPlayers
+	__numPlayers = __numPlayers + _numPlayers
+	__botPlayers = __botPlayers + _botPlayers
+else
+endif
+return
+
+
+
+
+
+:ReadInputFile00
+if FileExist( _inputFilePath00) == @TRUE
+	_serverAddress = ""
+	fIN = FileOpen( _inputFilePath00, "READ")
+	while @TRUE                                         ; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		if ItemCount( x, _qstatRawDelim) > 3
+			_qMip = ItemExtract( 2, x, _qstatRawDelim)
+			_qMsn = ItemExtract( 3, x, _qstatRawDelim)
+			_serverAddress = StrCat( _serverAddress, _qMip, "|", _qMsn, @tab)
+		endif
+	endwhile
+	FileClose(fIN)
+else
+endif
+return
+
+
+
+
+:InitGraphics
+	;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+	IntControl(1008,1,0,0,0)
+	IntControl(12,5,0,0,0)
+	;;;;;;;; Assorted Colors ;;;;;;;;;
+	DKBLUE="0,0,128"
+	BLUE="0,0,255"
+	LTGRAY="192,192,192"
+	GRAY="128,128,128"
+	DKGRAY="64,64,64"
+	GREEN="0,255,0"
+	RED="255,0,0"
+	BLACK="0,0,0"
+	WHITE="255,255,255"
+	YELLOW="255,255,0"
+	
+	
+	;;;;;  Generic code for drawing a box and  adding text to it.
+	
+	        ;Get title on screen
+	             ;wbid = 99
+	             ;BoxNew(wbid,rectTitle,1)
+	             ;BoxColor(wbid,BLACK,0)
+	             ;BoxDrawRect(wbid,"0,0,1000,1000",2)
+	             ;BoxTextFont(wbid,"Arial",TitleHeight,170,0)   ; san-srif, ariel, size 20, bold, noitalic
+	             ;BoxTextColor(wbid,RED)
+	             ;BoxDrawText(wbid,rectTitleText,"Acme Aardvarks",0,32)
+	
+	;;;;;;;;;;;; This Example  ;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;; Drawing the Main Box ;;;;;;;;
+	;; Note the use of while 1. This use of while maintains
+	;; the boxes until a user clicks on a button and exits 
+	;; the while construction
+	BoxesUp("0,0,450,%_yyMax%",@NORMAL)
+return
+
+
+
+:GraphicsA
+	BoxButtonDraw(1,bExit, "E&xit", "750,800,950,950" )
+	BoxButtonDraw(1,bExit + 1, "&WWW", "750,600,950,750" )
+	BoxColor(1,"0,0,128",4)
+	if isDefined(_procID)
+		BoxCaption(1,"(%_procID%) %wName%")
+	else
+		BoxCaption(1,"%wName%")
+	endif
+;; Note: Here we specify 8 buttons numbered 1 to 8.
+;; You can change this. Edit the list of buttons here,
+;; go to the "Select a button" routine and add or subtract
+;; your button selection information. Then create a subroutine
+;; at the end of this script to do what you need done when
+;; the button is pushed. There is a sample for you to use.
+ 
+	BoxDrawRect(1,"0,0,1000,1000",2)
+
+	BoxTextFont(1,"Comic Sans MS",35,25,0|0)
+	BoxTextColor(1,"255,255,0")
+
+	BoxDrawText(1,"5,5,950,950","%wName%",0,0)
+	BoxDataTag(1,"RAY")
+
+	BoxTextFont(1,"Comic Sans MS",35,30,0|0)
+
+	if ( IsDefined(_textLabels) && IsDefined(_textValues) && IsDefined(_textLabelsHourly) && IsDefined(_textValuesHourly) )
+		_y = 70
+		_x = 5
+		_x2 = 170
+		_ix = ItemCount( _textLabels, ",")
+		for iGraphicsA = 1 to _ix
+			_txt = ItemExtract( iGraphicsA, _textLabels, ",")
+			BoxDrawText(1,"%_x%,%_y%,950,950",_txt,0,0)
+			BoxDataClear(1,"RAY")
+			if (StrLen(_textValues) > 0) && (StrSub( _txt, 1, 1) != "-")
+				_val = ItemExtract( iGraphicsA, _textValues, ",")
+				BoxDrawText(1,"%_x2%,%_y%,950,950",_val,0,0)
+				BoxDataClear(1,"RAY")
+			endif
+			_y = _y + 38
+		next
+	
+		_y = 110
+		_x = 425
+		_x2 = 465
+		_ix = ItemCount( _textLabelsHourly, ",")
+		_ix1 = (_ix / 2)
+		for iGraphicsA = 1 to _ix1
+			_txt = ItemExtract( iGraphicsA, _textLabelsHourly, ",")
+			BoxDrawText(1,"%_x%,%_y%,950,950",_txt,0,0)
+			BoxDataClear(1,"RAY")
+			if (StrLen(_textValuesHourly) > 0) && (StrSub( _txt, 1, 1) != "-")
+				_val = ItemExtract( iGraphicsA, _textValuesHourly, ",")
+				BoxDrawText(1,"%_x2%,%_y%,950,950",_val,0,0)
+				BoxDataClear(1,"RAY")
+			endif
+			_y = _y + 38
+		next
+	
+		_y = 110
+		_x = 690
+		_x2 = 730
+		_ix = ItemCount( _textLabelsHourly, ",")
+		_ix1 = (_ix / 2) + 1
+		for iGraphicsA = _ix1 to _ix
+			_txt = ItemExtract( iGraphicsA, _textLabelsHourly, ",")
+			BoxDrawText(1,"%_x%,%_y%,950,950",_txt,0,0)
+			BoxDataClear(1,"RAY")
+			if (StrLen(_textValuesHourly) > 0) && (StrSub( _txt, 1, 1) != "-")
+				_val = ItemExtract( iGraphicsA, _textValuesHourly, ",")
+				BoxDrawText(1,"%_x2%,%_y%,950,950",_val,0,0)
+				BoxDataClear(1,"RAY")
+			endif
+			_y = _y + 38
+		next
+	endif
+
+	BoxDataClear(1,"RAY")
+
+	Gosub PollButton
+   
+return
+
+
+:Graphics0
+	BoxColor(1,"0,0,128",4)
+	BoxCaption(1,"%wName%")
+;; Note: Here we specify 8 buttons numbered 1 to 8.
+;; You can change this. Edit the list of buttons here,
+;; go to the "Select a button" routine and add or subtract
+;; your button selection information. Then create a subroutine
+;; at the end of this script to do what you need done when
+;; the button is pushed. There is a sample for you to use.
+ 
+	BoxDrawRect(1,"0,0,1000,1000",2)
+
+	BoxTextFont(1,"Comic Sans MS",35,25,0|0)
+	BoxTextColor(1,"255,255,0")
+
+	BoxDrawText(1,"5,5,950,950","%wName%",0,0)
+	BoxDataTag(1,"RAY2")
+
+	BoxTextFont(1,"Comic Sans MS",35,30,0|0)
+
+	_y = 70
+	_x = 5
+	BoxDrawText(1,"%_x%,%_y%,950,950","Working...",0,0)
+
+	BoxDataClear(1,"RAY2")
+
+return
+
+
+
+:PollButton
+	iBox=0
+;	BoxButtonWait()
+;	while iBox==0
+		for x=1 to bExit + 1
+			ErrorMode(@OFF)
+			if BoxButtonStat(1,x) then iBox=x
+			ErrorMode(@CANCEL)
+		next
+;	end while
+
+;;; Select a button  ;;;;
+    
+	if iBox
+		BoxDataClear(1,"TOP")
+		switch iBox
+			case bExit
+				exit
+				break
+			case bExit + 1
+				Run( _webBrowser, _wwwURL)
+				break
+		end switch
+	endif
+return
+
+
+:DOTHERM
+; _TotalUnits is the total units for the thermometer readout
+; _CurrentUnit is the current unit being displayed
+	rectNote="400,80,950,100"
+	rectTherm="400,80,950,100"
+	
+	Thermid=3
+	Noteid=4
+	if _CurrentUnit == 1
+		BoxNew(Noteid,rectNote,1)
+		BoxColor(Noteid,YELLOW,0)
+		BoxDrawRect(Noteid,"",2)
+	endif
+	BoxDataTag(Noteid,"NOTE")
+
+	;Draw thermoneter outline
+	BoxNew(Thermid,rectTherm,1)
+	if _CurrentUnit == 1
+		BoxUpdates(Thermid,0)
+		BoxColor(Thermid,YELLOW,0)
+		BoxDrawRect(Thermid,"",2)
+	endif
+	; Draw updating thermometer here
+	; there are 3 virtual pixels per percent
+	; we have to draw 3 boxes and some text...
+	BoxDataTag(Thermid,"FRED")
+
+		BoxDataClear(Thermid,"FRED")
+		BoxUpdates(Thermid,0)
+		BoxColor(Thermid,GREEN,0)
+		_xx = 0
+		xxx= _xx + ((1000 * _CurrentUnit) / _TotalUnits)
+		per=(100.0 * _CurrentUnit) / _TotalUnits
+		per=Int(per)
+		_y1 = 0
+		_y2 = 1000
+		_rectNote="%_xx%,%_y1%,%xxx%,%_y2%"
+		BoxDrawRect(Thermid,_rectNote,2)
+		BoxColor(Thermid,YELLOW,0)
+		
+;		if per<50 then BoxTextColor(Thermid,YELLOW)
+		BoxColor(Thermid,YELLOW,0)
+		BoxDataClear(NoteId,"NOTE")
+		BoxUpdates(Thermid,2)
+
+	if _CurrentUnit == _TotalUnits
+		BoxTextColor(Noteid,GREEN)
+		BoxDestroy(Noteid)
+		BoxDestroy(Thermid)
+		BoxColor(1,"0,0,128",4)
+	endif
+;	Gosub GraphicsA
+return
+
+
+:SecsToHHMMSS
+; __xTimex (in)
+; __sTimex (out)
+	_perDay = (60 * 60 * 24)
+	_perHour = (60 * 60)
+	_perMin = 60
+	_v = __xTimex / _perDay
+	_dd = int(_v)
+	__xTimex = __xTimex - (_dd * _perDay)
+	_v = __xTimex / _perHour
+	_hh = int(_v)
+	__xTimex = __xTimex - (_hh * _perHour)
+	_v = __xTimex / _perMin
+	_mm = int(_v)
+	__xTimex = __xTimex - (_mm * _perMin)
+	_ss = int(__xTimex)
+	__sTimex = "%_dd% day"
+	if (_dd == 0) || (_dd > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+	__sTimex = StrCat( __sTimex, " %_hh% hour")
+	if (_hh == 0) || (_hh > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+	__sTimex = StrCat( __sTimex, " %_mm% minute")
+	if (_mm == 0) || (_mm > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+	__sTimex = StrCat( __sTimex, " %_ss% second")
+	if (_ss == 0) || (_ss > 1)
+		__sTimex = StrCat( __sTimex, "s")
+	endif
+return
+
+
+
+:CheckIPs
+count = ItemCount(_ips,@tab)
+
+bestaddr=""
+bestsubnet=""
+
+for xx = 1 to count
+
+	thisipstring = ItemExtract(xx,_ips,@tab)
+	ip = ItemExtract(1,thisipstring,"|")
+	sub = ItemExtract(2,thisipstring,"|")
+	brd = ItemExtract(3,thisipstring,"|")
+	flags = ItemExtract(4,thisipstring,"|")
+	
+	show = strcat(ip,@crlf,sub,@crlf,brd,@crlf,strreplace(flags," ",@crlf))
+;	Message(xx,show)
+	
+	;fish out a usable IP address
+	;a) no better address already found
+	;b) ip address not 0.0.0.0
+	;c) LOOPBACK bot set
+	
+	if bestaddr != "" then continue
+	if ip == "0.0.0.0" then continue
+	if ItemExtract(1,flags," ") == "DOWN" then continue
+	if ItemExtract(4,flags," ") == "LOOPBACK" then continue
+	bestaddr = ip
+	bestsubnet = sub
+	for i = 1 to _serverAddress0
+		xix = StrIndexNc( _serverAddress%i%, bestaddr, 1, @FWDSCAN)
+		if xix > 0
+			_serverAddressIsLocal%i% = @TRUE
+		else
+			_serverAddressIsLocal%i% = @FALSE
+		endif
+	next
+next
+return
+
+
+
+:MakeShortCuts
+return
+
+
+
+:AppendActivityLog
+fOUT = FileOpen( outputFilePath, "APPEND")
+_textValuesHourly = ""
+_TimeNOW = StrCat( StrSub( TimeYmdHms(), 1, 11), "00:00:00")
+_addTime = "0000:00:00:01:00:00"
+_hh = ItemExtract( 4, _TimeNOW, ":")
+for i = 0 to 23
+	_value1 = _ikPcentHourlyMax%_hh%
+	_value2 = int(_ikPlayersHourlyMax%_hh%)
+	_value3 = int(_ikHumansHourlyMax%_hh%)
+	_value4 = int(_ikBOTsHourlyMax%_hh%)
+	if _publicVersion == @FALSE
+		_textValuesHourly = StrCat( _textValuesHourly, "%_value1%/")
+	else
+	endif
+	_textValuesHourly = StrCat( _textValuesHourly, "P=%_value2%/H=%_value3%/B=%_value4%", ",")
+	_ikPcentHourlyMax%_hh% = -1
+	_ikPlayersHourlyMax%_hh% = -1
+	_ikHumansHourlyMax%_hh% = -1
+	_ikBOTsHourlyMax%_hh% = -1
+	_newTime = TimeAdd( _TimeNOW, _addTime)
+	_hh = ItemExtract( 4, _newTime, ":")
+	_TimeNOW = _newTime
+next
+FileWrite( fOUT, StrCat(TimeYmdHms(), " - ", _textValuesHourly))
+FileClose(fOUT)
+_OkToAppendActivityLog = @FALSE
+return
+
+
+ 
+:AppendBillingLog
+fOUT = FileOpen( outputBillingFilePath, "APPEND")
+__serverMaxPlayers = _serverMaxPlayers%i%
+__totalPlayers = _totalPlayers%i%
+__numPlayers = _numPlayers%i%
+__botPlayers = _botPlayers%i%
+FileWrite( fOUT, StrCat(TimeYmdHms(), " - ", _serverAddress%i%, ", Players: %__totalPlayers%, Allowed Players: %__serverMaxPlayers%, Current Players: %__numPlayers%, BOTs: %__botPlayers% "))
+FileClose(fOUT)
+_OkToAppendActivityLog = @FALSE
+return
+
+
+
+:AppendParamsFile
+fOUT = FileOpen( _commandLineParmsFilePath, "APPEND")
+FileWrite( fOUT, ItemExtract( ItemCount( _commandLineParms, @TAB), _commandLineParms, @TAB))
+FileClose(fOUT)
+return
+
+
+
+:DeleteParamsFile
+if FileExist( _commandLineParmsFilePath) == @TRUE
+	FileDelete( _commandLineParmsFilePath)
+endif
+return
+
+
+
+:ReadParamsFile
+if FileExist( _commandLineParmsFilePath) == @TRUE
+	_Param0 = 0
+	fIN = FileOpen( _commandLineParmsFilePath, "READ")
+	while @TRUE                                         ; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		_Param0 = _Param0 + 1
+		_Param%_Param0% = x
+;		message("%wName% _Param%_Param0%", _Param%_Param0%)
+	endwhile
+	FileClose(fIN)
+endif
+return
+
+
+
+:telnet2
+socket = sOpen ()
+if socket != @FALSE
+	status = sConnect (socket, "64.32.189.241", 23)
+	if status == @TRUE
+		sSendString( socket, _CrLf)
+		binbuf = BinaryAlloc(1024)
+		BinaryEODSet(binbuf,1000)
+		binaddr = IntControl( 42, binbuf, 0, 0, 0)
+		;Following line will time out but we might still get data
+		stuff = sRecvBinary(socket, binaddr, 1000)
+		data = BinaryPeekStr(binbuf,0,1000)
+		BinaryFree( binbuf)
+
+		Message("%wName% - data", data)
+	else
+		err=wxGetLastErr()
+		msg=wxGetErrDesc(err)
+		Message("Winsock Error A %err%",msg)
+	endif
+	sClose(socket)
+else
+	err=wxGetLastErr()
+	msg=wxGetErrDesc(err)
+	Message("Winsock Error B %err%",msg)
+endif
+return
+
+
+
+:RepositionTelnetWindow
+if (WinExist(_telnetTitle3) == @TRUE)
+	_telnetWinPos = WinPlaceGet( @NORMAL, _telnetTitle3)
+	if ItemCount( _telnetWinPos, " ") == 4
+		_x1 = ItemExtract( 1, _telnetWinPos, " ")
+		_y1 = ItemExtract( 2, _telnetWinPos, " ")
+		_x2 = ItemExtract( 3, _telnetWinPos, " ")
+		_y2 = ItemExtract( 4, _telnetWinPos, " ")
+		_xx1 = 0
+		_yy1 = _yyMax
+		_xx2 = _xx1 + (_x2 - _x1)
+		_yy2 = _yy1 + (_y2 - _y1)
+		WinActivate( _telnetTitle3)
+		WinPlaceSet( @NORMAL, _telnetTitle3, "%_xx1% %_yy1% %_xx2% %_yy2%")
+		Gosub GraphicsA
+	endif
+endif
+return
+
+
+
+:telnet
+	if StrLen(_telnetUserName) < 1
+		_telnetUserName = AskLine( wName, "Telnet User Name ? ", _telnetUserName)
+	endif
+
+	if StrLen(_telnetUserPwd) < 1
+		_telnetUserPwd = AskPassword( wName, "Telnet Password ? ")
+	endif
+
+	if StrLen(_telnetIP) < 1
+		_telnetIP = AskLine( wName, "Telnet Address ? ", _telnetIP)
+	endif
+
+	_ikPcent = "-1"
+	_F = FilePath( _telnetProg)
+	if FileExist( _telnetProg) == @FALSE
+		while 1
+			_F = AskDirectory( "Telnet Root Folder ? %_F%", "", "", "Telnet Root Folder is", 2) 
+			_Exe = "%_F%hypertrm.exe"
+			if (FileExist( _Exe) == @TRUE)
+				_telnetProg = _Exe
+				break;
+			endif
+		endwhile
+	endif
+	_procID = RunShell( _telnetProg, "", _F, @NORMAL, @GETPROCID)
+	WinWaitExist(_telnetTitle1, 30)
+	if (WinExist(_telnetTitle1) == @FALSE)
+;		message("%wName% - ERROR", "Telnet window (%_telnetTitle1%) didn't appear... Timeout.")
+		return
+	endif
+	WinActivate( _telnetTitle1)
+	SendKeysTo( _telnetTitle1, "DSL")
+	SendKeysTo( _telnetTitle1, "{ENTER}")
+	WinWaitExist(_telnetTitle2, 30)
+	if (WinExist(_telnetTitle2) == @FALSE)
+;		message("%wName% - ERROR", "Telnet window (%_telnetTitle2%) didn't appear... Timeout.")
+		return
+	endif
+	WinActivate( _telnetTitle2)
+	SendKeysTo( _telnetTitle2, "{RIGHT}{RIGHT}")
+	TimeDelay(1)
+	SendKeysTo( _telnetTitle2, _telnetIP)
+	SendKeysTo( _telnetTitle2, "{ENTER}")
+	WinWaitExist(_telnetTitle3, 30)
+	if (WinExist(_telnetTitle3) == @FALSE)
+;		message("%wName% - ERROR", "Telnet window (%_telnetTitle3%) didn't appear... Timeout.")
+		return
+	endif
+	Gosub RepositionTelnetWindow
+	WinActivate( _telnetTitle3)
+	SendKeysTo( _telnetTitle3, "{HOME}")
+	SendKeysTo( _telnetTitle3, "+{DOWN}")
+	SendKeysTo( _telnetTitle3, "+{DOWN}")
+	SendKeysTo( _telnetTitle3, "{ALT}E")
+	SendKeysTo( _telnetTitle3, "{ENTER}")
+	_txt = StrTrim(ClipGet())
+	_ik = StrIndexNc( _txt, _telnetName, 1, @FWDSCAN)
+	if _ik > 0
+		SendKeysTo( _telnetTitle3, "%_telnetUserName%{ENTER}")
+		SendKeysTo( _telnetTitle3, "{HOME}")
+		SendKeysTo( _telnetTitle3, "+{DOWN}")
+		SendKeysTo( _telnetTitle3, "+{DOWN}")
+		SendKeysTo( _telnetTitle3, "+{DOWN}")
+		SendKeysTo( _telnetTitle3, "{ALT}E")
+		SendKeysTo( _telnetTitle3, "{ENTER}")
+		_txt = StrTrim(ClipGet())
+		_ik = StrIndexNc( _txt, _telnetPassword, 1, @FWDSCAN)
+		if _ik > 0
+			SendKeysTo( _telnetTitle3, "%_telnetUserPwd%{ENTER}")
+			TimeDelay(1)
+			SendKeysTo( _telnetTitle3, "{DOWN}")
+			SendKeysTo( _telnetTitle3, "{DOWN}")
+			SendKeysTo( _telnetTitle3, "{DOWN}")
+			SendKeysTo( _telnetTitle3, "{DOWN}")
+			SendKeysTo( _telnetTitle3, "{DOWN}")
+			SendKeysTo( _telnetTitle3, "{DOWN}")
+			SendKeysTo( _telnetTitle3, "{ENTER}")
+			TimeDelay(1)
+			SendKeysTo( _telnetTitle3, "{HOME}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "+{DOWN}")
+			SendKeysTo( _telnetTitle3, "{ALT}E")
+			SendKeysTo( _telnetTitle3, "{ENTER}")
+			_txt = StrTrim(ClipGet())
+			_ikx = ItemCount( _txt, @CrLf)
+			for _iki = 1 to _ikx
+				_iks = ItemExtract( _iki, _txt, @CrLf)
+				_ik = StrIndexNc( _iks, _telnetStatsKey, 1, @FWDSCAN)
+				if _ik > 0
+					_iks2 = StrSub( _iks, _ik, StrLen(_iks) - _ik)
+					_ikxx = ItemCount( _iks2, " ")
+					_ikxxj = 0
+					for _ikij = 1 to _ikxx
+						_ikPcent = ItemExtract( _ikij, _iks2, " ")
+						if IsNumber(_ikPcent) == @TRUE
+							_ikxxj = _ikxxj + 1
+							if _ikxxj == 2
+								Gosub closeTelnet
+								return
+							endif
+						endif
+					next
+				endif
+			next
+		endif
+	else
+		Gosub closeTelnet
+	endif
+	Gosub closeTelnet
+return
+
+
+:closeTelnet
+	if WinExist( _telnetTitle3) == @TRUE
+		WinClose( _telnetTitle3)
+		WinWaitExist(_telnetTitle4, 10)
+		while (WinExist(_telnetTitle4) == @TRUE)
+			if (WinExist(_telnetTitle4) == @TRUE)
+				SendKeysTo( _telnetTitle4, "{ENTER}")
+				WinWaitExist(_telnetTitle4, 10)
+				if (WinExist(_telnetTitle4) == @TRUE)
+					SendKeysTo( _telnetTitle4, "{RIGHT}{ENTER}")
+				endif
+			endif
+		endwhile
+	endif
+	WinWaitExist(_telnetTitle5, 10)
+	if WinExist( _telnetTitle5) == @TRUE
+		SendKeysTo( _telnetTitle5, "{ESC}")
+	endif
+return
+
+
+
+:telnet3
+unixsocket = SOpen()
+binbuf = BinaryAlloc(1000)
+BinaryEODSet(binbuf,1000)
+binaddr = IntControl(42,binbuf,0,0,0)
+prompt = "Quick View..."
+user = "smalltalker"
+password = "sisko@7660"
+hostname = _telnetIP
+
+status = SConnect(unixsocket,hostname,23)
+if status != @TRUE
+	err=wxGetLastErr()
+	msg=wxGetErrDesc(err)
+	Message("Winsock Error A %err%",msg)
+endif
+
+waitfor="name:"
+duration = strcat("login start ",timedate(),@CR)
+GoSub wait
+duration = strcat(duration,"login stop ",timedate(),@CR)
+line = strcat(line,@CR,"result=",found)
+;Message("result",line)
+SSendLine(unixsocket,user)
+waitfor = "password:"
+duration = strcat(duration,"password start ",timedate(),@CR)
+GoSub wait
+duration = strcat(duration,"password stop ",timedate(),@CR)
+line = strcat(line,@CR,"result=",found)
+;Message("result",line)
+SSendLine(unixsocket,password)
+waitfor = prompt
+duration = strcat(duration,"prompt start ",timedate(),@CR)
+GoSub wait
+duration = strcat(duration,"prompt stop ",timedate(),@CR)
+line = strcat(line,@CR,"result=",found)
+SSendLine(unixsocket,"")  ; this is where it gets a bit complex...
+SClose(unixsocket)
+BinaryFree(binbuf)
+Message("result",line)
+Message("Time",duration)
+return
+
+:wait
+	line=""
+	list="500,100,10,3,1"
+	timeout=1000
+	timmer=timeout
+	pointer=1
+	found=0
+	while timmer && (! found)
+		 for count=1 to ItemCount(list,",")
+			size=ItemExtract(count,list,",")
+			if sOK2Recv(unixsocket,size) 
+				sRecvBinary(unixsocket,binaddr,size)
+				stringsize=0;
+				raw=""
+				while stringsize <= size
+					;if waitfor==prompt then Debug(1)
+					raw=strcat(raw,BinaryPeekStr(binbuf,stringsize,size-stringsize))
+					stringsize=stringsize+strlen(raw)
+					if stringsize < size
+						stringsize=stringsize + 1
+					Endif
+				EndWhile
+				gosub scandata
+				line=strcat(line,raw)
+				timmer=-1
+				Break
+			Endif
+		Next
+		if timmer== -1
+		  timmer=timeout
+		else
+			if strindex(line,waitfor,strlen(line)-(2*strlen(waitfor)),@FWDSCAN)
+				found = 1
+			Endif
+			timmer=timmer-1
+		endif
+	EndWhile
+return
+
+:scandata
+	cindex=strindex(raw,num2char(255),0,@FWDSCAN)
+	while cindex
+		if cindex+1 <= StrLen(raw)
+			command=strsub(raw,cindex+1,1)
+		else 
+			command=num2char(sRecvNum(unixsocket,1))
+		endif
+		if char2num(command)>250 && char2num(command)<255
+			if cindex+2 <= StrLen(raw)
+				 option=strsub(raw,cindex+2,1)
+			else
+				 option=num2char(sRecvNum(unixsocket,1))
+			endif
+			if char2num(option)
+				SSendString(unixsocket,strcat(num2char(255),num2char(252),option))
+			endif
+			raw=strcat(strsub(raw,1,cindex-1),strsub(raw,cindex+3,-1))
+			else 
+			raw=strcat(strsub(raw,1,cindex-1),strsub(raw,cindex+2,-1))
+		endif
+		if char2num(command)==255 && cindex+1 <= StrLen(raw)
+			raw=strcat(strsub(raw,1,cindex-1),strsub(raw,cindex+1,-1))
+		endif
+		cindex=strindex(raw,num2char(255),cindex,@FWDSCAN)
+	EndWhile
+return
+

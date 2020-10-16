@@ -1,0 +1,31 @@
+Quick readme on this release of windows-stay.EXE - The Windows Utility to make active windows stay put.
+
+-------------------
+Installation
+-------------------
+
+Make a folder under C:\Program Files or the like and then double click windows-stay.exe
+
+You will be asked to verify the windows for which you want to snap-shot the positions.
+
+This utility is good for making sure certain windows remain where YOU want them to be. Okay, so let's say you are running a 
+Tribes2 dedicated server which means you've got ispawn.exe running as well as some other windows and then your Tribes2 server
+resets itself and the console window has moved to a different place than it was. You could walk over and manually reposition the
+console window or you could allow windows-stay to do this for you.  The same thing works for Total Control v1.5 which seems to want
+to reposition its main window every time a server got reset and Total Control v1.5 has to perform a reconnect.
+
+windows-stay then waits 10 mins and then it repositions the windows you previously identified as needing to stay-put.
+
+Updated this handy util to work correctly with Total Control v1.5.
+
+Note : This Utility program works with any version of Windows.
+
+---------------------
+Contact
+---------------------
+
+This is an early release, more features to come.  
+Please send comments and bug reports to 
+halsmalltalker@hotmail.com
+
+Thank you and enjoy!

@@ -1,0 +1,314 @@
+; url-downloader.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+_time_begin = TimeYmdHms( )
+total_bytes_transferred = 0
+secs = 0
+
+_open_anchor_token = '<A HREF="'
+_close_anchor_token = '">'
+
+_delays = 1
+
+Decimals(2)
+
+bytes_in_KB = 1024.0
+bytes_in_MB = bytes_in_KB * 1024.0
+bytes_in_GB = bytes_in_MB * 1024.0
+
+url_wName = "url-downloader.wbt"
+
+logdir = "url-downloader.txt"
+
+If param0 > 0
+	; param1 is the logdir
+	logdir = param1
+Endif
+
+If param0 > 1
+	; param2 is the URL to download from
+	base_url = param2
+Else
+	base_url = AskLine(url_wName, "Base URL? http://...", "http://www.powerhardcore.com/members/powerhard/mpeglist-h.html")
+Endif
+
+If param0 > 2
+	; param3 is the username
+	username = param3
+Else
+	username = AskLine(url_wName, "Username? ", "dboyd")
+Endif
+
+If param0 > 3
+	; param4 is the password
+	password = param4
+Else
+	password = AskLine(url_wName, "Password? ", "teensex")
+Endif
+
+If param0 > 4
+	; param5 is the logdir
+	logdir = param5
+Else
+	logdir = AskLine(url_wName, "Log File Path? c:\temp\...", "F:\208.128.219.19\winbatch\urlDownloader\")
+Endif
+
+while DirExist( logdir) == @FALSE
+	logdir = AskLine(url_wName, "Log File Path? c:\temp\...", "F:\208.128.219.19\winbatch\urlDownloader\")
+	logdir = StrCat( logdir, "\")
+	logdir = StrReplace( logdir, "\\", "\")
+end while
+
+_download_fpath = StrReplace( StrCat( logdir, "\download\"), "\\", "\")
+
+DirMake( _download_fpath)
+
+base_urls_domain_name = httpGetServer( base_url, "")
+If StrLen( base_urls_domain_name) < 1
+	Message( "WARNING", "Missing the domain name from %base_urls_domain_name%")
+Endif
+
+path = httpGetpath( base_url, "")
+fname = "%logdir%base.html"
+activityLogFile = "%logdir%ActivityLog.txt"
+	
+Gosub cycleActivityLogFile
+
+BoxCaption(1,url_wName)
+
+while 1
+
+	ErrorMode(@OFF)
+	base_url_pingable = wxPing( base_urls_domain_name)
+	ErrorMode(@CANCEL)
+
+	If base_url_pingable == @TRUE
+		line = "(2) %count% (HTTP: %secs% secs %t_bytes_transferred_text% %t_bytes_transferred_rate_text% %base_urls_domain_name% %path% %fname%)..."
+		BoxCaption(1, "%url_wName% %line%")
+		Gosub appendToActivityLog
+
+		httpAuth( username, password)
+		
+		a = httpRecvFile(base_urls_domain_name, path, fname, 0)
+		txt = "httpRecvFile Return code is %a%"
+
+		if a == 200
+			Message( "DEBUG", "%txt%, base_urls_domain_name=%base_urls_domain_name%, path=%path%, fname=%fname%")
+			Gosub ProcessTheHTML
+		endif
+	Else
+		line = "(4) %count% (PING FAILED: %base_urls_domain_name% - waiting 1 secs)..."
+		BoxCaption(1, "%url_wName% %line%")
+		Gosub appendToActivityLog
+
+	Endif
+
+endwhile
+
+exit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+:ProcessTheHTML
+	fs = FileSize( fname)
+	; Allocate a buffer the size of your file + 100 bytes.
+	binbuf = BinaryAlloc( fs + 128)
+	if binbuf == 0
+		Message( "Error", "BinaryAlloc Failed")
+	else
+		; Read the file into the buffer.	   
+		BinaryRead( binbuf, fname)
+
+		p = 0
+
+		count = 0
+		
+		while 1
+
+			count = count + 1
+
+			_symbol = "bytes"
+			t_bytes_transferred_text = "%total_bytes_transferred% %_symbol%"
+			If total_bytes_transferred > bytes_in_KB
+				_symbol = "KB"
+				total_KB_transferred = total_bytes_transferred / bytes_in_KB
+				t_bytes_transferred_text = "%total_KB_transferred% %_symbol%"
+				If total_bytes_transferred > bytes_in_MB
+					_symbol = "MB"
+					total_MB_transferred = total_bytes_transferred / bytes_in_MB
+					t_bytes_transferred_text = "%total_MB_transferred% %_symbol%"
+					If total_bytes_transferred > bytes_in_GB
+						_symbol = "GB"
+						total_GB_transferred = total_bytes_transferred / bytes_in_GB
+						t_bytes_transferred_text = "%total_GB_transferred% %_symbol%"
+					Endif
+				Endif
+			Endif
+
+			If secs > 0
+				total_bytes_transferred_rate = total_bytes_transferred / secs
+
+				_symbol = "Bps"
+				t_bytes_transferred_rate_text = "%total_bytes_transferred_rate% %_symbol%"
+				If total_bytes_transferred_rate > bytes_in_KB
+					_symbol = "KBps"
+					total_KB_transferred_rate = total_bytes_transferred_rate / bytes_in_KB
+					t_bytes_transferred_rate_text = "%total_KB_transferred_rate% %_symbol%"
+					If total_bytes_transferred_rate > bytes_in_MB
+						_symbol = "MBps"
+						total_MB_transferred_rate = total_bytes_transferred_rate / bytes_in_MB
+						t_bytes_transferred_rate_text = "%total_MB_transferred_rate% %_symbol%"
+						If total_bytes_transferred_rate > bytes_in_GB
+							_symbol = "GBps"
+							total_GB_transferred_rate = total_bytes_transferred_rate / bytes_in_GB
+							t_bytes_transferred_rate_text = "%total_GB_transferred_rate% %_symbol%"
+						Endif
+					Endif
+				Endif
+			Else
+				total_bytes_transferred_rate = 0
+			Endif
+	
+			line = "(1) %count% (PING: %secs% secs %t_bytes_transferred_text% %t_bytes_transferred_rate_text% %base_urls_domain_name%)..."
+			BoxCaption(1, "%url_wName% %line%")
+			Gosub appendToActivityLog
+		
+			p = BinaryIndexNc( binbuf, p, _open_anchor_token, @FWDSCAN)
+			if p <> 0
+				p2 = BinaryIndexNc( binbuf, p, _close_anchor_token, @FWDSCAN)
+				if p2 <> 0
+					_url = BinaryPeekStr( binbuf, p + StrLen( _open_anchor_token), (p2 - StrLen( _open_anchor_token)) - p)
+
+					_fname = StrReplace( StrCat( _download_fpath, FileRoot( _url), ".", FileExtension( _url)), "..", ".")
+
+;					 Message( "DEBUG", "_url=%_url%, _fname=%_fname%")
+
+					while 1
+
+						ErrorMode(@OFF)
+						base_url_pingable = wxPing( base_urls_domain_name)
+						ErrorMode(@CANCEL)
+
+						If base_url_pingable == @TRUE
+							break
+						Else
+							line = "(4) %count% (PING FAILED: %base_urls_domain_name% - waiting 1 secs)..."
+							BoxCaption(1, "%url_wName% %line%")
+							Gosub appendToActivityLog
+						Endif
+
+					endwhile
+
+					if FileExist( _fname) <> @FALSE
+						_fname = StrReplace( StrCat( _download_fpath, "_", FileRoot( _url), ".", FileExtension( _url)), "..", ".")
+						if FileExist( _fname) <> @FALSE
+							_collision_count = 1
+							while FileExist( _fname) <> @FALSE
+								_fname = StrReplace( StrCat( _download_fpath, FileRoot( _url), "_%_collision_count%", ".", FileExtension( _url)), "..", ".")
+								_collision_count = _collision_count + 1
+							endwhile
+						endif
+					endif
+					
+					_a = httpRecvFile( base_urls_domain_name, _url, _fname, 0)
+					_txt = "httpRecvFile Return code is %_a%"
+
+					_fsize = FileSize( _fname)
+					total_bytes_transferred = total_bytes_transferred + _fsize
+		
+					secs = Abs(Int(TimeDiffSecs( TimeYmdHms( ), _time_begin)))
+
+					line = "(3) %count% %secs% secs %t_bytes_transferred_text% %t_bytes_transferred_rate_text% (HTTP: %_txt%)..."
+					BoxCaption(1, "%url_wName% %line%")
+					Gosub appendToActivityLog
+		
+					p = p2 + 1
+				else
+					break
+				endif
+			else
+				break
+			endif
+		
+		endwhile
+
+		binbuf = BinaryFree( binbuf)
+	endif 
+
+return
+
+
+
+:appendToActivityLog
+	_handle = FileOpen( activityLogFile, "APPEND")
+	If _handle > 0
+		line = StrCat( TimeDate(), ", ", line, @CR)
+		FileWrite(_handle, line)
+		FileClose(_handle)
+	Endif
+return
+
+
+:cycleActivityLogFile
+fex = FileExist( activityLogFile)
+
+Switch fex
+	case @TRUE
+		; cycle the current log file - look for an open slot and use it
+		i = 1
+		_found = @TRUE
+		while _found == @TRUE
+			_activityLogFile = "%logdir%ActivityLog-%i%.txt"
+			_fex = FileExist( _activityLogFile)
+			If _fex == @FALSE ; the candidate file does not exist so use it!
+				_found = _fex
+				If FileRename( activityLogFile, _activityLogFile) == @FALSE
+					; current log file cannot be renamed so we can't cycle it and... make one up using today's date, etc.
+					_token = StrReplace( TimeYmdHms( ), ":", "_")
+					activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+				Endif
+				break
+			Else
+				i = i + 1
+			Endif
+		endwhile
+	break
+	case 2
+		; current log file is in use so make one up using today's date, etc.
+		_token = StrReplace( TimeYmdHms( ), ":", "_")
+		activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+	break
+EndSwitch
+return
+
+
+:readInitFile
+init_file = "%logdir%init.txt"
+
+keywords0 = 1
+keywords1 = "base_url="
+
+handle = FileOpen( init_file, "READ")
+If handle > 0
+	while @TRUE				; Loop till break do us end
+		data = FileRead(handle)
+		If data == "*EOF*" Then Break
+
+		For _i = 1 to keywords0
+			i = StrIndexNc(data, keywords%_i%, 1, @FWDSCAN)
+			If i > 0
+				keyword = StrReplace(keywords%_i%, "=", "")
+				%keyword% = StrSub(data, i + StrLen( keywords%_i%), -1)
+			Endif
+		Next
+
+	endwhile
+	FileClose(handle)
+Endif
+return
+
+
+

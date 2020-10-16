@@ -1,0 +1,52 @@
+_wname = "ComputerID_v1.0.0"
+
+#DefineFunction GetWMIInfo()
+	IntControl(73, 2,0,0,0)
+	Locator = ObjectOpen("WbemScripting.SWbemLocator")
+	Service = Locator.ConnectServer()
+	Security = Service.Security_     
+	Security.ImpersonationLevel = 3
+	Class = "Win32_ComputerSystemProduct"
+	Instance = Service.InstancesOf(Class)
+	Enum = ObjectCollectionOpen(Instance)
+	While 1
+		Obj = ObjectCollectionNext(Enum)
+		If Obj == 0 Then Break
+		man=Obj.Vendor
+		model=Obj.Name
+		serial=Obj.IdentifyingNumber
+	EndWhile
+	
+	ObjectCollectionClose(Enum)
+	ObjectClose(Instance)
+	ObjectClose(Security)
+	ObjectClose(Service)
+	ObjectClose(Locator)
+	data=StrCat(man,@TAB,model,@TAB,serial)
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+datax = GetWmiInfo()
+;aa = AskItemlist("???",datax,@TAB,@UNSORTED,@SINGLE)
+
+for i = 1 to ItemCount(datax, @TAB)
+	datax = ItemReplace(StrReplace(StrTrim(ItemExtract(i, datax, @TAB)), '|', '_'), i, datax, @TAB)
+next
+
+datax = StrReplace(datax, @TAB, '|')
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+logName = StrCat(_myPath,_wname, ".out")
+
+fHand = FileOpen(logName, "WRITE")
+FileWrite(fHand, datax)
+FileClose(fHand)

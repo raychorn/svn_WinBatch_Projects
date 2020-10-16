@@ -1,0 +1,1175 @@
+_html_crlf = 1
+
+https_prefix = "https://www.xxx-sex.net"
+this_cgi = "/cgi-win/billing/webcgi/webbatch.exe?billing/cybercashnetBilling.web"
+_this_cgi = StrCat( https_prefix, this_cgi)
+
+_title = "Cybercash-Network Billing System v1.1"
+_background = "/professi.jpg"
+
+_private_dir = "C:\website-private\billing"
+_customer_file = "customer-data.txt"
+
+_datasource = "bdb"
+
+defaultFontSize = 2
+defaultFontHTML = '<FONT FACE="Comic Sans MS" SIZE="%defaultFontSize%">'
+
+_Customer_Name = "Customer-Name"
+_Customer_Order_ID = "Customer-Order-ID"
+_Customer_File_Name = "Customer-File-Name"
+_Customer_IP_Addr = "Website-IP-Addr"
+_Customer_WebSpace = "Customer-WebSpace"
+_Customer_BaseAmount = "Customer-BaseAmount"
+_Customer_Bandwidth = "Customer-Bandwidth"
+_Customer_AddlBandwidth = "Customer-AddlBandwidth"
+_Customer_Addr = "Customer-Addr"
+_Customer_City = "Customer-City"
+_Customer_State = "Customer-State"
+_Customer_ZIPCode = "Customer-ZIPCode"
+_Customer_Country = "Customer-Country"
+_Customer_EMailAddress = "Customer-EMailAddress"
+_Customer_Phone_Number = "Customer-Phone-Number"
+_Customer_FAX_Number = "Customer-FAX-Number"
+_Customer_SSANorTAXID = "Customer_SSANorTAXID"
+_Customer_Acct_Number = "Customer-Acct-Num"
+_Customer_900PerTransPercent = "Customer-1-900-Per-Transaction-Percentage"
+_Customer_CCNUM = "Customer-CCNUM"
+_Customer_EXPDATE = "Customer-EXPDATE"
+_Customer_Order_ID = "Customer-Order-ID"
+
+_Contact_Name = "Contact-Name"
+_Contact_Addr = "Contact-Addr"
+_Contact_City = "Contact-City"
+_Contact_State = "Contact-State"
+_Contact_ZIPCode = "Contact-ZIPCode"
+_Contact_Country = "Contact-Country"
+_Contact_EMailAddress = "Contact-EMailAddress"
+_Contact_Phone_Number = "Contact-Phone-Number"
+_Contact_FAX_Number = "Contact-FAX-Number"
+
+; customer table
+CustomerTable0 = 2
+CustomerTable1 = _Customer_Name
+CustomerTable2 = _Customer_Addr
+
+_AccountOptionsListFormat = "ENV-AccountOptions="
+_AccountOptionsOldFormat = "ENV-AccountOptions_"
+
+_PAID_MONTHLY_Format = "PAID-MONTHLY-"
+
+_InterNIC_Domain_Description = "InterNIC-Domain-Description"
+_PAID_NEW_DOMAIN_REGISTRATION = "PAID-FOR-NEW-DOMAIN-REGISTRATION"
+_SERVICE_AGREEMENT_ON_FILE = "SERVICE-AGREEMENT-ON-FILE"
+_NEW_SERVICE_AGREEMENT_ON_FILE = "NEW-SERVICE-AGREEMENT-ON-FILE"
+_Bandwidth_Usage = "BANDWIDTH-USAGE"
+
+_Website_Domain_Name = "Website-Domain-Name"
+_Website_IP_Addr = "Website-IP-Addr"
+_Website_Package = "Website-Package"
+_Website_ServerSpeed = "Website-ServerSpeed"
+_Website_ProductCode = "Website-ProductCode"
+_Customer_WebSpace = "Customer-WebSpace"
+_Customer_BaseAmount = "Customer-BaseAmount"
+_Customer_Bandwidth = "Customer-Bandwidth"
+_Customer_AddlBandwidth = "Customer-AddlBandwidth"
+
+_ENV_AccountOptions = "ENV-AccountOptions"
+
+_DONT_CARE_Connection_Value = "Server-I=0.00"
+_DONT_CARE_Connection_Text = "Server I (FREE) - Our slowest server is still Super-FAST!"
+
+_FREE_OC3_Connection_Value = "OC3-Connection=0.00"
+_FREE_OC3_Connection_Text = "Server II (FREE) - Super-Fast High-Speed Server"
+
+_OC3_Connection_Value = "OC3-Connection=75.00"
+_OC3_Connection_Text = "Server II ($75/month) - Super-Fast High-Speed Server"
+
+_OC3_LowerConnection_Value = "OC3-Connection=75.00"
+_OC3_LowerConnection_Text = "Server II ($75/month) - Super-Fast High-Speed Server"
+
+_T1_SharedConnection_Value = "T1-SharedConnection=0.00"
+_T1_SharedConnection_Text = "Any Server - NO Additional Charge - Super-Slow Low-Speed Server"
+
+_T1_DedicatedConnection_Value = "T1-DedicatedConnection=50.00"
+_T1_DedicatedConnection_Text = "Server I ($50/month) - Slowest Server"
+
+_T3_SharedConnection_Value = "T3-SharedConnection=25.00"
+_T3_SharedConnection_Text = "Server I ($25/month) - Slowest Server"
+
+_T3_LowShareConnection_Value = "T3-SharedConnection=50.00"
+_T3_LowShareConnection_Text = "Server I ($20/month) - Slowest Server"
+
+_T3_DedicatedConnection_Value = "T3-DedicatedConnection=125.00"
+_T3_DedicatedConnection_Text = "Server I ($125/month) - Super-Fast High-Speed Server"
+
+WebSetTimeout( 255 * 60)
+
+IntControl(29, @TAB, 0, 0, 0)
+
+Call( "c:\website\support\webcgi\extra_headers.wbc", "")
+
+
+_cgi_dir = StrReplace( StrCat( DirGet(), "\"), "\\", "\")
+
+_slashi = StrIndex( QUERY_STRING, "/", StrLen( QUERY_STRING), @BACKSCAN)
+If _slashi > 0
+    _cgi_dir = StrReplace( StrCat( _cgi_dir, StrSub( QUERY_STRING, 1, _slashi)), "/", "\")
+Endif
+
+WebOut('Content-type: text/html',2)    ; Output Content Type
+
+WebOut('<HTML><HEAD><TITLE>%_title%</TITLE></HEAD>', _html_crlf)
+
+WebOut('<BODY BACKGROUND="%_background%">', _html_crlf)
+
+AddExtender("wwodb32i.dll")
+AddExtender ("wwwsk32i.dll")
+
+;Call( "c:\website\support\webcgi\extra_headers-debug.wbc", "")
+
+;Goto thats_all_folks
+
+If (StrCmp( REMOTE_ADDR, "24.1.89.151") <> 0) && (StrCmp( REMOTE_ADDR, "192.168.1.4") <> 0)
+;If StrIndexNc( HTTP_REFERER, "https://www.xxx-sex.net/cgi-win/billing/cybercashnetBilling.clx", 1, @FWDSCAN) < 1
+    WebOut('<H2>Unauthorized Use: (%REFERER%) Your IP address (%REMOTE_ADDR%) has been reported to your local law enforcement authorities for investigation.</H2>', _html_crlf)
+    Goto thats_all_folks
+Endif
+
+WebOut('', _html_crlf)
+
+_delim = @TAB
+s = WebParamNames()
+Call( "c:\website\support\webcgi\ParseFieldsToArray.wbc", "s field _delim")
+Drop( _delim)
+If field0 > 0
+_WebParamNames = s
+;If StrLen( s) > 0
+  ;This is a POST and we process the fields, etc.
+   WebOut('<B><FONT COLOR="BLUE">WebParamNames=', 0)
+   WebOut(_WebParamNames, 0)
+   WebOut('</FONT></B><BR>', _html_crlf)
+
+    WebOut('<HR>', _html_crlf)
+    Call( "c:\website\support\webcgi\DebugFieldsArray.wbc", "")
+    WebOut('<HR>', _html_crlf)
+
+    _action = WebParamData('_action')
+    If (StrLen( _action) > 0) && (StrCmp( _action, "PROCESS-RECORD") == 0)
+        _wp = ItemCount( _WebParamNames, @TAB)
+        For _wpi = 1 to _wp
+            _wpitem = ItemExtract( _wpi, _WebParamNames, @TAB)
+            If StrIndex( _wpitem, "CustomerDirName", 1, @FWDSCAN) > 0
+                _CustomerDirName = WebParamData( _wpitem)
+
+                ic = ItemCount( _CustomerDirName, ",")
+                If ic == 3
+                    _id = ItemExtract( 1, _CustomerDirName, ",")
+                    _cf = ItemExtract( 2, _CustomerDirName, ",")
+                    _d = ItemExtract( 3, _CustomerDirName, ",")
+
+;                    _customer_record_filename = _cf
+                    Call( "ReadCustomerRecord.wbc", "_cf CustomerRecord")
+
+                    WebOut('<B>Action is ', 0)
+                    WebOut(_action, 0)
+                    WebOut(' with _CustomerDirName=', 0)
+                    WebOut(_CustomerDirName, 0)
+                    WebOut('<BR> _id=', 0)
+                    WebOut(_id, 0)
+                    WebOut('<BR> _cf=', 0)
+                    WebOut(_cf, 0)
+                    WebOut('<BR> _d=', 0)
+                    WebOut(_d, 0)
+                    WebOut('</B>', _html_crlf)
+
+                    Call( "processCustomerRecords.wbc", "")
+                Else
+                Endif
+            Else
+                If StrCmp( _wpitem, "ProcessOldDatabase") == 0
+                    _ProcessOldDatabase = WebParamData( _wpitem)
+                    If StrCmp( _ProcessOldDatabase, "processOldDatabase") == 0
+                        Gosub processOldDatabase
+                    Endif
+                Endif
+            Endif
+        Next
+    Else
+        action = WebParamData('EDIT-RECORD')
+        If StrLen( action) < 1
+            action = WebParamData('VIEW-RECORD')
+        Endif
+
+        _customer_record_filename = ""
+        privateDirBilling = WebParamData('privateDirBilling')
+        Customer_Name = WebParamData('Customer-Name')
+        billingCustomerDataFile = WebParamData('billingCustomerDataFile')
+        customerFileType = WebParamData('customerFileType')
+        If (StrLen( privateDirBilling) > 0) && (StrLen( Customer_Name) > 0) && (StrLen( billingCustomerDataFile) > 0) && (StrLen( customerFileType) > 0)
+            _customer_record_filename = StrCat( privateDirBilling, customer_name, billingCustomerDataFile, customerFileType)
+        Endif
+
+;        Gosub ReadCustomerRecord
+; binbuf_RCR is the binary buffer handle for the glob of data for this customer's record - @TAB delimits each name+value key pair
+
+        Call( "ReadCustomerRecord.wbc", "_customer_record_filename CustomerRecord")
+
+        editMode = @FALSE
+        If action == 'Edit Record'
+            editMode = @TRUE
+            WebOut('<B>%action% Customer-Name=%Customer_Name%</B>', _html_crlf)
+        Else
+            If action == 'View Record'
+                WebOut('<B>%action% Customer-Name=%Customer_Name%</B>', _html_crlf)
+            Endif
+        Endif
+
+;Goto skip_debug_001
+    
+        WebOut('<B>%CustomerRecord0% Records for %Customer_Name%</B>', _html_crlf)
+    
+        _ticks_begin = GetTickCount( )
+        WebOut('<OL>', _html_crlf)
+        For i=1 to CustomerRecord0
+            aRec = CustomerRecord%i%
+            _name = ItemExtract( 1, aRec, "=")
+            _field_name = StrCat( _name, "=")
+
+            Gosub getCustomerRecordField
+        
+            _color = "BLACK"
+            If (StrLen( _aField) < StrLen( aRec)) || (StrCmp( aRec, _aField) <> 0)
+                _color = "RED"
+            Endif
+            WebOut('<LI><FONT COLOR="%_color%"><B>aRec=%aRec%, _aField=%_aField%</B></FONT></LI>', _html_crlf)
+        Next
+        WebOut('</OL>', _html_crlf)
+        _ticks_end = GetTickCount( )
+        
+        _ticks_elapsed = _ticks_end - _ticks_begin
+        _ticks_average = _ticks_elapsed / CustomerRecord0
+
+        WebOut('<LI><FONT COLOR="%_color%"><B>_ticks_elapsed=%_ticks_elapsed%, _ticks_average=%_ticks_average%</B></FONT></LI>', _html_crlf)
+
+        Call( "standard_record_form.wbc", "")
+
+:skip_debug_001
+
+        BinaryFree( binbuf_RCR)
+    Endif
+
+Else
+  ;otherwise we simply process this CGI as a GET since there are NO parms to process such as from a POST
+    WebOut('<B><FONT COLOR="BLUE">otherwise we simply show the default info</FONT></B><BR>', _html_crlf)
+
+    _parms = WebCmdData()                           ; Get the command line
+    WebOut('<B><FONT COLOR="BLUE">_parms=(%_parms%)</FONT></B><BR>', _html_crlf)
+
+;    Gosub processOldDbInteractive
+
+    Gosub processCustomerRecordsFromDb
+
+Endif
+
+WebOut('<HR SIZE="7" WIDTH="75%%">', _html_crlf)
+
+:thats_all_folks
+
+WebOut('</BODY>', _html_crlf)
+WebOut('</HTML>', _html_crlf)
+
+exit
+
+
+
+:beginSQL
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+henv = qAllocEnv()
+
+If henv == -1
+  ;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+  retcode = qLastCode()
+  WebOut('<B><FONT COLOR="RED">qAllocEnv failed %retcode% </FONT></B>', _html_crlf)
+  Exit
+Endif
+
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM
+;OF 10 OPEN CONNECTION HANDLES
+hdbc = qAllocConnect(henv)
+
+If hdbc == -1
+  retcode = qLastCode()
+  WebOut('<B><FONT COLOR="RED">qAllocConnect failed %retcode% </FONT></B>', _html_crlf)
+  Exit
+Endif
+
+;SQL_LOGIN_TIMEOUT - SETS OPTIONS FOR SQL CONNECTIONS
+qSetConnOpt(hdbc, 103, 5, 0)
+
+return
+
+
+:beginSQL2
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM
+;OF 10 OPEN CONNECTION HANDLES - assumes henv has already been allocated
+hdbc2 = qAllocConnect(henv)
+
+If hdbc2 == -1
+  retcode = qLastCode()
+  WebOut('<B><FONT COLOR="RED">qAllocConnect failed %retcode% </FONT></B>', _html_crlf)
+  Exit
+Endif
+
+;SQL_LOGIN_TIMEOUT - SETS OPTIONS FOR SQL CONNECTIONS
+qSetConnOpt(hdbc2, 103, 5, 0)
+
+return
+
+
+:endSQL
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc)
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)
+return
+
+
+:endSQL2
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc2)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc2)
+return
+
+
+
+
+:QueryCustomerNameFromDb
+; settings_Customer_Name  input - the customer name
+; __debug ............... input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+; customer_id ........... output - the customer id for the customer from the database
+; customer_custname ..... output - the file name for the dir name from the database
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Gosub beginSQL2
+
+sql_fetch = @TRUE
+sql_stmnt2 = "SELECT id, custname FROM customer WHERE (custname = '%settings_Customer_Name%')"
+;WebOut('<LI><B><FONT COLOR="BLUE">DEBUG: _cgi_dir=(%_cgi_dir%)</FONT></B></LI>', _html_crlf)
+Call( StrCat( _cgi_dir, "doExecSQLForCustomerName.wbc"), "sql_stmnt2")
+
+Gosub endSQL2
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+If sql_fetched == @TRUE
+    If __debug <> @FALSE
+        WebOut('<BR><B><FONT COLOR="BLUE">(2) customer_id=(%customer_id%), customer_custname=(%customer_custname%)</FONT></B><BR>', _html_crlf)
+    Endif
+Endif
+
+return
+
+
+
+:doExecSQLDirect2
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_stmnt ......... input - holds the SQL statement
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+retcode = qConnect(hdbc2, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">qConnect failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt2 = qAllocStmt(hdbc2)
+
+If hstmt2 == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">qAllocStmt failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt2, sql_stmnt2)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt2=', _html_crlf)
+  WebOut(sql_stmnt2, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt2, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+return
+
+
+:MarkSettingUsedInDb
+; settings_id_var ........... input - the variable name that holds the settings id for the record being marked
+; settings_fileid_var ....... input - the variable name that holds the settings fileid for the record being marked
+; __debug ............... input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Gosub beginSQL2
+
+_settings_id = %settings_id_var%
+_settings_fileid = %settings_fileid_var%
+
+sql_fetch = @TRUE
+sql_stmnt2 = "UPDATE settings SET used=1 WHERE (id = %_settings_id% AND fileid = %_settings_fileid%)"
+Gosub doExecSQLDirect2
+
+Gosub endSQL2
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+return
+
+
+
+:doQueryCValueByFileID
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_stmnt ......... input - holds the SQL statement
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; varname   ......... input - holds the name of the variable that gets the cvalue
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+retcode = qConnect(hdbc2, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">qConnect failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt2 = qAllocStmt(hdbc2)
+
+If hstmt2 == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">qAllocStmt failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt2, sql_stmnt2)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt=', _html_crlf)
+  WebOut(sql_stmnt, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+retcode = qFetch(hstmt2)
+
+If (sql_fetch2 == @TRUE) && (retcode <> @qNoData)
+    _cvalueBuf = BinaryAlloc(260)
+    If _cvalueBuf == @FALSE
+        WebOut('<BR><B><FONT COLOR="RED">BinaryAlloc failed for _cvalueBuf</FONT></B><BR>', _html_crlf)
+        Exit
+    Endif
+
+    While @TRUE
+        If retcode == @qNoData Then Break
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qFetch failed %retcode%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        retcode = qGetData(hstmt2, 1, "_cvalueBuf", 255)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for _cvalueBuf</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        If (retcode == @qSuccessInfo)  ; if the field was too small (This is how to handle errors)
+            msg = qError(hstmt2, 2)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData error/status %msg% for _cvalueBuf</FONT></B><BR>', _html_crlf)
+        Endif
+
+        %varname% = BinaryPeekStr(_cvalueBuf, 0, BinaryEodGet(_cvalueBuf))
+
+        sql_fetched = @TRUE
+
+        retcode = qFetch(hstmt2)
+
+    EndWhile
+
+    BinaryFree(_cvalueBuf)
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt2, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+return
+
+
+
+:QueryCValueByFileID
+; settings_fileid ....... input - the file id from a specific setting
+; sql_stmnt2 ............ input - the SQL code
+; varname ............... input - the name of the variable that holds the result
+; __debug ............... input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+; %varname% ............. output - the customer's name from the settings table
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Gosub beginSQL2
+
+sql_fetch2 = @TRUE
+Gosub doQueryCValueByFileID
+
+Gosub endSQL2
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+If sql_fetched <> @TRUE
+    If __debug <> @FALSE
+        If sql_fetched <> @TRUE
+            WebOut('<BR><B><FONT COLOR="RED">(2) sql_stmnt=', _html_crlf)
+            WebOut(sql_stmnt, _html_crlf)
+            WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+        Else
+            _varname = %varname%
+            _value = %_varname%
+            WebOut('<BR><B><FONT COLOR="BLUE">(2) settings_fileid=(%settings_fileid%), %_varname%=(%_value%)</FONT></B><BR>', _html_crlf)
+        Endif
+    Endif
+Else
+    If __debug <> @FALSE
+        _varname = %varname%
+        _value = %_varname%
+        WebOut('<BR><B><FONT COLOR="BLUE">(2) settings_fileid=(%settings_fileid%), %_varname%=(%_value%)</FONT></B><BR>', _html_crlf)
+    Endif
+Endif
+
+return
+
+
+
+:ExecSQLDirect2
+; settings_cvalue ....... input - the customer's address
+; settings_Customer_Name  input - the customer's name
+; __debug ............... input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Gosub beginSQL2
+
+sql_fetch = @TRUE
+Gosub doExecSQLDirect2
+
+Gosub endSQL2
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+return
+
+
+
+:doQueryRecordsForCustomers
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_stmnt ......... input - holds the SQL statement
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+; _fileid_count ..... output - row count for fileid rows satisfying the query
+retcode = qConnect(hdbc, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">qConnect failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)
+
+If hstmt == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">qAllocStmt failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt, sql_stmnt)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt=', _html_crlf)
+  WebOut(sql_stmnt, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+retcode = qFetch(hstmt)
+
+If (sql_fetch == @TRUE) && (retcode <> @qNoData)
+    cnameBuf = BinaryAlloc(260)
+    If cnameBuf == @FALSE
+        WebOut('<BR><B><FONT COLOR="RED">BinaryAlloc failed for cnameBuf</FONT></B><BR>', _html_crlf)
+        Exit
+    Endif
+
+    cvalueBuf = BinaryAlloc(260)
+    If cvalueBuf == @FALSE
+        WebOut('<BR><B><FONT COLOR="RED">BinaryAlloc failed for cvalueBuf</FONT></B><BR>', _html_crlf)
+        Exit
+    Endif
+
+    While @TRUE
+        If retcode == @qNoData Then Break
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qFetch failed %retcode%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        settings_id = 0
+        retcode = qGetData(hstmt, 1, "settings_id", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for settings_id</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        settings_fileid = 0
+        retcode = qGetData(hstmt, 2, "settings_fileid", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for settings_fileid</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        retcode = qGetData(hstmt, 3, "cnameBuf", 255)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for cnameBuf</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        retcode = qGetData(hstmt, 4, "cvalueBuf", 255)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for cvalueBuf</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        settings_used = 0
+        retcode = qGetData(hstmt, 5, "settings_used", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for settings_used</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+        settings_cname = BinaryPeekStr(cnameBuf, 0, BinaryEodGet(cnameBuf))
+        settings_cvalue = BinaryPeekStr(cvalueBuf, 0, BinaryEodGet(cvalueBuf))
+
+        If StrIndex(sql_stmnt, "'%_Customer_Name%'", 1, @FWDSCAN) > 0
+            WebOut('<TR>', 0)
+            WebOut('<TD ALIGN="CENTER"><B>%settings_id%</B></TD>', 0)
+            WebOut('<TD ALIGN="CENTER"><B>%settings_fileid%</B></TD>', 0)
+            WebOut('<TD><B>%settings_cvalue%</B></TD>', 0)
+            WebOut('<TD ALIGN="CENTER"><B>%settings_used%</B></TD>', 0)
+            WebOut('</TR>', _html_crlf)
+
+            Call( "InsertCustomerNameIntoDb.wbc", "settings_cvalue")
+
+            settings_id_var = "settings_id"
+            settings_fileid_var = "settings_fileid"
+            Gosub MarkSettingUsedInDb
+        Else
+            sql_stmnt2 = ""
+            settings_id_var = "settings_id"
+            settings_fileid_var = "settings_fileid"
+            If StrLen( settings_cvalue) >= 0
+                WebOut('<TR>', 0)
+                WebOut('<TD ALIGN="CENTER"><FONT COLOR="BLUE"><B>%settings_id%</B></FONT></TD>', 0)
+                WebOut('<TD ALIGN="CENTER"><FONT COLOR="BLUE"><B>%settings_fileid%</B></FONT></TD>', 0)
+
+                settings_Customer_Name = ""
+                sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Customer_Name%' AND fileid = %settings_fileid%)"
+                varname = "settings_Customer_Name"
+                Gosub QueryCValueByFileID
+
+                If StrIndex(sql_stmnt, "'%_Customer_Addr%'", 1, @FWDSCAN) > 0
+                    sql_stmnt2 = "UPDATE customer SET addr='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                Else
+                    If StrIndex(sql_stmnt, "'%_Customer_City%'", 1, @FWDSCAN) > 0
+                        sql_stmnt2 = "UPDATE customer SET city='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                    Else
+                        If StrIndex(sql_stmnt, "'%_Customer_State%'", 1, @FWDSCAN) > 0
+                            sql_stmnt2 = "UPDATE customer SET state='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                        Else
+                            If StrIndex(sql_stmnt, "'%_Customer_ZIPCode%'", 1, @FWDSCAN) > 0
+                                sql_stmnt2 = "UPDATE customer SET zip='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                            Else
+                                If StrIndex(sql_stmnt, "'%_Customer_Country%'", 1, @FWDSCAN) > 0
+                                    sql_stmnt2 = "UPDATE customer SET country='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                Else
+                                    If StrIndex(sql_stmnt, "'%_Customer_EMailAddress%'", 1, @FWDSCAN) > 0
+                                        sql_stmnt2 = "UPDATE customer SET email='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                    Else
+                                        If StrIndex(sql_stmnt, "'%_Customer_Phone_Number%'", 1, @FWDSCAN) > 0
+                                            sql_stmnt2 = "UPDATE customer SET phone='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                        Else
+                                            If StrIndex(sql_stmnt, "'%_Customer_FAX_Number%'", 1, @FWDSCAN) > 0
+                                                sql_stmnt2 = "UPDATE customer SET fax='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                            Else
+                                                If StrIndex(sql_stmnt, "'%_Customer_SSANorTAXID%'", 1, @FWDSCAN) > 0
+                                                    sql_stmnt2 = "UPDATE customer SET ssan='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                                Else
+                                                    If StrIndex(sql_stmnt, "'%_Customer_Acct_Number%'", 1, @FWDSCAN) > 0
+                                                        sql_stmnt2 = "UPDATE customer SET bankacct='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                                    Else
+                                                        If StrIndex(sql_stmnt, "'%_Contact_Name%'", 1, @FWDSCAN) > 0
+                                                            Gosub QueryCustomerNameFromDb
+
+                                                            sql_stmnt2 = "INSERT INTO contact (custid, cname) VALUES (%customer_id%, '%settings_cvalue%')"
+                                                        Else
+                                                            If StrIndex(sql_stmnt, "'%_Contact_Addr%'", 1, @FWDSCAN) > 0
+                                                                Gosub QueryCustomerNameFromDb
+
+                                                                sql_stmnt2 = "UPDATE contact SET addr='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                            Else
+                                                                If StrIndex(sql_stmnt, "'%_Contact_City%'", 1, @FWDSCAN) > 0
+                                                                    Gosub QueryCustomerNameFromDb
+
+                                                                    sql_stmnt2 = "UPDATE contact SET city='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                                Else
+                                                                    If StrIndex(sql_stmnt, "'%_Contact_State%'", 1, @FWDSCAN) > 0
+                                                                        Gosub QueryCustomerNameFromDb
+
+                                                                        sql_stmnt2 = "UPDATE contact SET state='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                                    Else
+                                                                        If StrIndex(sql_stmnt, "'%_Contact_ZIPCode%'", 1, @FWDSCAN) > 0
+                                                                            Gosub QueryCustomerNameFromDb
+
+                                                                            sql_stmnt2 = "UPDATE contact SET zip='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                                        Else
+                                                                            If StrIndex(sql_stmnt, "'%_Contact_Country%'", 1, @FWDSCAN) > 0
+                                                                                Gosub QueryCustomerNameFromDb
+
+                                                                                sql_stmnt2 = "UPDATE contact SET country='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                                            Else
+                                                                                If StrIndex(sql_stmnt, "'%_Contact_EMailAddress%'", 1, @FWDSCAN) > 0
+                                                                                    Gosub QueryCustomerNameFromDb
+
+                                                                                    sql_stmnt2 = "UPDATE contact SET email='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                                                Else
+                                                                                    If StrIndex(sql_stmnt, "'%_Contact_Phone_Number%'", 1, @FWDSCAN) > 0
+                                                                                        Gosub QueryCustomerNameFromDb
+
+                                                                                        sql_stmnt2 = "UPDATE contact SET phone='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                                                    Else
+                                                                                        If StrIndex(sql_stmnt, "'%_Contact_FAX_Number%'", 1, @FWDSCAN) > 0
+                                                                                            Gosub QueryCustomerNameFromDb
+
+                                                                                            sql_stmnt2 = "UPDATE contact SET fax='%settings_cvalue%' WHERE custid = %customer_id%"
+                                                                                        Else
+                                                                                            If StrIndex(sql_stmnt, "'%_Customer_CCNUM%'", 1, @FWDSCAN) > 0
+                                                                                                sql_stmnt2 = "UPDATE customer SET cc='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                                                                            Else
+                                                                                                If StrIndex(sql_stmnt, "'%_Customer_EXPDATE%'", 1, @FWDSCAN) > 0
+                                                                                                    sql_stmnt2 = "UPDATE customer SET exp='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                                                                                Else
+                                                                                                    If StrIndex(sql_stmnt, "'%_Customer_900PerTransPercent%'", 1, @FWDSCAN) > 0
+                                                                                                        sql_stmnt2 = "UPDATE customer SET 900_per_trans='%settings_cvalue%' WHERE custname = '%settings_Customer_Name%'"
+                                                                                                    Else
+                                                                                                        If StrIndex(sql_stmnt, "'%_Customer_Order_ID%'", 1, @FWDSCAN) > 0
+                                                                                                            Gosub QueryCustomerNameFromDb
+
+                                                                                                            settings_Website_Domain_Name = ""
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Website_Domain_Name%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Website_Domain_Name"
+                                                                                                            Gosub QueryCValueByFileID
+
+                                                                                                            settings_Website_IP_Addr = ""
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Website_IP_Addr%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Website_IP_Addr"
+                                                                                                            Gosub QueryCValueByFileID
+
+                                                                                                            settings_Website_ServerSpeed = ""
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Website_ServerSpeed%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Website_ServerSpeed"
+                                                                                                            Gosub QueryCValueByFileID
+
+                                                                                                            settings_Website_ProductCode = ""
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Website_ProductCode%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Website_ProductCode"
+                                                                                                            Gosub QueryCValueByFileID
+
+                                                                                                            settings_Customer_WebSpace = "0"
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Customer_WebSpace%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Customer_WebSpace"
+                                                                                                            Gosub QueryCValueByFileID
+                                                                                                            
+                                                                                                            _sql_i = StrIndex( settings_Customer_WebSpace, " MB", 1, @FWDSCAN)
+                                                                                                            If _sql_i < 1
+                                                                                                                _sql_i = StrLen( settings_Customer_WebSpace)
+                                                                                                            Endif
+
+                                                                                                            settings_Customer_WebSpace = StrSub( settings_Customer_WebSpace, 1, _sql_i)
+
+                                                                                                            settings_Customer_BaseAmount = "0.00"
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Customer_BaseAmount%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Customer_BaseAmount"
+                                                                                                            Gosub QueryCValueByFileID
+                                                                                                            
+                                                                                                            settings_Customer_BaseAmount = StrReplace( settings_Customer_BaseAmount, " .", ".")
+                                                                                                            If StrLen( settings_Customer_BaseAmount) < 1
+                                                                                                                settings_Customer_BaseAmount = "0.00"
+                                                                                                            Endif
+
+                                                                                                            settings_Customer_Bandwidth = "0.0"
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Customer_Bandwidth%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Customer_Bandwidth"
+                                                                                                            Gosub QueryCValueByFileID
+
+                                                                                                            settings_Cust_AddlBandwidth = "0.0"
+                                                                                                            sql_stmnt2 = "SELECT cvalue FROM settings WHERE (cname = '%_Customer_AddlBandwidth%' AND fileid = %settings_fileid%)"
+                                                                                                            varname = "settings_Cust_AddlBandwidth"
+                                                                                                            Gosub QueryCValueByFileID
+
+sql_stmnt2 = "INSERT INTO website (custid, oid, domain_name, ip, server_speed, prod_code, webspace, monthly_fee, bandwidth, addnl_bandwidth) VALUES ("
+sql_stmnt2 = StrCat( sql_stmnt2, "%customer_id%", ", '%settings_cvalue%'", ", '%settings_Website_Domain_Name%'", ", '%settings_Website_IP_Addr%'", ", '%settings_Website_ServerSpeed%'")
+sql_stmnt2 = StrCat( sql_stmnt2, ", '%settings_Website_ProductCode%'", ", %settings_Customer_WebSpace%", ", %settings_Customer_BaseAmount%", ", %settings_Customer_Bandwidth%", ", %settings_Cust_AddlBandwidth%")
+sql_stmnt2 = StrCat( sql_stmnt2, ")")
+
+;sql_stmnt2 = ""
+                                                                                                        Else
+                                                                                                            If StrIndex(sql_stmnt, "'%_Website_Domain_Name%'", 1, @FWDSCAN) > 0
+;                                                                                                                Gosub QueryCustomerNameFromDb
+
+;                                                                                                                sql_stmnt2 = "UPDATE website SET domain_name='%settings_cvalue%' WHERE custid = %customer_id%"
+sql_stmnt2 = ""
+                                                                                                            Else
+                                                                                                            Endif
+                                                                                                        Endif
+                                                                                                    Endif
+                                                                                                Endif
+                                                                                            Endif
+                                                                                        Endif
+                                                                                    Endif
+                                                                                Endif
+                                                                            Endif
+                                                                        Endif
+                                                                    Endif
+                                                                Endif
+                                                            Endif
+                                                        Endif
+                                                    Endif
+                                                Endif
+                                            Endif
+                                        Endif
+                                    Endif
+                                Endif
+                            Endif
+                        Endif
+                    Endif
+                Endif
+
+                If StrLen( sql_stmnt2) > 0
+                    Gosub ExecSQLDirect2
+
+                    Gosub MarkSettingUsedInDb
+                Endif
+
+                WebOut('<TD><FONT COLOR="BLUE"><B>cvalue=(', 0)
+                WebOut(settings_cvalue, 0)
+                WebOut(')', 0)
+                WebOut('<BR>Customer_Name=(', 0)
+                WebOut(settings_Customer_Name, 0)
+                WebOut(')', 0)
+                
+                If IsDefined( customer_id) == @YES
+                    WebOut('<BR>customer_id=(', 0)
+                    WebOut(customer_id, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( customer_custname) == @YES
+                    WebOut('<BR>customer_custname=(', 0)
+                    WebOut(customer_custname, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Website_Domain_Name) == @YES
+                    WebOut('<BR>settings_Website_Domain_Name=(', 0)
+                    WebOut(settings_Website_Domain_Name, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Website_IP_Addr) == @YES
+                    WebOut('<BR>settings_Website_IP_Addr=(', 0)
+                    WebOut(settings_Website_IP_Addr, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Website_ServerSpeed) == @YES
+                    WebOut('<BR>settings_Website_ServerSpeed=(', 0)
+                    WebOut(settings_Website_ServerSpeed, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Website_ProductCode) == @YES
+                    WebOut('<BR>settings_Website_ProductCode=(', 0)
+                    WebOut(settings_Website_ProductCode, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Customer_WebSpace) == @YES
+                    WebOut('<BR>settings_Customer_WebSpace=(', 0)
+                    WebOut(settings_Customer_WebSpace, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Customer_BaseAmount) == @YES
+                    WebOut('<BR>settings_Customer_BaseAmount=(', 0)
+                    WebOut(settings_Customer_BaseAmount, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Customer_Bandwidth) == @YES
+                    WebOut('<BR>settings_Customer_Bandwidth=(', 0)
+                    WebOut(settings_Customer_Bandwidth, 0)
+                    WebOut(')', 0)
+                Endif
+
+                If IsDefined( settings_Cust_AddlBandwidth) == @YES
+                    WebOut('<BR>settings_Cust_AddlBandwidth=(', 0)
+                    WebOut(settings_Cust_AddlBandwidth, 0)
+                    WebOut(')', 0)
+                Endif
+
+                WebOut('</B></FONT></TD>', 0)
+
+                WebOut('<TD ALIGN="CENTER"><FONT COLOR="BLUE"><B>%settings_used%</B></FONT></TD>', 0)
+                WebOut('</TR>', _html_crlf)
+            Else
+;                WebOut('<TD><FONT COLOR="BLACK"><B>', 0)
+;                WebOut(settings_cvalue, 0)
+;                WebOut('<BR>', 0)
+;                WebOut(settings_Customer_Name, 0)
+;                WebOut('</B></FONT></TD>', 0)
+            Endif
+        Endif
+        
+        sql_fetched = @TRUE
+
+        retcode = qFetch(hstmt)
+
+    EndWhile
+
+    BinaryFree(cnameBuf)
+    BinaryFree(cvalueBuf)
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+return
+
+
+
+:QueryRecordsForCustomers
+; __debug . input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Gosub beginSQL
+
+sql_fetch = @TRUE
+Gosub doQueryRecordsForCustomers
+
+Gosub endSQL
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+If sql_fetched == @TRUE
+    If __debug <> @FALSE
+        WebOut('<BR><B><FONT COLOR="BLUE">', 0)
+        WebOut('settings_id=(%settings_id%)', 0)
+        WebOut(', settings_fileid=(%settings_fileid%)', 0)
+        WebOut(', settings_cname=(%settings_cname%)', 0)
+        WebOut(', settings_cvalue=(%settings_cvalue%)', 0)
+        WebOut(', settings_used=(%settings_used%)', 0)
+        WebOut('</FONT></B><BR>', _html_crlf)
+    Endif
+Endif
+
+return
+
+
+:processCustomerRecordsFromDb
+; _private_dir ..... input
+
+;WebOut('<B>QueryRecordsForCustomers</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomerAddr</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomerCity</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomerState</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_ZIPCode</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_Country</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_EMailAddress</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_Phone_Number</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_FAX_Number</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_SSANorTAXID</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_Acct_Number</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_Name</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_Addr</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_City</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_State</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_ZIPCode</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_Country</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_EMailAddress</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_Phone_Number</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForContact_FAX_Number</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_CCNUM</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_EXPDATE</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsForCustomer_900PerTransPercent</B><BR><BR>', _html_crlf)
+;WebOut('<B>QueryRecordsFor_Customer_Order_ID</B><BR><BR>', _html_crlf)
+
+WebOut('<B>QueryRecordsFor_Website_Domain_Name</B><BR><BR>', _html_crlf)
+
+WebOut('<TABLE WIDTH="90%%" BORDER="1">', 0)
+
+WebOut('<TR>', 0)
+WebOut('<TD ALIGN="CENTER" BGCOLOR="#C0C0C0"><B>settings_id</B></TD>', 0)
+WebOut('<TD ALIGN="CENTER" BGCOLOR="#C0C0C0"><B>settings_fileid</B></TD>', 0)
+WebOut('<TD ALIGN="CENTER" BGCOLOR="#C0C0C0"><B>settings_cvalue</B></TD>', 0)
+WebOut('<TD ALIGN="CENTER" BGCOLOR="#C0C0C0"><B>settings_used</B></TD>', 0)
+WebOut('</TR>', _html_crlf)
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_Name%' AND used = 1)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_Addr%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_Addr%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_City%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_City%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_State%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_State%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_ZIPCode%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_ZIPCode%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_Country%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_Country%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_EMailAddress%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_EMailAddress%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_Phone_Number%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_Phone_Number%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_FAX_Number%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_FAX_Number%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_SSANorTAXID%' AND used = 0)"
+;sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_SSANorTAXID%'"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_Acct_Number%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_Name%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_Addr%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_City%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_State%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_ZIPCode%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_Country%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_EMailAddress%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_Phone_Number%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Contact_FAX_Number%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_CCNUM%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_EXPDATE%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_900PerTransPercent%' AND used = 0)"
+
+;sql_stmnt = "SELECT * FROM settings WHERE (cname = '%_Customer_Order_ID%' AND used = 0)"
+sql_stmnt = "SELECT * FROM settings WHERE cname = '%_Customer_Order_ID%'"
+
+Gosub QueryRecordsForCustomers
+
+WebOut('</TABLE>', _html_crlf)
+
+;WebOut('<FORM ACTION="%this_cgi%" METHOD="POST">', _html_crlf)
+;WebOut('<B>Make your Selection(s): <SMALL>count=%count%</SMALL> </B><BR><BR>', _html_crlf)
+
+;WebOut('%i% <INPUT TYPE="CHECKBOX" NAME="ProcessOldDatabase" VALUE="processOldDatabase', 0)
+;WebOut('"> <B>Process ALL Records', 0)
+;WebOut('</B><BR><BR>', _html_crlf)
+
+;WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="PROCESS-RECORD">', _html_crlf)
+;WebOut('<INPUT TYPE="SUBMIT" NAME="Submit1" VALUE="Process Customer Record">', _html_crlf)
+;WebOut('</FORM>', _html_crlf)
+
+return
+
+

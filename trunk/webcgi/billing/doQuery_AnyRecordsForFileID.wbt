@@ -1,0 +1,123 @@
+:doQuery_AnyRecordsForFileID
+; param1 ............ input - the name of the variable that holds the _datasource name
+; param2............. input - the name of the variable that holds the sql_stmnt name
+; param3............. input - the name of the variable that holds the sql_fetch name
+
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_stmnt ......... input - holds the SQL statement
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+; _fileid_count ..... output - row count for fileid rows satisfying the query
+If param0 <> 3
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for doQuery_AnyRecordsForFileID</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( _datasource) == @YES
+    _datasource_DQARFFI = _datasource
+Endif
+
+_param1 = %param1%
+_datasource = "%_param1%"
+
+If IsDefined( sql_stmnt) == @YES
+    sql_stmnt_DQARFFI = sql_stmnt
+Endif
+
+_param2 = %param2%
+sql_stmnt = "%_param2%"
+
+If IsDefined( sql_fetch) == @YES
+    sql_fetch_DQARFFI = sql_fetch
+Endif
+
+_param3 = %param3%
+sql_fetch = %_param3%
+
+retcode = qConnect(hdbc, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">qConnect failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)
+
+If hstmt == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">qAllocStmt failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt, sql_stmnt)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt=', _html_crlf)
+  WebOut(sql_stmnt, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+retcode = qFetch(hstmt)
+
+If (sql_fetch == @TRUE) && (retcode <> @qNoData)
+
+    While @TRUE
+        If retcode == @qNoData Then Break
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qFetch failed %retcode%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        _fileid_count = 0
+        retcode = qGetData(hstmt, 1, "_fileid_count", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for _fileid_count</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        sql_fetched = @TRUE
+
+        retcode = qFetch(hstmt)
+
+    EndWhile
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+
+Drop( _param1, _datasource, hstmt)
+Drop( _param2, sql_stmnt)
+Drop( _param3, sql_fetch)
+
+If IsDefined( _datasource_DQARFFI) == @YES
+    _datasource = _datasource_DQARFFI
+    Drop( _datasource_DQARFFI)
+Endif
+
+If IsDefined( sql_stmnt_DQARFFI) == @YES
+    sql_stmnt = sql_stmnt_DQARFFI
+    Drop( sql_stmnt_DQARFFI)
+Endif
+
+If IsDefined( sql_fetch_DQARFFI) == @YES
+    sql_fetch = sql_fetch_DQARFFI
+    Drop( sql_fetch_DQARFFI)
+Endif
+
+return
+
+

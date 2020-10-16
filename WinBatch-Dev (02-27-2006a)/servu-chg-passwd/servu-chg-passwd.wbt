@@ -1,0 +1,63 @@
+; servu-chg-passwd
+
+userId = "[USER=chameleon|"
+passwdKey = "Password="
+
+sample_pwd = "vMmnBoiUwXyTqzZc69pQTqzZc69pQUwXyTqzZc7vMmnBoiUwXyTqzZc69pQTqzZc69pQUwXyTqzZc5F1U2C3K4O5F6F"
+
+masterPassword_chars = "aAbBcCdDeEFgGhHmMnNpPqQrRsSTuUvVwWxXyYz3456789"
+masterPassword_chars_len = StrLen( masterPassword_chars)
+
+new_password = ""
+for i = 1 to StrLen(sample_pwd)
+	rc = StrSub( masterPassword_chars, Random( masterPassword_chars_len), 1)
+	new_password = StrCat( new_password, rc)
+next
+
+new_passwd = new_password
+
+If IsDefined(param1)
+	; param1 is the .ini file name for Serv-U FTP
+	fName = param1
+Else
+	types = "All Files|*.ini|"
+	fName = AskFileName("Select INI File", "", types, "", 1)
+Endif
+
+If IsDefined(param2)
+	; param2 is the txt file name for Serv-U FTP password (for Cold-Fusion interface)
+	tName = param2
+Else
+	types = "All Files|*.txt|"
+	tName = AskFileName("Select TXT File", "", types, "", 1)
+Endif
+
+beginState = @False
+endState = @False
+
+fin = FileOpen(fName, "READ")
+fout = FileOpen("%fName%.new", "WRITE")
+while @TRUE             ; Loop till break do us end
+	x = FileRead(fin)
+	If x == "*EOF*" Then Break
+	if StrIndexNc( x, userId, 1, @FWDSCAN) > 0
+		beginState = @True
+	endif
+	if beginState && (endState == @false)
+		if StrIndexNc( x, passwdKey, 1, @FWDSCAN) > 0
+			x = StrCat( passwdKey, new_passwd)
+			endState = @True
+		endif
+	endif
+	FileWrite( fout, x)
+endwhile
+FileClose(fin)
+FileClose(fout)
+
+fout = FileOpen(tName, "WRITE")
+FileWrite( fout, new_passwd)
+FileClose(fout)
+
+FileDelete( "%fName%")
+FileRename( "%fName%.new", "%fName%")
+

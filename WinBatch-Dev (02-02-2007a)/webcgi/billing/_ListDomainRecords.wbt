@@ -1,0 +1,36 @@
+:_ListDomainRecords
+
+If IsDefined( _list_multi_mode) == @YES
+    _all_records_listed = ""
+Endif
+
+_record_count = 1
+
+_table = "website"
+sql_fetch_map = "N,S129,S33"
+sql_level = ""
+sql_fetch_gosub = "ListDomainRecordsOneByOne"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+If IsDefined( _list_multi_mode) == @YES
+    WebOut('<OPTION VALUE="', 0)
+    If IsDefined( _all_records_listed) == @YES
+        WebOut(_all_records_listed, 0)
+    Endif
+    WebOut('">---------- ALL ----------', 0)
+    WebOut('</OPTION>', _html_crlf)
+
+    Drop( _list_multi_mode, _all_records_listed)
+Endif
+
+WebOut('</SELECT></FONT>', _html_crlf)
+
+_record_count = _record_count - 1
+
+WebOut('<B>%_record_count% Domains Listed</B>', _html_crlf)
+
+return
+

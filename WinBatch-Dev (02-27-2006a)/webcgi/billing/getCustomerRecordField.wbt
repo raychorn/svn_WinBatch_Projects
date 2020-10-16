@@ -1,0 +1,35 @@
+:getCustomerRecordField
+; _field_name ..... input - the field name
+; binbuf_RCR ...... input - the binary buffer that contains all the fields
+; _aField ......... output - the field (name+value key pair)
+
+If IsDefined( _bi) == @YES
+    _bi_gCRF = _bi
+Endif
+
+If IsDefined( bi) == @YES
+    bi_gCRF = bi
+Endif
+
+_aField = ""
+_bi = BinaryIndex( binbuf_RCR, 0, _field_name, @FWDSCAN)
+If _bi > 0
+    bi = BinaryIndex( binbuf_RCR, _bi, @TAB, @FWDSCAN)
+    If bi > 0
+        _aField = BinaryPeekStr(binbuf_RCR, _bi, bi - _bi)
+    Endif
+Endif
+
+If IsDefined( _bi_gCRF) == @YES
+    _bi = _bi_gCRF
+    Drop( _bi_gCRF)
+Endif
+
+If IsDefined( bi_gCRF) == @YES
+    bi = bi_gCRF
+    Drop( bi_gCRF)
+Endif
+
+return
+
+

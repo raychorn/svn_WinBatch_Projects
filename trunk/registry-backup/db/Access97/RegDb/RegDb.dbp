@@ -1,0 +1,16 @@
+# Microsoft Developer Studio Project File - Database Project
+Begin DataProject = "RegDb"
+   SccProjectName = """$/WinBatch Projects/registry-backup/RegDb"", INAAAAAA"
+   SccLocalPath = "."
+   SccAuxPath = "\\Sisko\sisko_d\MSVS6\VSS,"
+   SccProvider = ""
+   Begin DataSource = "Connection1"
+      ConnectStr = "Provider=MSDASQL.1;Persist Security Info=False;Data Source=RegDB;Connect Timeout=15;Extended Properties=""DSN=RegDB;DBQ=E:\myFiles\Access97\RegDB\RegDB.mdb;DriverId=281;FIL=MS Access;MaxBufferSize=2048;PageTimeout=5;"";Locale Identifier=1033"
+      Connection = "E:\myFiles\Access97\RegDB\RegDB (ACCESS)"
+      Colorizer = 1
+      Query = "Delete-ALL.dtq"
+      Query = "Insert-Record.dtq"
+      Query = "INSERT.dtq"
+      Query = "Select-All.dtq"
+   End
+End

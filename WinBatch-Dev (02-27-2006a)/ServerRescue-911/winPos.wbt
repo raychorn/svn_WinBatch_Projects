@@ -1,0 +1,30 @@
+;pPos = WinPlaceGet(@NORMAL, "PICARD2 ~ pcANYWHERE")
+pPos = WinPlaceGet(@ZOOMED, "PICARD2")
+Message("PICARD2", "%pPos%")
+
+;dPos = WinPlaceGet(@NORMAL, "DATA2 ~ pcANYWHERE")
+dPos = WinPlaceGet(@ZOOMED, "DATA2")
+Message("DATA2", "%dPos%")
+
+;rPos = WinPlaceGet(@NORMAL, "RIKER ~ pcANYWHERE")
+rPos = WinPlaceGet(@ZOOMED, "RIKER")
+Message("RIKER", "%rPos%")
+
+;zPos = WinPlaceGet(@NORMAL, "ZONE1 ~ pcANYWHERE")
+zPos = WinPlaceGet(@ZOOMED, "ZONE1")
+Message("ZONE1", "%zPos%")
+
+winPosFile = "F:\208.128.219.19\winbatch\ServerRescue\watchdog\winPos.txt"
+handle = FileOpen( winPosFile, "APPEND")
+If handle > 0
+    line = StrCat( TimeDate(), ", ", "pPos=%pPos%", @CR)
+    FileWrite(handle, line)
+    line = StrCat( TimeDate(), ", ", "dPos=%dPos%", @CR)
+    FileWrite(handle, line)
+    line = StrCat( TimeDate(), ", ", "rPos=%rPos%", @CR)
+    FileWrite(handle, line)
+    line = StrCat( TimeDate(), ", ", "zPos=%zPos%", @CR)
+    FileWrite(handle, line)
+    FileClose(handle)
+Endif
+

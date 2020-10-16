@@ -1,0 +1,7 @@
+:ViewSomePaymentsRecords
+
+__html_template_filename%sql_level% = _viewPaymentsRecord_html
+Call( StrCat( _cgi_dir, "_ViewADbRecordViaHTML.wbc"), "")
+
+return
+

@@ -1,0 +1,10 @@
+60
+192.168.1.8:28000
+90
+D:\Tribes2\GameData\Chameleon_v110\ispawnChameleonDedicatedServer.cmd
+D:\tribes2
+3
+0
+1
+-t2s
+Tribes2.exe

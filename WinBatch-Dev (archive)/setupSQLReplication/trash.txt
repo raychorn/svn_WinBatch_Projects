@@ -1,0 +1,34 @@
+P   C   C   C   C
+A   H   H   H   H
+R   I   I   I   I
+E   L   L   L   L
+N   D   D   D   D
+T   2   3   4   5    CLASS                     IDENT  TITLE
+--------------------------------------------------------------------------------
+TOP                  MMCMainFrame              0      SQL Server Enterprise Manager - [Console Root\Microsoft SQL Servers\SQL Server Group]
+ 
+    1                MDIClient                 59648  
+        1            MMCChildFrm               65280  Console Root\Microsoft SQL Servers\SQL Server Group
+            1        MMCView                   59648  
+                1    SysListView32             12786  
+                1    SysHeader32               0      
+                X    NONE
+            2        msctls_statusbar32        4099   Ready
+                1    msctls_progress32         4096   
+                X    NONE
+            3        SizeableRebar             4101   
+                1    ReBarWindow32             4096   
+                1    ToolbarWindow32           4097   
+                X    NONE
+ 
+    2                SizeableRebar             12867  
+        1            ReBarWindow32             4096   
+            1        ToolbarWindow32           4098   
+                X    NONE
+            2        ToolbarWindow32           4097   
+                X    NONE
+            3        AfxWnd42u                 8193   
+                X    NONE
+ 
+    3                SQLSinkMarshaller         0      
+        X            NONE

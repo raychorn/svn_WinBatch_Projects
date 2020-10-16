@@ -1,0 +1,78 @@
+; tac2-link-spammer.wbt
+
+; Purpose is to SPAM tac2.tribes-universe.com with sex related web links
+
+AddExtender("WWINT33I.DLL")
+
+wName = "TAC2 Link Spammer Vers 1.0"
+
+IntControl (50, 1, "http://TAC2.Tribes-Universe.com/", 0, 0)
+
+IntControl(29, @TAB, 0, 0, 0)
+
+__dirHome = IntControl(1004, 0, 0, 0, 0)
+_dirHome = FilePath( __dirHome)
+
+_lastCh = StrSub( _dirHome, StrLen(_dirHome), 1)
+if _lastCh <> "\"
+	_dirHome = StrCat( _dirHome, "\")
+endif
+
+_hrefSynbol = "href="
+
+_doubleQuoteSymbol = Num2Char(34)
+
+; USAGE: Package a Mod for Distribution the Chameleon Mod way...
+
+BoxCaption( 1, "%wName%")
+
+_tac2URL = "tac2.tribes-universe.com"
+
+_tac2Level = 0
+
+tophandle = iBegin(0, "", "")
+conhandle = iHostConnect(tophandle, _tac2URL, @HTTP, "", "")
+datahandle = iHttpInit(conhandle, "GET", "/", "",0)
+rslt = iHttpOpen(datahandle, "", 0, 0)
+xx = iReadData(datahandle, "%_dirHome%\tac2-webpage_%_tac2Level%.txt")
+iclose(datahandle)
+iClose(conhandle)
+iClose(tophandle)
+
+Gosub ReadHTMLFile
+
+if _URL%_tac2Level%C > 0
+	_tac2Level = _tac2Level + 1
+endif
+
+Message("All", "Done")
+
+exit
+
+
+:ReadHTMLFile
+_htmlFile = "%_dirHome%\tac2-webpage_%_tac2Level%.txt"
+if FileExist( _htmlFile) == @TRUE
+	_URL%_tac2Level%C = 0
+	fIN = FileOpen( _htmlFile, "READ")
+	while @TRUE				; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		_iHREF = StrIndexNc( StrLower( x), StrLower( _hrefSynbol), 1, @FWDSCAN)
+		If (_iHREF > 0)
+			_iDQuote = StrIndexNc( StrLower( x), StrLower( _doubleQuoteSymbol), _iHREF, @FWDSCAN)
+			If (_iDQuote > 0)
+				_iDQuote2 = StrIndexNc( StrLower( x), StrLower( _doubleQuoteSymbol), _iDQuote + 1, @FWDSCAN)
+				If (_iDQuote2 > 0)
+					_iURL = _URL%_tac2Level%C
+					_URL%_tac2Level%%_iURL% = StrSub( x, _iDQuote + 1, _iDQuote2 - _iDQuote - 1)
+					_URL%_tac2Level%C = _iURL + 1
+				endif
+			endif
+		Else
+		Endif
+	endwhile
+	FileClose(fIN)
+endif
+return
+

@@ -1,0 +1,46 @@
+; outlook-goodnite.wbt
+
+_outlookWinName = "Inbox - Microsoft Outlook"
+_outOfOfficeWinName = "Out of Office Assistant"
+
+;Debug( @TRUE)
+
+if WinExist( _outlookWinName) == @TRUE
+	WinActivate( _outlookWinName)
+	WinZoom( _outlookWinName)
+	SendKeysTo( _outlookWinName, "{ALT}T")
+	TimeDelay( 2)
+	SendKeysTo( _outlookWinName, "u")
+	TimeDelay( 2)
+	_timeBegin = GetTickCount()
+	while WinExist( _outOfOfficeWinName) == @FALSE
+		_timeNow = GetTickCount()
+		_timeElapsed = _timeNow - _timeBegin
+		if _timeElapsed > 10000 ; wait 10 secs and then bail
+			Message( "ERROR", "Time-out waiting for %_outOfOfficeWinName%")
+			break
+		endif
+	endwhile
+;	SendKeysTo( _outlookWinName, "{DOWN}")
+;	TimeDelay( 1)
+
+	SendKeysTo( _outlookWinName, "{ALT}o")
+	TimeDelay( 1)
+
+	SendKeysTo( _outlookWinName, "+{TAB}")
+	TimeDelay( 1)
+
+;	SendKeysTo( _outlookWinName, "{ALT}p")
+;	TimeDelay( 1)
+;	SendKeysTo( _outlookWinName, "{ALT}p")
+;	TimeDelay( 1)
+;	SendKeysTo( _outlookWinName, "{TAB}")
+;	TimeDelay( 1)
+;	SendKeysTo( _outlookWinName, "{ENTER}")
+;	TimeDelay( 1)
+
+	Message( "%_outlookWinName%", "Time to go home now!")
+endif		  
+
+exit
+

@@ -1,0 +1,3 @@
+T2S`63.170.139.42:28000`wt! - dark.ev0l.net`Minotaur`34`0`130`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game=base`mission=Capture the Flag`status=65`dedicated=1`bot_count=0`cpu_speed=500`info=Home of WHATTHE!`numteams=2
+

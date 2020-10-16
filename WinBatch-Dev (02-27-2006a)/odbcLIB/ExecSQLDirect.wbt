@@ -1,0 +1,125 @@
+:ExecSQLDirect
+; sql_level ............. input - the sql level 2-10 (optional)
+; __debug ............... input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+If IsDefined( _callExt) == @NO
+	_callExt = ".wbc"
+endif
+
+If IsDefined( sql_level) == @NO
+    Call( StrCat( _cgi_dir, "beginSQL%_callExt%"), "")
+Else
+    sql_level = StrTrim( sql_level)
+    If StrLen( sql_level) == 0
+        Call( StrCat( _cgi_dir, "beginSQL%_callExt%"), "")
+    Else
+        Call( StrCat( _cgi_dir, "beginSQLn%_callExt%"), "sql_level")
+    Endif
+Endif
+
+Call( StrCat( _cgi_dir, "doExecSQLDirect_prep%_callExt%"), "")
+
+If (sql_fetch == @TRUE) && (StrLen( sql_fetch_map%sql_level%) > 0)
+
+    While @TRUE
+
+        If __debug <> @FALSE
+			 	Message( "odbcLIB DEBUG", StrCat( "ExecSQLDirect (1) hstmt%sql_level%=(", hstmt%sql_level%, ")"))
+        Endif
+
+;    ErrorMode(@OFF)
+        retcode = qFetch(hstmt%sql_level%)
+;    ErrorMode(@CANCEL)
+
+        If __debug <> @FALSE
+			 	Message( "odbcLIB DEBUG", StrCat( "ExecSQLDirect (2) retcode=(", retcode, "), @qNoData=(", @qNoData, ")"))
+        Endif
+
+        If retcode == @qNoData Then Break
+
+;    WebOut('<BR><B><FONT COLOR="BLUE">qFetch %retcode% for sql_level=%sql_level%</FONT></B><BR>', _html_crlf)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+			 	Message( "odbcLIB WARNING", "doExecSQLDirect: qFetch failed %retcode% for sql_level=%sql_level%")
+            Exit
+        Endif
+
+        sql_fetched = @TRUE
+
+        _sql_fetch_gosub = sql_fetch_gosub%sql_level%
+
+        _sql_fetch_gosub_fname = StrCat( _cgi_dir, "%_sql_fetch_gosub%%_callExt%")
+
+  ;  WebOut('<BR><B><FONT COLOR="BLUE">ExecSQLDirect (1) _sql_fetch_gosub_fname=%_sql_fetch_gosub_fname%</FONT></B><BR>', _html_crlf)
+
+        If FileExist( _sql_fetch_gosub_fname) <> @FALSE
+            ErrorMode(@OFF)
+            Call( _sql_fetch_gosub_fname, "")
+            ErrorMode(@CANCEL)
+        Else
+            If DirExist( __cgi_dir) <> @FALSE
+                _sql_fetch_gosub_fname = StrCat( __cgi_dir, "%_sql_fetch_gosub%%_callExt%")
+ ;   WebOut('<BR><B><FONT COLOR="BLUE">ExecSQLDirect (2) __cgi_dir=%__cgi_dir% _sql_fetch_gosub_fname=%_sql_fetch_gosub_fname%</FONT></B><BR>', _html_crlf)
+            Endif
+
+            If FileExist( _sql_fetch_gosub_fname) <> @FALSE
+                ErrorMode(@OFF)
+                Call( _sql_fetch_gosub_fname, "")
+                ErrorMode(@CANCEL)
+            Else
+;    WebOut('<BR><B><FONT COLOR="BLUE">ExecSQLDirect (3) sql_fetch_gosub%sql_level%=%_sql_fetch_gosub%</FONT></B><BR>', _html_crlf)
+                If IsDefined( sql_fetch_gosub%sql_level%) == @YES
+                    If __debug <> @FALSE
+							 	Message( "odbcLIB DEBUG", "ExecSQLDirect (3) _sql_fetch_gosub=(%_sql_fetch_gosub%)")
+                    Endif
+
+;    WebOut('<BR><B><FONT COLOR="BLUE">ExecSQLDirect (3a) _sql_fetch_gosub=%_sql_fetch_gosub%</FONT></B><BR>', _html_crlf)
+
+                    Gosub %_sql_fetch_gosub%
+                    Drop( _sql_fetch_gosub)
+                Endif
+            Endif
+        Endif
+
+        Drop( _sql_fetch_gosub_fname)
+        
+    EndWhile
+
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+;ErrorMode(@OFF)
+qFreeStmt(hstmt%sql_level%, 0)
+;ErrorMode(@CANCEL)
+;SQL_UNBIND
+;ErrorMode(@OFF)
+qFreeStmt(hstmt%sql_level%, 2)
+;ErrorMode(@CANCEL)
+
+If IsDefined( sql_level) == @YES
+    If StrLen( sql_level) == 0
+        Drop( sql_level)
+    Endif
+Endif
+
+
+If IsDefined( sql_level) == @NO
+    Call( StrCat( _cgi_dir, "endSQL%_callExt%"), "")
+Else
+    If StrLen( sql_level) == 0
+        Call( StrCat( _cgi_dir, "endSQL%_callExt%"), "")
+    Else
+        Call( StrCat( _cgi_dir, "endSQLn%_callExt%"), "sql_level")
+    Endif
+Endif
+
+If __debug <> @FALSE
+ 	Message( "odbcLIB DEBUG", StrCat( "ExecSQLDirect (1) sql_stmnt=", sql_stmnt, ") Retcode %retcode%, sql_fetched=%sql_fetched%"))
+Endif
+
+return
+

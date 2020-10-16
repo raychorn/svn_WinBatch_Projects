@@ -1,0 +1,64 @@
+:AnyRecordsForFileID
+; param1 ............ input - the name of the variable that holds the _cgi_dir value
+; param2 ............ input - the name of the variable that holds the _datasource name
+; _id ..... input - the file id for the dirname from the database
+; __debug . input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+; _fileid_count ..... output - row count for fileid rows satisfying the query
+If param0 <> 2
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for AnyRecordsForFileID</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( _cgi_dir) == @YES
+    _cgi_dir_ARFFI = _cgi_dir
+Endif
+
+_param1 = %param1%
+_cgi_dir = "%_param1%"
+
+If IsDefined( _datasource) == @YES
+    _datasource_ARFFI = _datasource
+Endif
+
+_param2 = %param2%
+_datasource = "%_param2%"
+
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Call( StrCat( _cgi_dir, "beginSQL.wbc"), "")
+
+sql_fetch = @TRUE
+sql_stmnt = "SELECT COUNT (fileid) FROM settings WHERE (fileid = %_id%)"
+Call( StrCat( _cgi_dir, "doQuery_AnyRecordsForFileID.wbc"), "_datasource sql_stmnt sql_fetch")
+
+Call( StrCat( _cgi_dir, "endSQL.wbc"), "")
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+If sql_fetched == @TRUE
+    If __debug <> @FALSE
+        WebOut('<BR><B><FONT COLOR="BLUE">(1) _id=(%_id%), _fname=(%_fname%)</FONT></B><BR>', _html_crlf)
+    Endif
+Endif
+
+Drop( _param1, _cgi_dir)
+Drop( _param2, _datasource)
+
+If IsDefined( _cgi_dir_ARFFI) == @YES
+    _cgi_dir = _cgi_dir_ARFFI
+    Drop( _cgi_dir_ARFFI)
+Endif
+
+If IsDefined( _datasource_ARFFI) == @YES
+    _datasource = _datasource_ARFFI
+    Drop( _datasource_ARFFI)
+Endif
+
+return
+

@@ -1,0 +1,22 @@
+:endSQLn
+; param1 ............ input - the name of the variable that holds the connection handle number 1-10
+If param0 <> 1
+    _param1 = 2
+    param1 = "_param1"
+Else
+    If (%param1% < 1) || (%param1% > 10)
+        %param1% = 2
+    Endif
+Endif
+
+_var1 = %param1%
+
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc%_var1%)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc%_var1%)
+
+Drop( hdbc%_var1%)
+
+return
+

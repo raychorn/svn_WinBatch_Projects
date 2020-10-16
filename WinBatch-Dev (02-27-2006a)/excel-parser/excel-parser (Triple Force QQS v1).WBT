@@ -1,0 +1,149 @@
+;************************************************************************
+; excel-parser.wbt
+;
+;************************************************************************
+
+_wname = "Excel Parser v1.0"
+wname = "%_wname% (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved."
+
+types = "Text Files|*.txt|"
+fn1 = AskFileName("SelectFile", "C:\@temp", types, "*.txt", 1)
+if StrLen(fn1) > 0
+;	Message("File selected was", fn1)
+	hasHeader = @False
+	fHand = FileOpen(fn1, "READ")
+	while @TRUE             ; Loop till break do us end
+		x = FileRead(fHand)
+		If x == "*EOF*" Then Break
+		if StrLen(x) > 0
+			if hasHeader <> @True
+				Gosub ParseHeader
+			else
+				Gosub ParseData
+			endif
+		endif
+	endwhile
+	FileClose(fHand)
+endif
+
+exit
+
+
+:ParseHeader
+	; xList is the list of Q/S tokens - output
+	xList = ""
+	Gosub QQSAnalysis
+	Message("Debug - Header (Input) %sCountIn%", xList)
+	Message("Debug - Header (Output) %sCountOut%", _xList)
+	hasHeader = @true
+return
+
+
+:ParseData
+	xList = ""
+	Gosub QQSAnalysis
+	Message("Debug - Data (Input) %sCountIn%", xList)
+	Message("Debug - Data (Output) %sCountOut%", _xList)
+return
+
+
+;	Gather triples, 
+;	QSQ becomes QS,
+;	SSS becomes S,
+;	SQS becomes S,
+;	SSQ becomes S,
+;	QSS becomes QS,
+;	QQS = ok,
+;	S = ok,
+;	QS = ok,
+;	QQ = ok IIF last token.
+
+
+:QQSAnalysis
+	; xList is the list of Q/S tokens - output
+	xList = ""
+	for i = 1 to StrLen(x)
+		ch = StrSub(x, i, 1)
+		if ch == '"'
+			xList = ItemInsert("Q", ItemCount(xList, ","), xList, ",")
+		else
+			if ch == ","
+				xList = ItemInsert("S", ItemCount(xList, ","), xList, ",")
+			endif
+		endif
+	next
+
+	sCountIn = 0
+	nItems = ItemCount(xList, ",")
+	for j = 1 to nItems
+		ch = ItemExtract(j, xList, ",")
+		if ch == "S"
+			sCountIn = sCountIn + 1
+		endif
+	next
+
+	aTriple = ""
+	_xList = ""
+	isHandled = @False
+	nItems = ItemCount(xList, ",")
+	for j = 1 to nItems
+		ch = ItemExtract(j, xList, ",")
+		isOkay = @False
+		Gosub TripleAnalysis
+		if (sBegins) || ((qCount == 2) && (sCount == 1))
+			_xList = ItemInsert("Q", ItemCount(_xList, ","), _xList, ",")
+			_xList = ItemInsert("Q", ItemCount(_xList, ","), _xList, ",")
+			_xList = ItemInsert("S", ItemCount(_xList, ","), _xList, ",")
+			isHandled = @True
+			aTriple = ""
+		endif
+		aTriple = StrCat(aTriple, ch)
+	next
+
+	if StrLen(aTriple) > 0
+		if StriCmp(aTriple, "QQ") == 0
+			_xList = ItemInsert("Q", ItemCount(_xList, ","), _xList, ",")
+			_xList = ItemInsert("Q", ItemCount(_xList, ","), _xList, ",")
+			isHandled = @True
+			aTriple = ""
+		endif
+	endif
+
+	sCountOut = 0
+	nItems = ItemCount(_xList, ",")
+	for j = 1 to nItems
+		ch = ItemExtract(j, _xList, ",")
+		if ch == "S"
+			sCountOut = sCountOut + 1
+		endif
+	next
+
+return
+
+
+:TripleAnalysis
+	qCount = 0
+	sCount = 0
+	sBegins = @False
+	if (aTriple == "S") || (aTriple == "QSQQS")
+		sBegins = @True
+		if (aTriple == "QSQQS")
+			j = j - 3
+			aTriple = "QS"
+		endif
+	else
+		for z = 1 to StrLen(aTriple)
+			_ch = StrSub(aTriple, z, 1)
+			if _ch == "Q"
+				qCount = qCount + 1
+			endif
+		next
+	
+		_ch = StrSub(aTriple, StrLen(aTriple), 1)
+		if _ch == "S"
+			sCount = sCount + 1
+		endif
+	endif
+
+return
+

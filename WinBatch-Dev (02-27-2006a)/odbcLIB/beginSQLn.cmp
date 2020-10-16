@@ -1,0 +1,22 @@
+[Main]
+Type=3
+Targ=F:\myWinbatch\odbcLIB\beginSQLn.wbc
+Icon=
+[Other Files]
+Count=0
+[Options]
+TechWebPage=
+RunHidden=0
+[Version Info]
+Comments=
+CompanyName=HAL Smalltalker, Inc.
+FileDescription=beginSQLn
+FileVersion=1.0
+InternalName=beginSQLn.wbc
+LegalCopyright=(c). Copyright 1990-1999 HAL Smalltalker, Inc., All Rights Reserved
+LegalTrademarks=
+OriginalFilename=beginSQLn.wbc
+ProductName=beginSQLn
+ProductVersion=1.0
+[Extenders]
+Count=0

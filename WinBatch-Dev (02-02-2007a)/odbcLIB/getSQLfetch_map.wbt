@@ -1,0 +1,122 @@
+:getSQLfetch_map
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; _table ............ input - the table name
+; hdbc .............. input - already opened
+; sql_level ......... input - the sql level 2-10 (optional)
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetch_map ..... output - holds the map of fields to fetch S=String N=number (one per field) in the form of "Snnn,N" where nnn is the field size
+; sql_fetch_cols .... output - holds the name of the columns comma separated
+If IsDefined( sql_level) == @NO
+    sql_level = ""
+Endif
+
+retcode = qConnect(hdbc%sql_level%, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	 	Message( "odbcLIB WARNING", "getSQLfetch_map: qConnect failed %retcode% for sql_level=%sql_level% in DSN=%_datasource%")
+    Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt%sql_level% = qAllocStmt(hdbc%sql_level%)
+
+If hstmt%sql_level% == -1
+    retcode = qLastCode()
+	 	Message( "odbcLIB WARNING", "getSQLfetch_map: qAllocStmt failed %retcode% for sql_level=%sql_level%")
+    Exit
+Endif
+
+;FILLS A RESULT SET W/ A LIST OF TABLE NAMES STORED IN A
+;SPECIFIED DATASOURCE
+retcode = qColumns(hstmt%sql_level%, @qNull, @qNull, _table, @qNull)
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	 	Message( "odbcLIB WARNING", "getSQLfetch_map: qColumns failed %retcode% for sql_level=%sql_level%")
+    Exit
+Endif
+
+;BINDS A COLUMN IN A RESULT SET TO A VARIABLE THAT YOU NAME HERE
+retcode = qBindCol(hstmt%sql_level%, 4, "colname", 80)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	 	Message( "odbcLIB WARNING", "getSQLfetch_map: qBindCol failed %retcode% for colname for sql_level=%sql_level%")
+    Exit
+Else
+    retcode = qBindCol(hstmt%sql_level%, 6, "coltype", 80)
+    If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		 	Message( "odbcLIB WARNING", "getSQLfetch_map: qBindCol failed %retcode% for coltype for sql_level=%sql_level%")
+        Exit
+    Else
+        retcode = qBindCol(hstmt%sql_level%, 7, "colprecision", 80)
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+			 	Message( "odbcLIB WARNING", "getSQLfetch_map: qBindCol failed %retcode% for colprecision for sql_level=%sql_level%")
+            Exit
+        Endif
+    Endif
+Endif
+
+sql_fetch_map%sql_level% = ""
+sql_fetch_cols%sql_level% = ""
+
+While @TRUE
+    ;FETCHES A ROW OF DATA FROM A RESULT SET
+    retcode = qFetch(hstmt%sql_level%)
+
+    If retcode == @qNoData Then Break
+
+    If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		 	Message( "odbcLIB WARNING", "getSQLfetch_map: qFetch failed %retcode% for sql_level=%sql_level%")
+        Exit
+    Endif
+
+    If (StrCmp( coltype, "TEXT") == 0) || (StrCmp( coltype, "VARCHAR") == 0) || (StrCmp( coltype, "LONGCHAR") == 0)
+        sql_fetch_map%sql_level% = StrCat( sql_fetch_map%sql_level%, "S%colprecision%,")
+    Else
+        If StrCmp( coltype, "DATETIME") == 0
+            sql_fetch_map%sql_level% = StrCat( sql_fetch_map%sql_level%, "D,")
+        Else
+            If StrCmp( coltype, "DOUBLE") == 0
+                sql_fetch_map%sql_level% = StrCat( sql_fetch_map%sql_level%, "N,")
+            Else
+                sql_fetch_map%sql_level% = StrCat( sql_fetch_map%sql_level%, "I,")
+            Endif
+        Endif
+    Endif
+    
+    sql_fetch_cols%sql_level% = StrCat( sql_fetch_cols%sql_level%, colname, ",")
+EndWhile
+
+If IsDefined( colname) == @YES
+    Drop( colname)
+Endif
+
+If IsDefined( coltype) == @YES
+    Drop( coltype)
+Endif
+
+If IsDefined( colprecision) == @YES
+    Drop( colprecision)
+Endif
+
+sql_fetch_map_len = StrLen( sql_fetch_map%sql_level%)
+sql_fetch_map%sql_level% = StrSub( sql_fetch_map%sql_level%, 1, sql_fetch_map_len - 1)
+Drop( sql_fetch_map_len)
+
+sql_fetch_cols_len = StrLen( sql_fetch_cols%sql_level%)
+sql_fetch_cols%sql_level% = StrSub( sql_fetch_cols%sql_level%, 1, sql_fetch_cols_len - 1)
+Drop( sql_fetch_cols_len)
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt%sql_level%, 0)
+;SQL_UNBIND
+qFreeStmt(hstmt%sql_level%, 2)
+
+If IsDefined( sql_level) == @YES
+    If StrLen( sql_level) == 0
+        Drop( sql_level)
+    Endif
+Endif
+
+return
+

@@ -1,0 +1,35 @@
+; HTML-stripper.wbt
+
+AddExtender("wwwsk32i.dll")
+
+;Debug( @ON)
+
+_wname = "HTML-stripper"
+wname = "%_wname%.wbt"
+
+filename = "C:\RayHorn\VB5\OnlineReq E-Mail Project\print_order.cfm.html"
+
+_types = "All Files|*.*"
+filename = AskFileName( "SelectFile", "C:\", _types, "", 1)
+
+If FileExist( filename) == @TRUE
+	fhand = FileOpen(filename, "READ")
+	fnew = FileOpen(StrCat( filename, ".txt"), "WRITE")
+	while @TRUE				; Loop till break do us end
+		x = FileRead(fhand)
+		If x == "*EOF*" Then Break
+		x = httpStripHTML( x)	
+		FileWrite(fnew, x)
+	endwhile
+	FileClose(fnew)
+	FileClose(fhand)
+Else
+	Message( "DEBUG - filename missing", filename)
+Endif
+
+;Message( "DEBUG", "_retcode=%_retcode%")
+
+exit
+
+
+

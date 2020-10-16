@@ -1,0 +1,220 @@
+AddExtender("wwodb32i.dll")
+;INITIALIZE VARIABLES
+MyDataSource="hrPersnl"
+MyTableName="hrPersnl"
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+henv = qAllocEnv()
+
+If henv == -1
+  ;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+  retcode = qLastCode()  
+  Message("qAllocEnv failed", retcode)
+  Exit
+Endif
+
+
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM 
+;OF 10 OPEN CONNECTION HANDLES
+hdbc = qAllocConnect(henv) 
+
+If hdbc == -1
+  retcode = qLastCode()
+  Message("qAllocConnect failed", retcode)
+  Exit
+Endif
+
+datasources = ""
+
+;FIND ALL AVAILABLE DATA SOURCE NAMES
+For i = 1 To 999
+  If i == 1
+    direction = @qFirst
+  Else
+    direction = @qNext
+  Endif
+
+  ;RETURNS DATA SOURCE NAMES & DESCS FROM A LIST OF AVAILABLE
+  ;DATASOURCES
+  datasource = qDataSources(henv, direction) 
+
+  If datasource == ""
+    retcode = qLastCode()
+    If retcode == @qNoData Then Break
+    Message("qDataSources failed", retcode)
+    Exit
+  Endif
+
+  datasources = StrCat(datasources, datasource, @LF)
+Next
+
+;DISPLAYS ALL AVAILABLE DATA SOURCE NAMES
+Message("Data sources", datasources)
+
+;CONNECTS TO THE "SAMPLE" DATA SOURCE (with the data source name 'ContactDSN')
+retcode = qConnect(hdbc, MyDataSource, "", "") 
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qConnect failed", retcode)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)  
+
+If hstmt == -1
+  retcode = qLastCode()
+  Message("qAllocStmt failed", retcode)
+  Exit
+Endif
+
+;FILLS A RESULT SET W/ A LIST OF TABLE NAMES STORED IN A
+;SPECIFIED DATASOURCE
+retcode = qTables(hstmt, @qNull, @qNull, @qNull, "Table") 
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qTables failed", retcode)
+  Exit
+Endif
+
+tablenamebuf = BinaryAlloc(100)
+
+;BINDS A COLUMN IN A RESULT SET TO A VARIABLE THAT YOU NAME HERE
+retcode = qBindCol(hstmt, 3, "tablenamebuf", 80) 
+retcode = qBindCol(hstmt, 4, "tabletype", 80)
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qBindCol failed", retcode)
+  Exit
+Endif
+
+tables = ""
+
+While @TRUE
+  ;FETCHES A ROW OF DATA FROM A RESULT SET
+  retcode = qFetch(hstmt)  
+
+  If retcode == @qNoData Then Break
+
+  If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+    Message("qFetch failed", retcode)
+    Exit
+  Endif
+  ;GET THE VALUE FROM THE RESULT SET
+  tablename = BinaryPeekStr(tablenamebuf, 0, BinaryEodget(tablenamebuf))
+  ;BUILD A STRING (FOR DISPLAY)
+  tables = StrCat(tables, tablename, @TAB, "(", tabletype, ")", @LF)
+EndWhile
+
+BinaryFree(tablenamebuf)
+
+;DISPLAY TABLES IN THE "SAMPLE" DATA SOURCE
+Message("Tables in '%MyDataSource%'", tables)
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt, 0)
+;SQL_UNBIND
+qFreeStmt(hstmt, 2)
+
+;FILLS A RESULT SET WITH A LIST OF COLUMN NAMES IN THE SPECIFIED TABLE FROM "SAMPLE" DATA SOURCE
+retcode = qColumns(hstmt, @qNull, @qNull, MyTableName, @qNull) 
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qColumns failed", retcode)
+  Exit
+Endif
+
+;BINDS A COLUMN IN A RESULT SET TO A VARIABLE THAT YOU NAME HERE
+retcode = qBindCol(hstmt, 4, "colname", 80)  
+retcode = qBindCol(hstmt, 6, "coltype", 80)
+retcode = qBindCol(hstmt, 8, "collength", 80)
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qBindCol failed", retcode)
+  Exit
+Endif
+
+columns = ""
+
+While @TRUE
+  retcode = qFetch(hstmt)
+
+  If retcode == @qNoData Then Break
+
+  If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+    Message("qFetch failed", retcode)
+    Exit
+  Endif
+
+  columns = StrCat(columns, colname, @TAB, "(", coltype, ")", @TAB, "[",collength, "]", @LF)
+EndWhile
+
+;DISPLAY COLUMNS IN THE "SAMPLE" DATA SOURCE
+Message("Columns in the Table: %MyTableName%", columns) 
+
+;SQL_CLOSE - RESETS OR FREES A SQL STATEMENT HANDLE 
+;(SET WITH QALLOC)
+qFreeStmt(hstmt, 0)  
+qFreeStmt(hstmt, 2)  ; SQL_UNBIND
+
+;THE FOLLOWING EXECUTES AN SQL STATEMENT.
+;THE COLUMNS BELOW ARE ACTUAL COLUMN NAMES IN YOUR DATA SOURCE, ;E.G.,"LASTNAME":
+retcode = qExecDirect(hstmt, "SELECT FIRSTNAME, LASTNAME, WORKPHONE FROM %MyTableName%")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qExecDirect failed", retcode)
+  Exit
+Endif
+
+names = ""
+
+lastnamebuf = BinaryAlloc(100)
+
+While @TRUE
+  ;FETCHES A ROW OF DATA FROM A RESULT SET
+  retcode = qFetch(hstmt) 
+
+  If retcode == @qNoData Then Break
+
+  If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+    Message("qFetch failed", retcode)
+    Exit
+  Endif
+
+  ;RETRIEVES THE VALUE OF A COLUMN IN THE CURRENT ROW 
+  ;OF A RESULT SET
+  retcode = qGetData(hstmt, 1, "firstname", 80)
+  retcode = qGetData(hstmt, 2, "lastnamebuf", 80)
+  retcode = qGetData(hstmt, 3, "workphone", 80)
+
+  If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+    Message("qGetData failed", retcode)
+    Exit
+  Endif
+
+  lastname = BinaryPeekStr(lastnamebuf, 0, BinaryEodGet(lastnamebuf))
+
+  If (retcode == @qSuccessInfo)  ;if the field was too small
+    msg = qError(hstmt, 2)
+    Message("qGetData error/status (%lastname%, %firstname%)", msg)
+  Endif
+
+  names = StrCat(names, lastname, ", ", firstname, @TAB, workphone, @LF)
+EndWhile
+
+BinaryFree(lastnamebuf)
+
+;DISPLAY NAMES 
+Message("Names & phone numbers from specific columns in table'%MyTablename%'", names) 
+
+;SQL_DROP  - RESETS OR FREES AN SQL STATEMENT HANDLE
+qFreeStmt(hstmt, 1)
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc)
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)
+
+ver = qVersionInfo(0)
+;DISPLAYS THE ODBC EXTENDER VERSION
+Message("SQL Test (extender version %ver%)", "Done") 

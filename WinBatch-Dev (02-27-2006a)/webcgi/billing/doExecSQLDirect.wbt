@@ -1,0 +1,144 @@
+:doExecSQLDirect
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_stmnt ......... input - holds the SQL statement
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; sql_fetch_map ..... input - holds the map of fields to fetch S=String N=number (one per field) in the form of "Snnn,N" where nnn is the field size
+; sql_fetch_gosub ... input - the name of the subroutine called via Gosub
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+If IsDefined( _datasource) == @NO
+    WebOut('<BR><B><FONT COLOR="RED">ERROR: doExecSQLDirect missing variable named '_datasource'</FONT></B><BR>', _html_crlf)
+    Exit
+Endif
+
+If IsDefined( hdbc) == @NO
+    WebOut('<BR><B><FONT COLOR="RED">ERROR: doExecSQLDirect missing variable named 'hdbc'</FONT></B><BR>', _html_crlf)
+    Exit
+Endif
+
+If IsDefined( sql_stmnt) == @NO
+    WebOut('<BR><B><FONT COLOR="RED">ERROR: doExecSQLDirect missing variable named 'sql_stmnt'</FONT></B><BR>', _html_crlf)
+    Exit
+Endif
+
+If IsDefined( sql_fetch) == @NO
+    sql_fetch = @FALSE
+Endif
+
+If IsDefined( sql_fetch_map) == @NO
+    sql_fetch_map = ""
+Endif
+
+retcode = qConnect(hdbc, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">qConnect failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)
+
+If hstmt == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">qAllocStmt failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt, sql_stmnt)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt=', _html_crlf)
+  WebOut(sql_stmnt, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+retcode = qFetch(hstmt)
+
+If (sql_fetch == @TRUE) && (retcode <> @qNoData) && (StrLen( sql_fetch_map) > 0)
+    sql_fetch_ic = ItemCount( sql_fetch_map, ",")
+    For sql_fetch_i = 1 to sql_fetch_ic
+        sql_fetch_ch = ItemExtract(sql_fetch_i, sql_fetch_map, ",")
+        sql_fetch_ch_i = StrIndex( sql_fetch_ch, "S", 1, @FWDSCAN)
+        If sql_fetch_ch_i > 0
+            sql_fetch_ch_len = StrLen( sql_fetch_ch)
+            __cv = StrSub( sql_fetch_ch, sql_fetch_ch_i + 1, sql_fetch_ch_len - sql_fetch_ch_i)
+;WebOut('<BR><B><FONT COLOR="GREEN">__cv=(%__cv%), sql_fetch_ch_i=(%sql_fetch_ch_i%), sql_fetch_ch=(%sql_fetch_ch%), sql_fetch_ch_len=(%sql_fetch_ch_len%)</FONT></B><BR>', _html_crlf)
+            _cvalueBufLen%sql_fetch_i% = Int( __cv) - 1
+            _cvalueBuf%sql_fetch_i% = BinaryAlloc( _cvalueBufLen%sql_fetch_i%)
+            If _cvalueBuf%sql_fetch_i% == @FALSE
+                WebOut('<BR><B><FONT COLOR="RED">BinaryAlloc failed for _cvalueBuf%sql_fetch_i% mapped as %sql_fetch_ch%</FONT></B><BR>', _html_crlf)
+                Exit
+            Endif
+        Endif
+    Next
+    
+    While @TRUE
+        If retcode == @qNoData Then Break
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qFetch failed %retcode%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        For sql_fetch_i = 1 to sql_fetch_ic
+            sql_fetch_ch = ItemExtract(sql_fetch_i, sql_fetch_map, ",")
+            If StrIndex( sql_fetch_ch, "S", 1, @FWDSCAN) > 0
+                _cvalueVar = "_cvalueBuf%sql_fetch_i%"
+;WebOut('<BR><B><FONT COLOR="GREEN">_cvalueVar=(%_cvalueVar%), sql_fetch_i=(%sql_fetch_i%)</FONT></B><BR>', _html_crlf)
+                retcode = qGetData(hstmt, sql_fetch_i, "%_cvalueVar%", _cvalueBufLen%sql_fetch_i%)
+
+                If (retcode == @qSuccess) || (retcode == @qSuccessInfo)
+                    _cvalue%sql_fetch_i% = BinaryPeekStr(_cvalueBuf%sql_fetch_i%, 0, BinaryEodGet(_cvalueBuf%sql_fetch_i%))
+                Else
+                    _cvalue%sql_fetch_i% = ""
+                Endif
+            Else
+                _cvalueVar = "_cvalue%sql_fetch_i%"
+                %_cvalueVar% = 0
+                retcode = qGetData(hstmt, sql_fetch_i, "%_cvalueVar%", 32)
+            Endif
+        Next
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for %_cvalueVar% mapped as %sql_fetch_ch%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        If (retcode == @qSuccessInfo)  ; if the field was too small (This is how to handle errors)
+            msg = qError(hstmt, 2)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData error/status %msg% for %_cvalueVar% mapped as %sql_fetch_ch%</FONT></B><BR>', _html_crlf)
+        Endif
+
+        sql_fetched = @TRUE
+
+        If IsDefined( sql_fetch_gosub) == @YES
+            Gosub %sql_fetch_gosub%
+        Endif
+
+        retcode = qFetch(hstmt)
+
+    EndWhile
+
+    For sql_fetch_i = 1 to sql_fetch_ic
+        sql_fetch_ch = ItemExtract(sql_fetch_i, sql_fetch_map, ",")
+        If StrIndex( sql_fetch_ch, "S", 1, @FWDSCAN) > 0
+            BinaryFree(_cvalueBuf%sql_fetch_i%)
+        Endif
+    Next
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+return
+

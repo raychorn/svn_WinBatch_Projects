@@ -1,0 +1,314 @@
+:_ViewADbRecordViaHTML
+; __html_template_filename .... input - the name of the HTML template file
+; _table ...................... input - the name of the SQL table being acted upon
+; _edit_mode .................. input - the _edit_mode (@TRUE or @FALSE)
+; sql_level ................... input - the sql_level (2 ... 10)
+
+If IsDefined( fs) == @YES
+    fs_VADRVH = fs
+Endif
+
+If IsDefined( binbuf) == @YES
+    binbuf_VADRVH = binbuf
+Endif
+
+If IsDefined( _table_name) == @YES
+    _table_name_VADRVH = _table_name
+Endif
+
+If IsDefined( ___fn) == @YES
+    ___fn_VADRVH = ___fn
+Endif
+
+If IsDefined( eod) == @YES
+    eod_VADRVH = eod
+Endif
+
+If IsDefined( j) == @YES
+    j_VADRVH = j
+Endif
+
+If IsDefined( begin) == @YES
+    begin_VADRVH = begin
+Endif
+
+If IsDefined( i) == @YES
+    i_VADRVH = i
+Endif
+
+If IsDefined( html) == @YES
+    html_VADRVH = html
+Endif
+
+If IsDefined( token) == @YES
+    token_VADRVH = token
+Endif
+
+If IsDefined( _token) == @YES
+    _token_VADRVH = _token
+Endif
+
+If IsDefined( k) == @YES
+    k_VADRVH = k
+Endif
+
+If IsDefined( _sql_alias_var_name) == @YES
+    _sql_alias_var_name_VADRVH = _sql_alias_var_name
+Endif
+
+If IsDefined( sql_fetch_ch) == @YES
+    sql_fetch_ch_VADRVH = sql_fetch_ch
+Endif
+
+If IsDefined( sql_fetch_ch_i) == @YES
+    sql_fetch_ch_i_VADRVH = sql_fetch_ch_i
+Endif
+
+If IsDefined( sql_fetch_ch_len) == @YES
+    sql_fetch_ch_len_VADRVH = sql_fetch_ch_len
+Endif
+
+If IsDefined( __cv) == @YES
+    __cv_VADRVH = __cv
+Endif
+
+If IsDefined( _cvalueBufLen2) == @YES
+    _cvalueBufLen2_VADRVH = _cvalueBufLen2
+Endif
+
+If IsDefined( _cvalueBufLen) == @YES
+    _cvalueBufLen_VADRVH = _cvalueBufLen
+Endif
+
+If IsDefined( _dv) == @YES
+    _dv_VADRVH = _dv
+Endif
+
+If IsDefined( _d) == @YES
+    _d_VADRVH = _d
+Endif
+
+fs = FileSize( __html_template_filename%sql_level%)
+binbuf = BinaryAlloc( fs + 100)
+if binbuf == 0
+    WebOut('<BR><B><FONT COLOR="RED">ERROR: BinaryAlloc Failed in _ViewADbRecordViaHTML</FONT></B><BR>', _html_crlf)
+    Exit
+else
+    _table_name = _table
+
+     ___fn = __html_template_filename%sql_level%
+;     WebOut('<BR><B><FONT COLOR="BLUE">DEBUG: __html_template_filename%sql_level%=%___fn%</FONT></B><BR>', _html_crlf)
+
+    BinaryRead( binbuf, __html_template_filename%sql_level%)
+
+    If _edit_mode == @TRUE
+        WebOut('<INPUT TYPE="HIDDEN" NAME="_table" VALUE="%_table%">', 0)
+    Endif
+    
+    eod = BinaryEodGet( binbuf)
+    j = 0
+    begin = 0
+    while begin <= j
+        i = BinaryIndex( binbuf, begin, "__", @FWDSCAN)
+        If i > 0
+            html = BinaryPeekStr( binbuf, begin, i - begin)
+            WebOut(html, 0)
+        Else
+            html = BinaryPeekStr( binbuf, begin, eod - begin)
+            WebOut(html, 0)
+            break
+        Endif
+        j = BinaryIndex( binbuf, i + 2, "__", @FWDSCAN) + 2
+        token = BinaryPeekStr( binbuf, i, j - i)
+        If StrCmp( token, __id__) == 0
+            _token = StrReplace( token, "__", "")
+            k = ItemLocate( _token, sql_fetch_cols, ",")
+            If k > 0
+                _sql_alias_var_name = sql_alias%sql_level%
+                WebOut(%_sql_alias_var_name%%k%, 0)
+            Endif
+        Else
+            If StrCmp( token, __contact__) == 0
+            Else
+                _token = StrReplace( token, "__", "")
+                k = ItemLocate( _token, sql_fetch_cols, ",")
+                If k > 0
+                    _sql_alias_var_name = sql_alias%sql_level%
+
+                    sql_fetch_ch = ItemExtract( k, sql_fetch_map, ",")
+
+                    If _edit_mode == @TRUE
+                        sql_fetch_ch_i = StrIndex( sql_fetch_ch, "S", 1, @FWDSCAN)
+                        If sql_fetch_ch_i > 0
+                            sql_fetch_ch_len = StrLen( sql_fetch_ch)
+                            __cv = StrSub( sql_fetch_ch, sql_fetch_ch_i + 1, sql_fetch_ch_len - sql_fetch_ch_i)
+                            _cvalueBufLen2 = Int( __cv)
+                            If _cvalueBufLen2 > 32
+                                _cvalueBufLen = 32
+                            Else
+                                _cvalueBufLen = _cvalueBufLen2
+                            Endif
+                        Else
+                            _cvalueBufLen = 10
+                            _cvalueBufLen2 = 10
+                        Endif
+                        
+;                        WebOut('<INPUT TYPE="TEXT" NAME="%_table%%_db_fields_separator%%_token%"', 0)
+                        WebOut('<INPUT TYPE="TEXT" NAME="%_token%"', 0)
+                        If StrLen( %_sql_alias_var_name%%k%) > 0
+                            WebOut(' VALUE="', 0)
+                            WebOut(%_sql_alias_var_name%%k%, 0)
+                            WebOut('"', 0)
+                        Endif
+                        WebOut(' SIZE="%_cvalueBufLen%" MAXLENGTH="%_cvalueBufLen2%"></FONT>', 0)
+                    Else
+;                        WebOut('<FONT SIZE="2">', 0)
+                        If StrCmp( token, __email__) == 0
+                            WebOut( StrReplace( __email_html, __email__, %_sql_alias_var_name%%k%), 0)
+                        Else
+                            _dv = %_sql_alias_var_name%%k%
+
+                            If StrIndex( sql_fetch_ch, "D", 1, @FWDSCAN) > 0
+                                Call( StrCat( _cgi_dir, "FromDbDate.wbc"), "_dv")
+
+                                WebOut( _dv, 0)
+                            Else
+                                If StrIndex( sql_fetch_ch, "N", 1, @FWDSCAN) > 0
+                                    If IsFloat( _dv) == @TRUE
+                                        _d = Decimals( 2)
+
+                                        _dv = _dv * 1.0
+
+                                        WebOut('%_dv%', 0)
+
+                                        Decimals( _d)
+                                    Else
+                                        WebOut('%_dv%', 0)
+                                    Endif
+                                Else
+                                    WebOut('%_dv%', 0)
+                                Endif
+                            Endif
+                        Endif
+;                        WebOut('</FONT>', 0)
+                    Endif
+                Endif
+            Endif
+        Endif
+        begin = j
+    endwhile
+
+    BinaryFree( binbuf)
+
+    Drop( _table_name)
+endif
+
+Drop( fs, binbuf, ___fn, eod, j, begin, i, html, token, _token, k, _sql_alias_var_name, sql_fetch_ch, sql_fetch_ch_i, sql_fetch_ch_len, __cv, _cvalueBufLen2, _cvalueBufLen, _dv, _d)
+
+If IsDefined( _d_VADRVH) == @YES
+    _d = _d_VADRVH
+    Drop( _d_VADRVH)
+Endif
+
+If IsDefined( _dv_VADRVH) == @YES
+    _dv = _dv_VADRVH
+    Drop( _dv_VADRVH)
+Endif
+
+If IsDefined( _cvalueBufLen_VADRVH) == @YES
+    _cvalueBufLen = _cvalueBufLen_VADRVH
+    Drop( _cvalueBufLen_VADRVH)
+Endif
+
+If IsDefined( _cvalueBufLen2_VADRVH) == @YES
+    _cvalueBufLen2 = _cvalueBufLen2_VADRVH
+    Drop( _cvalueBufLen2_VADRVH)
+Endif
+
+If IsDefined( __cv_VADRVH) == @YES
+    __cv = __cv_VADRVH
+    Drop( __cv_VADRVH)
+Endif
+
+If IsDefined( sql_fetch_ch_len_VADRVH) == @YES
+    sql_fetch_ch_len = sql_fetch_ch_len_VADRVH
+    Drop( sql_fetch_ch_len_VADRVH)
+Endif
+
+If IsDefined( sql_fetch_ch_i_VADRVH) == @YES
+    sql_fetch_ch_i = sql_fetch_ch_i_VADRVH
+    Drop( sql_fetch_ch_i_VADRVH)
+Endif
+
+If IsDefined( sql_fetch_ch_VADRVH) == @YES
+    sql_fetch_ch = sql_fetch_ch_VADRVH
+    Drop( sql_fetch_ch_VADRVH)
+Endif
+
+If IsDefined( _sql_alias_var_name_VADRVH) == @YES
+    _sql_alias_var_name = _sql_alias_var_name_VADRVH
+    Drop( _sql_alias_var_name_VADRVH)
+Endif
+
+If IsDefined( k_VADRVH) == @YES
+    k = k_VADRVH
+    Drop( k_VADRVH)
+Endif
+
+If IsDefined( _token_VADRVH) == @YES
+    _token = _token_VADRVH
+    Drop( _token_VADRVH)
+Endif
+
+If IsDefined( token_VADRVH) == @YES
+    token = token_VADRVH
+    Drop( token_VADRVH)
+Endif
+
+If IsDefined( html_VADRVH) == @YES
+    html = html_VADRVH
+    Drop( html_VADRVH)
+Endif
+
+If IsDefined( i_VADRVH) == @YES
+    i = i_VADRVH
+    Drop( i_VADRVH)
+Endif
+
+If IsDefined( begin_VADRVH) == @YES
+    begin = begin_VADRVH
+    Drop( begin_VADRVH)
+Endif
+
+If IsDefined( j_VADRVH) == @YES
+    j = j_VADRVH
+    Drop( j_VADRVH)
+Endif
+
+If IsDefined( eod_VADRVH) == @YES
+    eod = eod_VADRVH
+    Drop( eod_VADRVH)
+Endif
+
+If IsDefined( ___fn_VADRVH) == @YES
+    ___fn = ___fn_VADRVH
+    Drop( ___fn_VADRVH)
+Endif
+
+If IsDefined( _table_name_VADRVH) == @YES
+    _table_name = _table_name_VADRVH
+    Drop( _table_name_VADRVH)
+Endif
+
+If IsDefined( binbuf_VADRVH) == @YES
+    binbuf = binbuf_VADRVH
+    Drop( binbuf_VADRVH)
+Endif
+
+If IsDefined( fs_VADRVH) == @YES
+    fs = fs_VADRVH
+    Drop( fs_VADRVH)
+Endif
+
+return
+

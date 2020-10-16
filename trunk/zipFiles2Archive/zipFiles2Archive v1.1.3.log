@@ -1,0 +1,15 @@
+2006:03:19:20:42:25 BEGIN :: zipFiles2Archive v1.1.3 [Zip Files to Archive] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved. 
+
+_pathSource = [\\Sql2005\c$\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Backup]
+_filePattern = [*.bak]
+_pathTarget = [\\stayme\C$\@Db-Backups]
+_zgPath = [C:\Program Files\ZipGenius 6]
+2006:03:19:20:42:43 _dName = [\\Sql2005\c$\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Backup\*.bak]
+2006:03:19:20:42:49 num_lst = [27], _dName = [\\Sql2005\c$\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Backup\*.bak]
+2006:03:19:20:45:58 ZIP-up _latestFName = [\\Sql2005\c$\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Backup\AJAX_TEST_backup_200603190006.bak], _fnGn = [AJAX_TEST_backup_200603190006]
+2006:03:19:20:46:13 ZIP-up _cmdName = [W:\WinBatch-Dev\zipFiles2Archive\AJAX_TEST_backup_200603190006.CMD], _myPath = [W:\WinBatch-Dev\zipFiles2Archive\]
+2006:03:19:20:46:14 ZIP-up _cmdG = ["C:\Program Files\ZipGenius 6\zg" -add "\\Sql2005\c$\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Backup\AJAX_TEST_backup_200603190006.ZIP" CB R0 +\\Sql2005\c$\Program Files\Microsoft SQL Server\MSSQL.1\MSSQL\Backup\AJAX_TEST_backup_200603190006.bak]
+2006:03:19:20:46:16 ZIP-up lst = [AJAX_TEST_backup_200603170006.bak	AJAX_TEST_backup_200603180006.bak	AJAX_TEST_backup_200603190006.bak	BlogDb_backup_200603170006.bak	BlogDb_backup_200603180006.bak	BlogDb_backup_200603190006.bak	clientvars_backup_200603170006.bak	clientvars_backup_200603180006.bak	clientvars_backup_200603190006.bak	cms_backup_200603170006.bak	cms_backup_200603180006.bak	cms_backup_200603190006.bak	pastapomodoro_backup_200603170006.bak	pastapomodoro_backup_200603180006.bak	pastapomodoro_backup_200603190006.bak	pmprofessionalism_backup_200603170006.bak	pmprofessionalism_backup_200603180006.bak	pmprofessionalism_backup_200603190006.bak	ReportServerTempDB_backup_200603170006.bak	ReportServerTempDB_backup_200603180006.bak	ReportServerTempDB_backup_200603190006.bak	ReportServer_backup_200603170006.bak	ReportServer_backup_200603180006.bak	ReportServer_backup_200603190006.bak	visioneer_backup_200603170006.bak	visioneer_backup_200603180006.bak	visioneer_backup_200603190006.bak]
+2006:03:19:20:54:52 ZIP-up files_lst = [AJAX_TEST_backup_200603190006.bak	BlogDb_backup_200603190006.bak	clientvars_backup_200603190006.bak	cms_backup_200603190006.bak	pastapomodoro_backup_200603190006.bak	pmprofessionalism_backup_200603190006.bak	ReportServerTempDB_backup_200603190006.bak	ReportServer_backup_200603190006.bak	visioneer_backup_200603190006.bak]
+2006:03:19:20:54:52 ZIP-up dt = [2006_3_19], _cmdName = [W:\WinBatch-Dev\zipFiles2Archive\2006_3_19.CMD], _zgName = [\\stayme\C$\@Db-Backups\DbBackups_2006_3_19.ZIP], nn = [9]
+2006:03:19:20:55:58 _cmdName = [W:\WinBatch-Dev\zipFiles2Archive\2006_3_19.CMD]

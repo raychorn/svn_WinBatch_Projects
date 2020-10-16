@@ -1,0 +1,152 @@
+; doWebTrends.wbt
+
+;AddExtender("wwctl32i.dll")
+
+wName = "Corel WordPerfect"
+wName2 = "%wName%"
+
+wNameInsertImage = "Insert Image"
+
+dir_path = ""
+
+dir0 = 1
+dir1 = "O:\DNSWIZ\"
+
+;exit
+
+If WinExist(wName) == @TRUE
+
+    for j=1 to dir0
+        If DirExist(dir%j%)
+            types = "All Files|*.*"
+            dirname = AskFileName( "Select the directory (by selecting one of the files):", dir%j%, types, "", 1)
+
+            If StrLen( dirname) > 0
+                dir_path = FilePath(dirname)
+                dir_root = FileRoot(dirname)
+                dir_ext = FileExtension(dirname)
+                
+                s = ""
+                _ix = StrLen( dir_root)
+                For _i = _ix to 1 by -1
+                    ch = StrSub( dir_root, _i, 1)
+                    If IsInt(ch) == @FALSE
+                        break
+                    Endif
+                    s = StrCat( s, ch)
+                Next
+
+                _is = StrLen( s)
+                s = StrSub( dir_root, _ix - _is + 1, _is)
+                ns = Int( s)
+                np = _is - 1
+
+                _dir_root = StrSub( dir_root, 1, _ix - _is)
+
+;Message( "DEBUG", "dir_path=%dir_path%, s=%s%, ns=%ns%, dir_root=%dir_root%, _dir_root=%_dir_root%, dir_ext=%dir_ext%")
+;exit
+            Endif
+            break
+        Endif
+    Next
+            
+; Now we process all the files and build the WP Doc
+
+    If DirExist( dir_path)
+        IntControl(29, @TAB, 0, 0, 0)
+        _dir_path = StrCat( dir_path, "\*.", dir_ext)
+        files = FileItemize(_dir_path)
+        _number_of_files = ItemCount(files, @TAB)
+        for _i=1 to _number_of_files
+            If ns > 0
+                aFileName = StrCat( _dir_root, StrFixLeft( "%_i%", "0", _is), ".", dir_ext)
+                _aFileName = StrReplace( StrCat( dir_path, "\", aFileName), "\\", "\")
+;Message( "DEBUG", "aFileName=%aFileName%, _aFileName=%_aFileName%")
+;exit
+            Else
+                aFileName = ItemExtract(_i, files, @TAB)
+                _aFileName = StrReplace( StrCat( dir_path, "\", aFileName), "\\", "\")
+            Endif
+
+            If WinExist(wName) == @TRUE
+                WinActivate(wName)
+                WinTitle(wName, "%wName2% - %aFileName%")
+                Delay( 1)
+                Gosub addAFile
+            Endif
+;exit
+;Debug( @ON)
+;                    Message( "DEBUG", "aFileName=<%aFileName%>")
+        Next
+    Endif
+            
+Else
+    Message( "WARNING: %wName2% is NOT running", "Start it up and try again!")
+
+Endif
+
+exit
+
+
+:addAFile
+; dir_path ............ input - the dir_path for all the files being processed
+; aFileName ........... input - the file being processed
+; reports_dir ......... input - the place the reports live in when completed
+; __i ................. used
+; __attempts .......... used
+; __digit ............. used
+; __filenum............ used
+; __filenums........... used
+; __s ................. used
+; __time .............. used
+; __YmdHms ............ used
+; __delayHms .........  used
+; __laterYmdHms ....... used
+; __report_path ....... used
+; __report_pathname ... used
+; __status_rep ........ used
+; __handle ............ used
+
+    If WinExist(wName) == @TRUE
+        WinActivate(wName)
+
+        WinTitle(wName, "%wName2% - Seeking END for %_aFileName%")
+
+        SendKey(`^{END}!Igf`)
+
+        Delay( 2)
+
+        If WinExist(wNameInsertImage) == @TRUE
+            WinActivate(wNameInsertImage)
+
+            WinTitle(wName, "%wName2% - Finding %_aFileName%")
+
+            SendKey(_aFileName)
+            Delay( 1)
+
+            WinTitle(wName, "%wName2% - Loading %_aFileName%")
+
+            SendKey(`{ENTER}`)
+
+            Delay( 15)
+
+            WinTitle(wName, "%wName2% - Resizing %_aFileName%")
+
+            SendKey(`!Azf{ENTER}`)
+
+            Delay( 15)
+
+            WinTitle(wName, "%wName2% - Making new page %_aFileName%")
+
+            SendKey(`a{BACKSPACE}^{ENTER}`)
+
+            Delay( 5)
+
+        Endif
+
+    Endif
+
+return
+
+
+

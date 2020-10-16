@@ -1,0 +1,243 @@
+;************************************************************************
+; tibco-ftp.wbt
+;
+;************************************************************************
+
+_wname = "Tibco FTP Downloader v1.0.4"
+wname = "%_wname% [CF-Scheduled] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved."
+
+AddExtender("WWINT33I.DLL")
+
+IntControl (1001, 1, 0, 0, 0) ; behave as a service
+
+Cr = Num2Char(13)
+CrLf = StrCat(Cr, Num2Char(10))
+_crlf = CrLf
+
+_temp_html_path = "C:\@temp"
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+_logFilename = "%_myPath%%_wname%.log"
+
+s = "" ; init this to a blank string for now...
+
+:runAgain
+
+_fhandLog = FileOpen( _logFilename, "APPEND")
+
+http_log_msg = "================================================================================ %_crlf%"
+FileWrite( _fhandLog, http_log_msg)
+Gosub appendToLog
+
+_now = TimeYmdHms()
+_nowBegin = _now
+http_log_msg = "%_now% BEGIN :: %wname% %_crlf%"
+FileWrite( _fhandLog, http_log_msg)
+Gosub appendToLog
+
+if DirExist(_temp_html_path) == @FALSE
+	_now = TimeYmdHms()
+	http_log_msg = "%_now% DirMake :: (%_temp_html_path%) %_crlf%"
+	FileWrite( _fhandLog, http_log_msg)
+	Gosub appendToLog
+	DirMake(_temp_html_path)
+endif
+
+tophandle = iBegin(0,"","")
+conhandle = iHostConnect(tophandle,"ediftp.ingrammicro.com",@FTP, "US112544", "vision")
+if conhandle == 0
+	_now = TimeYmdHms()
+	http_log_msg = "%_now% ABEND :: Unable to connect to host %_crlf%"
+	FileWrite( _fhandLog, http_log_msg)
+	Gosub appendToLog
+	GoSub LogRunTime
+	FileClose(_fhandLog)
+;	message("ERROR","Unable to connect to host")
+	exit
+endif
+init = iFtpFindInit(conhandle,"\" ,"*.*",@True,@False)
+if init == 0
+	_now = TimeYmdHms()
+	http_log_msg = "%_now% ABEND :: IFtpFindInit - Failed %_crlf%"
+	FileWrite( _fhandLog, http_log_msg)
+	Gosub appendToLog
+	GoSub LogRunTime
+	FileClose(_fhandLog)
+;	message("IFtpFindInit?","Failed")
+	exit
+else
+;	message("IFtpFindInit?","Sucessful")
+endif
+;iFtpDialog(3,"Multiple Ftp Get","Initializing",0,1)
+remote_dir_list = ""
+remote_dir_count = 0
+While 1
+	remote_srcfile = iFtpFindNext(@False);no attributes
+	if remote_srcfile == ""
+;     message("Finished","No More Files")
+		iClose(conhandle)
+		iClose(tophandle)
+;		cnt = ItemCount( remote_dir_list, CrLf)
+;		a = AskItemList("remote_dir_list (%cnt% items)", remote_dir_list, Cr, @unsorted, @single)
+;		message("Finished",a)
+
+;		types = "All Files|*.*|Text Files|*.txt|"
+;		filename = AskFileName("SelectFile", "C:\", types, "output.txt", 0)
+
+;		if StrLen(filename) > 0
+;			fHand = FileOpen(filename, "WRITE")
+;			FileWrite(fHand, remote_dir_list)
+;			FileClose(fHand)
+;		endif
+		
+		_now = TimeYmdHms()
+		http_log_msg = "%_now% END :: No More Files... Processed %remote_dir_count% files. %_crlf%"
+		FileWrite( _fhandLog, http_log_msg)
+		Gosub appendToLog
+		GoSub LogRunTime
+		FileClose(_fhandLog)
+
+		; Wait 15 minutes and then run again...
+;		Yield
+;		TimeDelay(_nextRunDelay)
+;		Goto runAgain
+
+		exit
+	endif
+
+;	remote_dir_list = ItemInsert(remote_srcfile, -1, remote_dir_list, CrLf)
+
+	p = ItemExtract( 2, remote_srcfile, "/")
+	p = StrCat( "/", p, "/")
+
+	n = ItemCount( remote_srcfile, " ")
+	for i = 1 to n
+		s = ItemExtract( i, remote_srcfile, " ")
+	next
+
+;	remote_dir_list = ItemInsert(s, -1, remote_dir_list, Cr)
+
+	remote_dir_count = remote_dir_count + 1
+
+	_now = TimeYmdHms()
+	http_log_msg = "%_now% STATUS :: #%remote_dir_count% : remote_srcfile=(%remote_srcfile%) %_crlf%"
+	FileWrite( _fhandLog, http_log_msg)
+	Gosub appendToLog
+
+	BoxCaption(1, "Processing #%remote_dir_count% %s%")
+
+	http_data = remote_srcfile
+	GoSub processRequest
+
+;   timedelay(1)
+endwhile
+
+iClose(init)
+iClose(conhandle)
+iClose(tophandle)
+
+_now = TimeYmdHms()
+http_log_msg = "%_now% ABEND :: Processing Failed %_crlf%"
+FileWrite( _fhandLog, http_log_msg)
+Gosub appendToLog
+GoSub LogRunTime
+FileClose(_fhandLog)
+exit
+
+
+:processRequest
+	tophandle2 = iBegin(0,"","")
+	connecthandle2 = iHostConnect(tophandle2, "localhost",@HTTP,"", "")
+	
+	_url2 = StrCat("/visioneer/ftp-download2.cfm?nocache=", Random(65535), "&filename=", iUrlEncode(http_data))
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% STATUS :: _url2=(%_url2%) %_crlf%")
+	
+	datahandle2 = iHttpInit(connecthandle2, "GET", _url2, "",0)
+	
+	myheader = strcat("", @CRLF, "tibco-ftp: 1.0")
+	rslt = iHttpOpen(datahandle2, myheader , 0, 0)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% STATUS :: rslt=(%rslt%) %_crlf%")
+
+	xx_fname = StrCat(_temp_html_path, "\tibco-ftp_%s%.html")
+	if FileExist(xx_fname) <> @FALSE then FileDelete(xx_fname)
+	xx = iReadData(datahandle2, xx_fname)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% STATUS :: xx_fname=(%xx_fname%) %_crlf%")
+
+	iClose(datahandle2)
+	iClose(connecthandle2)
+	iClose(tophandle2)
+;	Message("All","Done")
+return
+
+
+:LogRunTime
+	_today = TimeDate()
+	_now = TimeYmdHms()
+	_ds = TimeDiffSecs(_now, _nowBegin)
+	_nextRunDelay = Max ((60 * 60), _ds) - Min((60 * 60), _ds)
+	_dsv = _ds
+	_dv = 60 * 60
+	_hh = Int(_dsv / _dv)
+	_dsv = _dsv - (_hh * _dv)
+	_dv = 60
+	_mm = Int(_dsv / _dv)
+	_dsv = _dsv - (_mm * _dv)
+	_ss = _dsv
+	if _hh <= 9
+		_hh = "0%_hh%"
+	endif
+	if _mm <= 9
+		_mm = "0%_mm%"
+	endif
+	if _ss <= 9
+		_ss = "0%_ss%"
+	endif
+	_t = "%_hh%:%_mm%:%_ss%"
+	http_log_msg = "%_today% END :: %wname% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS) %_crlf%"
+	FileWrite( _fhandLog, http_log_msg)
+	Gosub appendToLog
+return
+
+
+:appendToLog
+	tophandle3 = iBegin(0,"","")
+	connecthandle3 = iHostConnect(tophandle3, "localhost",@HTTP,"", "")
+	
+	_url2 = StrCat("/visioneer/tibco-append-log.cfm?nocache=", Random(65535))
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% (appendToLog) STATUS :: _url2=(%_url2%) %_crlf%")
+
+	_url2 = StrCat(_url2, "&log_msg=", iUrlEncode(http_log_msg))
+	
+	datahandle3 = iHttpInit(connecthandle3, "GET", _url2, "",0)
+	
+	myheader = strcat("", @CRLF, "tibco-append-log: 1.0")
+	rslt = iHttpOpen(datahandle3, myheader , 0, 0)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% (appendToLog) STATUS :: rslt=(%rslt%) %_crlf%")
+
+	_s = StrReplace(s, "/", "+")
+	xx_fname = StrCat(_temp_html_path, "\tibco-append-log%_s%.html")
+	if FileExist(xx_fname) <> @FALSE then FileDelete(xx_fname)
+	xx = iReadData(datahandle3, xx_fname)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% (appendToLog) STATUS :: xx_fname=(%xx_fname%) %_crlf%")
+
+	iClose(datahandle3)
+	iClose(connecthandle3)
+	iClose(tophandle3)
+;	Message("All","Done")
+return
+
+
+

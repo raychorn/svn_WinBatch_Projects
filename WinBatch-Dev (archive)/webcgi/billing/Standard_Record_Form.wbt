@@ -1,0 +1,1313 @@
+:StandardRecordForm
+;void StandardRecordForm( Hashtable aDict, boolean newRecord, String privateDirBilling, String billingCustomerDataFile, String customerFileType, boolean editMode) {
+
+    WebOut('<HR>', _html_crlf)
+
+    colorBegin = ""
+    colorEnd = ""
+    Gosub isServiceTerminated
+    If _isServiceTerminated
+        colorBegin = "<FONT COLOR=\"#FF0000\">"
+        colorEnd = "</FONT>"
+    Endif
+
+    dataColor = "#0000FF";
+
+    If editMode
+        WebOut('<FORM ACTION="', _html_crlf)
+        WebOut(_this_cgi, _html_crlf)
+        WebOut('" METHOD="POST">', _html_crlf)
+        WebOut(colorBegin, _html_crlf)
+    Else
+        WebOut('<TABLE BORDER="0" WIDTH="100%%"><TBODY><COLDEFS><COLDEF></COLDEFS><ROWS><TR><TD COLSTART="1">', _html_crlf)
+    Endif
+
+    WebOut('<P><B>', _html_crlf)
+    WebOut(defaultFontHTML, _html_crlf)
+    WebOut('Name: ', _html_crlf)
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_Name%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_Name, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="30" MAXLENGTH="128">', _html_crlf)
+    Endif
+
+    WebOut('<BR>', _html_crlf)
+
+    WebOut('<B>%defaultFontHTML%Order ID: ', _html_crlf)
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_Order_ID%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_Order_ID, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="60" MAXLENGTH="128">', _html_crlf)
+    Endif
+
+    WebOut('</FONT></B></P>', _html_crlf)
+
+
+    _field_name = StrCat( _Customer_File_Name, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    customerFileName = _string
+
+    If editMode == @FALSE
+        WebOut('<TABLE BORDER="0"><TBODY><COLDEFS><COLDEF><COLDEF></COLDEFS><ROWS><TR>', 0);
+        WebOut('<TD COLSTART="1">', 0);
+        WebOut('<FORM ACTION="%_thisCGI%" METHOD="POST">', 0);
+        WebOut('<INPUT TYPE="HIDDEN" NAME="%_Customer_Name%" VALUE="%customerFileName%">', 0);
+        WebOut(defaultFontHTML, 0);
+        WebOut('<INPUT TYPE="SUBMIT" NAME="EDIT-RECORD" VALUE="Edit Record">', 0);
+        WebOut('</FONT>', 0);
+        WebOut('</FORM></TD>', _html_crlf)
+        WebOut('<TD COLSTART="2">', 0)
+        WebOut('<FORM ACTION="%_thisCGI%" METHOD="POST">', 0)
+        WebOut('<INPUT TYPE="HIDDEN" NAME="%_Customer_Name%" VALUE="%customerFileName%">', 0)
+        WebOut(defaultFontHTML, 0)
+        WebOut('<NOBR><INPUT TYPE="SUBMIT" NAME="BILL-CUSTOMER-FOR" VALUE="Bill Customer -->">', 0)
+        WebOut('</FONT>', 0)
+        WebOut(' <INPUT TYPE="TEXT" NAME="Amount" VALUE="10.99" SIZE="10" MAXLENGTH="20">', 0)
+        WebOut(' <INPUT TYPE="TEXT" NAME="Reason-for-this-charge" VALUE="Reason for this charge" SIZE="40" MAXLENGTH="128">', 0)
+        WebOut('</NOBR></FORM></TD>', _html_crlf)
+        WebOut('</TR></ROWS></TBODY></TABLE>', _html_crlf)
+    Endif
+
+    _field_name = StrCat( _Website_Domain_Name, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    website_Domain_Name = _string
+
+    _field_name = StrCat( _Customer_IP_Addr, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    website_IP_Addr = _string
+
+    WebOut('<P><B>%defaultFontHTML%Domain Name: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Website_Domain_Name%" VALUE="', 0)
+    Endif
+
+    _string = website_Domain_Name
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="40" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</B>  <B>%defaultFontHTML%IP Address: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_IP_Addr%" VALUE="', 0)
+    Endif
+
+    _string = website_IP_Addr
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="30">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+    
+    WebOut('<B>%defaultFontHTML%Domain Description: ', _html_crlf)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_InterNIC_Domain_Description%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _InterNIC_Domain_Description, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="60" MAXLENGTH="80">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+    WebOut('<B>%defaultFontHTML%WebSite Package: </FONT>', _html_crlf)
+
+    _field_name = StrCat( _Website_Package, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    websitePackage = _string
+
+    If editMode
+        WebOut('%defaultFontHTML%<SELECT NAME="%_Website_Package%">', 0)
+
+        For i = 1 to 7
+            WebOut('<OPTION VALUE="%i%"', 0)
+
+            If websitePackage == i
+                WebOut(' SELECTED="SELECTED"', 0)
+            Endif
+
+            WebOut('>', 0)
+            
+            Switch i
+                case 1
+                    WebOut('I', 0)
+                    break
+                case 2
+                    WebOut('II', 0)
+                    break
+                case 3
+                    WebOut('III', 0)
+                    break
+                case 4
+                    WebOut('IV', 0)
+                    break
+                case 5
+                    WebOut('V', 0)
+                    break
+                case 6
+                    WebOut('VI', 0)
+                    break
+                case 7
+                    WebOut('VII', 0)
+                    break
+            EndSwitch
+            
+            WebOut('</OPTION>', 0)
+        Next
+
+        WebOut('</SELECT></FONT>', 0)
+    Else
+        Switch websitePackage
+            case 1
+                _string = "I"
+                break
+            case 2
+                _string = "II"
+                break
+            case 3
+                _string = "III"
+                break
+            case 4
+                _string = "IV"
+                break
+            case 5
+                _string = "V"
+                break
+            case 6
+                _string = "VI"
+                break
+            case 7
+                _string = "VII"
+                break
+        EndSwitch
+
+        _foregroundColor = dataColor
+        _backgroundColor = ""
+
+        Gosub coloredText
+    Endif
+
+    _field_name = StrCat( _Website_ServerSpeed, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    serverSpeed = _string
+
+    WebOut('  <BR><B>%defaultFontHTML%Server Speed: ', 0)
+
+    If editMode
+        _selectName = _Website_ServerSpeed
+        _selection = serverSpeed
+        Gosub serverSpeedSelection
+    Else
+        _serverSpeed = serverSpeed
+        Gosub serverSpeedText
+
+        _string = _serverSpeedText
+        _foregroundColor = dataColor
+        If editMode
+            _foregroundColor = ""
+        Endif
+        _backgroundColor = ""
+
+        Gosub coloredText
+    Endif
+
+    WebOut('</FONT><BR>', _html_crlf)
+
+
+    WebOut('  <B>%defaultFontHTML%Product Code: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Website_ProductCode%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Website_ProductCode, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="32" MAXLENGTH="40">', 0)
+    Endif
+
+    WebOut('</FONT></B>', 0)
+
+    WebOut('<BR>', _html_crlf)
+
+    WebOut('<B>%defaultFontHTML%WebSpace: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_WebSpace%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_WebSpace, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="32">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+    WebOut('<B>%defaultFontHTML%Base Billable Amount: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_BaseAmount%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_BaseAmount, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="32">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    _field_name = StrCat( _Customer_Bandwidth, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    customerBandwidth = _string
+
+    WebOut('<B>%defaultFontHTML%Monthly Bandwidth: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_Bandwidth%" VALUE="', 0)
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="10" MAXLENGTH="32">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    _field_name = StrCat( _Customer_AddlBandwidth, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    additionalBandwidthFee = _string
+
+    WebOut('<B>%defaultFontHTML%Monthly Bandwidth: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_AddlBandwidth%" VALUE="', 0)
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="10" MAXLENGTH="32">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut(defaultFontHTML, 0)
+    WebOut('<TABLE BORDER="0" BGCOLOR="#FFFFFF"><TBODY><COLDEFS><COLDEF></COLDEFS><ROWS><TR>', 0)
+    WebOut('<TD COLSTART="1">', 0)
+
+    WebOut('<B>%defaultFontHTML%Account Options:  ', 0)
+
+    Gosub accountOptions
+
+    If editMode
+        WebOut('<FONT COLOR="#0000FF">(Select any or all options for your account)</FONT><BR>', 0)
+        WebOut('<SMALL>%defaultFontHTML%<SELECT NAME="%_ENV_AccountOptions%" SIZE="%accountOptions0%" MULTIPLE="MULTIPLE">', 0)
+
+        For i=1 to accountOptions0
+            aRec = accountOptions%i%
+
+            _field_name = StrCat( aRec, "=")
+            _string = StrCat( _field_name, '(')
+
+            Gosub getCustomerRecordField
+
+            _value = ""
+            If ItemCount( _aField, "=") > 1
+                _value = StrCat( ItemExtract( 2, _aField, "="), ')')
+            Endif
+
+            WebOut('<OPTION VALUE="%_string%%_value%" SELECTED="SELECTED">%_string%%_value%</OPTION>', _html_crlf)
+        Next
+
+        WebOut('</SELECT></FONT></SMALL>', _html_crlf)
+    Else
+        WebOut('<B>(Selected items are in <FONT COLOR="#FF0000">red</FONT>)</B><BR><SMALL>', 0)
+
+        WebOut('<OL>', _html_crlf)
+        For i=1 to accountOptions0
+            aRec = accountOptions%i%
+
+            _foregroundColor = "RED"
+            If editMode
+                _foregroundColor = ""
+            Endif
+            _backgroundColor = ""
+
+            WebOut('<LI><B>', 0)
+
+            _field_name = StrCat( aRec, "=")
+            _string = StrCat( _field_name, '(')
+
+            Gosub coloredText
+
+            Gosub getCustomerRecordField
+
+            If ItemCount( _aField, "=") > 1
+                _string = StrCat( ItemExtract( 2, _aField, "="), ')')
+
+                Gosub coloredText
+            Endif
+        
+            WebOut('</B></LI>', _html_crlf)
+        Next
+        WebOut('</OL>', _html_crlf)
+
+        WebOut('</SMALL><BR>', _html_crlf)
+    Endif
+
+    WebOut('</B></TD>', 0)
+    WebOut('</TR></ROWS></TBODY></TABLE></FONT>', 0)
+
+
+    WebOut('<P><B>%defaultFontHTML%Customer Addr: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_Addr%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_Addr, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="50" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Customer City: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_City%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_City, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="30" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Customer State: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_State%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_State, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Customer ZIP Code: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_ZIPCode%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_ZIPCode, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Customer Country: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_Country%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_Country, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    _field_name = StrCat( _Customer_EMailAddress, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    customer_EMailAddress = _string
+
+    If (editMode == @FALSE) && (StrLen( customer_EMailAddress) > 0)
+        WebOut('<TABLE BORDER="0" BGCOLOR="#FFFFFF"><TBODY><COLDEFS><COLDEF><COLDEF></COLDEFS><ROWS>', 0)
+        WebOut('<TR>', 0)
+        WebOut('<TD COLSTART="1">', 0)
+        WebOut('<FORM ACTION="%_thisCGI%" METHOD="POST" TARGET="main">', 0)
+        WebOut('<B>%defaultFontHTML%<INPUT TYPE="SUBMIT" NAME="SEND-EMail-TO-Address" VALUE="%customer_EMailAddress%"></FONT></B>', 0)
+        WebOut('</FORM>', 0)
+        WebOut('</TD>', 0)
+;        WebOut('</TR>', 0)
+;        WebOut('<TR>', 0)
+        WebOut('<TD COLSTART="2">', 0)
+        WebOut('<B> E-mail: <A HREF="mailto:%customer_EMailAddress%" TARGET="">%customer_EMailAddress%</A> via your default e-mail client!</B>', 0)
+        WebOut('</TD>', 0)
+        WebOut('</TR>', 0)
+        WebOut('</ROWS></TBODY></TABLE>', _html_crlf)
+    Else
+        WebOut('<B>%defaultFontHTML%<NOBR>Customer E-Mail Address: ', 0)
+        WebOut('<INPUT TYPE="TEXT" NAME="', 0)
+        WebOut(_Customer_EMailAddress, 0)
+        WebOut('" VALUE="', 0)
+        WebOut(customer_EMailAddress, 0)
+        WebOut('" SIZE="40" MAXLENGTH="128">', 0)
+        WebOut('</NOBR></B><BR>', _html_crlf)
+    Endif
+
+
+    WebOut('<B>%defaultFontHTML%Customer Phone Number: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_Phone_Number%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_Phone_Number, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="16" MAXLENGTH="40">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Customer FAX Number: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_FAX_Number%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_FAX_Number, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="16" MAXLENGTH="40">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Customer SSAN or TAXID: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_SSANorTAXID%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_SSANorTAXID, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="16" MAXLENGTH="40">', 0)
+    Endif
+
+    WebOut('</FONT></B></P>', _html_crlf)
+
+
+    WebOut('<P><B>%defaultFontHTML%Wells Fargo Acct #: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_Acct_Number%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_Acct_Number, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="10" MAXLENGTH="20">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<P><B>%defaultFontHTML%1-900 Per Transaction %%: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_900PerTransPercent%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_900PerTransPercent, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="10" MAXLENGTH="20">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Credit Card #: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_CCNUM%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_CCNUM, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    customer_CCNUM = _string
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="30" MAXLENGTH="40">', 0)
+    Endif
+
+    WebOut('  Exp. Date: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Customer_EXPDATE%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Customer_EXPDATE, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+    customer_EXPDATE = _string
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="10" MAXLENGTH="20">', 0)
+    Endif
+
+    WebOut('</FONT></B></P>', _html_crlf)
+
+
+    WebOut('<P><B>%defaultFontHTML%Contact Name: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_Name%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_Name, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="30" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact Addr: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_Addr%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_Addr, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="50" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact City: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_City%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_City, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="30" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact State: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_State%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_State, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact ZIP Code: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_ZIPCode%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_ZIPCode, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact Country: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_Country%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_Country, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="20" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact E-Mail Address: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_EMailAddress%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_EMailAddress, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="40" MAXLENGTH="128">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact Phone Number: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_Phone_Number%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_Phone_Number, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="16" MAXLENGTH="40">', 0)
+    Endif
+
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+
+    WebOut('<B>%defaultFontHTML%Contact FAX Number: ', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="TEXT" NAME="%_Contact_FAX_Number%" VALUE="', 0)
+    Endif
+
+    _field_name = StrCat( _Contact_FAX_Number, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    _foregroundColor = dataColor
+    If editMode
+        _foregroundColor = ""
+    Endif
+    _backgroundColor = ""
+
+    Gosub coloredText
+
+    If editMode
+        WebOut('" SIZE="16" MAXLENGTH="40">', 0)
+    Endif
+
+    WebOut('</FONT></B></P>', _html_crlf)
+
+
+    _field_name = StrCat( _PAID_NEW_DOMAIN_REGISTRATION, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    WebOut('<P><B>%defaultFontHTML%', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="CHECKBOX" NAME="%_PAID_NEW_DOMAIN_REGISTRATION%"', 0)
+        If StrLen( _string) > 0
+            WebOut(' CHECKED="CHECKED"', 0)
+        Endif
+        WebOut('>', 0)
+    Else
+        WebOut('<IMG SRC="%https_prefix%/', 0)
+        If StrLen( _string) < 1
+            WebOut('un', 0)
+        Endif
+        WebOut('checkmark.gif" BORDER="0">', 0)
+    Endif
+
+    WebOut('  Paid for New Domain Registration', 0)
+    WebOut('</FONT></B><BR><BR>', _html_crlf)
+
+
+    _field_name = StrCat( _SERVICE_AGREEMENT_ON_FILE, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    WebOut('<P><B>%defaultFontHTML%', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="CHECKBOX" NAME="%_SERVICE_AGREEMENT_ON_FILE%"', 0)
+        If StrLen( _string) > 0
+            WebOut(' CHECKED="CHECKED"', 0)
+        Endif
+        WebOut('>', 0)
+    Else
+        WebOut('<IMG SRC="%https_prefix%/', 0)
+        If StrLen( _string) < 1
+            WebOut('un', 0)
+        Endif
+        WebOut('checkmark.gif" BORDER="0">', 0)
+    Endif
+
+    WebOut('  Service Agreement on File', 0)
+    WebOut('</FONT></B><BR><BR>', _html_crlf)
+
+
+    If editMode == @FALSE
+        If StrLen( customer_EMailAddress) > 0
+            WebOut('<FORM ACTION="%_thisCGI%" METHOD="POST" TARGET="main">', 0)
+            WebOut('<B>%defaultFontHTML%', 0)
+            WebOut('<INPUT TYPE="SUBMIT" NAME="SEND-EMail-TO-Address" VALUE="%customer_EMailAddress%">', 0)
+            WebOut('</FONT></B>', 0)
+            WebOut('</FORM>', _html_crlf)
+        Endif
+    Endif
+
+
+    _field_name = StrCat( _NEW_SERVICE_AGREEMENT_ON_FILE, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    WebOut('<P><B>%defaultFontHTML%', 0)
+
+    If editMode
+        WebOut('<INPUT TYPE="CHECKBOX" NAME="%_NEW_SERVICE_AGREEMENT_ON_FILE%"', 0)
+        If StrLen( _string) > 0
+            WebOut(' CHECKED="CHECKED"', 0)
+        Endif
+        WebOut('>', 0)
+    Else
+        WebOut('<IMG SRC="%https_prefix%/', 0)
+        If StrLen( _string) < 1
+            WebOut('un', 0)
+        Endif
+        WebOut('checkmark.gif" BORDER="0">', 0)
+    Endif
+
+    WebOut('  <U>New</U> Service Agreement on File', 0)
+    WebOut('</FONT></B></P>', _html_crlf)
+
+
+    Gosub paidMonthly
+
+    WebOut('<TABLE BORDER="0" BGCOLOR="#FFFFFF"><TBODY><COLDEFS><COLDEF></COLDEFS><ROWS><TR>', 0)
+    WebOut('<TD COLSTART="1">', 0)
+
+    b_recordsExists = @FALSE
+    For i = 1 to paidMonthly0
+        If b_recordsExists == @FALSE
+            WebOut('<P><B>%defaultFontHTML%PAID-MONTHLY:</FONT></B><BR>', 0)
+            b_recordsExists = @TRUE
+        Endif
+
+        aRec = paidMonthly%i%
+
+        _field_name = StrCat( aRec, "=")
+        _string = StrReplace( _field_name, "=", "")
+
+        Gosub getCustomerRecordField
+
+        _value = ""
+        If ItemCount( _aField, "=") > 1
+            _value = ItemExtract( 2, _aField, "=")
+        Endif
+
+        WebOut('<B>%defaultFontHTML%', 0)
+
+        If editMode
+            WebOut('<INPUT TYPE="TEXT" NAME="%aRec%" VALUE="', 0)
+        Endif
+
+        _foregroundColor = dataColor
+        If editMode
+            _foregroundColor = ""
+        Endif
+        _backgroundColor = ""
+
+        Gosub coloredText
+
+        If editMode
+            WebOut('" SIZE="60" MAXLENGTH="128">', 0)
+        Else
+            WebOut('<BR>', 0)
+        Endif
+    Next
+
+    WebOut('</B><BR>', _html_crlf)
+    
+    If b_recordsExists
+        WebOut('</P>', _html_crlf)
+    Endif
+
+    WebOut('</TD>', 0)
+    WebOut('</TR></ROWS></TBODY></TABLE>', 0)
+
+
+    _field_name = StrCat( _Bandwidth_Usage, "=")
+    Gosub getCustomerRecordField
+    _string = ""
+    If ItemCount( _aField, "=") > 1
+        _string = ItemExtract( 2, _aField, "=")
+    Endif
+
+    WebOut('<P><B>%defaultFontHTML%BandWidth Utilization: ', 0)
+    WebOut('<BIG><TEXTAREA NAME="BANDWIDTH-USAGE" ROWS="30" COLS="60" WRAP="Off">%_string%</TEXTAREA></BIG><BR>', 0)
+
+    WebOut('', 0)
+    WebOut('', 0)
+    WebOut('', 0)
+    WebOut('', 0)
+    WebOut('', 0)
+    WebOut('', _html_crlf)
+
+
+    If editMode
+        WebOut('</FORM>', _html_crlf)
+    Endif
+
+
+    WebOut('</TD></TR></ROWS></TBODY></TABLE>', _html_crlf)
+
+    WebOut('<HR>', _html_crlf)
+
+return
+
+

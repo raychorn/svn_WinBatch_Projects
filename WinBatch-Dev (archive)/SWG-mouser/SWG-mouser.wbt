@@ -1,0 +1,31 @@
+; SWG-mouser util - allows SWG kill macros to work better by rotating the field-of-view in a 360 degree arc periodically.
+
+_window_name = "SwgClient"
+
+WinActivate(_window_name)
+
+for i = 1 to 10
+	SendKeysTo(_window_name, "{DOWN}")
+	TimeDelay(1)
+next
+TimeDelay(10)
+
+for i = 1 to 10
+	SendKeysTo(_window_name, "{LEFT}")
+	TimeDelay(1)
+next
+TimeDelay(10)
+
+for i = 1 to 10
+	SendKeysTo(_window_name, "{RIGHT}")
+	TimeDelay(1)
+next
+TimeDelay(10)
+
+for i = 1 to 10
+	SendKeysTo(_window_name, "{UP}")
+	TimeDelay(1)
+next
+TimeDelay(10)
+
+

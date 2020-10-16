@@ -1,0 +1,44 @@
+[Main]
+Type=1
+Src=ispawn.wbt
+Targ=G:\myWinbatch\ispawn\ispawn.exe
+Icon=G:\myWinbatch\tribes2missions\won.ico
+CmpVersion=2
+[Options]
+TechWebPage=http://T2Chameleon.com/
+RunHidden=0
+[Version Info]
+Comments=http://T2Chameleon.com/
+CompanyName=HAL Smalltalker, Inc.
+FileDescription=ispawn
+FileVersion=2.0.5.1
+InternalName=ispawn.exe
+LegalCopyright=(c). Copyright 1990-2001 All Rights Reserved
+LegalTrademarks=http://T2Chameleon.com/
+OriginalFilename=ispawn.exe
+ProductName=ispawn
+ProductVersion=2.0.5.1
+[Other Files]
+Count=19
+File001=G:\myWinbatch\ispawn\qstat.exe
+File002=G:\myWinbatch\ispawn\qstat-readme.txt
+File003=G:\myWinbatch\ispawn\iSpawn-ReadMe.txt
+File004=G:\myWinbatch\ispawn\ISpawn-Release-Notes.txt
+File005=G:\myWinbatch\ispawn\ispawnChameleonDedicatedServer.cmd
+File006=G:\myWinbatch\ispawn\iSpawn Chameleon_v110.LNK
+File007=G:\myWinbatch\ispawn\chameleonParams.txt
+File008=G:\myWinbatch\ispawn\ISPAWN\index.html
+File009=G:\myWinbatch\ispawn\ISPAWN\ispawn-1.gif
+File010=G:\myWinbatch\ispawn\ISPAWN\ispawn-10.gif
+File011=G:\myWinbatch\ispawn\ISPAWN\ispawn-11.gif
+File012=G:\myWinbatch\ispawn\ISPAWN\ispawn-2.gif
+File013=G:\myWinbatch\ispawn\ISPAWN\ispawn-3.gif
+File014=G:\myWinbatch\ispawn\ISPAWN\ispawn-4.gif
+File015=G:\myWinbatch\ispawn\ISPAWN\ispawn-5.gif
+File016=G:\myWinbatch\ispawn\ISPAWN\ispawn-6.gif
+File017=G:\myWinbatch\ispawn\ISPAWN\ispawn-7.gif
+File018=G:\myWinbatch\ispawn\ISPAWN\ispawn-8.gif
+File019=G:\myWinbatch\ispawn\ISPAWN\ispawn-9.gif
+[Extenders]
+Count=1
+File001=WWIPG32I.DLL

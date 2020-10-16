@@ -1,0 +1,168 @@
+; websiteRescue.wbt
+
+AddExtender("WWWNT32I.DLL")
+AddExtender("WWWSK32I.DLL")
+
+_appName = "websiteRescue"
+
+wName_wsp1 = "WebSite Server Properties"
+wName_wsp2 = "Browse for Folder"
+
+If param0 > 0
+	_website_domain_name = param1
+Else
+	default_domain_name = ClipGet( )
+	If StrLen( default_domain_name) < 1
+		default_domain_name = "www.domain-name.com"
+	Endif
+	_website_domain_name = AskLine("%_appName%", "WebSite Domain Name?", default_domain_name)
+Endif
+
+_website_nick_name = StrReplace( StrReplace( StrReplace( _website_domain_name, "www.", ""), ".", ""), "-", "")
+
+If StrLen( _website_nick_name) > 16
+	_website_nick_name = StrSub( _website_nick_name, 1, 16)
+Endif
+
+_domain_ip_less = AskYesNo( "%_appName%", "Is domain IP-LESS ? (Yes/NO)")
+
+line = "(1) _website_domain_name=%_website_domain_name%..."
+BoxCaption(1, "%_appName% %line%")
+
+If (WinExist(wName_wsp1) == @NO)
+	Run("C:\WebSite\Admin\srvadmin.exe", "")
+
+	goal = 60
+	timer = 0
+	while WinExist(wName_wsp1) == @NO
+		If timer > goal then break
+		Delay(1)
+		timer = timer + 1
+	endwhile
+Endif
+
+If (WinExist(wName_wsp1) == @TRUE)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '+{TAB}{RIGHT}{TAB}{TAB}{TAB}{ENTER}')
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, _website_domain_name)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '{TAB}{ENTER}{ENTER}{ENTER}')
+
+	Delay( 5)
+
+	If _domain_ip_less == @YES
+		WinActivate( wName_wsp1)
+		SendKeysTo( wName_wsp1, '{SPACE}')
+	Else
+		WinActivate( wName_wsp1)
+		SendKeysTo( wName_wsp1, '{TAB}')
+	Endif
+	
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 10)
+	
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, _website_nick_name)
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '{TAB}{ENTER}')
+
+	Delay( 10)
+
+	goal = 60
+	timer = 0
+	while WinExist(wName_wsp2) == @NO
+		If timer > goal then break
+		Delay(1)
+		timer = timer + 1
+	endwhile
+
+	goal = 60
+	timer = 0
+	while WinExist(wName_wsp2) == @YES
+		If timer > goal then break
+		Delay(1)
+		timer = timer + 1
+	endwhile
+	
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!B')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '^{INS}')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '{SPACE}')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '{TAB}')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '+{INS}')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '\htdocs\weblogs\access.log')
+
+	Delay( 2)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '!N')
+
+	Delay( 5)
+
+	WinActivate( wName_wsp1)
+	SendKeysTo( wName_wsp1, '{TAB}{ENTER}')
+Endif
+
+exit
+

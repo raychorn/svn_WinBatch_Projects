@@ -1,0 +1,60 @@
+:_ViewCustomerWebSiteRecord
+; sql_level ............. input - the sql level 2-10 (optional)
+; sql_html_file ......... input - the name of the html file
+
+If IsDefined( sql_level) == @NO
+    sql_level = ""
+Endif
+
+WebOut('<TABLE WIDTH="*" BORDER="1"><SQTBODY><COLDEFS><COLDEF></COLDEFS><ROWS><TR><TD COLSTART="1">', 0)
+WebOut('<B>WebSite Info:</B>', 0)
+
+Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+sql_stmnt%sql_level% = "SELECT "
+k = ItemCount( sql_fetch_cols%sql_level%, ",")
+For i = 1 to k
+    sql_stmnt%sql_level% = StrCat( sql_stmnt%sql_level%, ItemExtract( i, sql_fetch_cols%sql_level%, ","))
+    If i < k
+        sql_stmnt%sql_level% = StrCat( sql_stmnt%sql_level%, ", ")
+    Endif
+Next
+
+sql_stmnt%sql_level% = StrCat( sql_stmnt%sql_level%, " FROM %_table% WHERE custid = %_custid% AND domain_name = '%_domain_name%'")
+
+If StrLen( _ip) > 0
+    sql_stmnt%sql_level% = StrCat( sql_stmnt%sql_level%, " AND ip = '%_ip%'")
+Endif
+
+;v1 = sql_stmnt%sql_level%
+
+;WebOut('<BR><B><FONT COLOR="BLUE">DEBUG: ', 0)
+;WebOut('sql_stmnt%sql_level%=', 0)
+;WebOut(v1, 0)
+;WebOut('</FONT></B><BR>', _html_crlf)
+
+;Drop( v1)
+
+Drop( i, k)
+
+sql_fetch_gosub%sql_level% = "ViewACustWebSiteContactRecord"
+sql_html_file = _viewCustWebSiteRecord_html
+sql_fetch = @TRUE
+sql_alias%sql_level% = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+If _edit_mode == @TRUE
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_id" VALUE="%_id%">', 0)
+Endif
+
+WebOut('</TD></TR></ROWS></SQTBODY></TABLE>', _html_crlf)
+
+If IsDefined( sql_level) == @YES
+    If StrLen( sql_level) == 0
+        Drop( sql_level)
+    Endif
+Endif
+
+return
+

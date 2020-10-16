@@ -1,0 +1,225 @@
+; webspaceMonitor2.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+IntControl(41, 1, 0, 0, 0) ; Y2K to 4 digit YYYY
+
+_appName = "webspaceMonitor2"
+
+If param0 > 0
+	_first_drive = param1
+Else
+	_first_drive = AskLine("%_appName%", "First Drive to Scan? (C, D, E, F ...)", "D")
+Endif
+
+If param0 > 1
+	_last_drive = param2
+Else
+	_last_drive = AskLine("%_appName%", "Last Drive to Scan? (D, E, F ...)", "H")
+Endif
+
+_response_code_okay = 200
+
+_smtp_server = "mail.cybercash-net.com"
+_email_from = "webAdmin@cybercash-net.com"
+_email_to = "guru@smalltalker.com"
+_email_subject = "Greetings"
+_email_message = "Have you noticed... it's raining."
+
+_URL = "http://home.dirt-cheap-servers.net/_gateway/_gateway_sisko_db.iHTML"
+_fname = "c:\temp\%_appName%.txt"
+_results_txt_File = "c:\temp\%_appName%-response.txt"
+_userid = "smalltalker"
+_passwd = "peek@boo"
+
+_query_string = ""
+
+urls_domain_name = httpGetServer( _URL, "")
+urls_path = httpGetpath( _URL, "")
+
+_home_dir = DirGet()
+
+_dir_tree_function = "dirtree.wbc"
+_http_response_text_function = "getresponsecodetext.wbc"
+
+_drive_list = DiskScan( 2)
+
+For i = 1 to ItemCount( _drive_list, @TAB)
+	_drive_letter = StrSub( ItemExtract( i, _drive_list, @TAB), 1, 1)
+;	 If (StrCmp( _drive_letter, _first_drive) < 0) && (StrCmp( _drive_letter, _last_drive) > 0)
+	If (_drive_letter < _first_drive) || (_drive_letter > _last_drive)
+		_drive_list = ItemRemove( i, _drive_list, @TAB)
+		i = 1
+	Endif
+Next
+
+Message( "%_appName%", "%_drive_list%")
+
+For i = 1 to ItemCount( _drive_list, @TAB)
+	aDrive = ItemExtract( i, _drive_list, @TAB)
+	_wildcard = "%aDrive%\*.*"
+	_dir_list = DirItemize( _wildcard)
+	_report_filename = StrCat( aDrive, "\%_appName%-report.txt")
+	Gosub reportOpen
+;	 Message( "%_appName%", "%_wildcard%=(%_dir_list%)")
+	For j = 1 to ItemCount( _dir_list, @TAB)
+		aDir = ItemExtract( j, _dir_list, @TAB)
+		_path = StrCat( aDrive, "\", aDir)
+		_size = FileSize( StrCat( _path, "\*.*"))
+;		 _time = FileTimeGet( _path)
+		_time = "time-UNKNOWN"
+
+		__path = StrReplace( StrReplace( _path, ":", "_"), "\", "_")
+		_fname = StrCat( "c:\temp\%_appName%\data\", __path, ".txt")
+		_results_txt_File = StrCat( "c:\temp\%_appName%\response\", __path, "-response.txt")
+		_fname_bak = StrCat( "c:\temp\%_appName%\data\", __path, ".bak")
+
+		_ip = StrSubWild( aDir, "*.*.*-", 1)
+		If StrLen( _ip) > 0
+			_domain_name = StrSub( aDir, StrLen( _ip) + 1, -1)
+		Else
+			_domain_name = aDir
+		Endif
+		_ip = StrReplace( _ip, "-", "")
+
+		_target_symbol0 = 5
+		_target_symbol1 = "_webid"
+		_target_symbol2 = "_custid"
+		_target_symbol3 = "_webspace"
+		_target_symbol4 = "_termination"
+		_target_symbol5 = "_rid"
+		_query_string = StrCat( "_domain_name=", urlEncode( _domain_name), "&_ip=", urlEncode( _ip), "&step_num=_webid")
+		Gosub _gatewayQuery
+
+		If _response_code == _response_code_okay
+			If _ip <> "207.55.215.2"
+				If IsInt( _webid) == @FALSE
+					Message( "%_appName% ERROR - Missing %_target_symbol%=(%_webid%)", _query_string)
+				Endif
+			Endif
+		
+			_dir_tree = ""
+			Call( StrCat( _home_dir, _dir_tree_function), "%_path% _dir_tree")
+
+			aLine = StrCat( "_path=(", _path, "), _time=%_time%, _webid=%_webid%, _custid=%_custid%, _webspace=%_webspace%, _termination=%_termination%, _rid=%_rid%")
+			Gosub reportAppend
+
+			For k = 1 to ItemCount( _dir_tree, @TAB)
+				_aDir = ItemExtract( k, _dir_tree, @TAB)
+				If _aDir <> "\"
+					__size = FileSize( StrCat( _path, _aDir, "\*.*"))
+					_size = _size + __size
+
+					aLine = StrCat( "_aDir=(", _aDir, "), __size=%__size%")
+					Gosub reportAppend
+				Endif
+			Next
+		
+			aLine = "_size=(%_size%)"
+			Gosub reportAppend
+
+			aLine = ""
+			Gosub reportAppend
+		Else
+			_email_subject = "%_appName% - WARNING: Failed to talk with Sisko Gateway Server"
+			_email_message = StrCat( "_query_string=(", _query_string, ") , _response_code=(%_response_code%)")
+			Gosub emailWebAdmin
+		Endif
+	Next
+Next
+
+exit
+
+:reportOpen
+handle = fileopen( _report_filename, "WRITE")
+filewrite( handle, "%_appName% Report:")
+filewrite( handle, "")
+fileclose( handle)
+return
+
+
+
+:reportAppend
+handle = fileopen( _report_filename, "APPEND")
+filewrite( handle, aLine)
+fileclose( handle)
+return
+
+
+
+:_gatewayQuery
+; _query_string .... input - this is the _query_string
+
+httpAuth( _userid, _passwd)
+
+ErrorMode(@OFF)
+_response_code = httpRecvQryF( urls_domain_name, urls_path, _query_string, _fname, @hMethodGet) 
+ErrorMode(@CANCEL)
+
+Gosub cleanUpFile
+
+Call( StrCat( _home_dir, _http_response_text_function), "")
+
+handle = fileopen( _results_txt_File, "write")
+filewrite(handle, "_response_code=%_response_code%")
+filewrite(handle, _response_text)
+fileclose(handle)
+return
+
+
+
+:cleanUpFile
+; _target_symbol ... _webid=
+
+_target_symbol_separator = "="
+
+For xx = 1 to _target_symbol0
+	_target_symbol_name = _target_symbol%xx%
+	_target_symbol_varname = "%_target_symbol_name%"
+	%_target_symbol_varname% = ""
+
+	_target_symbol%xx%_string = StrCat( _target_symbol_varname, _target_symbol_separator)
+	
+;	 _s = "_target_symbol%xx%_string"
+;	 Message( "%_appName% - cleanUpFile", "_target_symbol_varname=%_target_symbol_varname% , _target_symbol%xx%_string=%_s%")
+Next
+
+old_handle = FileOpen( _fname, "READ")
+new_handle = FileOpen( _fname_bak, "WRITE")
+while @TRUE
+	xLine = FileRead(old_handle)
+	If xLine == "*EOF*" Then Break
+	xLine = StrTrim( xLine)
+	If StrLen( xLine) > 0
+		For xx = 1 to _target_symbol0
+			If StrIndex( xLine, _target_symbol%xx%_string, 1, @FWDSCAN) > 0
+				_target_symbol_name = _target_symbol%xx%
+				_target_symbol_varname = "%_target_symbol_name%"
+				%_target_symbol_varname% = ItemExtract( 2, xLine, _target_symbol_separator)
+			Endif
+		Next
+		FileWrite(new_handle, xLine)
+	Endif
+endwhile
+FileClose(new_handle)
+FileClose(old_handle)
+
+FileDelete( _fname)
+FileRename( _fname_bak, _fname)
+
+Drop( old_handle, new_handle, xLine)
+return
+
+
+
+:emailWebAdmin
+;_smtp_server ... input - "mail.cybercash-net.com"
+;_email_from ... input - "webAdmin@cybercash-net.com"
+;_email_to ... input - "guru@smalltalker.com"
+;_email_subject ... input - "Greetings"
+;_email_message ... input - "Have you noticed... it's raining."
+rc = smtpSendText( _smtp_server, _email_from, _email_to, _email_subject, _email_message)
+return
+

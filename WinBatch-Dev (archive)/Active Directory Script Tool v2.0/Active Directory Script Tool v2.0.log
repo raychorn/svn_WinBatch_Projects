@@ -1,0 +1,260 @@
+================================================================================ 
+
+2004:04:27:13:32:26 BEGIN :: Active Directory Script Tool v2.0 (c)2004 FamiliesFirst, Inc., All Rights Reserved. 
+
+2004:04:27:13:32:28 item :: 1. Search LDAP 
+
+2004:04:27:13:32:29 _runMode :: 0 
+
+2004:04:27:13:32:33 _distinguishedName :: OU=Program,DC=familiesfirstinc,DC=org 
+
+2004:04:27:13:32:36 Accept the whole List ? :: 0 
+
+2004:04:27:13:32:49 groupName :: Amber Mitchell|Amitchell,Andrea Dow|adow, 
+
+2004:04:27:13:32:53 _subFunc_item :: 1. Terminal Services Profile	 
+
+2004:04:27:13:32:54 _termLine1 :: \\davdc01\mfprofile$\%username% 
+
+2004:04:27:13:32:54 _termLine2 :: \\davdc01\mfusers$\%username% 
+
+2004:04:27:13:32:54 Entering :: functionSearchUser() 
+
+2004:04:27:13:32:54 #1 of 2 _groupName :: Amber Mitchell|Amitchell 
+
+2004:04:27:13:32:54 Entering :: functionSearchGroup() 
+
+2004:04:27:13:32:54 WinExist(Active Directory Users and Computers) :: @FALSE 
+
+2004:04:27:13:32:54 const_sellLink :: C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk 
+
+2004:04:27:13:32:54 WinWaitExist(Active Directory Users and Computers, 30) 
+
+2004:04:27:13:32:57 _retCode :: 1 
+
+2004:04:27:13:32:57 WinExist(Find Users, Contacts, and Groups) :: @FALSE 
+
+2004:04:27:13:32:59 WinExist(Find Users, Contacts, and Groups) :: @True 
+
+2004:04:27:13:33:00 _aUserName/_aFullName :: Amitchell/Amber Mitchell 
+
+================================================================================ 
+
+2004:04:27:13:36:58 BEGIN :: Active Directory Script Tool v2.0 (c)2004 FamiliesFirst, Inc., All Rights Reserved. 
+
+2004:04:27:13:37:00 item :: 1. Search LDAP 
+
+2004:04:27:13:37:01 _runMode :: 0 
+
+2004:04:27:13:37:02 _distinguishedName :: OU=Program,DC=familiesfirstinc,DC=org 
+
+2004:04:27:13:37:04 Accept the whole List ? :: 0 
+
+2004:04:27:13:37:08 groupName :: Andrea Dow|adow, 
+
+2004:04:27:13:37:10 _subFunc_item :: 1. Terminal Services Profile	 
+
+2004:04:27:13:37:11 _termLine1 :: \\davdc01\mfprofile$\%username% 
+
+2004:04:27:13:37:12 _termLine2 :: \\davdc01\mfusers$\%username% 
+
+2004:04:27:13:37:12 Entering :: functionSearchUser() 
+
+2004:04:27:13:37:12 #1 of 1 _groupName :: Andrea Dow|adow 
+
+2004:04:27:13:37:12 Entering :: functionSearchGroup() 
+
+2004:04:27:13:37:12 WinExist(Active Directory Users and Computers) :: @FALSE 
+
+2004:04:27:13:37:12 const_sellLink :: C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk 
+
+2004:04:27:13:37:12 WinWaitExist(Active Directory Users and Computers, 30) 
+
+2004:04:27:13:37:15 _retCode :: 1 
+
+2004:04:27:13:37:15 WinExist(Find Users, Contacts, and Groups) :: @FALSE 
+
+2004:04:27:13:37:17 WinExist(Find Users, Contacts, and Groups) :: @True 
+
+2004:04:27:13:37:18 _aUserName/_aFullName :: adow/Andrea Dow 
+
+2004:04:27:13:37:24 _windowName3 ::  
+
+================================================================================ 
+
+2004:04:27:13:38:10 BEGIN :: Active Directory Script Tool v2.0 (c)2004 FamiliesFirst, Inc., All Rights Reserved. 
+
+2004:04:27:13:38:12 item :: 1. Search LDAP 
+
+2004:04:27:13:38:12 _runMode :: 0 
+
+2004:04:27:13:38:13 _distinguishedName :: OU=Program,DC=familiesfirstinc,DC=org 
+
+2004:04:27:13:38:15 Accept the whole List ? :: 0 
+
+2004:04:27:13:38:18 groupName :: Andrea Dow|adow, 
+
+2004:04:27:13:38:21 _subFunc_item :: 1. Terminal Services Profile	 
+
+2004:04:27:13:38:22 _termLine1 :: \\davdc01\mfprofile$\%username% 
+
+2004:04:27:13:38:22 _termLine2 :: \\davdc01\mfusers$\%username% 
+
+2004:04:27:13:38:22 Entering :: functionSearchUser() 
+
+2004:04:27:13:38:22 #1 of 1 _groupName :: Andrea Dow|adow 
+
+2004:04:27:13:38:22 Entering :: functionSearchGroup() 
+
+2004:04:27:13:38:22 WinExist(Active Directory Users and Computers) :: @FALSE 
+
+2004:04:27:13:38:22 const_sellLink :: C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk 
+
+2004:04:27:13:38:22 WinWaitExist(Active Directory Users and Computers, 30) 
+
+2004:04:27:13:38:25 _retCode :: 1 
+
+2004:04:27:13:38:25 WinExist(Find Users, Contacts, and Groups) :: @FALSE 
+
+2004:04:27:13:38:27 WinExist(Find Users, Contacts, and Groups) :: @True 
+
+2004:04:27:13:38:28 _aUserName/_aFullName :: adow/Andrea Dow 
+
+2004:04:27:13:38:34 _windowName3 ::  
+
+2004:04:27:13:38:34 WinExist() :: @True 
+
+2004:04:27:13:38:43 WinWaitClose() 
+
+================================================================================ 
+
+2004:04:27:13:43:58 BEGIN :: Active Directory Script Tool v2.0 (c)2004 FamiliesFirst, Inc., All Rights Reserved. 
+
+2004:04:27:13:44:00 item :: 1. Search LDAP 
+
+2004:04:27:13:44:01 _runMode :: 0 
+
+2004:04:27:13:44:02 _distinguishedName :: OU=Program,DC=familiesfirstinc,DC=org 
+
+2004:04:27:13:44:03 Accept the whole List ? :: 0 
+
+2004:04:27:13:44:05 groupName :: Andrea Dow|adow, 
+
+2004:04:27:13:44:08 _subFunc_item :: 1. Terminal Services Profile	 
+
+2004:04:27:13:44:09 _termLine1 :: \\davdc01\mfprofile$\%username% 
+
+2004:04:27:13:44:10 _termLine2 :: \\davdc01\mfusers$\%username% 
+
+2004:04:27:13:44:10 Entering :: functionSearchUser() 
+
+2004:04:27:13:44:10 #1 of 1 _groupName :: Andrea Dow|adow 
+
+2004:04:27:13:44:10 Entering :: functionSearchGroup() 
+
+2004:04:27:13:44:10 WinExist(Active Directory Users and Computers) :: @FALSE 
+
+2004:04:27:13:44:10 const_sellLink :: C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk 
+
+2004:04:27:13:44:10 WinWaitExist(Active Directory Users and Computers, 30) 
+
+2004:04:27:13:44:13 _retCode :: 1 
+
+2004:04:27:13:44:13 WinExist(Find Users, Contacts, and Groups) :: @FALSE 
+
+2004:04:27:13:44:15 WinExist(Find Users, Contacts, and Groups) :: @True 
+
+2004:04:27:13:44:16 _aUserName/_aFullName :: adow/Andrea Dow 
+
+2004:04:27:13:44:22 _windowName3 ::  
+
+2004:04:27:13:44:22 WinExist() :: @True 
+
+2004:04:27:13:44:30 WinWaitClose() 
+
+================================================================================ 
+
+2004:04:27:13:47:03 BEGIN :: Active Directory Script Tool v2.0 (c)2004 FamiliesFirst, Inc., All Rights Reserved. 
+
+2004:04:27:13:47:05 item :: 1. Search LDAP 
+
+2004:04:27:13:47:06 _runMode :: 0 
+
+2004:04:27:13:47:07 _distinguishedName :: OU=Program,DC=familiesfirstinc,DC=org 
+
+2004:04:27:13:47:08 Accept the whole List ? :: 0 
+
+2004:04:27:13:47:11 groupName :: Andrea Dow|adow, 
+
+2004:04:27:13:47:14 _subFunc_item :: 1. Terminal Services Profile	 
+
+2004:04:27:13:47:15 _termLine1 :: \\davdc01\mfprofile$\%username% 
+
+2004:04:27:13:47:15 _termLine2 :: \\davdc01\mfusers$\%username% 
+
+2004:04:27:13:47:15 Entering :: functionSearchUser() 
+
+2004:04:27:13:47:15 #1 of 1 _groupName :: Andrea Dow|adow 
+
+2004:04:27:13:47:15 Entering :: functionSearchGroup() 
+
+2004:04:27:13:47:15 WinExist(Active Directory Users and Computers) :: @FALSE 
+
+2004:04:27:13:47:15 const_sellLink :: C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk 
+
+2004:04:27:13:47:15 WinWaitExist(Active Directory Users and Computers, 30) 
+
+2004:04:27:13:47:18 _retCode :: 1 
+
+2004:04:27:13:47:18 WinExist(Find Users, Contacts, and Groups) :: @FALSE 
+
+2004:04:27:13:47:20 WinExist(Find Users, Contacts, and Groups) :: @True 
+
+2004:04:27:13:47:21 _aUserName/_aFullName :: adow/Andrea Dow 
+
+2004:04:27:13:47:27 _windowName3 :: Nothing 
+
+	 2004:04:27:13:47:27 ERROR: Expected Nothing 
+
+2004:04:27:13:47:27 Returning :: functionSearchUser() 
+
+================================================================================ 
+
+2004:04:27:13:50:37 BEGIN :: Active Directory Script Tool v2.0 (c)2004 FamiliesFirst, Inc., All Rights Reserved. 
+
+2004:04:27:13:50:39 item :: 1. Search LDAP 
+
+2004:04:27:13:50:40 _runMode :: 0 
+
+2004:04:27:13:50:41 _distinguishedName :: OU=Program,DC=familiesfirstinc,DC=org 
+
+2004:04:27:13:50:42 Accept the whole List ? :: 0 
+
+2004:04:27:13:50:44 groupName :: Andrea Dow|adow, 
+
+2004:04:27:13:50:46 _subFunc_item :: 1. Terminal Services Profile	 
+
+2004:04:27:13:50:48 _termLine1 :: \\davdc01\mfprofile$\%username% 
+
+2004:04:27:13:50:48 _termLine2 :: \\davdc01\mfusers$\%username% 
+
+2004:04:27:13:50:48 Entering :: functionSearchUser() 
+
+2004:04:27:13:50:48 #1 of 1 _groupName :: Andrea Dow|adow 
+
+2004:04:27:13:50:48 Entering :: functionSearchGroup() 
+
+2004:04:27:13:50:48 WinExist(Active Directory Users and Computers) :: @FALSE 
+
+2004:04:27:13:50:48 const_sellLink :: C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk 
+
+2004:04:27:13:50:48 WinWaitExist(Active Directory Users and Computers, 30) 
+
+2004:04:27:13:50:51 _retCode :: 1 
+
+2004:04:27:13:50:51 WinExist(Find Users, Contacts, and Groups) :: @FALSE 
+
+2004:04:27:13:50:53 WinExist(Find Users, Contacts, and Groups) :: @True 
+
+2004:04:27:13:50:54 _aUserName/_aFullName :: adow/Andrea Dow 
+

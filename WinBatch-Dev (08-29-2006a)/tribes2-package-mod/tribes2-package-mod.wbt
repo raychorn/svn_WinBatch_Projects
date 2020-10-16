@@ -1,0 +1,660 @@
+; tribes2-package-mod.wbt
+
+; Check file dates to ensure the .CS files have been compiled but ONLY when there is a .CS.DSO
+
+wName = "Tribes2 Package Mod Vers 1.1"
+
+IntControl (50, 1, "http://Tribes2ChameleonMod.HALSmalltalker.Com/", 0, 0)
+
+IntControl(29, @TAB, 0, 0, 0)
+
+__dirHome = IntControl(1004, 0, 0, 0, 0)
+_dirHome = FilePath( __dirHome)
+
+; USAGE: Package a Mod for Distribution the Chameleon Mod way...
+
+BoxCaption( 1, "%wName%")
+
+_SourceFilesRootName = "ModRootFiles.txt"
+_SourceFilesRoot0 = 7
+_SourceFilesRoot1 = "Chameleon_Mod-Release-Notes.txt"
+_SourceFilesRoot2 = "Dynamix-Patch-Notes-22460-22649.txt"
+_SourceFilesRoot3 = "Dynamix-Patch-Notes-22755.txt"
+_SourceFilesRoot4 = "Dynamix-Patch-Notes-23115.txt"
+_SourceFilesRoot5 = "*.cs*"
+_SourceFilesRoot6 = "*.cmd"
+_SourceFilesRoot7 = "*.bat"
+
+_sourceFilePattern = StrCat( _dirHome, _SourceFilesRootName)
+if (FileExist( _sourceFilePattern) == @TRUE)
+	BoxCaption( 1, "%wName% - Reading... %_sourceFilePattern%")
+	Gosub ReadSourceFiles
+	if ItemCount( _SourceFilesList, @TAB) > 0
+		for _i = 1 to _SourceFilesRoot0
+			drop( _SourceFilesRoot%_i%)
+		next
+		_SourceFilesRoot0 = ItemCount( _SourceFilesList, @TAB)
+		for _i = 1 to ItemCount( _SourceFilesList, @TAB)
+			_SourceFilesRoot%_i% = ItemExtract( _i, _SourceFilesList, @TAB)
+		next
+	endif
+endif
+
+_SourceFilesRemoveDirName = "ModDirsRemove.txt"
+_SourceFilesRemoveDir0 = 2
+_SourceFilesRemoveDir1 = "@1"
+_SourceFilesRemoveDir2 = "debugger"
+
+_sourceFilePattern = StrCat( _dirHome, _SourceFilesRemoveDirName)
+if (FileExist( _sourceFilePattern) == @TRUE)
+	BoxCaption( 1, "%wName% - Reading... %_sourceFilePattern%")
+	Gosub ReadSourceFiles
+	if ItemCount( _SourceFilesList, @TAB) > 0
+		for _i = 1 to _SourceFilesRemoveDir0
+			drop( _SourceFilesRemoveDir%_i%)
+		next
+		_SourceFilesRemoveDir0 = ItemCount( _SourceFilesList, @TAB)
+		for _i = 1 to ItemCount( _SourceFilesList, @TAB)
+			_SourceFilesRemoveDir%_i% = StrLower( ItemExtract( _i, _SourceFilesList, @TAB))
+		next
+	endif
+endif
+
+; This list need an ID to tell the system "how" to handle each Dir Name... for now we leave this as is...
+_SourceFilesExcepDirsName = "ModExcepDirs.txt"
+_SourceFilesExcepDirs0 = 3
+
+_SourceFilesExcepDirs1 = ""
+_SourceFilesExcepDirs1 = StrCat( _SourceFilesExcepDirs1, "AIEquipmentConfigs", @TAB)
+
+_SourceFilesExcepDirs2 = ""
+_SourceFilesExcepDirs2 = StrCat( _SourceFilesExcepDirs2, "autoexec", @TAB)
+
+_SourceFilesExcepDirs3 = ""
+_SourceFilesExcepDirs3 = StrCat( _SourceFilesExcepDirs3, "bwadmin", @TAB)
+
+_sourceFilePattern = StrCat( _dirHome, _SourceFilesExcepDirsName)
+if (FileExist( _sourceFilePattern) == @TRUE)
+	BoxCaption( 1, "%wName% - Reading... %_sourceFilePattern%")
+	Gosub ReadSourceFiles
+	if ItemCount( _SourceFilesList, @TAB) > 0
+		for _i = 1 to _SourceFilesExcepDirs0
+			drop( _SourceFilesExcepDirs%_i%)
+		next
+		_SourceFilesExcepDirs0 = ItemCount( _SourceFilesList, @TAB)
+		for _i = 1 to ItemCount( _SourceFilesList, @TAB)
+			_SourceFilesExcepDirs%_i% = StrLower( ItemExtract( _i, _SourceFilesList, @TAB))
+		next
+	endif
+endif
+
+_SourceFilesBwAdminFilesName = "ModBwAdminDelDirs.txt"
+_SourceFilesBwAdminDelFiles0 = 2
+_SourceFilesBwAdminDelFiles1 = "bwadminMapRotation.cs"
+_SourceFilesBwAdminDelFiles2 = "bwadminMapRotation.cs.dso"
+
+_sourceFilePattern = StrCat( _dirHome, _SourceFilesBwAdminFilesName)
+if (FileExist( _sourceFilePattern) == @TRUE)
+	BoxCaption( 1, "%wName% - Reading... %_sourceFilePattern%")
+	Gosub ReadSourceFiles
+	if ItemCount( _SourceFilesList, @TAB) > 0
+		for _i = 1 to _SourceFilesBwAdminDelFiles0
+			drop( _SourceFilesBwAdminDelFiles%_i%)
+		next
+		_SourceFilesBwAdminDelFiles0 = ItemCount( _SourceFilesList, @TAB)
+		for _i = 1 to ItemCount( _SourceFilesList, @TAB)
+			_SourceFilesBwAdminDelFiles%_i% = StrLower( ItemExtract( _i, _SourceFilesList, @TAB))
+		next
+	endif
+endif
+
+_SourceFilesBwAdminKeepFName = "ModBwAdminKeepFiles.txt"
+_SourceFilesBwAdminKeepFiles0 = 1
+_SourceFilesBwAdminKeepFiles1 = "bwadmin.cs"
+
+_sourceFilePattern = StrCat( _dirHome, _SourceFilesBwAdminKeepFName)
+if (FileExist( _sourceFilePattern) == @TRUE)
+	BoxCaption( 1, "%wName% - Reading... %_sourceFilePattern%")
+	Gosub ReadSourceFiles
+	if ItemCount( _SourceFilesList, @TAB) > 0
+		for _i = 1 to _SourceFilesBwAdminKeepFiles0
+			drop( _SourceFilesBwAdminKeepFiles%_i%)
+		next
+		_SourceFilesBwAdminKeepFiles0 = ItemCount( _SourceFilesList, @TAB)
+		for _i = 1 to ItemCount( _SourceFilesList, @TAB)
+			_SourceFilesBwAdminKeepFiles%_i% = StrLower( ItemExtract( _i, _SourceFilesList, @TAB))
+		next
+	endif
+endif
+
+_SourceFilesScriptsKeepFName = "ModKeepScripts.txt"
+_SourceFilesScriptsKeepFiles0 = 2
+_SourceFilesScriptsKeepFiles1 = "HostSuperAdminList.cs"
+_SourceFilesScriptsKeepFiles2 = "aiBotProfiles.cs"
+
+_sourceFilePattern = StrCat( _dirHome, _SourceFilesScriptsKeepFName)
+if (FileExist( _sourceFilePattern) == @TRUE)
+	BoxCaption( 1, "%wName% - Reading... %_sourceFilePattern%")
+	Gosub ReadSourceFiles
+	if ItemCount( _SourceFilesList, @TAB) > 0
+		for _i = 1 to _SourceFilesScriptsKeepFiles0
+			drop( _SourceFilesScriptsKeepFiles%_i%)
+		next
+		_SourceFilesScriptsKeepFiles0 = ItemCount( _SourceFilesList, @TAB)
+		for _i = 1 to ItemCount( _SourceFilesList, @TAB)
+			_SourceFilesScriptsKeepFiles%_i% = StrLower( ItemExtract( _i, _SourceFilesList, @TAB))
+		next
+	endif
+endif
+
+:retryHere
+
+_dir_name = "E:\Tribes2"
+
+_tribes2GameRootFolder = _dir_name
+
+_tribes2ModRootFolder = "%_dir_name%\GameData\Chameleon_v110"
+
+_tribes2DestRootFolder = "E:\@1\Chameleon_v110+24834\Chameleon_v110"
+
+_tribes2ModSourcePrefsFolder = "E:\Tribes2\GameData\[prefs]\"
+
+BoxCaption( 1, "%wName% - Please specify the Tribes2 Game Source Root Folder")
+
+If IsDefined(param1)
+	; param1 is the directory path name for the root folder for the game source aka D:\Tribes2
+	_dir_name = param1
+Else
+	consoleLogFileName = "%_tribes2GameRootFolder%\GameData\console.log"
+	while (FileExist( consoleLogFileName) != @TRUE)
+		_dir_name = AskDirectory( "Tribes2 Game Source Root Folder ? %_dir_name%", "", "", "Tribes2 Game Source Root Folder is", 2) 
+		consoleLogFileName = "%_dir_name%\GameData\console.log"
+		if (FileExist( consoleLogFileName) == @TRUE)
+			_tribes2GameRootFolder = _dir_name
+			break;
+		endif
+	endwhile
+Endif
+
+if StrLen(_tribes2GameRootFolder) == 0
+	exit
+endif
+
+BoxCaption( 1, "%wName% - Please specify the Tribes2 Mod Source Root Folder")
+
+If IsDefined(param2)
+	; param1 is the directory path name for the root folder for the game source aka D:\Tribes2
+	_dir_name = param2
+Else
+	autoexecFileName = "%_tribes2ModRootFolder%\autoexec.cs"
+	while (FileExist( autoexecFileName) != @TRUE)
+		_dir_name = AskDirectory( "Tribes2 Mod Source Root Folder ? %_tribes2ModRootFolder%", _tribes2GameRootFolder, _tribes2GameRootFolder, "Tribes2 Mod Source Root Folder is", 2) 
+		autoexecFileName = "%_dir_name%autoexec.cs"
+		if (FileExist( autoexecFileName) == @TRUE)
+			_tribes2ModRootFolder = _dir_name
+			break;
+		else
+			_tribes2ModRootFolder = ""
+		endif
+	endwhile
+Endif
+
+if StrLen(_tribes2ModRootFolder) == 0
+	exit
+endif
+
+BoxCaption( 1, "%wName% - Please specify the Tribes2 Mod Dest Root Folder")
+
+If IsDefined(param3)
+	; param1 is the directory path name for the root folder for the game source aka D:\Tribes2
+	_dir_name = param3
+Else
+	_filesList = FileItemize( "%_tribes2DestRootFolder%\*.*")
+	_dirsList = DirItemize( "%_tribes2DestRootFolder%\*.*")
+	while ( (ItemCount( _filesList, @TAB) != 0) || (ItemCount( _dirsList, @TAB) != 0) )
+		_dir_name = AskDirectory( "Tribes2 Mod Dest Root Folder ? %_tribes2DestRootFolder%", "", "", "Tribes2 Mod Dest Root Folder is", 2) 
+		_filesList = FileItemize( "%_dir_name%*.*")
+		_dirsList = DirItemize( "%_dir_name%*.*")
+		if ( (ItemCount( _filesList, @TAB) == 0) && (ItemCount( _dirsList, @TAB) == 0) )
+			_tribes2DestRootFolder = _dir_name
+			break;
+		else
+			message("%wName%", "The folder you chose %_dir_name% is NOT empty so you will have to make it empty BEFORE this program can proceed... Thanks.")
+		endif
+	endwhile
+Endif
+
+if StrLen(_tribes2DestRootFolder) == 0
+	exit
+endif
+
+BoxCaption( 1, "%wName% - Please specify the Tribes2 Mod Source Prefs Folder")
+
+If IsDefined(param4)
+	; param1 is the directory path name for the root folder for the game source aka D:\Tribes2
+	_dir_name = param4
+Else
+	_filesList = FileItemize( "%_tribes2ModSourcePrefsFolder%\serverPrefs.cs")
+	_filesList2 = FileItemize( "%_tribes2ModSourcePrefsFolder%\*.cs*")
+	_dirsList = DirItemize( "%_tribes2ModSourcePrefsFolder%\*.*")
+	while ( (ItemCount( _filesList, @TAB) == 0) || (ItemCount( _filesList2, @TAB) <= 1) || (ItemCount( _dirsList, @TAB) != 0) )
+		_dir_name = AskDirectory( "Tribes2 Mod Source Prefs Folder ? %_tribes2ModSourcePrefsFolder%", "", "", "Tribes2 Mod Source Prefs Folder is", 2) 
+		_filesList = FileItemize( "%_dir_name%serverPrefs.cs")
+		_filesList2 = FileItemize( "%_dir_name%*.cs*")
+		_dirsList = DirItemize( "%_dir_name%*.*")
+		if ( (ItemCount( _filesList, @TAB) > 0) && (ItemCount( _filesList2, @TAB) > 1) && (ItemCount( _dirsList, @TAB) == 0) )
+			_tribes2ModSourcePrefsFolder = _dir_name
+			break;
+		else
+			message("%wName%", "The folder you chose %_dir_name% is NOT valid so you will have to find a valid folder BEFORE this program can proceed... Thanks.")
+		endif
+	endwhile
+Endif
+
+if StrLen(_tribes2ModSourcePrefsFolder) == 0
+	exit
+endif
+
+if _tribes2GameRootFolder == _tribes2ModRootFolder
+	message("%wName% - User Error", "The folder you selected for your Tribes2 Game Root Folder %_tribes2GameRootFolder% cannot be the same folder as your Tribes2 Mod Root Folder %_tribes2ModRootFolder% ! Try again...")
+	Goto retryHere
+else
+	if _tribes2GameRootFolder == _tribes2DestRootFolder
+		message("%wName% - User Error", "The folder you selected for your Tribes2 Game Root Folder %_tribes2GameRootFolder% cannot be the same folder as your Tribes2 Mod Dest Root Folder %_tribes2DestRootFolder% ! Try again...")
+		Goto retryHere
+	else
+		if _tribes2ModRootFolder == _tribes2DestRootFolder
+			message("%wName% - User Error", "The folder you selected for your Tribes2 Mod Root Folder %_tribes2ModRootFolder% cannot be the same folder as your Tribes2 Mod Dest Root Folder %_tribes2DestRootFolder% ! Try again...")
+			Goto retryHere
+		else
+		endif
+	endif
+endif
+
+;message("%wName%", "_tribes2GameRootFolder is %_tribes2GameRootFolder%, _tribes2ModRootFolder is %_tribes2ModRootFolder%, _tribes2DestRootFolder is %_tribes2DestRootFolder%")
+
+BoxCaption( 1, "%wName% - RESTRICTED USE - BE CAREFUL YOU HAVE PERMISSION TO USE...")
+
+message("%wName% - Copyright Notice", "NOTICE: This program is Protected by U.S Federal and International Copyright Laws and may NOT be downloaded or used without the expressed written permission of the author(s).");
+
+_i = ItemCount( _tribes2ModRootFolder, "\")
+if _i > 1
+	__Name = ItemExtract( _i, _tribes2ModRootFolder, "\")
+else
+	message("%wName% - Runtime Error", "Unable to determine the Mod Name from the Tribes2 Mod Root Folder : %_tribes2ModRootFolder%");
+	exit
+endif
+
+_modName = __Name
+
+__j = ItemLocate( _modName, _tribes2DestRootFolder, "\")
+if __j > 0
+	_tribes2DestRootFolder = ItemRemove( __j, _tribes2DestRootFolder, "\")
+endif
+
+__Name = ""
+for _i = 1 to ItemCount( _tribes2DestRootFolder, "\")
+	__Name = StrCat( __Name, ItemExtract( _i, _tribes2DestRootFolder, "\"), "\")
+next
+
+_destFolder = "%__Name%%_modName%"
+if DirExist( _destFolder) != @TRUE
+	DirMake( _destFolder)
+endif
+
+if StrSub( _tribes2ModRootFolder, StrLen(_tribes2ModRootFolder) - 1, 1) != "\"
+	_tribes2ModRootFolder = StrCat( _tribes2ModRootFolder, "\")
+endif
+
+for __i = 1 to _SourceFilesRoot0
+	_sourceFilePattern = StrCat( _tribes2ModRootFolder, _SourceFilesRoot%__i%)
+	BoxCaption( 1, "%wName% - Copying %_sourceFilePattern% to %_destFolder%")
+	FileCopy( _sourceFilePattern, _destFolder, @FALSE)
+next
+
+if StrSub( _tribes2DestRootFolder, StrLen(_tribes2DestRootFolder) - 1, 1) != "\"
+	_tribes2DestRootFolder = StrCat( _tribes2DestRootFolder, "\")
+endif
+
+_destFolder = "%_tribes2DestRootFolder%%_modName%\prefs"
+if DirExist( _destFolder) != @TRUE
+	DirMake( _destFolder)
+endif
+
+_sourceFilePattern = "%_tribes2ModSourcePrefsFolder%*.cs*"
+_filesListCs = FileItemize( "%_sourceFilePattern%")
+
+if (ItemCount( _filesListCS, @TAB) < 1)
+	message("%wName% - Runtime Error", "The folder %_sourceFilePattern% doesn't have any Prefs files in it - Try again !");
+	exit
+endif
+
+BoxCaption( 1, "%wName% - Copying %_sourceFilePattern% to %_destFolder%")
+FileCopy( _sourceFilePattern, _destFolder, @FALSE)
+
+_destFolder = "%_tribes2DestRootFolder%%_modName%\shapes"
+if DirExist( _destFolder) != @TRUE
+	DirMake( _destFolder)
+endif
+
+BoxCaption( 1, "%wName% - Copying %_sourceFilePattern% to %_destFolder%")
+_sourceFilePattern = StrCat( _tribes2ModRootFolder, "shapes\*.cs")
+_filesListCs = FileItemize( "%_sourceFilePattern%")
+_sourceFilePattern = StrCat( _tribes2ModRootFolder, "shapes\*.cs.dso")
+_filesListCsDso = FileItemize( "%_sourceFilePattern%")
+
+if ( (ItemCount( _filesListCSdso, @TAB) < 1) || (ItemCount( _filesListCSdso, @TAB) < ItemCount( _filesListCs, @TAB)) )
+	message("%wName% - Runtime Error", "The number of shapes\*.cs.dso is less than the number of shapes\*.cs - Recompile the Mod and try again !");
+	exit
+endif
+
+BoxCaption( 1, "%wName% - Preparing to Analyze shapes\*.cs.dso to remove shapes\*.cs that have shapes\*.cs.dso files")
+for __i = 1 to ItemCount( _filesListCS, @TAB)
+	__Name = ItemExtract( __i, _filesListCS, @TAB)
+	_filesListCS = ItemReplace( __Name, __i, _filesListCS, @TAB)
+next
+
+for __i = 1 to ItemCount( _filesListCSdso, @TAB)
+	__Name = ItemExtract( __i, _filesListCSdso, @TAB)
+	_filesListCSdso = ItemReplace( __Name, __i, _filesListCSdso, @TAB)
+next
+
+BoxCaption( 1, "%wName% - Analyzing shapes\*.cs.dso to remove shapes\*.cs that have shapes\*.cs.dso files")
+for __i = 1 to ItemCount( _filesListCSdso, @TAB)
+	__NameDso = ItemExtract( __i, _filesListCSdso, @TAB)
+	__Name = StrReplace( __NameDso, ".dso", "")
+
+;	__j = ItemLocate( __Name, _filesListCS, @TAB)
+;	if __j  > 0
+
+	_ILitem = __Name
+	_IList = _filesListCS
+	_ILdelim = @TAB
+	Gosub ItemLocate
+	if _ILfound  == @TRUE
+		__j = _ILnum
+		_sourceFilePatternDso = StrCat( _tribes2ModRootFolder, "shapes\%__NameDso%")
+		_sourceFilePatternCs = StrCat( _tribes2ModRootFolder, "shapes\%__Name%")
+		fileTimeDso = FileTimeCode( _sourceFilePatternDso)
+		fileTimeCs = FileTimeCode( _sourceFilePatternCs)
+		if fileTimeCs > fileTimeDso
+			message("%wName% - Runtime Error", "The source file shapes\%__Name% has been changed but NOT recompiled - Recompile the Mod and try again !");
+			exit
+		endif
+		_filesListCS = ItemRemove( __j, _filesListCS, @TAB)
+	endif
+next
+
+if (ItemCount( _filesListCS, @TAB) > 0)
+	message("%wName% - Runtime Error", "The number of shapes\*.cs.dso doesn't match the number of shapes\*.cs - Recompile the Mod and try again !");
+	exit
+endif
+
+_sourceFilePattern = StrCat( _tribes2ModRootFolder, "shapes\")
+BoxCaption( 1, "%wName% - Preparing shapes\*.cs.dso files to be copied to %_destFolder%")
+for __i = 1 to ItemCount( _filesListCSdso, @TAB)
+	__Name = StrCat( _sourceFilePattern, ItemExtract( __i, _filesListCSdso, @TAB))
+	_filesListCSdso = ItemReplace( __Name, __i, _filesListCSdso, @TAB)
+next
+
+FileCopy( _filesListCSdso, _destFolder, @FALSE)
+
+_destFolder = "%_tribes2DestRootFolder%%_modName%\scripts"
+if DirExist( _destFolder) != @TRUE
+	DirMake( _destFolder)
+endif
+
+_sourceFilePattern = StrCat( _tribes2ModRootFolder, "scripts\*.cs")
+BoxCaption( 1, "%wName% - Scanning %_sourceFilePattern%")
+_filesListCS = FileItemize( "%_sourceFilePattern%")
+
+_sourceFilePattern = StrCat( _tribes2ModRootFolder, "scripts\*.cs.dso")
+BoxCaption( 1, "%wName% - Scanning %_sourceFilePattern%")
+_filesListCSdso = FileItemize( "%_sourceFilePattern%")
+
+BoxCaption( 1, "%wName% - Preparing to Analyze *.cs.dso to remove *.cs that have *.cs.dso files")
+for __i = 1 to ItemCount( _filesListCS, @TAB)
+	__Name = ItemExtract( __i, _filesListCS, @TAB)
+	_filesListCS = ItemReplace( __Name, __i, _filesListCS, @TAB)
+next
+
+for __i = 1 to ItemCount( _filesListCSdso, @TAB)
+	__Name = ItemExtract( __i, _filesListCSdso, @TAB)
+	_filesListCSdso = ItemReplace( __Name, __i, _filesListCSdso, @TAB)
+next
+
+BoxCaption( 1, "%wName% - Analyzing *.cs.dso to remove *.cs that have *.cs.dso files")
+for __i = 1 to ItemCount( _filesListCSdso, @TAB)
+	__NameDso = ItemExtract( __i, _filesListCSdso, @TAB)
+	__Name = StrReplace( __NameDso, ".dso", "")
+
+;	__j = ItemLocate( __Name, _filesListCS, @TAB)
+
+	_ILitem = __Name
+	_IList = _filesListCS
+	_ILdelim = @TAB
+	Gosub ItemLocate
+	__j = 0
+	if _ILfound  == @TRUE
+		__j = _ILnum
+	endif
+
+	for __iX = 1 to _SourceFilesScriptsKeepFiles0
+		if StrLower( __Name) == StrLower( _SourceFilesScriptsKeepFiles%__iX%)
+			__j = 0  ; signal to bypass the removal of this file cuz it's on the keep list...
+			break
+		endif
+	next
+	if __j > 0
+		_sourceFilePatternDso = StrCat( _tribes2ModRootFolder, "scripts\%__NameDso%")
+		_sourceFilePatternCs = StrCat( _tribes2ModRootFolder, "scripts\%__Name%")
+		fileTimeDso = FileTimeCode( _sourceFilePatternDso)
+		fileTimeCs = FileTimeCode( _sourceFilePatternCs)
+		if fileTimeCs > fileTimeDso
+			message("%wName% - Runtime Error", "The source file scripts\%__Name% has been changed but NOT recompiled - Recompile the Mod and try again !");
+			exit
+		endif
+		_filesListCS = ItemRemove( __j, _filesListCS, @TAB)
+	endif
+next
+
+_sourceFilePattern = StrCat( _tribes2ModRootFolder, "scripts\")
+BoxCaption( 1, "%wName% - Preparing *.cs files to be copied to %_destFolder%")
+for __i = 1 to ItemCount( _filesListCS, @TAB)
+	__Name = StrCat( _sourceFilePattern, ItemExtract( __i, _filesListCS, @TAB))
+	_filesListCS = ItemReplace( __Name, __i, _filesListCS, @TAB)
+next
+
+BoxCaption( 1, "%wName% - Preparing *.cs.dso files to be copied to %_destFolder%")
+for __i = 1 to ItemCount( _filesListCSdso, @TAB)
+	__Name = StrCat( _sourceFilePattern, ItemExtract( __i, _filesListCSdso, @TAB))
+	_filesListCSdso = ItemReplace( __Name, __i, _filesListCSdso, @TAB)
+next
+
+BoxCaption( 1, "%wName% - Copying *.cs files to %_destFolder%")
+FileCopy( _filesListCS, _destFolder, @FALSE)
+
+BoxCaption( 1, "%wName% - Copying *.cs.dso files to %_destFolder%")
+FileCopy( _filesListCSdso, _destFolder, @FALSE)
+
+_sourceFilePattern = StrCat( _tribes2ModRootFolder, "scripts\*.*")
+BoxCaption( 1, "%wName% - Scanning %_sourceFilePattern% for folders to process")
+_dirsList = DirItemize( "%_sourceFilePattern%")
+
+_sourceFilePattern = StrReplace( _sourceFilePattern, "*.*", "")
+
+_dirsListCount = ItemCount( _dirsList, @TAB)
+
+BoxCaption( 1, "%wName% - Found %_dirsListCount% folders in %_sourceFilePattern%")
+
+BoxCaption( 1, "%wName% - Ignoring %_SourceFilesRemoveDir0% source folders under %_sourceFilePattern%")
+for __i = 1 to _SourceFilesRemoveDir0
+	__Name = _SourceFilesRemoveDir%__i%
+;	__j = ItemLocate( __Name, _dirsList, @TAB)
+
+	_ILitem = __Name
+	_IList = _dirsList
+	_ILdelim = @TAB
+	Gosub ItemLocate
+	__j = 0
+	if _ILfound  == @TRUE
+		__j = _ILnum
+	endif
+
+	if __j > 0
+		_dirsList = ItemRemove( __j, _dirsList, @TAB)
+	endif
+next
+
+for __i = 1 to ItemCount( _dirsList, @TAB)
+	__Name = ItemExtract( __i, _dirsList, @TAB)
+	_destFolder = "%_tribes2DestRootFolder%%_modName%\scripts\%__Name%"
+	if DirExist( _destFolder) != @TRUE
+		DirMake( _destFolder)
+	endif
+	for __iXX = 1 to _SourceFilesExcepDirs0
+;		__j%__iXX% = ItemLocate( __Name, StrLower( _SourceFilesExcepDirs%__iXX%), @TAB)
+
+		_ILitem = __Name
+		_IList = _SourceFilesExcepDirs%__iXX%
+		_ILdelim = @TAB
+		Gosub ItemLocate
+		__j%__iXX% = 0
+		if _ILfound  == @TRUE
+			__j%__iXX% = _ILnum
+		endif
+
+	next
+	__sourceFilePatternF = StrCat( _sourceFilePattern, "%__Name%\")
+	__sourceFilePattern = StrCat( __sourceFilePatternF, "*.cs*")
+	__filesList = FileItemize( "%__sourceFilePattern%")
+	for __iL = 1 to ItemCount( __filesList, @TAB)
+		__NameL = ItemExtract( __iL, __filesList, @TAB)
+		__filesList = ItemReplace( __NameL, __iL, __filesList, @TAB)
+	next
+	__sourceFilePattern = StrCat( __sourceFilePatternF, "*.cs.dso")
+	__filesListCSDso = FileItemize( "%__sourceFilePattern%")
+	for __iL = 1 to ItemCount( __filesListCSDso, @TAB)
+		__NameL = ItemExtract( __iL, __filesListCSDso, @TAB)
+		__filesListCSDso = ItemReplace( __NameL, __iL, __filesListCSDso, @TAB)
+	next
+	if __j1 > 0        ; AIEquipmentConfigs ?
+	else
+		if __j2 > 0        ; autoexec ?
+			__filesList = ""
+		else
+			if __j3 > 0        ; bwadmin ?
+				for __k = 1 to _SourceFilesBwAdminDelFiles0
+					__kName = StrLower( _SourceFilesBwAdminDelFiles%__k%)
+;					__jk = ItemLocate( __kName, __filesList, @TAB)
+
+					_ILitem = __kName
+					_IList = __filesList
+					_ILdelim = @TAB
+					Gosub ItemLocate
+					__jk = 0
+					if _ILfound  == @TRUE
+						__jk = _ILnum
+					endif
+
+					if __jk > 0
+						__filesList = ItemRemove( __jk, __filesList, @TAB)
+					endif
+				next
+				Gosub FilterCsFromCsDso
+			else
+				Gosub FilterCsFromCsDso
+			endif
+		endif
+	endif
+	if StrLen(__filesList) > 0
+		BoxCaption( 1, "%wName% - Preparing files from %__sourceFilePattern% to be copied to %_destFolder%")
+		for __k = 1 to ItemCount( __filesList, @TAB)
+			__zName = StrCat( __sourceFilePatternF, ItemExtract( __k, __filesList, @TAB))
+			__filesList = ItemReplace( __zName, __k, __filesList, @TAB)
+		next
+		BoxCaption( 1, "%wName% - Copying files from %__sourceFilePattern% to %_destFolder%")
+		FileCopy( __filesList, _destFolder, @FALSE)
+	endif
+next
+
+BoxCaption( 1, "%wName% - Done !")
+message("%wName%", "Done... Thanks.")
+
+exit
+
+
+:FilterCsFromCsDso
+	BoxCaption( 1, "%wName% - Analyzing scripts\%__Name%\*.cs.dso to remove scripts\%__Name%\*.cs that have scripts\%__Name%\*.cs.dso files")
+	for __iZ = 1 to ItemCount( __filesListCSDso, @TAB)
+		__NameZDso = ItemExtract( __iZ, __filesListCSDso, @TAB)
+		__NameZ = StrReplace( __NameZDso, ".dso", "")
+;		__jZ = ItemLocate( __NameZ, __filesList, @TAB)
+
+		_ILitem = __NameZ
+		_IList = __filesList
+		_ILdelim = @TAB
+		Gosub ItemLocate
+		__jZ = 0
+		if _ILfound  == @TRUE
+			__jZ = _ILnum
+		endif
+
+		if __jZ > 0
+			_sourceFilePatternDso = StrCat( __sourceFilePatternF, "%__NameZDso%")
+			_sourceFilePatternCs = StrCat( __sourceFilePatternF, "%__NameZ%")
+			fileTimeDso = FileTimeCode( _sourceFilePatternDso)
+			fileTimeCs = FileTimeCode( _sourceFilePatternCs)
+			if fileTimeCs > fileTimeDso
+				message("%wName% - Runtime Error", "The source file %__sourceFilePatternF%%__NameZ% has been changed but NOT recompiled - Recompile the Mod and try again !");
+				exit
+			endif
+			if __j3 > 0        ; bwadmin ?
+				for __iZK = 1 to _SourceFilesBwAdminKeepFiles0
+					if StrLower( __NameZ) == StrLower( _SourceFilesBwAdminKeepFiles%__iZK%)
+						__jZ = 0  ; bypass the removal of this file cuz we want to keep it...
+						break
+					endif
+				next
+			endif
+			if __jZ > 0
+				__filesList = ItemRemove( __jZ, __filesList, @TAB)
+			endif
+		endif
+	next
+return
+
+
+:ReadSourceFiles
+; INPUT - _sourceFilePattern
+; OUTPUT - _SourceFilesList
+if FileExist( _sourceFilePattern) == @TRUE
+	_SourceFilesList = ""
+	fIN = FileOpen( _sourceFilePattern, "READ")
+	while @TRUE				; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		_SourceFilesList = StrCat( _SourceFilesList, x, @TAB)
+	endwhile
+	FileClose(fIN)
+endif
+return
+
+
+:ItemLocate
+; INPUT - _ILitem
+; INPUT - _IList
+; INPUT - _ILdelim
+; OUTPUT - _ILnum
+; OUTPUT - _ILfound
+	_ILfound = @FALSE
+	__ILitem = StrLower( _ILitem)
+	for _ILnum = 1 to ItemCount( _IList, _ILdelim)
+		_ILit = StrLower( ItemExtract( _ILnum, _IList, _ILdelim))
+		if __ILitem == _ILit
+			_ILfound = @TRUE
+			break
+		endif
+	next
+return
+

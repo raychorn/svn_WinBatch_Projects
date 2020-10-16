@@ -1,0 +1,9 @@
+open ediftp.ingrammicro.com
+user
+US112544
+vision
+binary
+prompt n
+lcd c:\@temp
+mget *.*
+quit 

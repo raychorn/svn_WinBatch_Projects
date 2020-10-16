@@ -1,0 +1,238 @@
+; simulation-mixers.wbt
+
+;Debug( @ON)
+
+_wname = "simulation-mixers"
+wname = "%_wname%.wbt v1.0 (c)2004 HAL Smalltalker, Inc., All Rights Reserved."
+
+CR = StrCat(Num2Char(13),Num2Char(10))
+
+_q0 = ""
+_q1 = ""
+_q2 = ""
+_q3 = ""
+_q4 = ""
+_q5 = ""
+_q6 = ""
+_q7 = ""
+_q8 = ""
+_q9 = ""
+_q10 = ""
+_q11 = ""
+_q12 = ""
+
+_currentTime = 0
+
+_currentTime0 = ""
+_currentTime1 = 0
+_currentTime2 = 0
+_currentTime3 = 0
+_currentTime4 = 0
+_currentTime5 = 0
+_currentTime6 = 0
+_currentTime7 = 0
+_currentTime8 = 0
+_currentTime9 = 0
+_currentTime10 = 0
+_currentTime11 = 0
+
+;Station ** Task ***** Assigned Task Time (minutes)
+;1 ******* 1 ******* *3.0
+;2 ******* 3; 4 ***** *1.5; 2.0
+;3 ******* 2; 5; 6 **** 1.5; 1.5; 1.0
+;4 ******* 7 * *******3.0
+;5 ******* 8 ******** 2.5
+;6 * ******9; 10; 11 ** 2.0; 1.0; 1.0
+
+_maxTime0 = ""
+_maxTime1 = Int(60 * 3.0)
+_maxTime2 = Int(60 * 1.5) + Int(60 * 2.0)
+_maxTime3 = Int(60 * 1.5) + Int(60 * 1.5) + Int(60 * 1.0)
+_maxTime4 = Int(60 * 3.0)
+_maxTime5 = Int(60 * 2.5)
+_maxTime6 = Int(60 * 2.0) + Int(60 * 1.0) + Int(60 * 1.0)
+_maxTime7 = ""
+_maxTime8 = ""
+_maxTime9 = ""
+_maxTime10 = ""
+_maxTime11 = ""
+_maxTime12 = ""
+
+_lastTime = -1
+
+_lastTimes = ""
+_diffTimes = ""
+
+BoxOpen("%wname%","")
+
+while ( (IsKeyDown(@CTRL) == @NO) && (ItemCount( _lastTimes, ",") < 15) )
+	_q0 = StrCat( _q0, "M")
+	TimeDelay(1)
+	_currentTime = _currentTime + 1
+
+	if StrLen(_q0) > 0
+		_person = StrSub( _q0, 1, 1)
+		_q0 = StrSub( _q0, 2, StrLen(_q0) - 1)
+		if StrLen(_q1) < 30
+			_q1 = StrCat( _q1, _person)
+		endif
+	endif
+
+	if StrLen(_q1) > 0
+		_currentTime1 = _currentTime1 + 1
+		if _currentTime1 == _maxTime1
+			_currentTime1 = 0
+			_person = StrSub( _q1, 1, 1)
+			_q1 = StrSub( _q1, 2, StrLen(_q1) - 1)
+			_q2 = StrCat( _q2, _person)
+		endif
+	endif
+
+	if StrLen(_q2) > 0
+		_currentTime2 = _currentTime2 + 1
+		if _currentTime2 == _maxTime2
+			_currentTime2 = 0
+			_person = StrSub( _q2, 1, 1)
+			_q2 = StrSub( _q2, 2, StrLen(_q2) - 1)
+			_q3 = StrCat( _q3, _person)
+		endif
+	endif
+
+	if StrLen(_q3) > 0
+		_currentTime3 = _currentTime3 + 1
+		if _currentTime3 == _maxTime3
+			_currentTime3 = 0
+			_person = StrSub( _q3, 1, 1)
+			_q3 = StrSub( _q3, 2, StrLen(_q3) - 1)
+			_q4 = StrCat( _q4, _person)
+		endif
+	endif
+
+	if StrLen(_q4) > 0
+		_currentTime4 = _currentTime4 + 1
+		if _currentTime4 == _maxTime4
+			_currentTime4 = 0
+			_person = StrSub( _q4, 1, 1)
+			_q4 = StrSub( _q4, 2, StrLen(_q4) - 1)
+			_q5 = StrCat( _q5, _person)
+		endif
+	endif
+
+	if StrLen(_q5) > 0
+		_currentTime5 = _currentTime5 + 1
+		if _currentTime5 == _maxTime5
+			_currentTime5 = 0
+			_person = StrSub( _q5, 1, 1)
+			_q5 = StrSub( _q5, 2, StrLen(_q5) - 1)
+			_q6 = StrCat( _q6, _person)
+		endif
+	endif
+
+	goto skip1
+
+	if StrLen(_q6) > 0
+		_currentTime6 = _currentTime6 + 1
+		if _currentTime6 == _maxTime6
+			_currentTime6 = 0
+			_person = StrSub( _q6, 1, 1)
+			_q6 = StrSub( _q6, 2, StrLen(_q6) - 1)
+			_q7 = StrCat( _q7, _person)
+		endif
+	endif
+
+	if StrLen(_q7) > 0
+		_currentTime7 = _currentTime7 + 1
+		if _currentTime7 == _maxTime7
+			_currentTime7 = 0
+			_person = StrSub( _q7, 1, 1)
+			_q7 = StrSub( _q7, 2, StrLen(_q7) - 1)
+			_q8 = StrCat( _q8, _person)
+		endif
+	endif
+
+	if StrLen(_q8) > 0
+		_currentTime8 = _currentTime8 + 1
+		if _currentTime8 == _maxTime8
+			_currentTime8 = 0
+			_person = StrSub( _q8, 1, 1)
+			_q8 = StrSub( _q8, 2, StrLen(_q8) - 1)
+			_q9 = StrCat( _q9, _person)
+		endif
+	endif
+
+	if StrLen(_q9) > 0
+		_currentTime9 = _currentTime9 + 1
+		if _currentTime9 == _maxTime9
+			_currentTime9 = 0
+			_person = StrSub( _q9, 1, 1)
+			_q9 = StrSub( _q9, 2, StrLen(_q9) - 1)
+			_q10 = StrCat( _q10, _person)
+		endif
+	endif
+
+	if StrLen(_q10) > 0
+		_currentTime10 = _currentTime10 + 1
+		if _currentTime10 == _maxTime10
+			_currentTime10 = 0
+			_person = StrSub( _q10, 1, 1)
+			_q10 = StrSub( _q10, 2, StrLen(_q10) - 1)
+			_q11 = StrCat( _q11, _person)
+		endif
+	endif
+
+:skip1
+
+	if StrLen(_q6) > 0
+		_currentTime6 = _currentTime6 + 1
+		if _currentTime6 == _maxTime6
+			_currentTime6 = 0
+			_person = StrSub( _q6, 1, 1)
+			_q6 = StrSub( _q6, 2, StrLen(_q6) - 1)
+			_q7 = StrCat( _q7, _person)
+			_lastTime = _currentTime
+			_diffTime = _lastTime
+			if ItemCount( _lastTimes, ",") > 0
+				_diffTime = _lastTime - ItemExtract( ItemCount( _lastTimes, ","), _lastTimes, ",")
+			endif
+			_lastTimes = ItemInsert( _lastTime, -1, _lastTimes, ",")
+			_diffTimes = ItemInsert( _diffTime, -1, _diffTimes, ",")
+		endif
+	endif
+
+	_pad = 0
+	_ct = _currentTime
+	_hh = Int(_ct / 3600)
+	if StrLen(_hh) < 2 then _hh = "0%_hh%"
+	_ct = _ct - (_hh * 3600)
+	_mm = Int(_ct / 60)
+	if StrLen(_mm) < 2 then _mm = "0%_mm%"
+	_ct = _ct - (_mm * 60)
+	_ss = _ct
+	if StrLen(_ss) < 2 then _ss = "0%_ss%"
+	_Text = "%_currentTime% s (%_hh%:%_mm%:%_ss%)"
+	_Text = StrCat( _Text, " ")
+	_Text = StrCat( _Text, "# Secs Max  Mixers = 'M'", CR)
+	for _i = 1 to 7
+		_t1 = _currentTime%_i%
+		_pad1 = 2 - StrLen(_t1)
+		if _pad1 > 0
+			for _j = 1 to _pad1
+				_t1 = StrCat( _t1, "_")
+			next
+		else
+			_v1 = ""
+		endif
+		_Text = StrCat( _Text, " Queue  #%_i%   ", _t1, "   ", _maxTime%_i%, "   ", _q%_i%, CR)
+	next
+	_Text = StrCat( _Text, " Total times ", _lastTimes, CR)
+	_Text = StrCat( _Text, " Diff times  ", _diffTimes, CR)
+	_Text = StrCat( _Text, " Press and Hold the Ctrl key down to terminate...", CR)
+	BoxText( _Text)
+
+endwhile
+
+BoxShut()
+
+exit
+
+

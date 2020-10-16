@@ -1,0 +1,112 @@
+:NavigationBar
+
+WebOut('<HR>', _html_crlf)
+
+If StrCmp( _action, _action_ListCustRecords) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><SMALL><INPUT TYPE="CHECKBOX" NAME="%_option_ShowDelinquencyStatus%" VALUE="%_option_ShowDelinquencyStatus%"> Show Delinquency Status - Very Slow!</SMALL></B>', 0)
+    WebOut('<BR>', 0)
+    WebOut('<B><SMALL><INPUT TYPE="CHECKBOX" NAME="%_option_ShowDomains%" VALUE="%_option_ShowDomains%"> Show Domain/IP Name</SMALL></B>', 0)
+    WebOut('<BR>', 0)
+    WebOut('<B><SMALL><INPUT TYPE="CHECKBOX" NAME="%_option_ShowOnlyDelinquencies%" VALUE="%_option_ShowOnlyDelinquencies%"> Show ONLY Delinquencies</SMALL></B>', 0)
+    WebOut('<BR>', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListCustRecords%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListCustRecords%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+WebOut('<HR WIDTH="75%%">', _html_crlf)
+
+If StrCmp( _action, _action_ListDomainRecords) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListDomainRecords%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListDomainRecords%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+If StrCmp( _action, _action_ListIPRecords) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListIPRecords%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListIPRecords%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+If b_is_admin_ip == @TRUE
+    If StrCmp( _action, _action_EMailCustRecords) <> 0
+        WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+        WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_EMailCustRecords%"></B>', 0)
+        WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_EMailCustRecords%">', 0)
+        WebOut('</FORM>', _html_crlf)
+    Endif
+Endif
+
+WebOut('<HR WIDTH="75%%">', _html_crlf)
+
+If StrCmp( _action, _action_ListMissingCC) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListMissingCC%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListMissingCC%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+If StrCmp( _action, _action_ListExpiringCC) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListExpiringCC%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListExpiringCC%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+If b_is_admin_ip == @TRUE
+    If StrCmp( _action, _action_EMailExpiringCC) <> 0
+        WebOut('<B><A HREF="%_action_EMailExpiringCC_URL%" TARGET="_new">%_action_EMailExpiringCC%</A></B><BR>', _html_crlf)
+    Endif
+
+    WebOut('<BR><B><A HREF="%_action_ViewBPPELogs_URL%" TARGET="_new">%_action_ViewBPPELogs%</A></B><BR>', _html_crlf)
+Endif
+
+If (StrCmp( _action, _action_ListZone1CustRecords) <> 0) || (StrCmp( _action, _action_ListZone1DomainRecords) <> 0)
+    WebOut('<HR>', _html_crlf)
+    WebOut('<B><SMALL>Adult-Zone Dedicated Server</SMALL></B><BR><BR>', _html_crlf)
+Endif
+
+If StrCmp( _action, _action_ListZone1CustRecords) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListZone1CustRecords%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListZone1CustRecords%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+If StrCmp( _action, _action_ListZone1DomainRecords) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListZone1DomainRecords%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListZone1DomainRecords%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+If StrCmp( _action, _action_ListZone1MissingCC) <> 0
+    WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+    WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ListZone1MissingCC%"></B>', 0)
+    WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ListZone1MissingCC%">', 0)
+    WebOut('</FORM>', _html_crlf)
+Endif
+
+If b_is_admin_ip == @TRUE
+    If StrCmp( _action, _action_EMailZone1Records) <> 0
+        WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+        WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_EMailZone1Records%"></B>', 0)
+        WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_EMailZone1Records%">', 0)
+        WebOut('</FORM>', _html_crlf)
+    Endif
+
+    WebOut('<HR>', _html_crlf)
+
+;    If StrCmp( _action, _action_ImportOldCustDb) <> 0
+;        WebOut('<FORM ACTION="%_this_import_cgi%" METHOD="POST" TARGET="_top">', 0)
+;        WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_ImportOldCustDb%"></B>', 0)
+;        WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_ImportOldCustDb%">', 0)
+;        WebOut('</FORM>', _html_crlf)
+;    Endif
+Endif
+
+return
+

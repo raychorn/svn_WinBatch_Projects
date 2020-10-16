@@ -1,0 +1,53 @@
+; ftp-saver.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+IntControl(41, 1, 0, 0, 0) ; Y2K to 4 digit YYYY
+
+_appName = "ftp-saver"
+
+_dir_name = "F:\webcelerator-N\"
+
+wname_save_as = "Save As..."
+
+_max_secs_wait_for_save = 60 * 5
+
+wname_webcelerator = "webcelerator"
+
+_begin_time = TimeYmdHms()
+while 1
+	win_title_list = WinItemize( )
+	i = ItemLocate( wname_save_as, win_title_list, @TAB)
+	while i > 0
+		If i > 0
+			_wname_to_handle = ItemExtract( i, win_title_list, @TAB)
+			win_title_list = ItemRemove( i, win_title_list, @TAB)
+			WinActivate( _wname_to_handle)
+			Gosub getTargetFilename
+			If StrLen( _target_file_name) > 0
+				SendKey( '%_target_file_name%{ENTER}')
+			Endif
+		Endif
+		i = ItemLocate( wname_save_as, win_title_list, @TAB)
+	endwhile
+
+	_now_time = TimeYmdHms()
+	If TimeDiffSecs( _now_time, _begin_time) > _max_secs_wait_for_save
+		break
+	Endif
+
+	Delay( 1)
+endwhile
+
+exit
+
+
+:getTargetFilename
+_target_file_name = ""
+For _i = 1 to 65535
+	_target_file_name = "%_dir_name%webcelerator%_i%.exe"
+	If FileExist( _target_file_name) == @FALSE
+		break
+	Endif
+Next
+return
+

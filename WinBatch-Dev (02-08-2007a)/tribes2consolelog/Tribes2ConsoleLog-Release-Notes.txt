@@ -1,0 +1,25 @@
+Quick readme on this release of Tribes2ConsoleLog.EXE - The Tribes2 Utilities to Cycle the Console.Log file once a day at midnite.
+
+-------------------
+Installation
+-------------------
+
+Make a folder under C:\Program Files or the like and then double click tribes2consolelog.exe
+
+You will be asked for your Tribes2 root folder.
+
+Tribes2ConsoleLog then waits until 12:00a the next night and then cycles the existing console.log file to save the contents of the current console.log file and make a new one. Each saved console.log file is then date stamped for later reference.
+
+Note : This Utility program works ONLY with the {USB}Mayhem Mod vers 1.24+22755 or later.
+
+Tribes2ConsoleLog assumes your Tribes2 Server is currently running.
+
+---------------------
+Contact
+---------------------
+
+This is an early release, more features to come.  
+Please send comments and bug reports to 
+halsmalltalker@hotmail.com
+
+Thank you and enjoy!

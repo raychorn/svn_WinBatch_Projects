@@ -1,0 +1,34 @@
+:ViewCustomerWebSiteButton
+; sql_level ............. input - the sql level 2-10 (optional)
+; sql_html_file ......... input - the name of the html file
+
+If IsDefined( sql_level) == @NO
+    sql_level = ""
+Endif
+
+WebOut('<TABLE WIDTH="*" BORDER="1"><SQTBODY><COLDEFS><COLDEF></COLDEFS><ROWS><TR><TD COLSTART="1">', 0)
+WebOut('<B>WebSite(s): <SMALL><I>Each Button Grants Access to the Domain Name/IP Address Listed</I></SMALL></B>', 0)
+WebOut('<CENTER>', 0)
+
+_table = "website"
+;sql_stmnt%sql_level% = "SELECT custid, domain_name, ip FROM website WHERE custid = %_custid% ORDER BY domain_name, ip ;"
+;sql_fetch_map%sql_level% = "N,S129,S33"
+sql_stmnt%sql_level% = "SELECT w.custid, w.domain_name, w.ip, w.id FROM website w WHERE w.custid = %_custid% AND w.termination IS NULL ORDER BY w.domain_name, w.ip;"
+sql_fetch_map%sql_level% = "N,S129,S33,N"
+sql_fetch_gosub%sql_level% = "ViewACustWebSiteContactButton"
+sql_fetch = @TRUE
+sql_alias%sql_level% = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+WebOut('</CENTER>', 0)
+WebOut('</TD></TR></ROWS></SQTBODY></TABLE>', _html_crlf)
+
+If IsDefined( sql_level) == @YES
+    If StrLen( sql_level) == 0
+        Drop( sql_level)
+    Endif
+Endif
+
+return
+

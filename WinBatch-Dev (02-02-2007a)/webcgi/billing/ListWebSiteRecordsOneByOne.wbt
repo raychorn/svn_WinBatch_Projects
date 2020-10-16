@@ -1,0 +1,34 @@
+:ListWebSiteRecordsOneByOne
+
+_record_count = 1
+
+WebOut('<OPTION VALUE="', 0)
+If IsDefined( %sql_alias%1) == @YES
+    WebOut(%sql_alias%1, 0)
+Endif
+WebOut('"', 0)
+If _record_count == 1
+    WebOut(' SELECTED="SELECTED"', 0)
+Endif
+WebOut('>%_record_count%: ID#', 0)
+If IsDefined( %sql_alias%1) == @YES
+    WebOut(%sql_alias%1, 0)
+Endif
+If IsDefined( %sql_alias%2) == @YES
+    If StrLen( %sql_alias%2) > 0
+        WebOut(' ', 0)
+        WebOut(%sql_alias%2, 0)
+    Endif
+Endif
+If IsDefined( %sql_alias%3) == @YES
+    If StrLen( %sql_alias%3) > 0
+        WebOut(',', 0)
+        WebOut(%sql_alias%3, 0)
+    Endif
+Endif
+WebOut('</OPTION>', _html_crlf)
+
+_record_count = _record_count + 1
+
+return
+

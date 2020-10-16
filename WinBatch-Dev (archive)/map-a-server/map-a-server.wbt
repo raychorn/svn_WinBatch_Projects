@@ -1,0 +1,326 @@
+; map-a-server.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_yyyy = ItemExtract( 1, TimeYmdHms(), ":")
+if _yyyy > 1999
+	_yyyy = StrCat( "1999-", _yyyy)
+endif
+wName = "map-a-server.wbt (c). Copyright %_yyyy% Ray Horn"
+
+BoxCaption( 1, wName)
+
+_CSAAFWCR01_SOFTWARE = "\\CSAAFWCR01\SOFTWARE"
+_CSAAFWCR01_VERCTRL = "\\CSAAFWCR01\VERCTRL"
+
+_CSAAFWCR01_SOFTWARE = StrReplace( _CSAAFWCR01_SOFTWARE, "CSAAFWCR01", "192.168.114.10")
+_CSAAFWCR01_VERCTRL = StrReplace( _CSAAFWCR01_VERCTRL, "CSAAFWCR01", "192.168.114.10")
+
+_UserName = "dkostovets"
+_Password = "password"
+
+_drive_letters = "CDEFGHIJKLMNOPQRSTUVWXYZ"
+
+;It is \\CSAAFWCR01\SOFTWARE AND 
+;\\CSAAFWCR01\VERCTRL
+;User name is: dkostovets
+;Password is: password
+
+;Debug( @TRUE)
+
+If param0 > 0
+	; param1 is the _UserName 
+	_UserName = param1
+Else
+	_UserName = AskLine(wName, "What is your username? (YOUR username for CSAAFWCR01)", "")
+Endif
+
+if StrLen( _UserName) < 1
+	Message("ERROR", "Unknown usernames NOT allowed !")
+	exit
+endif
+
+If param0 > 1
+	; param2 is the _Password 
+	_Password = param2
+Else
+;	_Password = AskLine(wName, "What is your password? (This is your password for the CSAAFWCR01 shared resource)", "")
+	_Password = AskPassword ( wName, "What is your password?")
+Endif
+
+if StrLen( _Password) < 1
+	Message("ERROR", "Unknown passwords NOT allowed !")
+	exit
+endif
+
+If param0 > 2
+	; param3 is the default drive letter for _CSAAFWCR01_SOFTWARE - the default is to use the next unallocated drive letter available
+	_default_drive_letter1 = param3
+Else
+	_default_drive_letter1 = AskLine(wName, "What drive letter should be used to map to %_CSAAFWCR01_SOFTWARE%? (The default is to map %_CSAAFWCR01_SOFTWARE% using the next available drive letter) DO NOT ENTER A COLON (:) after the drive letter.", "")
+Endif
+
+If param0 > 3
+	; param4 is the default drive letter for _CSAAFWCR01_VERCTRL - the default is to use the next unallocated drive letter available
+	_default_drive_letter2 = param3
+Else
+	_default_drive_letter2 = AskLine(wName, "What drive letter should be used to map to %_CSAAFWCR01_VERCTRL%? (The default is to map %_CSAAFWCR01_VERCTRL% using the next available drive letter) DO NOT ENTER A COLON (:) after the drive letter.", "")
+Endif
+
+b_isNT = @FALSE
+b_is9x = @FALSE
+
+_ver5 = WinVersion(5)
+if ItemCount( _ver5, "-") == 3
+	_verPlatform = ItemExtract( 1, _ver5, "-")
+	_verMajor = ItemExtract( 2, _ver5, "-")
+	_verMinor = ItemExtract( 3, _ver5, "-")
+	if _verPlatform == 2  ; running NT
+;      Message("You are running", "Windows NT")
+		AddExtender("WWWNT32I.DLL")
+		b_isNT = @TRUE
+	else						 ; maybe Win9x
+		;determine 95 or 98 platform
+		AddExtender("WWW9532I.DLL")
+		b_is9x = @TRUE
+		if _verMajor == 4
+		   if _verMinor == 0
+;		      Message("You are running", "Windows 95")
+		   else
+;		      Message("You are running", "Windows 98 or newer")
+		endif
+	endif
+endif
+
+if b_is9x
+	mTC_resourceName = _CSAAFWCR01_SOFTWARE
+	mTC_userName = _UserName
+	mTC_password = _Password
+	mTC_default_drive_letter = _default_drive_letter1
+	Gosub makeTheConnection
+
+	mTC_resourceName = _CSAAFWCR01_VERCTRL
+	mTC_default_drive_letter = _default_drive_letter2
+	Gosub makeTheConnection
+
+	Drop( mTC_resourceName, mTC_userName, mTC_password, mTC_default_drive_letter)
+endif
+
+exit
+
+
+:makeTheConnection
+; input ...  mTC_resourceName ....... holds the name of the network resource
+; input ...  mTC_userName ........... holds the user name for the person who can access the network resource
+; input ...  mTC_password ........... holds the password for the person who can access the network resource
+; input ...  mTC_default_drive_letter holds the default drive letter as entered by the user
+
+	_drives = w95GetDrive( mTC_resourceName)
+	for _i = 1 to ItemCount( _drives, @TAB)
+		_aDrive = ItemExtract( _i, _drives, @TAB)
+		w95CancelCon( _aDrive, @TRUE, @TRUE)
+	next
+	b_foundDriveLetter = @FALSE
+	if (StrLen( mTC_default_drive_letter) > 0) && (StrIndexNc( _drive_letters, mTC_default_drive_letter, 1, @FWDSCAN) > 0)
+		b_foundDriveLetter = @TRUE
+		_nextFreeDriveLetter = StrUpper( StrTrim( StrSub( mTC_default_drive_letter, 1, 1)))
+		if StrIndex( _nextFreeDriveLetter, ":", 1, @FWDSCAN) < 1
+			_nextFreeDriveLetter = StrCat( _nextFreeDriveLetter, ":")
+		endif
+	else
+		if ItemCount( _drives, @TAB) > 0
+			b_foundDriveLetter = @TRUE
+			_nextFreeDriveLetter = ItemExtract( 1, _drives, @TAB)
+		else
+			_iFreeDriveLetter = StrLen( _drive_letters)
+			_mappedDrives = DiskScan( 4) ; get a list of mapped drives
+			while b_foundDriveLetter == @FALSE
+				_nextFreeDriveLetter = StrCat( StrSub( _drive_letters, _iFreeDriveLetter, 1), ":")
+				if ItemLocate( _nextFreeDriveLetter, _mappedDrives, @TAB) > 0
+					_iFreeDriveLetter = _iFreeDriveLetter - 1
+					if _iFreeDriveLetter < 1
+						_iFreeDriveLetter = 1
+						break
+					endif
+				else
+					b_foundDriveLetter = @TRUE
+				endif
+			endwhile
+		endif
+	endif
+
+	ErrorMode(@OFF)
+	LastError()
+	w95AddDrive( mTC_userName, mTC_password, mTC_resourceName, _nextFreeDriveLetter, @FALSE)
+	_lastError = LastError()
+	ErrorMode(@CANCEL)
+	Gosub decodeNetworkError
+	if b_wasError == @TRUE
+		Message( "ERROR #%_lastError% - %mTC_resourceName%", _errorMsg)
+	endif
+
+return
+
+:decodeNetworkError
+; input ...  _lastError ... holds the value of the last error message
+; output ... b_wasError ... @TRUE if there was an error else @FALSE
+; output ... _errorMsg  ... holds the actual error message
+
+_errorCodes = "185:Bad name for local drive or printer,"
+_errorCodes = StrCat( _errorCodes, "499:Unrecognized network error #,")
+_errorCodes = StrCat( _errorCodes, "500:Access is denied.,")
+_errorCodes = StrCat( _errorCodes, "501:LocalName is already connected.,")
+_errorCodes = StrCat( _errorCodes, "502:Device and resource do not match.,")
+_errorCodes = StrCat( _errorCodes, "503:LocalName is invalid.,")
+_errorCodes = StrCat( _errorCodes, "504:ResourceName is not valid or cannot be located.,")
+_errorCodes = StrCat( _errorCodes, "505:The user profile is in an incorrect format.,")
+_errorCodes = StrCat( _errorCodes, "506:Unable to open the user profile to process persistent connections.,")
+_errorCodes = StrCat( _errorCodes, "507:LocalName is already in the user profile.,")
+_errorCodes = StrCat( _errorCodes, "508:Password is invalid.,")
+_errorCodes = StrCat( _errorCodes, "509:Network component is not started or invalid,")
+_errorCodes = StrCat( _errorCodes, "510:The network is not present.,")
+_errorCodes = StrCat( _errorCodes, "511:Device in use.,")
+_errorCodes = StrCat( _errorCodes, "512:Device not currently connected.,")
+_errorCodes = StrCat( _errorCodes, "513:Open files on device and FORCE=@FALSE.,")
+_errorCodes = StrCat( _errorCodes, "514:Device not currently available.,")
+_errorCodes = StrCat( _errorCodes, "515:Invalid Password.,")
+_errorCodes = StrCat( _errorCodes, "516:Insufficient memory.,")
+_errorCodes = StrCat( _errorCodes, "517:Not supported in current NT version (Invalid Parameter).,")
+_errorCodes = StrCat( _errorCodes, "518:Invalid 'net-resource'.,")
+_errorCodes = StrCat( _errorCodes, "519:Invalid 'scope' ,")
+_errorCodes = StrCat( _errorCodes, "520:Invalid 'type' ,")
+_errorCodes = StrCat( _errorCodes, "521:Invalid 'usage' ,")
+_errorCodes = StrCat( _errorCodes, "522:Unable to allocate (or lock) memory,")
+_errorCodes = StrCat( _errorCodes, "523:Error enumerating network resources,")
+_errorCodes = StrCat( _errorCodes, "524:Unable to access specified server,")
+_errorCodes = StrCat( _errorCodes, "525:Invalid resource,")
+_errorCodes = StrCat( _errorCodes, "526:Invalid share name,")
+_errorCodes = StrCat( _errorCodes, "527: Invalid 'max-users',")
+_errorCodes = StrCat( _errorCodes, "528:Error creating share,")
+_errorCodes = StrCat( _errorCodes, "529:Error deleting share,")
+_errorCodes = StrCat( _errorCodes, "530:Access denied,")
+_errorCodes = StrCat( _errorCodes, "531:Invalid parameter,")
+_errorCodes = StrCat( _errorCodes, "532:Error looking up specified user/group name,")
+_errorCodes = StrCat( _errorCodes, "533:Share already exists with the specified name,")
+_errorCodes = StrCat( _errorCodes, "534:Invalid share type,")
+_errorCodes = StrCat( _errorCodes, "535:Invalid printer name,")
+_errorCodes = StrCat( _errorCodes, "536:Error accessing share information,")
+_errorCodes = StrCat( _errorCodes, "537:Error setting share information,")
+_errorCodes = StrCat( _errorCodes, "538:Unable to access specified printer,")
+_errorCodes = StrCat( _errorCodes, "539:Error accessing printer information,")
+_errorCodes = StrCat( _errorCodes, "540:Error setting printer information,")
+_errorCodes = StrCat( _errorCodes, "541:Invalid resource,")
+_errorCodes = StrCat( _errorCodes, "542:Invalid user/group name,")
+_errorCodes = StrCat( _errorCodes, "543:Invalid 'object-type',")
+_errorCodes = StrCat( _errorCodes, "544:Invalid resource/share-name,")
+_errorCodes = StrCat( _errorCodes, "545:Invalid 'access-string',")
+_errorCodes = StrCat( _errorCodes, "546:Invalid file/directory name,")
+_errorCodes = StrCat( _errorCodes, "547:Error accessing file/directory information,")
+_errorCodes = StrCat( _errorCodes, "548:Error setting file/directory information,")
+_errorCodes = StrCat( _errorCodes, "549:Invalid registry key handle,")
+_errorCodes = StrCat( _errorCodes, "550:Unable to open registry key,")
+_errorCodes = StrCat( _errorCodes, "551:Error accessing registry key information,")
+_errorCodes = StrCat( _errorCodes, "552:Error setting registry key information,")
+_errorCodes = StrCat( _errorCodes, "553:Error accessing object's ACL,")
+_errorCodes = StrCat( _errorCodes, "554:Error adding new access record,")
+_errorCodes = StrCat( _errorCodes, "555:Error setting new ACL,")
+_errorCodes = StrCat( _errorCodes, "556:Error initializing new ACL,")
+_errorCodes = StrCat( _errorCodes, "557:Error initializing new SD,")
+_errorCodes = StrCat( _errorCodes, "558:Error accessing ACL information,")
+_errorCodes = StrCat( _errorCodes, "559:Error reading ACL,")
+_errorCodes = StrCat( _errorCodes, "560:Error updating ACL,")
+_errorCodes = StrCat( _errorCodes, "561:Invalid group name,")
+_errorCodes = StrCat( _errorCodes, "562:Invalid user name,")
+_errorCodes = StrCat( _errorCodes, "563:Invalid 'group-type',")
+_errorCodes = StrCat( _errorCodes, "564:Error getting group information,")
+_errorCodes = StrCat( _errorCodes, "565:Error adding user to group,")
+_errorCodes = StrCat( _errorCodes, "566:User has an invalid account type,")
+_errorCodes = StrCat( _errorCodes, "567:Error removing user from group,")
+_errorCodes = StrCat( _errorCodes, "568:Error itemizing groups,")
+_errorCodes = StrCat( _errorCodes, "569:Invalid flags,")
+_errorCodes = StrCat( _errorCodes, "570:Operation allowed only on primary domain controller,")
+_errorCodes = StrCat( _errorCodes, "571:Operation not allowed on this special group,")
+_errorCodes = StrCat( _errorCodes, "572:Specified 'net-resource' is not a container,")
+_errorCodes = StrCat( _errorCodes, "573:Access denied, or invalid provider,")
+_errorCodes = StrCat( _errorCodes, "574:Invalid provider,")
+_errorCodes = StrCat( _errorCodes, "575:Function failed,")
+_errorCodes = StrCat( _errorCodes, "576:Invalid server type,")
+_errorCodes = StrCat( _errorCodes, "577:Service name not specified,")
+_errorCodes = StrCat( _errorCodes, "578:'flags' does not include a service type,")
+_errorCodes = StrCat( _errorCodes, "579:'flags' does not include a service state,")
+_errorCodes = StrCat( _errorCodes, "580:No browser servers found,")
+_errorCodes = StrCat( _errorCodes, "581:Error enumerating servers,")
+_errorCodes = StrCat( _errorCodes, "582:Invalid access rights,")
+_errorCodes = StrCat( _errorCodes, "583:Error reading access information,")
+_errorCodes = StrCat( _errorCodes, "584:Error creating access list,")
+_errorCodes = StrCat( _errorCodes, "585:System not set up for user-level access control,")
+_errorCodes = StrCat( _errorCodes, "586:Unable to access specified server or domain,")
+_errorCodes = StrCat( _errorCodes, "587:'old-pass' is incorrect,")
+_errorCodes = StrCat( _errorCodes, "588:'new-pass' is too short,")
+_errorCodes = StrCat( _errorCodes, "589:Error changing password,")
+_errorCodes = StrCat( _errorCodes, "590:Invalid server name,")
+_errorCodes = StrCat( _errorCodes, "591:Function not avail (RADMIN32.DLL and RLOCAL32.DLL required),")
+_errorCodes = StrCat( _errorCodes, "592:Operation not supported on workstations,")
+_errorCodes = StrCat( _errorCodes, "593:Error accessing object's owner information,")
+_errorCodes = StrCat( _errorCodes, "594:Error changing object's owner,")
+_errorCodes = StrCat( _errorCodes, "595:Specified user/group may not be assigned as the owner,")
+_errorCodes = StrCat( _errorCodes, "596:Invalid file name,")
+_errorCodes = StrCat( _errorCodes, "597:Error enumerating open files,")
+_errorCodes = StrCat( _errorCodes, "598:Error closing file,")
+_errorCodes = StrCat( _errorCodes, "599:Invalid level (client and server are different platforms),")
+_errorCodes = StrCat( _errorCodes, "600:Invalid request number,")
+_errorCodes = StrCat( _errorCodes, "601:Error getting user information,")
+_errorCodes = StrCat( _errorCodes, "602:Invalid delimiter,")
+_errorCodes = StrCat( _errorCodes, "603:Service control manager database does not exist,")
+_errorCodes = StrCat( _errorCodes, "604:Invalid service name,")
+_errorCodes = StrCat( _errorCodes, "605:Specified service does not exist,")
+_errorCodes = StrCat( _errorCodes, "606:Service binary file could not be found,")
+_errorCodes = StrCat( _errorCodes, "607:Service is already running,")
+_errorCodes = StrCat( _errorCodes, "608:Service database is locked,")
+_errorCodes = StrCat( _errorCodes, "609:A dependent service doesn't exist or is marked for deletion,")
+_errorCodes = StrCat( _errorCodes, "610:A dependent service has failed to start,")
+_errorCodes = StrCat( _errorCodes, "611:Service has been disabled,")
+_errorCodes = StrCat( _errorCodes, "612:Service could not be logged on,")
+_errorCodes = StrCat( _errorCodes, "613:Service has been marked for deletion,")
+_errorCodes = StrCat( _errorCodes, "614:Thread could not be created for Win32 service,")
+_errorCodes = StrCat( _errorCodes, "615:Service request timed out,")
+_errorCodes = StrCat( _errorCodes, "616:Service is a dependency of other running services,")
+_errorCodes = StrCat( _errorCodes, "617:Invalid or unacceptable control code,")
+_errorCodes = StrCat( _errorCodes, "618:Service cannot accept control code in its current state,")
+_errorCodes = StrCat( _errorCodes, "619:Service has not been started,")
+_errorCodes = StrCat( _errorCodes, "620:Logon failure,")
+_errorCodes = StrCat( _errorCodes, "621:'group-type' must be @GLOBALGROUP,")
+_errorCodes = StrCat( _errorCodes, "622:Error adding user,")
+_errorCodes = StrCat( _errorCodes, "623:Error deleting user,")
+_errorCodes = StrCat( _errorCodes, "624:Group already exists,")
+_errorCodes = StrCat( _errorCodes, "625:User account already exists,")
+_errorCodes = StrCat( _errorCodes, "626:Password is too short,")
+_errorCodes = StrCat( _errorCodes, "627:Invalid element,")
+_errorCodes = StrCat( _errorCodes, "628:Operation not allowed on special groups,")
+_errorCodes = StrCat( _errorCodes, "629:Operation not allowed on last administrative account,")
+_errorCodes = StrCat( _errorCodes, "630:Error setting user information,")
+_errorCodes = StrCat( _errorCodes, "631:Invalid 'old-username',")
+_errorCodes = StrCat( _errorCodes, "632:Invalid 'new-username',")
+_errorCodes = StrCat( _errorCodes, "633:'new-username' already exists,")
+_errorCodes = StrCat( _errorCodes, "634:Error renaming user,")
+_errorCodes = StrCat( _errorCodes, "635:Invalid privilege,")
+_errorCodes = StrCat( _errorCodes, "636:Invalid phone number,")
+_errorCodes = StrCat( _errorCodes, "637:Privilege 'Act as part of the operating system' not held,")
+_errorCodes = StrCat( _errorCodes, "638:This logon type has not been granted to the specified user,")
+_errorCodes = StrCat( _errorCodes, "639:Logon failure (invalid user-name or password),")
+_errorCodes = StrCat( _errorCodes, "901:WWWNT Extender: Unknown function,")
+_errorCodes = StrCat( _errorCodes, "903:WWWNT Extender: Need newer version of WIL DLL,")
+
+b_wasError = @FALSE
+_errorMsg = ""
+
+for _i = 1 to ItemCount( _errorCodes, ",")
+	_anErr = ItemExtract( _i, _errorCodes, ",")
+	if ItemLocate( "%_lastError%", _anErr, ":") > 0
+		b_wasError = @TRUE
+		_errorMsg = ItemExtract( 2, _anErr, ":")
+	endif
+next
+
+return
+

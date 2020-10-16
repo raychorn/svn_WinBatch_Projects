@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=zipFiles2Archive.WBT
+Targ=W:\WinBatch-Dev\zipFiles2Archive\zipFiles2Archive.exe
+Icon=W:\WinBatch-Dev\zipFiles2Archive\earth2.ico
+CmpVersion=3
+[Options]
+TechWebPage=http://rabid.contentopia.net/blog
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=
+CompanyName=(c). Copyright 1990-2006 Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=zipFiles2Archive
+FileVersion=1.1.3
+InternalName=zipFiles2Archive.exe
+LegalCopyright=(c). Copyright 1990-2006 Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2006 Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=zipFiles2Archive.exe
+ProductName=zipFiles2Archive
+ProductVersion=1.1.3
+[Other Files]
+Count=0
+[Extenders]
+Count=0

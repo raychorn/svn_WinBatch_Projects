@@ -1,0 +1,19 @@
+:ListRecvRecordsOneByOne
+
+WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+__html_template_filename%sql_level% = _editReceivablesRecord_html
+Call( StrCat( _cgi_dir, "_ViewADbRecordViaHTML.wbc"), "")
+
+_custid = %sql_alias%2
+_webid = %sql_alias%3
+
+;WebOut('<BR><BR>', 0)
+WebOut('<INPUT TYPE="SUBMIT" NAME="%_action_MarkReceivablePaid%" VALUE="%_action_MarkReceivablePaid%">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_MarkReceivablePaid%">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_custid" VALUE="%_custid%">', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_webid" VALUE="%_webid%">', 0)
+WebOut('</FORM>', _html_crlf)
+
+return
+

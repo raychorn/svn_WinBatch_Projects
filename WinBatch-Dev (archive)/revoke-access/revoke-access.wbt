@@ -1,0 +1,155 @@
+; revoke-access.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+wName = "revoke-access.wbt"
+
+_quote = Num2Char( 34)
+
+mserver	  = "192.168.1.5"
+whofrom	  = "webmaster@xxx-sex.com"
+dafile	  = "C:\Program Files\revoke-access\message.txt"
+
+_wsauth_dir = "C:\TEMP\wsauth\"
+_wsauth_file_type = ".txt"
+_wsauth_report_type = ".rpt"
+
+_pairs_delimiter = ";"
+_pair_delimiter = ","
+
+_wsauth_command = "c:\website\cgi-shl-prot\wsauth.exe"
+_wsauth_File = "revoke-expired-memberships"
+
+_url = "http://x-rated.xxx-sex.com/_admin/revoke-expired-memberships.iHTML"
+_resultsFile = "c:\temp\revoke-expired-memberships.txt"
+_username = "smalltalker"
+_password = "peek@boo"
+
+_Realm = "X-Rated XXX Sex Videos"
+
+If param0 > 0
+	; param1 is the directory path name for the file that holds the current agecheck password
+	_url = param1
+Else
+	_url = AskLine(wName, "URL? %_url%", _url)
+Endif
+
+If param0 > 1
+	; param2 is the SMTP server name or IP address
+	mserver = param2
+Else
+	mserver = AskLine(wName, "SMTP Address? %mserver%", mserver)
+Endif
+
+If param0 > 2
+	; param3 is the e-mail From address
+	whofrom = param3
+Else
+	whofrom = AskLine(wName, "E-Mail From Address? %whofrom%", whofrom)
+Endif
+
+If param0 > 3
+	; param4 is the e-mail message file name
+	dafile = param4
+Else
+	dafile = AskLine(wName, "Message file name with path? %dafile%", dafile)
+Endif
+
+BoxCaption( 1, wName)
+
+Gosub getRevokedUserList
+
+If _response_code == 200
+	Gosub processRevokedUserList
+
+	BoxCaption( 1, "%wName% - run_wsauth_commands")
+	Gosub run_wsauth_commands
+Else
+	BoxCaption( 1, "%wName% - _response_code=%_response_code%")
+	Message( "ERROR", "_response_code=%_response_code%")
+Endif
+
+exit
+
+
+:getRevokedUserList
+urls_domain_name = httpGetServer( _url, "")
+path = httpGetpath( _url, "")
+
+httpAuth( _username, _password)
+
+ErrorMode(@OFF)
+_response_code = httpRecvQryF( urls_domain_name, path, "", _resultsFile, @hMethodGet) 
+ErrorMode(@CANCEL)
+
+return
+
+
+:processRevokedUserList
+DirMake( _wsauth_dir)
+
+_afile = StrCat( StrReplace( StrCat( _wsauth_dir, "\"), "\\", "\"), _wsauth_File, _wsauth_file_type)
+
+_revokedList = ""
+
+old = FileOpen( _resultsFile, "READ")
+new = FileOpen( _afile, "WRITE")
+FileWrite( new, 'SetRealm %_quote%%_Realm%%_quote%')
+while @TRUE				; Loop till break do us end
+	x = FileRead( old)
+	If x == "*EOF*" Then Break
+
+	x = StrTrim( x)
+	If StrLen( x) > 0
+		For i = 1 to ItemCount( x, _pairs_delimiter)
+			pair = ItemExtract( i, x, _pairs_delimiter)
+
+			username = ItemExtract( 1, pair, _pair_delimiter)
+			password = ItemExtract( 2, pair, _pair_delimiter)
+
+			If ItemLocate( username, _revokedList, _pairs_delimiter) == 0
+				BoxCaption( 1, "%wName% - DelUser %username%")
+				FileWrite( new, "DelUser %username%")
+
+				BoxCaption( 1, "%wName% - e-mail %username%")
+				Gosub emailRevokedUser
+
+				_revokedList = ItemInsert( username, ItemCount( _revokedList, _pairs_delimiter), _revokedList, _pairs_delimiter)
+			Endif
+		Next
+	Endif
+endwhile
+FileClose(new)
+FileClose(old)
+return
+
+
+:emailRevokedUser
+whoto	  = username
+;whoto	   = "guru@smalltalker.com"
+dasubj	  = "Your Membership to XXX-SEX has expired !"
+
+ErrorMode(@OFF)
+rc = smtpSendFile (mserver, whofrom, whoto, dasubj, dafile)
+ErrorMode(@CANCEL)
+
+If rc <> 0
+	Message( "ERROR", "SMTP error? rc=%rc%")
+Endif
+return
+
+
+:run_wsauth_commands
+_ofile = StrReplace( _afile, _wsauth_file_type, _wsauth_report_type)
+
+BoxCaption( 1, "%wName% - run %_wsauth_command%")
+
+RunShell( _wsauth_command, "-v -i %_afile% -o %_ofile%", _wsauth_dir, @HIDDEN, @WAIT)
+
+FileDelete( _afile)
+FileDelete( _ofile)
+
+return
+

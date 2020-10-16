@@ -1,0 +1,51 @@
+;************************************************************************
+;iFtpGet Multiple Files
+;
+;
+;************************************************************************
+
+AddExtender("WWINT33I.DLL")
+;specify local directory path
+local_dest="C:\@temp\@1\"
+if !DirExist(local_dest) then DirMake(local_dest)
+tophandle=iBegin(0,"","")
+conhandle=iHostConnect(tophandle,"ediftp.ingrammicro.com",@FTP, "US112544", "vision")
+if conhandle==0
+ message("ERROR","Unable to connect to host")
+ exit
+endif
+init=iFtpFindInit(conhandle,"\" ,"*.*",@True,@False)
+ if init==0
+      message("IFtpFindInit?","Failed")
+      exit
+   else
+      message("IFtpFindInit?","Sucessful")
+   endif
+iFtpDialog(3,"Multiple Ftp Get","Initializing",0,1)
+While 1
+   remote_srcfile=iFtpFindNext(@False);no attributes
+   if remote_srcfile==""
+     message("Finished","No More Files")
+     iClose(conhandle)
+     iClose(tophandle)
+     exit
+   endif
+
+	p = ItemExtract( 2, remote_srcfile, "/")
+	p = StrCat( "/", p, "/")
+
+	n = ItemCount( remote_srcfile, " ")
+	for i = 1 to n
+		s = ItemExtract( i, remote_srcfile, " ")
+	next
+
+   destfile=FileMapName(s,local_dest)
+   getfile=iFtpGet(conhandle,remote_srcfile,destfile,0,@BINARY)  ; StrCat(p, s)
+        If getfile==0 then message("Opps","iFtpGet Failed on File: %remote_srcfile%")
+   timedelay(1)
+endwhile
+iClose(init)
+iClose(conhandle)
+iClose(tophandle)
+Message("All","Done")
+exit

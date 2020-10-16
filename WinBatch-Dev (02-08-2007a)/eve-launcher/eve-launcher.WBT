@@ -1,0 +1,271 @@
+; eve-launcher v1.2
+
+_winShortName = "eve-launcher"
+_winName = "%_winShortName% v1.2"
+
+; Purpose :: Auto-magically starts EVE using the proper Audio COntrol Panel settings
+
+_cplPath = "C:\WINNT\system32\mmsys.cpl"
+
+_cplWinName = "Sounds and"
+_cplWinName2 = "Advanced Audio"
+
+_eveEXE = "D:\EVE-Online\eve.exe"
+
+_makeShortCuts = @True
+_makeShortCutsCount = 0
+
+If (IsDefined( Param1))
+	_eveEXE = Param1
+	_makeShortCutsCount = _makeShortCutsCount + 1
+else
+	types = "All Exe(s)|*.EXE|"
+	_eveEXE = AskFileName("Select your EVE Program File", "C:\Program Files\CCP\EVE", types, "eve.exe", 1)
+endif
+
+If (IsDefined( Param2))
+	If (FileExist( Param2) == @TRUE)
+		_cplPath = Param2
+		_makeShortCutsCount = _makeShortCutsCount + 1
+	endif
+else
+	types = "All Files|*.cpl|"
+	_cplPath = AskFileName("Select your Windows Audio COntrol Panel File", "C:\WINNT\system32\mmsys.cpl", types, "mmsys.cpl", 1)
+endif
+
+_skipAudioAdjusts = @False
+
+If (IsDefined( Param3))
+	if Param3 == 1
+		_skipAudioAdjusts = @True
+	endif
+endif
+
+if _makeShortCutsCount >= 2
+	_makeShortCuts = @False
+endif
+
+_startDir = FilePath( _eveEXE)
+
+if _makeShortCuts == @True
+	If (FileExist( _eveEXE) == @TRUE)
+		_myPath = IntControl (1004, 0, 0, 0, 0)
+		
+		_shortcutPath1 = "C:\Documents and Settings\All Users\Desktop"
+		_shortcutPath2 = "C:\Documents and Settings\All Users.WINNT\Desktop"
+		
+		If DirExist( _shortcutPath1) == @True
+			_num = ""
+			while 1
+				if (FileExist( "%_shortcutPath1%\run-eve%_num%.LNK") == @False) then break
+				if StrLen(_num) == 0
+					_num = 1
+				else
+					_num = _num + 1
+				endif
+			endwhile
+			ShortcutMake("%_shortcutPath1%\run-eve%_num%.LNK", "%_myPath%", "%_eveEXE% %_cplPath%", _startDir, @NORMAL)
+		endif
+		
+		If DirExist( _shortcutPath2) == @True
+			_num = ""
+			while 1
+				if (FileExist( "%_shortcutPath2%\run-eve%_num%.LNK") == @False) then break
+				if StrLen(_num) == 0
+					_num = 1
+				else
+					_num = _num + 1
+				endif
+			endwhile
+			ShortcutMake("%_shortcutPath2%\run-eve%_num%.LNK", "%_myPath%", "%_eveEXE% %_cplPath%", _startDir, @NORMAL)
+		endif
+	endif
+endif
+
+if _skipAudioAdjusts == @False
+	_prgPath = "%_cplPath%"
+	Run(_prgPath, "")
+	_resp = WinWaitExist(_cplWinName, 15)
+	
+	if _resp <> @True then
+		Message( "%_winName% :: ERROR", "Cannot start-up Audio Control Panel")
+		exit
+	endif
+	
+	TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "+{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "{RIGHT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "!d")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "+{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{RIGHT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{LEFT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{LEFT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "!a")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{ENTER}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "+{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "{ENTER}")
+endif
+
+; +++
+
+_eveCacheDir = "%_startDir%\cache"
+_eveCacheFiles = "%_eveCacheDir%\macho*.dat"
+
+; Message( "%_winName% :: DEBUG", "%_eveCacheFiles%")
+
+FileDelete( _eveCacheFiles)
+
+If (FileExist( _eveEXE) == @TRUE)
+	Run(_eveEXE, "")
+endif
+
+if _skipAudioAdjusts == @False
+	TimeDelay(10)
+	
+	Run(_prgPath, "")
+	_resp = WinWaitExist(_cplWinName, 15)
+	
+	if _resp <> @True then
+		Message( "%_winName% :: ERROR", "Cannot start-up Audio Control Panel")
+		exit
+	endif
+	
+	TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "+{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "{RIGHT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "!d")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "+{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{RIGHT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{RIGHT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{RIGHT}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "!a")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName2)
+	SendKeysTo(_cplWinName2, "{ENTER}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "+{TAB}")
+	
+	;TimeDelay(1)
+	
+	WinActivate(_cplWinName)
+	SendKeysTo(_cplWinName, "{ENTER}")
+endif
+
+

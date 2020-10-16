@@ -1,0 +1,78 @@
+; decreaseConnections.wbt
+
+#DefineFunction GetValueFromRegistry(_key_name)
+	IntControl(73, 2,0,0,0)
+
+	value = RegQueryDword(@REGCURRENT, _key_name, 0)
+	Return(value)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+IntControl(29, @TAB, 0, 0, 0)
+
+wName = "decreaseConnections.wbt"
+
+const_MaxConnPerServer = "MaxConnectionsPerServer"
+const_MaxConnPerServer2 = "MaxConnectionsPer1_0Server"
+
+const_MaxConnPerServer_val = 36
+const_MaxConnPerServer2_val = 10
+
+const_Backup_symbol = "__Backup"
+
+const_BkUpMaxConnPerServer = StrCat(const_MaxConnPerServer, const_Backup_symbol)
+const_BkUpMaxConnPerServer2 = StrCat(const_MaxConnPerServer2, const_Backup_symbol)
+
+_key_name = "Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+
+If param0 > 0
+	; param1 is the initial registry key value
+	_key_name = param1
+Else
+;	_key_name = AskLine(wName, "Initial HKEY_CURRENT_USER Registry Key value ?", _key_name)
+Endif
+
+BoxCaption( 1, wName)
+
+__key_name = _key_name
+Gosub GetItemsAndKeys
+
+;Message( "keys + items", "keys=(%keys%), items=(%items%)")
+
+iPos = ItemLocate(const_BkUpMaxConnPerServer, items, @TAB)
+if iPos > 0 then
+	itemName = StrCat(_key_name, "[", const_MaxConnPerServer, "]")
+	itemBkupName = StrCat(_key_name, "[", const_BkUpMaxConnPerServer, "]")
+	val = GetValueFromRegistry(itemBkupName)
+	RegSetDword(@REGCURRENT, itemName, "%val%", 0)
+	RegDelValue(@REGCURRENT, itemBkupName)
+;	Message( "INFO", "Adjusted (%const_MaxConnPerServer%) [%val%] !")
+endif
+
+iPos = ItemLocate(const_BkUpMaxConnPerServer2, items, @TAB)
+if iPos > 0 then
+	itemName = StrCat(_key_name, "[", const_MaxConnPerServer2, "]")
+	itemBkupName = StrCat(_key_name, "[", const_BkUpMaxConnPerServer2, "]")
+	val = GetValueFromRegistry(itemBkupName)
+	RegSetDword(@REGCURRENT, itemName, "%val%", 0)
+	RegDelValue(@REGCURRENT, itemBkupName)
+;	Message( "INFO", "Adjusted (%const_MaxConnPerServer2%) [%val%] !")
+endif
+
+exit
+
+
+:GetItemsAndKeys
+	key = RegOpenkey( @REGCURRENT, _key_name)
+	keys = RegQueryKeys( key)
+	items = RegQueryItem( @REGCURRENT, _key_name)
+	RegClosekey(key)
+return
+

@@ -1,0 +1,30 @@
+:GrabSQLValue
+
+_sql_alias_name = sql_alias%sql_level%
+
+If __debug <> @FALSE
+    WebOut('<B><FONT COLOR="BLUE">GrabSQLValue (1) ', 0)
+    WebOut('sql_alias%sql_level%=(', 0)
+    WebOut("%_sql_alias_name%", 0)
+    WebOut(')', 0)
+    WebOut(', %_sql_alias_name%%sql_level%1=(', 0)
+    WebOut(%_sql_alias_name%%sql_level%1, 0)
+    WebOut(')', 0)
+    WebOut('</FONT></B>', _html_crlf)
+Endif
+
+If IsDefined( %_sql_alias_name%%sql_level%1) == @YES
+    a_value = %_sql_alias_name%%sql_level%1
+
+    If __debug <> @FALSE
+        WebOut('<B><FONT COLOR="BLUE">GrabSQLValue (2) ', 0)
+        WebOut('a_value=(', 0)
+        WebOut(a_value, 0)
+        WebOut(')', 0)
+        WebOut('</FONT></B>', _html_crlf)
+    Endif
+
+Endif
+
+return
+

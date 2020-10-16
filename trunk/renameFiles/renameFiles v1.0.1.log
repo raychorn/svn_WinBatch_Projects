@@ -1,0 +1,15 @@
+2006:03:22:15:59:34 BEGIN :: renameFiles v1.0.1 [Rename Files] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved. 
+
+_pathTarget = [\\192.168.3.3\c$\@SVN-Backups]
+_filePattern = [mySVNbackup.zip]
+2006:03:22:15:59:41 num_lst = [1], _dName = [\\192.168.3.3\c$\@SVN-Backups\mySVNbackup.zip]
+2006:03:22:16:02:03 BEGIN :: renameFiles v1.0.1 [Rename Files] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved. 
+
+_pathTarget = [\\192.168.3.3\c$\@SVN-Backups]
+_filePattern = [mySVNbackup.zip]
+2006:03:22:16:02:07 num_lst = [1], _dName = [\\192.168.3.3\c$\@SVN-Backups\mySVNbackup.zip]
+2006:03:22:16:02:47 BEGIN :: renameFiles v1.0.1 [Rename Files] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved. 
+
+_pathTarget = [\\192.168.3.3\c$\@SVN-Backups]
+_filePattern = [mySVNbackup.zip]
+2006:03:22:16:02:49 num_lst = [1], _dName = [\\192.168.3.3\c$\@SVN-Backups\mySVNbackup.zip]

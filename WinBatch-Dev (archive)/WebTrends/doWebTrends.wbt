@@ -1,0 +1,753 @@
+; doWebTrends.wbt
+
+_wName0 = "WBT - doWebTrends.exe"
+_wName = "doWebTrends"
+
+;AddExtender("wwctl32i.dll")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+IntControl(41, 1, 0, 0, 0)
+_time_offset = 12
+
+wName = "WebTrends Log Analyzer"
+wName2 = "%wName% v4.1a"
+
+_max_items = 999
+
+_minimum_file_size = (1024 * 1024)
+
+wNameProfile = "Add Web Log Profile"
+
+wNameScheduler = "Scheduler..."
+
+wNameSchedule = "Schedule Report"
+
+status_rep = "status.rep"
+
+dir_path = ""
+
+reports_dir = ""
+
+report_schedule_delay = 30 ; in minutes - we can process at most 2 files per minute
+
+If WinExist(_wName0) == @TRUE
+	WinTitle(_wName0, "%_wName% - Determining timing factors")
+Endif
+
+_ticks0 = GetTickCount( )
+Delay( 30)
+_ticks0a = GetTickCount( )
+
+_ticks00 = _ticks0a - _ticks0
+
+If WinExist(_wName0) == @TRUE
+	WinTitle(_wName, "%_wName% - %_ticks00% ticks per 30 secs")
+Endif
+
+dir0 = 2
+dir1 = "N:\access-logs\"
+dir2 = "D:\access-logs\"
+
+webtrends_reg_keyname = "SOFTWARE\WebTrends Corporation\Log Analyzer\InstallPath"
+
+regkey = RegOpenKey(@REGMACHINE, webtrends_reg_keyname)
+webtrends_basedir = RegQueryValue(regkey, "[]")
+RegCloseKey(regkey)
+
+count = 0
+webtrends_Datfiles_dir = ""
+If DirExist( webtrends_basedir)
+	webtrends_Datfiles_dir = StrReplace( StrCat( webtrends_basedir, "\WTM_LOG\DATFILES"), "\\", "\")
+
+	If DirExist( webtrends_Datfiles_dir)
+		webtrends_dot_ftp_files = DirItemize( StrReplace( StrCat( webtrends_Datfiles_dir, "\*.ftp"), "\\", "\"))
+		count = ItemCount( webtrends_dot_ftp_files, @TAB)
+;Message( "DEBUG", "webtrends_dot_ftp_files count=(%count%)")
+	Endif
+Endif
+
+;exit
+
+If WinExist(wName) == @TRUE
+
+	while 1
+		num = AskLine ("%wName%:", "Number of items to delete? (0=skip delete, %_max_items% max)", "%count%")
+		If (num > -1) && (num < _max_items)
+			for j=1 to dir0
+				If DirExist(dir%j%)
+					types = "All Files|*.*|Access Log Files|*.00?;*access-*.log"
+					dirname = AskFileName( "Select the directory (by selecting one of the files) that contains the access logs:", dir%j%, types, "", 1)
+
+					If StrLen( dirname) > 0
+						dir_path = FilePath(dirname)
+						dir_root = FileRoot(dirname)
+						dir_ext = FileExtension(dirname)
+						
+;						 _text = StrCat( "You entered ", dirname, " with path=<", dir_path, ", root=<", dir_root, ">, ext=<", dir_ext, ">")
+						
+;						 Message( "dirname", _text)	  
+					Endif
+					break
+				Endif
+			Next
+			
+			If (num > 0) && (num < _max_items)
+				Delay( 2)
+				For i=1 to num
+					WinActivate(wName)
+					SendKey(`^{HOME}`) ; select the top item to delete
+;					 Delay( 1)
+					SendKey(`!Fd`)	   ; Delete an item from the list
+;					 Delay( 1)
+					SendKey(`y`)	   ; Delete an item from the list
+					Delay( 1)
+					remains = num - i
+					WinTitle(wName, "%wName2% - Deleted #%i% with %remains% remaining")
+				Next
+
+				Goto skip_deletion_of_schedules
+				
+				WinActivate(wName)
+				SendKey(`!Fs`)
+
+				For i=1 to num
+					WinActivate(wNameScheduler)
+					SendKey(`^{HOME}`) ; select the top item to delete
+;					 Delay( 1)
+					SendKey(`!D`)	   ; Delete an item from the list
+;					 Delay( 1)
+					SendKey(`y`)	   ; Delete an item from the list
+					remains = num - i
+					WinTitle(wName, "%wName2% - Deleted #%i% with %remains% remaining")
+				Next
+				
+:skip_deletion_of_schedules
+
+				WinTitle(wName, "%wName2% - Deleted ALL #%i%")
+			Endif
+
+; Now we process all the files and build the list in WebTrends
+
+			If DirExist( dir_path)
+				reports_dir = "%dir_path%\reports"
+				
+				If DirExist( reports_dir) == @FALSE
+					DirMake(reports_dir)
+				Endif
+
+				logdir = StrReplace( "%reports_dir%\", "\\", "\")
+
+				activityLogFile = "%logdir%ActivityLog.txt"
+
+				Gosub cycleActivityLogFile
+
+				_dir_path = StrCat( dir_path, "\*.*")
+				files = FileItemize(_dir_path)
+				_number_of_files = ItemCount(files, @TAB)
+
+				line = "(1) %wName2% - _number_of_files=%_number_of_files%"
+				Gosub appendToActivityLog
+
+				report_schedule_delay = (_number_of_files / 2) + (_number_of_files mod 2)
+
+				line = "(2) %wName2% - report_schedule_delay=%report_schedule_delay%"
+				Gosub appendToActivityLog
+
+				for _i=1 to _number_of_files
+					aFileName = ItemExtract(_i, files, @TAB)
+					_aFileName = StrReplace( StrCat( dir_path, "\", aFileName), "\\", "\")
+					_aFileNameSize = FileSize( _aFileName)
+
+					If _aFileNameSize > _minimum_file_size
+						line = "(3) %wName2% (%wName%) - aFileName=%aFileName%, _aFileNameSize=%_aFileNameSize%, _minimum_file_size=%_minimum_file_size%"
+						Gosub appendToActivityLog
+
+						If WinExist(wName) == @TRUE
+							WinActivate(wName)
+							line = "%wName2% buildAProfile: - %aFileName%"
+							WinTitle(wName, line)
+							Delay( 1)
+
+							Gosub appendToActivityLog
+							
+							; check the log file to see if it's okay or not...
+;                            Gosub AnalyzeLogFile
+
+                            _ticks0b1 = GetTickCount( )
+
+                            Gosub buildAProfile
+
+                            _ticks0b2 = GetTickCount( )
+                            
+                            _ticks0b0 = _ticks0b2 - _ticks0b1
+                            
+                            If _ticks0b0 > _ticks00
+                                line = "(3a) FIX FILE: %wName2% (%wName%) - aFileName=%aFileName%, _aFileNameSize=%_aFileNameSize%, _minimum_file_size=%_minimum_file_size%"
+                                Gosub appendToActivityLog
+                            Endif
+
+                            Delay( 1)
+
+                            line = "%wName2% scheduleAProfile: - %aFileName%"
+                            Gosub appendToActivityLog
+  
+                            Gosub scheduleAProfile
+                        Else
+                            line = "(4) %wName2% (%wName%) - aFileName=%aFileName%, _aFileNameSize=%_aFileNameSize%, _minimum_file_size=%_minimum_file_size%"
+                            Gosub appendToActivityLog
+                        Endif
+                    Else
+                        If WinExist(wName) == @TRUE
+                            WinActivate(wName)
+                            WinTitle(wName, "%wName2% - Deleted %aFileName% - size is %_aFileNameSize%")
+
+                            line = "scheduleAProfile: %wName2% - Deleted %aFileName% - size is %_aFileNameSize%"
+                            Gosub appendToActivityLog
+
+                            FileDelete( _aFileName)
+                        Endif
+                    Endif
+;                    exit
+;Debug( @ON)
+;                    Message( "DEBUG", "aFileName=<%aFileName%>")
+                Next
+            Endif
+            
+            break
+        Else
+            line = "WARNING: Number of items to delete is invalid", "You entered %num% - Try again?"
+            Gosub appendToActivityLog
+
+            Message( line)
+        Endif
+    endwhile
+
+Else
+;    Message( "WARNING: %wName2% is NOT running", "Start it up and try again!")
+
+exit
+
+    for j=1 to dir0
+        If DirExist(dir%j%)
+            types = "All Files|*.*|Access Log Files|*.00?;*access-*.log"
+            dirname = AskFileName( "Select the directory to clean-up/check (by selecting one of the files) that contains the access logs:", dir%j%, types, "", 1)
+
+            If StrLen( dirname) > 0
+                dir_path = FilePath(dirname)
+                dir_root = FileRoot(dirname)
+                dir_ext = FileExtension(dirname)
+            Endif
+            break
+        Endif
+    Next
+
+    If DirExist( dir_path) == @TRUE
+        _file_path = StrCat( dir_path, "\*.*")
+        files = FileItemize( _file_path)
+        files_copy = files
+
+        reports_dir = "%dir_path%\reports"
+
+        If DirExist( reports_dir) == @TRUE
+            _dir_path = StrCat( reports_dir, "\*.*")
+            dirs = DirItemize( _dir_path)
+            _number_of_dirs = ItemCount(dirs, @TAB)
+            For _i=1 to _number_of_dirs
+                aDirName = ItemExtract(_i, dirs, @TAB)
+                _aDirName = StrReplace( StrCat( reports_dir, "\", aDirName), "\\", "\")
+                _aFileName = StrReplace( StrCat( _aDirName, "\", status_rep), "\\", "\")
+
+                __handle = fileopen(_aFileName, "READ")
+                If __handle <> 0
+                    _desc = FileRead(__handle)
+                    FileClose(__handle)
+                    
+                    _desc = StrTrim( _desc)
+                    ii = StrIndexNc(files, _desc, 1, @FWDSCAN)
+                    If ii > 0
+                        _ii = StrIndexNc(files, @TAB, ii, @BACKSCAN)
+                        _ii = _ii + 1
+
+                        _ij = StrIndexNc(files, @TAB, _ii, @FWDSCAN)
+                        If _ij < 1
+                            _ij = StrLen( files)
+                        Endif
+                        If _ij > 0
+                            __s = StrSub(files, _ii, _ij - _ii)
+                            _ix = ItemLocate( __s, files, @TAB)
+                            If _ix > 0
+                                files = ItemRemove( _ix, files, @TAB)
+                            Else
+                                Message( "DEBUG", "==> (%__s%) at %_ix% for _desc=<%_desc%> in %_aDirName%")
+                            Endif
+                        Endif
+
+;                            Message( "DEBUG", "Missing log file for _desc=<%_desc%> at _ii=%_ii% & ii=%ii% in %_aDirName%")
+                    Else
+;                        Message( "DEBUG", "Missing log file for _desc=<%_desc%> in %_aDirName%")
+
+                        __aFileName = StrReplace( StrCat( _aDirName, "\*.*"), "\\", "\")
+                        __files = FileItemize( __aFileName)
+                        __number_of__files = ItemCount(__files, @TAB)
+ErrorMode(@OFF)
+                        _result = FileDelete( __aFileName)
+ErrorMode(@CANCEL)
+                        If _result == @FALSE
+                            Message( "DEBUG", "(1) What the hell is __aFileName=%__aFileName% with _result=%_result% and __number_of__files=%__number_of__files% using __files=%__files%")
+                            exit
+                        Endif
+
+ErrorMode(@OFF)
+                        _result = DirRemove( _aDirName)
+ErrorMode(@CANCEL)
+                        If _result == @FALSE
+                            Message( "DEBUG", "(2) What the hell is _aDirName=<%_aDirName%> with _result=%_result%")
+                            exit
+                        Endif
+;                        exit
+                    Endif
+                Endif
+            Next
+            __numfiles = ItemCount(files, @TAB)
+            __msg = StrCat( "Delete ALL but these files=(", files, ") (%__numfiles%) have NO ", status_rep, " file - might need to rerun the report(s)?!?")
+            q = AskYesNo('CLEAN-UP SCAN RESULTS', __msg)
+            If q == @YES
+                _num_files = ItemCount( files, @TAB)
+                For _xi=1 to _num_files
+                    anXName = ItemExtract(_xi, files, @TAB)
+                    _ix = ItemLocate( anXName, files_copy, @TAB)
+                    If _ix > 0
+                        files_copy = ItemRemove( _ix, files_copy, @TAB)
+                    Endif
+                Next
+                o_dir = DirGet()
+                DirChange( dir_path)
+                FileDelete( files_copy)
+                DirChange( o_dir)
+            Endif
+        Else
+            Message( "ERROR", "%reports_dir% doesn't exist")
+        Endif
+                
+    Endif
+Endif
+
+exit
+
+
+:AnalyzeLogFile
+_fpath = StrReplace( StrCat( dir_path, "\", aFileName), "\\", "\")
+
+line = "AnalyzeLogFile: (1) _fpath=%_fpath%"
+Gosub appendToActivityLog
+
+longest_line = -1
+shortest_line = -1
+
+longest = -1
+shortest = -1
+
+avg = -1
+total = 0
+
+_begin_time = TimeYmdHms()
+
+lineNo = 1
+handle = FileOpen(_fpath, "READ")
+while @TRUE             ; Loop till break do us end
+    aLine = FileRead(handle)
+    If aLine == "*EOF*" Then Break
+    len = StrLen( aLine)
+    If len > longest
+        longest_line = lineNo
+    Endif
+    If len < shortest
+        shortest_line = lineNo
+    Endif
+    longest = Max( longest, len)
+    shortest = Min( shortest, len)
+    total = total + len
+    avg = total / lineNo
+    lineNo = lineNo + 1
+endwhile
+FileClose(handle)
+
+_end_time = TimeYmdHms()
+
+_elapsed_time = TimeSubtract( _end_time, _begin_time)
+_elapsed_secs = TimeDiffSecs( _end_time, _begin_time)
+
+line = "AnalyzeLogFile: (2) longest=%longest%"
+Gosub appendToActivityLog
+
+line = "AnalyzeLogFile: (3) shortest=%shortest%"
+Gosub appendToActivityLog
+
+line = "AnalyzeLogFile: (4) longest_line=%longest_line%"
+Gosub appendToActivityLog
+
+line = "AnalyzeLogFile: (5) shortest_line=%shortest_line%"
+Gosub appendToActivityLog
+
+line = "AnalyzeLogFile: (6) total=%total%, lineNo=%lineNo%, avg=%avg%"
+Gosub appendToActivityLog
+
+line = "AnalyzeLogFile: (7) _elapsed_time=%_elapsed_time%, _elapsed_secs=%_elapsed_secs%"
+Gosub appendToActivityLog
+
+Drop( _fpath, handle)
+return
+
+
+:scheduleAProfile
+; dir_path ............ input - the dir_path for all the files being processed
+; aFileName ........... input - the file being processed
+; reports_dir ......... input - the place the reports live in when completed
+; __i ................. used
+; __attempts .......... used
+; __digit ............. used
+; __filenum............ used
+; __filenums........... used
+; __s ................. used
+; __time .............. used
+; __YmdHms ............ used
+; __delayHms .........  used
+; __laterYmdHms ....... used
+; __report_path ....... used
+; __report_pathname ... used
+; __status_rep ........ used
+; __handle ............ used
+
+    If WinExist(wName) == @TRUE
+        WinActivate(wName)
+
+        line = "scheduleAProfile: (1)"
+        Gosub appendToActivityLog
+
+        SendKey('!Fs')
+        Delay( 1)
+
+        If WinExist(wNameScheduler) == @TRUE
+            WinActivate(wNameScheduler)
+
+            line = "scheduleAProfile: (2)"
+            Gosub appendToActivityLog
+
+            SendKey('!A')
+            Delay( 1)
+
+            If WinExist(wNameSchedule) == @TRUE
+                WinActivate(wNameSchedule)
+
+                line = "scheduleAProfile: (3)"
+                Gosub appendToActivityLog
+
+                SendKey('E') ; Executive Summary
+                SendKey('{TAB}{TAB}')
+                Delay( 1)
+
+                line = "scheduleAProfile: (4) _desc=%_desc%"
+                Gosub appendToActivityLog
+
+                SendKey(_desc)
+                Delay( 1)
+
+                SendKey('{TAB}')
+                Delay( 1)
+                
+                __YmdHms = TimeYmdHms( )
+
+                __delayHms = "00:00:00:00:%report_schedule_delay%:00"  ; in mins
+				__laterYmdHms = TimeAdd(__YmdHms, __delayHms)
+				
+				__time = StrSub(__laterYmdHms, _time_offset, -1)
+
+				line = "scheduleAProfile: (5) __time=%__time%"
+				Gosub appendToActivityLog
+
+				SendKey(__time)
+				Delay( 1)
+
+				SendKey('{TAB}{TAB}1{TAB}W{TAB}{TAB}')
+				Delay( 1)
+				
+				__attempts = 0
+				__filenums = ""
+				while 1
+					__filenum = ""
+					For __i=1 to 8
+						__digit = Random( 9)
+						__filenum = StrCat( __filenum, "%__digit%")
+					Next
+				
+					__filenums = StrCat( __filenums, __filenum, "|")
+					
+					__report_path = StrCat( reports_dir, "\", __filenum)
+					__report_pathname = StrReplace( __report_path, "\\", "\")
+
+					line = "scheduleAProfile: (6) __report_path=%__report_path%"
+					Gosub appendToActivityLog
+
+					If DirExist( __report_path)
+						__attempts = __attempts + 1
+						If __attempts > 10
+							line = StrCat( "scheduleAProfile: (7) ", "Got stuck! Hit Okay and we'll exit rather than continue forever... __filenums=<%__filenums%>")
+							Gosub appendToActivityLog
+
+							Message( "WARNING", line)
+							exit
+						Endif
+					Else
+						line = "scheduleAProfile: (8) __report_path=%__report_path%"
+						Gosub appendToActivityLog
+
+						DirMake(__report_path)
+						break
+					Endif
+				endwhile
+				
+				__report_path = StrReplace( StrCat( __report_pathname, "\rep.htm"), "\\", "\")
+
+				line = "scheduleAProfile: (9) __report_path=%__report_path%"
+				Gosub appendToActivityLog
+
+				SendKey(__report_path)
+				Delay( 1)
+				SendKey('!S')
+				Delay( 1)
+				
+				__status_rep = StrCat( __report_pathname, "\", status_rep)
+				__handle = fileopen(__status_rep, "WRITE")
+				If __handle <> 0
+					FileWrite(__handle, StrCat( _desc, @CR))
+					FileClose(__handle)
+				Endif
+
+				line = "scheduleAProfile: (10) __status_rep=%__status_rep%"
+				Gosub appendToActivityLog
+
+				SendKey('!O')
+				Delay( 1)
+
+			Endif
+		Endif
+
+	Endif
+
+	line = "scheduleAProfile: (11) - DONE!"
+	Gosub appendToActivityLog
+
+return
+
+
+:buildAProfile
+; dir_path .... input - the dir_path for all the files being processed
+; aFileName ... input - the file being processed
+; __i ......... used
+; __i2 ........ used
+; __i3 ........ used
+; _desc ....... used
+; __i4 ........ used
+; __i5 ........ used
+; _fname ...... used
+; _fpath ...... used
+; __i6 ........ used
+; __i7 ........ used
+; _access ..... "_access"
+; __i8 ........ used
+
+	_access = "_access"
+	
+	If WinExist(wName) == @TRUE
+		WinActivate(wName)
+
+		line = "buildAProfile: (1)"
+		Gosub appendToActivityLog
+
+		SendKey(`!Fn`)
+		Delay( 2)
+
+		__i = StrIndexNc(aFileName, "__", 1, @FWDSCAN)
+		If __i > 0
+			line = "buildAProfile: (2) aFileName=%aFileName%"
+			Gosub appendToActivityLog
+
+			__i2 = StrIndexNc(aFileName, "_", __i + 1, @FWDSCAN)
+			If __i2 > 0
+				line = "buildAProfile: (3) aFileName=%aFileName%"
+				Gosub appendToActivityLog
+
+				__i3 = StrIndexNc(aFileName, "__", __i2 + 1, @FWDSCAN)
+				If __i3 < 1
+					__i3 = StrIndexNc(aFileName, "_htdocs_", __i2 + 1, @FWDSCAN)
+					If __i3 < 1
+						__i3 = StrIndexNc(aFileName, "-htdocs_", __i2 + 1, @FWDSCAN)
+					Endif
+				Endif
+				If __i3 > 0
+					_desc = StrSub(aFileName, __i2 + 1, (__i3 - 1) - __i2)
+
+					line = "buildAProfile: (4) _desc=%_desc%"
+					Gosub appendToActivityLog
+
+					If WinExist(wNameProfile) == @TRUE
+						WinActivate(wNameProfile)
+						SendKey(`{HOME}+{END}{DELETE}`)
+						SendKey(_desc)
+						Delay( 1)
+
+						line = "buildAProfile: (5) _desc=%_desc%"
+						Gosub appendToActivityLog
+
+						If WinExist(wNameProfile) == @TRUE
+							WinActivate(wNameProfile)
+							SendKey(`{TAB}{TAB}`)
+							SendKey(`{HOME}+{END}{DELETE}`)
+							Delay( 1)
+
+							; _access-19980507-1.log or _access.00?
+							_fname = aFileName
+
+							line = "buildAProfile: (6) _fname=%_fname%"
+							Gosub appendToActivityLog
+					
+							__i6 = StrIndexNc(_fname, _access, 1, @FWDSCAN)
+							If __i6 < 1
+								__i6 = 1
+							Else
+								__i6 = __i6 + StrLen( _access)
+							Endif
+					
+							__i7 = StrIndexNc(_fname, ".", __i6 + 1, @FWDSCAN)
+							If __i7 < 1
+								__i7 = StrLen( _fname)
+							Endif
+
+							__i8 = StrSub(_fname, __i6 + 1, (__i7 - 1) - __i6)
+					
+							_fname = StrReplace( _fname, __i8, "*")
+
+							line = "buildAProfile: (7) _fname=%_fname%"
+							Gosub appendToActivityLog
+					
+							If WinExist(wNameProfile) == @TRUE
+								WinActivate(wNameProfile)
+								
+								_fpath = StrReplace( StrCat( dir_path, "\", _fname), "\\", "\")
+
+								line = "buildAProfile: (8) _fpath=%_fpath%"
+								Gosub appendToActivityLog
+								
+								SendKey(`%_fpath%!NA!N`)
+								Delay( 1)
+					
+								__i4 = StrIndexNc(_desc, "_", 1, @FWDSCAN)
+								If __i4 < 1
+									__i4 = 0
+								Endif
+
+								__i5 = StrIndexNc(_desc, "-", __i4 + 1, @FWDSCAN)
+								If __i5 < 1
+									__i5 = StrLen( _desc)
+								Endif
+
+								_url = StrSub(_desc, __i4 + 1, (__i5 - 1) - __i4)
+
+								line = "buildAProfile: (9) _url=%_url%"
+								Gosub appendToActivityLog
+
+								If WinExist(wNameProfile) == @TRUE
+									WinActivate(wNameProfile)
+									SendKey(`{TAB}`)
+									Delay( 1)
+									SendKey(`{HOME}+{END}{DELETE}`)
+									SendKey(`%_url%/`)
+									Delay( 1)
+									SendKey(`!N`)
+									SendKey(`!N`)
+
+									line = "buildAProfile: (10) _url=%_url%"
+									Gosub appendToActivityLog
+
+									SendKey(`{ENTER}`)
+									Delay( 1)
+								Endif
+							Endif
+						Endif
+					Endif
+				Else
+					line = StrCat( "buildAProfile: (11) ", "(3) What the hell is this... aFileName=<%aFileName%>")
+					Gosub appendToActivityLog
+
+					Message( "DEBUG", line)
+					exit
+				Endif
+			Else
+				line = StrCat( "buildAProfile: (12) ", "(2) What the hell is this... aFileName=<%aFileName%>")
+				Gosub appendToActivityLog
+
+				Message( "DEBUG", line)
+				exit
+			Endif
+		Else
+			line = StrCat( "buildAProfile: (12) ", "(1) What the hell is this... aFileName=<%aFileName%>")
+			Gosub appendToActivityLog
+
+			Message( "DEBUG", line)
+			exit
+		Endif
+	Endif
+
+	line = "buildAProfile: (13) - DONE!"
+	Gosub appendToActivityLog
+
+return
+
+
+
+:cycleActivityLogFile
+fex = FileExist( activityLogFile)
+
+Switch fex
+	case @TRUE
+		; cycle the current log file - look for an open slot and use it
+		i = 1
+		_found = @TRUE
+		while _found == @TRUE
+			_activityLogFile = "%logdir%ActivityLog-%i%.txt"
+			_fex = FileExist( _activityLogFile)
+			If _fex == @FALSE ; the candidate file does not exist so use it!
+				_found = _fex
+				If FileRename( activityLogFile, _activityLogFile) == @FALSE
+					; current log file cannot be renamed so we can't cycle it and... make one up using today's date, etc.
+					_token = StrReplace( TimeYmdHms( ), ":", "_")
+					activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+				Endif
+				break
+			Else
+				i = i + 1
+			Endif
+		endwhile
+	break
+	case 2
+		; current log file is in use so make one up using today's date, etc.
+		_token = StrReplace( TimeYmdHms( ), ":", "_")
+		activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+	break
+EndSwitch
+return
+
+
+
+:appendToActivityLog
+	_handle = FileOpen( activityLogFile, "APPEND")
+	If _handle > 0
+		line = StrCat( TimeDate(), ", ", line, @CR)
+		FileWrite(_handle, line)
+		FileClose(_handle)
+	Endif
+return
+
+
+

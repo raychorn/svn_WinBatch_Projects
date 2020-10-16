@@ -1,0 +1,44 @@
+:beginSQLn
+; param1 ............ input - the name of the variable that holds the connection handle number 1-10
+If param0 <> 1
+    _param1 = 2
+    param1 = "_param1"
+Else
+    If (%param1% < 1) || (%param1% > 10)
+        %param1% = 2
+    Endif
+Endif
+
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+_var1 = %param1%
+
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM
+;OF 10 OPEN CONNECTION HANDLES - assumes henv has already been allocated
+If IsDefined( hdbc%_var1%) == @NO
+    hdbc%_var1% = qAllocConnect(henv)
+
+    If __debug <> @FALSE
+        WebOut('<B><FONT COLOR="BLUE">beginSQLn ', 0)
+        WebOut('hdbc%_var1%=(', 0)
+        WebOut(hdbc%_var1%, 0)
+        WebOut('), henv=(', 0)
+        WebOut(henv, 0)
+        WebOut(')', 0)
+        WebOut('</FONT></B>', _html_crlf)
+    Endif
+
+    If hdbc%_var1% == -1
+      retcode = qLastCode()
+      WebOut('<B><FONT COLOR="RED">qAllocConnect failed %retcode% </FONT></B>', _html_crlf)
+      Exit
+    Endif
+
+    ;SQL_LOGIN_TIMEOUT - SETS OPTIONS FOR SQL CONNECTIONS
+    qSetConnOpt(hdbc%_var1%, 103, 5, 0)
+Endif
+
+return
+

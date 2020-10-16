@@ -1,0 +1,131 @@
+:SendEMailToCusts
+; param1 .... input - the name of the variable that holds the __custids - list of cust ids to process
+; param2 .... input - the name of the variable that holds the _email_preamble_file
+
+If param0 <> 2
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for SendEMailToCusts</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( fs) == @YES
+    fs_SETC = fs
+Endif
+
+If IsDefined( binbuf) == @YES
+    binbuf_SETC = binbuf
+Endif
+
+If IsDefined( line) == @YES
+    line_SETC = line
+Endif
+
+If IsDefined( _subject) == @YES
+    _subject_SETC = _subject
+Endif
+
+If IsDefined( _message) == @YES
+    _message_SETC = _message
+Endif
+
+If IsDefined( _count) == @YES
+    _count_SETC = _count
+Endif
+
+If IsDefined( i_count) == @YES
+    i_count_SETC = i_count
+Endif
+
+If IsDefined( value) == @YES
+    value_SETC = value
+Endif
+
+_param2 = "%param2%"
+__param2 = %_param2%
+
+WebOut('<BR><FONT COLOR="RED"><B>SendEMailToCusts DEBUG: param2=%param2%, _param2=%_param2%, __param2=%__param2%</B></FONT><BR>', _html_crlf)
+
+
+fs = FileSize( __param2)
+binbuf = BinaryAlloc( fs + 100)
+if binbuf == 0
+    WebOut('<BR><FONT COLOR="RED"><B>SendEMailToCusts ERROR: BinaryAlloc Failed for %fs% bytes</B></FONT><BR>', _html_crlf)
+else
+    BinaryRead( binbuf, "%__param2%")
+    
+    line = BinaryPeekStr( binbuf, 0, BinaryEodGet( binbuf))
+
+    binbuf = BinaryFree( binbuf)
+endif
+
+Drop( binbuf, fs, __param2, _param2)
+
+_subject = WebParamData(_Subject)
+_message = WebParamData(_MessageText)
+
+_count = ItemCount( %param1%, @TAB)
+
+;WebOut('<BR><FONT COLOR="BLUE"><B>DEBUG: _count=%_count%, __custids=%__custids%</B></FONT><BR>', _html_crlf)
+
+For i_count = 1 to _count
+    value = ItemExtract( i_count, %param1%, @TAB)
+
+;WebOut('<BR><FONT COLOR="BLUE"><B>(*) DEBUG: i_count=%i_count%, value=%value%</B></FONT><BR>', _html_crlf)
+    
+    _table = "customer"
+    sql_stmnt = "SELECT c.custname, c.email, w.domain_name, w.ip FROM %_table% c, website w WHERE c.id=w.custid AND c.id = %value% AND w.custid = %value%"
+    sql_fetch_map = "S65,S129,S129,S33"
+    sql_fetch_gosub = "EMailACustomerRecord"
+    sql_fetch = @TRUE
+    sql_alias = _table
+    _datasource = datasource
+    Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+;WebOut('<BR><FONT COLOR="BLUE"><B>(**) DEBUG: i_count=%i_count%, value=%value%</B></FONT><BR>', _html_crlf)
+
+    Drop( value)
+Next
+
+Drop( _subject, _message, line, _count, i_count)
+
+If IsDefined( value_SETC) == @YES
+    value = value_SETC
+    Drop( value_SETC)
+Endif
+
+If IsDefined( i_count_SETC) == @YES
+    i_count = i_count_SETC
+    Drop( i_count_SETC)
+Endif
+
+If IsDefined( _count_SETC) == @YES
+    _count = _count_SETC
+    Drop( _count_SETC)
+Endif
+
+If IsDefined( _message_SETC) == @YES
+    _message = _message_SETC
+    Drop( _message_SETC)
+Endif
+
+If IsDefined( _subject_SETC) == @YES
+    _subject = _subject_SETC
+    Drop( _subject_SETC)
+Endif
+
+If IsDefined( line_SETC) == @YES
+    line = line_SETC
+    Drop( line_SETC)
+Endif
+
+If IsDefined( binbuf_SETC) == @YES
+    binbuf = binbuf_SETC
+    Drop( binbuf_SETC)
+Endif
+
+If IsDefined( fs_SETC) == @YES
+    fs = fs_SETC
+    Drop( fs_SETC)
+Endif
+
+return
+

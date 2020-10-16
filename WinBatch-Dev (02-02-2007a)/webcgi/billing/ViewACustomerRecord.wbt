@@ -1,0 +1,7 @@
+:ViewACustomerRecord
+
+__html_template_filename%sql_level% = _viewCustomerRecord_html
+Call( StrCat( _cgi_dir, "_ViewADbRecordViaHTML.wbc"), "")
+
+return
+

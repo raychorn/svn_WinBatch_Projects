@@ -1,0 +1,136 @@
+:ViewACustWebSiteContactRecord
+; sql_html_file ......... input - the name of the html file
+
+    _fs = FileSize( sql_html_file)
+    _binbuf = BinaryAlloc( _fs + 100)
+    if _binbuf == 0
+        WebOut('<BR><B><FONT COLOR="RED">ERROR: BinaryAlloc Failed in ViewACustomerWebSiteRecord</FONT></B><BR>', _html_crlf)
+        Exit
+    else
+        BinaryRead( _binbuf, sql_html_file)
+
+        WebOut('<INPUT TYPE="HIDDEN" NAME="_table" VALUE="%_table%">', 0)
+        
+        _eod = BinaryEodGet( _binbuf)
+        _j = 0
+        _begin = 0
+        while _begin <= _j
+            _i = BinaryIndex( _binbuf, _begin, "__", @FWDSCAN)
+            If _i > 0
+                _html = BinaryPeekStr( _binbuf, _begin, _i - _begin)
+                WebOut(_html, 0)
+            Else
+                _html = BinaryPeekStr( _binbuf, _begin, _eod - _begin)
+                WebOut(_html, 0)
+                break
+            Endif
+            _j = BinaryIndex( _binbuf, _i + 2, "__", @FWDSCAN) + 2
+            __token = BinaryPeekStr( _binbuf, _i, _j - _i)
+            _token = StrReplace( __token, "__", "")
+            _k = ItemLocate( _token, sql_fetch_cols%sql_level%, ",")
+            If _k > 0
+                _sql_alias_var_name = sql_alias%sql_level%
+
+                _sql_fetch_ch = ItemExtract( _k, sql_fetch_map%sql_level%, ",")
+
+                WebOut('<FONT SIZE="4">', 0)
+                If _edit_mode == @TRUE
+;                    WebOut('<INPUT TYPE="TEXT" NAME="%_table%%_db_fields_separator%%_token%" VALUE="', 0)
+                    WebOut('<INPUT TYPE="TEXT" NAME="%_token%" VALUE="', 0)
+                Endif
+
+                _dv = ""
+                _cvalueBufLen = 10
+                _cvalueBufLen2 = 10
+                If IsDefined( %_sql_alias_var_name%%_k%%sql_level%) == @YES
+                    _dv = %_sql_alias_var_name%%_k%%sql_level%
+                Endif
+
+;WebOut('<BR><B><FONT COLOR="BLUE" SIZE=2>(1) %_sql_alias_var_name%%_k%%sql_level%=%_dv%', 0)
+;WebOut('</FONT></B><BR>', _html_crlf)
+
+                _sql_fetch_ch_i = StrIndex( _sql_fetch_ch, "S", 1, @FWDSCAN)
+                If _sql_fetch_ch_i > 0
+                    _sql_fetch_ch_len = StrLen( _sql_fetch_ch)
+                    __cv = StrSub( _sql_fetch_ch, _sql_fetch_ch_i + 1, _sql_fetch_ch_len - _sql_fetch_ch_i)
+                    _cvalueBufLen2 = Int( __cv)
+                    If _cvalueBufLen2 > 32
+                        _cvalueBufLen = 32
+                    Else
+                        _cvalueBufLen = _cvalueBufLen2
+                    Endif
+
+                    WebOut( _dv, 0)
+                Else
+                    If StrIndex( _sql_fetch_ch, "D", 1, @FWDSCAN) > 0
+
+                        If IsDefined( %_sql_alias_var_name%%_k%%sql_level%) == @YES
+                            Call( StrCat( _cgi_dir, "FromDbDate.wbc"), "_dv")
+
+                            WebOut( _dv, 0)
+                        Endif
+                    Else
+                        If StrIndex( _sql_fetch_ch, "N", 1, @FWDSCAN) > 0
+                            If IsFloat( _dv) == @TRUE
+                                _d = Decimals( 2)
+
+                                _dv = _dv * 1.0
+
+                                WebOut('%_dv%', 0)
+
+                                Decimals( _d)
+                            Else
+                                WebOut('%_dv%', 0)
+                            Endif
+                        Else
+                            WebOut('%_dv%', 0)
+                        Endif
+                    Endif
+                Endif
+
+                Drop( _d, _dv)
+
+                If _edit_mode == @TRUE
+                    WebOut('" SIZE="%_cvalueBufLen%" MAXLENGTH="%_cvalueBufLen2%">', 0)
+                Endif
+                WebOut('</FONT>', 0)
+
+                If __debug <> @FALSE
+                    WebOut('<BR><B><FONT COLOR="BLUE" SIZE=2>(2) %_sql_alias_var_name%%_k%%sql_level%=%_dv%, _sql_fetch_ch=%_sql_fetch_ch%, ', 0)
+                    WebOut('_cvalueBufLen=%_cvalueBufLen%, ', 0)
+                    WebOut('_cvalueBufLen2=%_cvalueBufLen2%, ', 0)
+                    WebOut('_sql_fetch_ch_len=%_sql_fetch_ch_len%', 0)
+                    WebOut('_sql_fetch_ch_i=%_sql_fetch_ch_i%, ', 0)
+                    WebOut('_token=%_token%, ', 0)
+                    WebOut('_custid=%_custid%, ', 0)
+                    WebOut('_custname=%_custname%, ', 0)
+                    WebOut('</FONT></B><BR>', _html_crlf)
+                Endif
+
+                Drop( _cvalueBufLen, _cvalueBufLen2, _sql_fetch_ch_len, _sql_fetch_ch_i, _sql_fetch_ch, _k)
+            Else
+                If __debug <> @FALSE
+                    WebOut('<BR><B><FONT COLOR="BLUE" SIZE=2>(2*) _k=%_k%, __token=%__token%, ', 0)
+                    WebOut('_token=%_token%, ', 0)
+                    WebOut('_custid=%_custid%, ', 0)
+                    WebOut('_custname=%_custname%, ', 0)
+                    WebOut('</FONT></B><BR>', _html_crlf)
+                Endif
+
+                If StrCmp( __token, "__@custid__") == 0
+                    WebOut('<FONT SIZE="4">', 0)
+                    WebOut('<B>%_custid% %_custname%</B>', 0)
+                    WebOut('<INPUT TYPE="HIDDEN" NAME="%___custid__%" VALUE="%_custid%">', 0)
+                    WebOut('</FONT>', 0)
+                Endif
+            Endif
+
+            _begin = _j
+        endwhile
+        
+        BinaryFree( _binbuf)
+        
+        WebOut('<HR>', _html_crlf)
+    endif
+return
+

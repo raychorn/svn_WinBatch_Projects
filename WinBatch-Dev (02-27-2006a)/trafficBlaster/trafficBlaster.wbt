@@ -1,0 +1,201 @@
+; url-downloader.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+_delays = 1
+
+url_wName = "trafficBlaster.wbt"
+
+wname0 = "Web Site Traffic Builder"
+wname1 = "Exit Prompt"
+
+_program_name = "C:\Program Files\Traffic Builder\tbuilder.exe"
+
+If param0 > 0
+	; param2 is the URL to download from
+	_program_name = param2
+Else
+	_program_name = AskLine(url_wName, "Program Path? %_program_name%", _program_name)
+Endif
+
+BoxCaption(1,url_wName)
+
+Run( _program_name, "")
+
+BoxCaption(1, "%url_wName% - Sleeping...")
+TimeDelay( 5)
+
+BoxCaption(1, "%url_wName% - Press Enter Key...")
+SendKey( "{ENTER}")
+
+while WinExist( wname0) <> @TRUE
+	If WinExist( wname0) <> @TRUE
+		BoxCaption(1, "%url_wName% - Sleeping...")
+		TimeDelay( 45)
+
+		BoxCaption(1, "%url_wName% - Press Enter Key...")
+		SendKey( "{ENTER}")
+	Endif
+endwhile
+
+If WinExist( wname1) == @TRUE
+	SendKeysTo( wname1, "{TAB}")
+	SendKeysTo( wname1, "{ENTER}")
+	TimeDelay( 2)
+Endif
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{RIGHT}")
+TimeDelay( 1)
+
+; TAB to Site Information tab
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{RIGHT}")
+TimeDelay( 1)
+
+; TAB to Keywords tab
+SendKeysTo( wname0, "{TAB}")
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{RIGHT}")
+TimeDelay( 1)
+
+; TAB to Sites tab
+SendKeysTo( wname0, "{TAB}")
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{RIGHT}")
+TimeDelay( 1)
+
+; TAB to Categories tab
+SendKeysTo( wname0, "{TAB}")
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{RIGHT}")
+TimeDelay( 1)
+
+; TAB to Load Profile button
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+
+; Hit the Load Profile button
+SendKeysTo( wname0, "{ENTER}")
+
+SendKeysTo( wname0, "www.xxx-sex.com.ss2")
+
+; TAB to Open button
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+
+; Hit the Open button
+SendKeysTo( wname0, "{ENTER}")
+TimeDelay( 2)
+
+; Hit the Ok button
+SendKeysTo( wname0, "{ENTER}")
+TimeDelay( 2)
+
+; TAB to Sites tab
+SendKeysTo( wname0, "{TAB}")
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+; TAB to Add-All button
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{DOWN}")
+
+; Hit the Add-All button
+SendKeysTo( wname0, "{ENTER}")
+TimeDelay( 5)
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{LEFT}")
+TimeDelay( 1)
+
+SendKeysTo( wname0, "{SPACE}")
+For i = 1 to 54
+	SendKeysTo( wname0, "+{UP}")
+Next
+
+; TAB to Add-All button
+SendKeysTo( wname0, "{TAB}")
+SendKeysTo( wname0, "{DOWN}")
+
+; Hit the Add-All button
+SendKeysTo( wname0, "{ENTER}")
+TimeDelay( 5)
+
+
+exit
+
+while 1
+
+	ErrorMode(@OFF)
+	base_url_pingable = wxPing( base_urls_domain_name)
+	ErrorMode(@CANCEL)
+
+	If base_url_pingable == @TRUE
+		line = "(2) %count% (HTTP: %secs% secs %t_bytes_transferred_text% %t_bytes_transferred_rate_text% %base_urls_domain_name% %path% %fname%)..."
+		BoxCaption(1, "%url_wName% %line%")
+		Gosub appendToActivityLog
+
+		httpAuth( username, password)
+		
+		a = httpRecvFile(base_urls_domain_name, path, fname, 0)
+		txt = "httpRecvFile Return code is %a%"
+
+		if a == 200
+			Message( "DEBUG", "%txt%, base_urls_domain_name=%base_urls_domain_name%, path=%path%, fname=%fname%")
+			Gosub ProcessTheHTML
+		endif
+	Else
+		line = "(4) %count% (PING FAILED: %base_urls_domain_name% - waiting 1 secs)..."
+		BoxCaption(1, "%url_wName% %line%")
+		Gosub appendToActivityLog
+
+	Endif
+
+endwhile
+
+exit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+

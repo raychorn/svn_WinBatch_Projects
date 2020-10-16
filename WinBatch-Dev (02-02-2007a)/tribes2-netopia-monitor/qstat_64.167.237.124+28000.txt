@@ -1,0 +1,3 @@
+T2S`64.167.237.124:28000`Sacramento HellZone`Minotaur`64`0`30`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game=Syrinx`mission=Capture the Flag`status=1`dedicated=1`bot_count=0`cpu_speed=925`info=This is a Tribes 2 Server.`numteams=2
+

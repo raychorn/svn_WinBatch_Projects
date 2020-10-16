@@ -1,0 +1,199 @@
+_html_crlf = 1
+
+http_prefix = "http://sisko.cybercash-net.com"
+
+this_cgi = "/cgi-win/billing/webcgi/webbatch.exe?billing/halBilling.web"
+_this_cgi = StrCat( http_prefix, this_cgi)
+
+this_import_cgi = "/cgi-win/billing/webcgi/webbatch.exe?billing/halBilling-import.web"
+_this_import_cgi = StrCat( http_prefix, this_import_cgi)
+
+_title = "HAL Smalltalker, Inc. Billing System v2.0"
+_background = "/professi.jpg"
+
+datasource = "billing"
+
+_datasource = datasource
+
+_private_dir = "C:\website-private\billing"
+_customer_file = "customer-data.txt"
+
+_max_string_len = 30
+
+_cr = StrCat( Num2Char(13), Num2Char(10))
+
+_db_fields_separator = "@"
+_date_field_separator = "-"
+
+_action_Nothing = ""
+_action_Nothing_Button = "Back to Main System"
+
+_action_PROCESS_RECORD = "PROCESS-RECORD"
+
+AddExtender( "wwodb32i.dll")
+AddExtender( "wwwsk32i.dll")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+Call( "c:\website\support\webcgi\extra_headers.wbc", "")
+
+_cgi_dir = StrReplace( StrCat( DirGet(), "\"), "\\", "\")
+
+_slashi = StrIndex( QUERY_STRING, "/", StrLen( QUERY_STRING), @BACKSCAN)
+If _slashi > 0
+    _cgi_dir = StrReplace( StrCat( _cgi_dir, StrSub( QUERY_STRING, 1, _slashi)), "/", "\")
+Endif
+
+WebOut('Content-type: text/html',2)    ; Output Content Type
+
+WebOut('<HTML><HEAD><TITLE>%_title%</TITLE></HEAD>', _html_crlf)
+
+WebOut('<BODY BACKGROUND="%_background%">', _html_crlf)
+
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+;ErrorMode(@OFF)
+henv = qAllocEnv()
+;ErrorMode(@CANCEL)
+
+;WebOut('<B><FONT COLOR="BLUE">qAllocEnv %retcode% and henv=%henv%</FONT></B>', _html_crlf)
+If henv == -1
+  ;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+  retcode = qLastCode()
+  WebOut('<B><FONT COLOR="RED">qAllocEnv failed %retcode% </FONT></B>', _html_crlf)
+  Exit
+Endif
+
+;Call( "c:\website\support\webcgi\extra_headers-debug.wbc", "")
+
+If (StrCmp( REMOTE_ADDR, "192.168.1.3") <> 0) && (StrCmp( REMOTE_ADDR, "192.168.1.4") <> 0)
+    WebOut('<H2>Unauthorized Use: (%REFERER%) Your IP address (%REMOTE_ADDR%) has been reported to your local law enforcement authorities for investigation.</H2>', _html_crlf)
+    Goto thats_all_folks
+Endif
+
+WebOut('', _html_crlf)
+
+; ----------> HERE
+
+WebOut('<TABLE WIDTH="100%%" BORDER="0">', 0)
+WebOut('<TR>', _html_crlf)
+
+_delim = @TAB
+s = WebParamNames()
+Call( "c:\website\support\webcgi\ParseFieldsToArray.wbc", "s field _delim")
+Drop( _delim)
+
+; Navigation Bar
+WebOut('<TD VALIGN="TOP">', 0)
+_action = ""
+If field0 > 0
+    _action = WebParamData('_action')
+Endif
+
+Gosub NavigationBar
+
+WebOut('</TD>', _html_crlf)
+
+; Data Area
+WebOut('<TD VALIGN="TOP" HEIGHT="100%%">', 0)
+
+If field0 > 0
+    _WebParamNames = s
+    
+  ;This is a POST and we process the fields, etc.
+   WebOut('<B><FONT COLOR="BLUE">WebParamNames=', 0)
+   WebOut(_WebParamNames, 0)
+   WebOut('</FONT></B><BR>', _html_crlf)
+
+    WebOut('<HR WIDTH="75%%">', _html_crlf)
+;    Call( "c:\website\support\webcgi\DebugFieldsArray.wbc", "")
+    WebOut('<HR WIDTH="75%%">', _html_crlf)
+
+    _action = WebParamData('_action')
+    WebOut('<B><FONT COLOR="BLUE">_action=', 0)
+    WebOut(_action, 0)
+    WebOut('</FONT></B><BR>', _html_crlf)
+
+    WebOut('<HR>', _html_crlf)
+
+    If StrLen( _action) > 0
+        _edit_mode = @FALSE
+
+        If (StrLen( _action) > 0) && (StrCmp( _action, _action_PROCESS_RECORD) == 0)
+            _wp = ItemCount( _WebParamNames, @TAB)
+            For _wpi = 1 to _wp
+                _wpitem = ItemExtract( _wpi, _WebParamNames, @TAB)
+                If StrIndex( _wpitem, "CustomerDirName", 1, @FWDSCAN) > 0
+                    _CustomerDirName = WebParamData( _wpitem)
+
+                    ic = ItemCount( _CustomerDirName, ",")
+                    If ic == 3
+                        _id = ItemExtract( 1, _CustomerDirName, ",")
+                        _cf = ItemExtract( 2, _CustomerDirName, ",")
+                        _d = ItemExtract( 3, _CustomerDirName, ",")
+
+                        Call( StrCat( _cgi_dir, "ReadCustomerRecord.wbc"), "_cf CustomerRecord")
+
+                        WebOut('<B>Action is ', 0)
+                        WebOut(_action, 0)
+                        WebOut(' with _CustomerDirName=', 0)
+                        WebOut(_CustomerDirName, 0)
+                        WebOut('<BR> _id=', 0)
+                        WebOut(_id, 0)
+                        WebOut('<BR> _cf=', 0)
+                        WebOut(_cf, 0)
+                        WebOut('<BR> _d=', 0)
+                        WebOut(_d, 0)
+                        WebOut('</B>', _html_crlf)
+
+                        Call( StrCat( _cgi_dir, "processCustomerRecords.wbc"), "")
+                    Endif
+                Endif
+            Next
+        Else
+WebOut('<BR><B><FONT COLOR="BLUE">halBilling-import: DEBUG hdbc=%hdbc%, DSN=%_datasource%</FONT></B><BR>', _html_crlf)
+
+            Call( StrCat( _cgi_dir, "processOldDbInteractive.wbc"), "_this_import_cgi _cgi_dir _datasource")
+        Endif
+    Endif
+Else
+    Gosub CopyrightNotice
+Endif
+
+WebOut('</TD>', _html_crlf)
+
+WebOut('</TR>', _html_crlf)
+WebOut('</TABLE>', _html_crlf)
+
+:thats_all_folks
+
+WebOut('</BODY>', _html_crlf)
+WebOut('</HTML>', _html_crlf)
+
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)
+
+exit
+
+
+:NavigationBar
+
+WebOut('<HR>', _html_crlf)
+
+WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="%_action_Nothing_Button%"></B>', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="%_action_Nothing%">', 0)
+WebOut('</FORM>', _html_crlf)
+
+WebOut('<HR>', _html_crlf)
+
+return
+
+
+:CopyrightNotice
+
+WebOutFile(_copyrightNotice_html)
+
+return
+
+
+

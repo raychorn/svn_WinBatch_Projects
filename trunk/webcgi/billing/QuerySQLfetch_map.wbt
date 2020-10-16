@@ -1,0 +1,29 @@
+:QuerySQLfetch_map
+; _cgi_dir .............. input the name of the full path where this CGI is being run
+; sql_level ............. input 2-10 (optional)
+
+If IsDefined( sql_level) == @NO
+    Call( StrCat( _cgi_dir, "beginSQL.wbc"), "")
+Else
+    sql_level = StrTrim( sql_level)
+    If StrLen( sql_level) == 0
+        Call( StrCat( _cgi_dir, "beginSQL.wbc"), "")
+    Else
+        Call( StrCat( _cgi_dir, "beginSQLn.wbc"), "sql_level")
+    Endif
+Endif
+
+Call( StrCat( _cgi_dir, "getSQLfetch_map.wbc"), "")
+
+If IsDefined( sql_level) == @NO
+    Call( StrCat( _cgi_dir, "endSQL.wbc"), "")
+Else
+    If StrLen( sql_level) == 0
+        Call( StrCat( _cgi_dir, "endSQL.wbc"), "")
+    Else
+        Call( StrCat( _cgi_dir, "endSQLn.wbc"), "sql_level")
+    Endif
+Endif
+
+return
+

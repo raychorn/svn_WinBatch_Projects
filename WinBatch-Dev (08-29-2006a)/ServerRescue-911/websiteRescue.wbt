@@ -1,0 +1,242 @@
+; websiteRescue.wbt
+
+AddExtender("WWWNT32I.DLL")
+AddExtender("WWWSK32I.DLL")
+
+_appName = "websiteRescue"
+
+_new_virtual_servers_root = "C:\TEMP\new-virtual-servers\"
+_domain_adder_root = StrReplace( StrCat( _new_virtual_servers_root, "\domain adder\"), "\\", "\")
+
+domain_adder_exe_file = "AddDomain.exe"
+info_txt_file = "info.txt"
+
+cgi_shl_dirname = "cgi-shl"
+cgi_shl_prot_dirname = "cgi-shl-prot"
+cgi_bin_dirname = "cgi-bin"
+htdocs_dirname = "htdocs"
+weblogs_dirname = "weblogs"
+
+wsauth_exe_filename = "wsauth.exe"
+wsauth_exe_fullname = "C:\WebSite\cgi-shl\%wsauth_exe_filename%"
+
+cgi_shl_source_dir = "C:\TEMP\new-virtual-servers\207.55.200.xx-domain-name.COM\cgi-shl"
+digits_dirname = "digits"
+scoreboard_dirname = "scoreboard"
+led_dirname = "led"
+scoreboard_digits_dirname = "C:\TEMP\new-virtual-servers\207.55.200.xx-domain-name.COM\cgi-shl\%digits_dirname%\%scoreboard_dirname%"
+led_digits_dirname = "C:\TEMP\new-virtual-servers\207.55.200.xx-domain-name.COM\cgi-shl\%digits_dirname%\%led_dirname%"
+
+www_prefix = "www."
+com_domain_type = ".com"
+net_domain_type = ".net"
+dash_symbol = "-"
+
+ipless_symbol0 = 3
+ipless_symbol1 = "207.55.215.13"
+ipless_symbol2 = "207.55.210.13"
+ipless_symbol3 = "207.55.200.4"
+
+default_email_address = "techSupport@cybercash-net.com"
+wspro_anon = "wspro_anon"
+htdocs_prefix = "\htdocs"
+weblogs_postfix = "%htdocs_prefix%\weblogs\access.log"
+cgi_bin_prefix = "%htdocs_prefix%\cgi-bin"
+cr = ""; Num2Char( 13)
+
+_virtual_domain_names0 = 6
+_virtual_domain_names1 = ".xxx-sex.com"
+_virtual_domain_names2 = ".e-servers.net"
+_virtual_domain_names3 = ".adultservers.net"
+_virtual_domain_names4 = ".mymall.net"
+_virtual_domain_names5 = ".xxx-sex.net"
+_virtual_domain_names6 = ".adult-zone.com"
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_dir_name = ""
+
+If param0 > 0
+	_disk_drive = param1
+Else
+	disk_list = DiskScan( 2)
+
+	_disk_drive = AskItemList( "%_appName% Choose a Disk Drive to scan", disk_list, @tab, @sorted, @single)
+Endif
+
+If param0 > 1
+	If DirExist(param2) == @TRUE
+		_dir_name = param2
+	Endif
+Else
+	dir_list = DirItemize( StrCat( _disk_drive, "\*.*"))
+
+	_dir_name = AskItemList( "%_appName% WebSite Root Dir Name?", dir_list, @tab, @sorted, @single)
+Endif
+
+If StrLen( _disk_drive) > 0
+
+	If StrLen( _dir_name) > 0
+	
+		_target_dir = StrReplace( "%_new_virtual_servers_root%\%_dir_name%", "\\", "\")
+		
+		DirMake( _target_dir)
+
+		_source_file = StrReplace( "%_domain_adder_root%\%domain_adder_exe_file%", "\\", "\")
+		_dest_file = StrReplace( "%_target_dir%\%domain_adder_exe_file%", "\\", "\")
+		_domain_adder_exe_filename = _dest_file
+		FileCopy( _source_file, _dest_file, @FALSE)
+
+		_webspace_root_dir = StrReplace( StrReplace( StrCat( _disk_drive, ":\", _dir_name), "\\", "\"), "::", ":")
+
+		_pathname = StrReplace( "%_webspace_root_dir%\%cgi_bin_dirname%", "\\", "\")
+		If DirExist( _pathname) == @FALSE
+			DirMake( _pathname)
+		Endif
+
+		_pathname = StrReplace( "%_webspace_root_dir%\%cgi_shl_dirname%", "\\", "\")
+		If DirExist( _pathname) == @FALSE
+			DirMake( _pathname)
+		Endif
+
+		_source_file = StrReplace( "%cgi_shl_source_dir%\*.*", "\\", "\")
+		_dest_file = _pathname
+		FileCopy( _source_file, _dest_file, @FALSE)
+
+		_pathname = StrReplace( "%_pathname%\%digits_dirname%", "\\", "\")
+		DirMake( _pathname)
+		_pathname = StrReplace( "%_pathname%\%scoreboard_dirname%", "\\", "\")
+		DirMake( _pathname)
+
+		_source_file = StrReplace( "%scoreboard_digits_dirname%\*.*", "\\", "\")
+		_dest_file = _pathname
+		FileCopy( _source_file, _dest_file, @FALSE)
+
+		_pathname = StrReplace( "%_webspace_root_dir%\%cgi_shl_dirname%\%digits_dirname%\%led_dirname%", "\\", "\")
+		DirMake( _pathname)
+
+		_source_file = StrReplace( "%led_digits_dirname%\*.*", "\\", "\")
+		_dest_file = _pathname
+		FileCopy( _source_file, _dest_file, @FALSE)
+
+		_pathname = StrReplace( "%_webspace_root_dir%\%cgi_shl_prot_dirname%", "\\", "\")
+		If DirExist( _pathname) == @FALSE
+			DirMake( _pathname)
+		Endif
+
+		_source_file = wsauth_exe_fullname
+		_dest_file = StrReplace( "%_pathname%\%wsauth_exe_filename%", "\\", "\")
+		FileCopy( _source_file, _dest_file, @FALSE)
+
+		_pathname = StrReplace( "%_webspace_root_dir%\%htdocs_dirname%", "\\", "\")
+		If DirExist( _pathname) == @FALSE
+			DirMake( _pathname)
+		Endif
+
+		_pathname = StrReplace( "%_webspace_root_dir%\%htdocs_dirname%\%weblogs_dirname%", "\\", "\")
+		If DirExist( _pathname) == @FALSE
+			DirMake( _pathname)
+		Endif
+
+		_dest_file = StrReplace( "%_target_dir%\%info_txt_file%", "\\", "\")
+		handle = FileOpen( _dest_file, "WRITE")
+		If handle > 0
+
+			_domain_name = _dir_name
+			_ip_address = "ipless"
+		
+			i = StrIndex( _dir_name, dash_symbol, 1, @FWDSCAN)
+			If i > 0
+				_domain_name = StrSub( _dir_name, i + 1, StrLen( _dir_name) - i)
+				_ip_address = StrSub( _dir_name, 1, i - 1)
+
+;			 Message( "%_appName% - DEBUG", "_domain_adder_exe_filename=%_domain_adder_exe_filename%, _target_dir=%_target_dir%")
+
+			Endif
+
+			len = StrLen( _domain_name)
+			n1 = StrIndexNc( _domain_name, com_domain_type, len, @BACKSCAN)
+			n2 = StrIndexNc( _domain_name, net_domain_type, len, @BACKSCAN)
+
+			for __i = 1 to ipless_symbol0
+				k = StrIndex( _ip_address, ipless_symbol%__i%, 1, @FWDSCAN)
+				If k > 0
+					break
+				Endif
+			next
+
+;			 k = StrIndex( _ip_address, ipless_symbol, 1, @FWDSCAN)
+			If k < 1
+				If (n1 < 1) && (n2 < 1)
+					_domain_name = _ip_address
+				Endif
+			Endif
+
+			If (n1 > 0) || (n2 > 0)
+				j = StrIndexNc( _domain_name, www_prefix, 1, @FWDSCAN)
+				If j < 1
+					_vdn = @FALSE
+					For vdn = 1 to _virtual_domain_names0
+						i_vdn = StrIndexNc( _domain_name, _virtual_domain_names%vdn%, len, @BACKSCAN)
+						If i_vdn > 0
+							_vdn = @TRUE
+						Endif
+					Next
+
+					If _vdn == @FALSE
+						_domain_name = StrCat( www_prefix, _domain_name)
+					Endif
+				Endif
+			Endif
+
+			FileWrite( handle, "%_domain_name%%cr%")
+
+			If k > 0
+				FileWrite( handle, "ipless%cr%")
+			Else
+				FileWrite( handle, "%_ip_address%%cr%")
+			Endif
+
+			FileWrite( handle, "%default_email_address%%cr%")
+			FileWrite( handle, "%wspro_anon%%cr%")
+			
+			_weblogs_dir = StrReplace( StrCat( _webspace_root_dir, weblogs_postfix), "\\", "\")
+			FileWrite( handle, "%_weblogs_dir%%cr%")
+
+			_website_nick_name = StrReplace( StrReplace( StrReplace( _domain_name, "www.", ""), ".", ""), "-", "")
+			If StrLen( _website_nick_name) > 16
+				_website_nick_name = StrSub( _website_nick_name, 1, 16)
+			Endif
+			FileWrite( handle, "%_website_nick_name%%cr%")
+
+			_document_root_dir = StrReplace( StrCat( _webspace_root_dir, htdocs_prefix), "\\", "\")
+			FileWrite( handle, "%_document_root_dir%%cr%")
+
+			_cgi_bin_dir = StrReplace( StrCat( _webspace_root_dir, cgi_bin_prefix), "\\", "\")
+			FileWrite( handle, "%_cgi_bin_dir%%cr%")
+			
+			FileClose( handle)
+
+			cwd = DirGet()
+			DirChange( _target_dir)
+			RunShell( domain_adder_exe_file, "", "", @NORMAL, @WAIT)
+			DirChange( cwd)
+		Else
+			Message( "%_appName% - ERROR", "Could not create %_dest_file%")
+		Endif
+	
+	Endif
+Endif
+
+exit
+
+;;pornographic.net
+;;ipless
+;;horizonmg@yahoo.com
+;;wspro_anon
+;;G:\207.55.215.13-pornographic.net\htdocs\weblogs\access.log
+;;pornographicnet
+;;G:\207.55.215.13-pornographic.net\htdocs
+;;G:\207.55.215.13-pornographic.net\htdocs\cgi-bin
+
+

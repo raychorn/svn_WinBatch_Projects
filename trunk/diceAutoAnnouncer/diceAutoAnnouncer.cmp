@@ -1,0 +1,24 @@
+[Main]
+Type=1
+Targ=F:\myWinbatch\diceAutoAnnouncer\diceAutoAnnouncer.exe
+Icon=
+[Other Files]
+Count=0
+[Options]
+TechWebPage=
+RunHidden=0
+[Version Info]
+Comments=
+CompanyName=HAL Smalltalker, Inc.
+FileDescription=diceAutoAnnouncer
+FileVersion=1.0
+InternalName=diceAutoAnnouncer.exe
+LegalCopyright=(c). Copyright 1990-1999 HAL Smalltalker, Inc., All Rights Reserved
+LegalTrademarks=
+OriginalFilename=diceAutoAnnouncer.exe
+ProductName=diceAutoAnnouncer
+ProductVersion=1.0
+[Extenders]
+Count=2
+File001=pdh.dll
+File002=wwwsk32i.dll

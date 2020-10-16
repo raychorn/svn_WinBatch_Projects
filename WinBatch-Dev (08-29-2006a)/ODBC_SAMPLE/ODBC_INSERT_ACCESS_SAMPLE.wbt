@@ -1,0 +1,108 @@
+AddExtender("wwodb32i.dll")
+;INITIALIZE VARIABLES
+MyDataSource="ContactDSN"
+MyTableName="Contacts"
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+henv = qAllocEnv()
+
+If henv == -1
+  ;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+  retcode = qLastCode()  
+  Message("qAllocEnv failed", retcode)
+  Exit
+Endif
+
+
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM 
+;OF 10 OPEN CONNECTION HANDLES
+hdbc = qAllocConnect(henv) 
+
+If hdbc == -1
+  retcode = qLastCode()
+  Message("qAllocConnect failed", retcode)
+  Exit
+Endif
+
+;CONNECTS TO THE "SAMPLE" DATA SOURCE (with the data source name 'ContactDSN')
+retcode = qConnect(hdbc, MyDataSource, "", "") 
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qConnect failed", retcode)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)  
+
+If hstmt == -1
+  retcode = qLastCode()
+  Message("qAllocStmt failed", retcode)
+  Exit
+Endif
+
+
+;FILLS A RESULT SET WITH A LIST OF COLUMN NAMES IN THE SPECIFIED TABLE FROM "SAMPLE" DATA SOURCE
+retcode = qColumns(hstmt, @qNull, @qNull, MyTableName, @qNull) 
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qColumns failed", retcode)
+  Exit
+Endif
+
+;BINDS A COLUMN IN A RESULT SET TO A VARIABLE THAT YOU NAME HERE
+retcode = qBindCol(hstmt, 4, "colname", 80)  
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+ Message("qBindCol failed", retcode)
+  Exit
+Endif
+
+columns = ""
+debug(1)
+While @TRUE
+  retcode = qFetch(hstmt)
+
+  If retcode == @qNoData Then Break
+
+  If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+    Message("qFetch failed", retcode)
+    Exit
+  Endif
+
+  columns = StrCat(columns, colname, ",")
+EndWhile
+colname=Askitemlist("Select column to INSERT a string to.(make sure its a STRING type)",columns,",",@unsorted,@Single)
+
+;SQL_CLOSE - RESETS OR FREES A SQL STATEMENT HANDLE 
+;(SET WITH QALLOC)
+qFreeStmt(hstmt, 0)  
+qFreeStmt(hstmt, 2)  ; SQL_UNBIND
+
+;THE FOLLOWING EXECUTES AN SQL STATEMENT.
+;THE COLUMNS BELOW ARE ACTUAL COLUMN NAMES IN YOUR DATA SOURCE, ;E.G.,"LASTNAME":
+;INSERT INTO <TABLE NAME> [(<COLUMN LIST>)]VALUES (<VALUE LIST>);
+retcode = qExecDirect(hstmt,"INSERT INTO %mytablename% (%colname%) VALUES ('string') ")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  Message("qExecDirect failed", retcode)
+  Exit
+Endif
+
+;SQL_DROP  - RESETS OR FREES AN SQL STATEMENT HANDLE
+qFreeStmt(hstmt, 1)
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc)
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)
+
+ver = qVersionInfo(0)
+;DISPLAYS THE ODBC EXTENDER VERSION
+Message("SQL Test (extender version %ver%)", "Done") 
+
+
+exit
+
+
+

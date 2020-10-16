@@ -1,0 +1,69 @@
+; zip-files.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+IntControl(41, 1, 0, 0, 0)
+
+wName = "zip-files.wbt"
+
+_dirname = "g:\"
+_sourcefilemask = ""
+
+_destination = "G:\_access-logs\@downloaded"
+
+;_winzip = "C:\WINZIP\WINZIP32.EXE"
+
+_winzip = "C:\WINZIP\WZZIP.EXE"
+
+If param0 > 0
+	; param1 is the dir name
+	_dirname = param1
+Else
+	_dirname = AskLine(wName, "Dir Name ?", _dirname)
+Endif
+
+If param0 > 1
+	; param2 is the location of the winzip program
+	_winzip = param2
+Else
+	_winzip = AskLine(wName, "WinZIp Location ?", _winzip)
+Endif
+
+If param0 > 2
+	; param3 is the location of the zip file
+	_destination = param3
+Else
+	_destination = AskLine(wName, "Destination of zip file ?", _destination)
+Endif
+
+BoxCaption( 1, wName)
+
+If DirExist( _dirname) == @FALSE
+	Message( "ERROR: %wName%", "ERROR: %_dirname% does NOT exist !")
+Else
+	_sourcefilemask = StrCat( _dirname, "\*.*")
+	
+	if FileItemize( _sourcefilemask) == ""
+		Message( "ERROR: %wName%", "ERROR: NO files to act upon in %_dirname% !")
+	else
+		If FileExist( _winzip) == @FALSE
+			Message( "ERROR: %wName%", "ERROR: %_winzip% does NOT exist !")
+		Else
+			Gosub ZipUpTheFiles
+		Endif
+	endif
+Endif
+
+exit
+
+:ZipUpTheFiles
+;Message( "%wName%", "OKAY: _dirname=%_dirname%, _winzip=%_winzip% !")
+
+_Ymd = TimeYmdHms( ) ; YYYY:MM:DD:HH:MM:SS
+
+_parms = StrCat( " -m -ex ", StrCat( _destination, "\access-logs-", ItemExtract( 2, _Ymd, ":"), "-", ItemExtract( 3, _Ymd, ":"), "-", ItemExtract( 1, _Ymd, ":"), ".ZIP"), " ", _sourcefilemask)
+
+;Message( "%wName%", "RunShell( %_winzip%, %_parms%, %_dirname%, @NORMAL, @WAIT)")
+RunShell( _winzip, _parms, _dirname, @NORMAL, @WAIT)
+
+return
+

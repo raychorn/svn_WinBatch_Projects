@@ -1,0 +1,83 @@
+; randomize.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_dir0 = 7
+_dir1 = "x-rated.xxx-sex.com"
+_dir2 = "xxx-sex.nu"
+_dir3 = "xxx-servers.net"
+_dir4 = "adultservers.net"
+_dir5 = "xxx-sex.net"
+_dir6 = "dirt-cheap-servers.net"
+_dir7 = "mymall.net"
+
+_delays = 1
+
+url_wName = "randomize.wbt"
+
+_dir_name = "E:\pics\www.picpost.com\"
+
+_pattern = "*.*"
+
+If param0 > 0
+	; param1 is the directory name
+	_dir_name = param1
+Else
+	_dir_name = AskLine(url_wName, "Pics Path? %_dir_name%", _dir_name)
+Endif
+
+If param0 > 1
+	; param2 is the pattern to match
+	_pattern = param2
+Else
+	_pattern = AskLine(url_wName, "File Pattern? %_pattern%", _pattern)
+Endif
+
+BoxCaption(1,url_wName)
+
+_dir_name = StrReplace( StrCat( _dir_name, "\"), "\\", "\")
+
+_filepath = StrCat( _dir_name, _pattern)
+
+_files = FileItemize( _filepath)
+
+_count = ItemCount( _files, @TAB)
+
+Message( "DEBUG", "_dir_name=%_dir_name%, _pattern=%_pattern%, _prefix=%_prefix%, _count=%_count%, _filepath=%_filepath%")
+
+for i = 1 to _dir0
+	_n = _dir%i%
+	__p = StrCat( _dir_name, "%_n%")
+	DirMake( __p)
+Next
+
+_dirN = 1
+
+while _count > 0
+
+	_r = Random( _count - 1) + 1
+
+	_f = ItemExtract( _r, _files, @TAB)
+
+	_dest = _dir%_dirN%
+
+	FileMove( StrCat( _dir_name, _f), StrCat( _dir_name, "%_dest%", "\", _f), @FALSE)
+
+	BoxCaption(1, "%url_wName% - %_r% --> %_f% --> %_dest%")
+
+	_files = ItemRemove( _r, _files, @TAB)
+
+	_count = ItemCount( _files, @TAB)
+	
+	_dirN = _dirN + 1
+	If _dirN > _dir0
+		_dirN = 1
+	Endif
+
+endwhile
+
+exit
+
+

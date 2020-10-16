@@ -1,0 +1,148 @@
+:doExecSQLDirect_prep
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_stmnt ......... input - holds the SQL statement - sql_stmnt%sql_level%
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; sql_fetch_map ..... input - holds the map of fields to fetch S=String N=number (one per field) in the form of "Snnn,N" where nnn is the field size
+; sql_fetch_gosub ... input - the name of the subroutine called via Gosub
+; sql_level ......... input - the sql level 2-10 (optional)
+; sql_alias ......... input - the prefix for all _cvalue variables normall is the _table %sql_alias%n where n is 1..N one N for each column
+;                             _sql_alias_var_name = sql_alias%sql_level%
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+If IsDefined( _datasource) == @NO
+	Message( "odbcLIB WARNING", "doExecSQLDirect_prep missing variable named _datasource")
+    Exit
+Endif
+
+If IsDefined( hdbc) == @NO
+	Message( "odbcLIB WARNING", "doExecSQLDirect_prep missing variable named hdbc")
+    Exit
+Endif
+
+If IsDefined( sql_stmnt) == @NO
+	Message( "odbcLIB WARNING", "doExecSQLDirect_prep missing variable named sql_stmnt")
+    Exit
+Endif
+
+If IsDefined( sql_alias%sql_level%) == @NO
+	Message( "odbcLIB WARNING", "doExecSQLDirect_prep missing variable named sql_alias for sql_level=%sql_level%")
+    Exit
+Endif
+
+If IsDefined( sql_fetch) == @NO
+    sql_fetch = @FALSE
+Endif
+
+If IsDefined( sql_fetch_map) == @NO
+    sql_fetch_map = ""
+Endif
+
+If IsDefined( sql_level) == @NO
+    sql_level = ""
+Endif
+
+If __debug <> @FALSE
+	Message( "odbcLIB WARNING", StrCat( "doExecSQLDirect_prep hdbc%sql_level%=(", hdbc%sql_level%, "), _datasource=(%_datasource%)"))
+Endif
+
+;ErrorMode(@OFF)
+retcode = qConnect(hdbc%sql_level%, _datasource, "", "")
+;ErrorMode(@CANCEL)
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	Message( "odbcLIB WARNING", "doExecSQLDirect_prep qConnect failed %retcode% for sql_level=%sql_level%")
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+;ErrorMode(@OFF)
+hstmt%sql_level% = qAllocStmt(hdbc%sql_level%)
+;ErrorMode(@CANCEL)
+
+If __debug <> @FALSE
+	Message( "odbcLIB WARNING", StrCat( "doExecSQLDirect_prep hstmt%sql_level%=(", hstmt%sql_level%, "), sql_stmnt%sql_level%=(", sql_stmnt%sql_level%, ")"))
+Endif
+
+If hstmt%sql_level% == -1
+  retcode = qLastCode()
+	Message( "odbcLIB WARNING", "doExecSQLDirect_prep qAllocStmt failed %retcode% for sql_level=%sql_level%")
+  Exit
+Endif
+
+;ErrorMode(@OFF)
+retcode = qExecDirect(hstmt%sql_level%, sql_stmnt%sql_level%)
+;ErrorMode(@CANCEL)
+
+If __debug <> @FALSE
+	Message( "odbcLIB WARNING", "doExecSQLDirect_prep qExecDirect retcode=%retcode%")
+Endif
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	Message( "odbcLIB WARNING", StrCat( "doExecSQLDirect_prep qExecDirect failed %retcode%, sql_stmnt%sql_level%=", sql_stmnt%sql_level%, ")"))
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+If (sql_fetch == @TRUE)
+	If (StrLen( sql_fetch_map%sql_level%) > 0)
+	    sql_fetch_ic = ItemCount( sql_fetch_map%sql_level%, ",")
+	
+	    If __debug <> @FALSE
+				Message( "odbcLIB WARNING", StrCat( "doExecSQLDirect_prep sql_fetch_map%sql_level%=(", sql_fetch_map%sql_level%, "), sql_fetch_ic=(", sql_fetch_ic, ")"))
+	    Endif
+	
+	    For sql_fetch_i = 1 to sql_fetch_ic
+	        _sql_alias_var_name = sql_alias%sql_level%
+	        _cvalueVar = "%_sql_alias_var_name%%sql_fetch_i%%sql_level%"
+	        sql_fetch_ch = ItemExtract(sql_fetch_i, sql_fetch_map%sql_level%, ",")
+	        sql_fetch_ch_i = StrIndex( sql_fetch_ch, "S", 1, @FWDSCAN)
+	        If sql_fetch_ch_i > 0
+	            sql_fetch_ch_len = StrLen( sql_fetch_ch)
+	            __cv = StrSub( sql_fetch_ch, sql_fetch_ch_i + 1, sql_fetch_ch_len - sql_fetch_ch_i)
+	            _cvalueBufLen%sql_fetch_i% = Int( __cv) - 1
+	
+	;            ErrorMode(@OFF)
+	            retcode = qBindCol(hstmt%sql_level%, sql_fetch_i, "%_cvalueVar%", _cvalueBufLen%sql_fetch_i%)
+	;            ErrorMode(@CANCEL)
+	
+	            If __debug <> @FALSE
+						__s = StrCat( "doExecSQLDirect_prep qBindCol S hstmt%sql_level%=(", hstmt%sql_level%, "), sql_fetch_i=(", sql_fetch_i, "), _cvalueBufLen%sql_fetch_i%=(", _cvalueBufLen%sql_fetch_i%, "), retcode=(", retcode, ")")
+						__s = StrCat( __s, ", @qSuccess=(", @qSuccess, ")", ", @qSuccessInfo=(", @qSuccessInfo, ")")
+						Message( "odbcLIB WARNING", __s)
+	            Endif
+	
+	            If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+						Message( "odbcLIB WARNING", "doExecSQLDirect_prep qBindCol failed %retcode% for %_cvalueVar% for sql_level=%sql_level%")
+	                Exit
+	            Endif
+	        Else
+	;            ErrorMode(@OFF)
+	            retcode = qBindCol(hstmt%sql_level%, sql_fetch_i, "%_cvalueVar%", 80)
+	;            ErrorMode(@CANCEL)
+	
+	            If __debug <> @FALSE
+						__s = StrCat( "doExecSQLDirect_prep qBindCol -S hstmt%sql_level%=(", hstmt%sql_level%, "), sql_fetch_i=(", sql_fetch_i, "), _cvalueBufLen%sql_fetch_i%=(", _cvalueBufLen%sql_fetch_i%, "), retcode=(", retcode, ")")
+						__s = StrCat( __s, ", @qSuccess=(", @qSuccess, "), @qSuccessInfo=(", @qSuccessInfo, ")")
+						Message( "odbcLIB WARNING", __s)
+	            Endif
+	
+	            If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+						Message( "odbcLIB WARNING", "doExecSQLDirect_prep qBindCol failed %retcode% for %_cvalueVar% for sql_level=%sql_level%")
+	                Exit
+	            Endif
+	        Endif
+	    Next
+	
+	Endif
+endif
+
+return
+

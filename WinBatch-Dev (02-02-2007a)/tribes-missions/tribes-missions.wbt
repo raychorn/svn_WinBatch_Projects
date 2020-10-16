@@ -1,0 +1,673 @@
+; tribes-missions.wbt
+
+; $pref::lastMission = "Volcano";
+
+AddExtender("WWWSK32I.DLL")
+
+_tokenIGNORE = "IGNORE"
+
+_myIGNORE = "" ; initially we are NOT ignoring anything
+
+_TRUE = "TRUE"
+
+_tribesEXEname = "tribes"
+_tribesEXEprocessID = "-1"
+
+tribeStatWindowName = "TribeStat"
+programHaltedWindowName = "Program Halted"
+
+tribeStatWindowPos = "138 0 996 731"
+
+tribeStatProgramPath = "C:\Program Files\TribeStat\"
+tribeStatProgramPathName = "%tribeStatProgramPath%TribeStat.exe"
+
+infiniteSpawnWindowName = "InfiniteSpawn v1.1"
+tribesWindowName = "tribes.exe"
+
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_yyyy = ItemExtract( 1, TimeYmdHms(), ":")
+
+_wname = "tribes-missions"
+wName = "%_wname%.wbt (c). Copyright 1990-%_yyyy% HAL Smalltalker, Inc."
+
+_fpath = "i:\Dynamix-Tribes v1.8+ultra3\Tribes\base\missions"
+_types = "*.mis"
+
+_fpath_base_missions = "\base\missions\"
+_fpath_config = "\config\"
+
+_serverConfig = "serverConfig.cs"
+
+__usbClanRegistry = "USBclanRegistry.cs"  ; this is the default name of the file where this data lives
+_usbClanRegistry = __usbClanRegistry  ; this is the default name of the file where this data lives
+_rtypes = "*.cs"
+
+_temp_text_file_name = "temp_text_file.txt"
+
+_text_file_name = "message_text_file.txt"
+
+_USBclanRegistryBANNED_token = "What@a@fucking@idiot!"
+
+_USBclanRegistry_token = "$USBclanPwdRegistry["
+_USBclanRegistry_delimToken = "]"
+_USBclanRegistry_rvalueToken = "] = "
+_USBclanRegistry_endToken = ";"
+_USBclanRegistry_sectionINI = "USBclanPwdRegistry"
+_USBclanRegistry_lastToken = "$USBclanSpiderman"
+_USBclanRegistry_nameINI = "USBclanPwdRegistry"
+
+_USBclanRegistryMaxSecs = 60 * 60 * 24 * 7
+
+_USBclanSMTPServer = "mail.hal-smalltalker.com"
+_USBclanMailFrom = "UltraStarbase@smalltalker.com"
+_USBclanMailSubj = "{USB} Clan Password Change Advice Notice"
+
+_USBclanFTPServer1 = "24.1.89.104"
+_USBclanFTPUserID1 = "smalltalker"
+_USBclanFTPPwd1 = "peek@boo"
+_USBclanFTPPath1 = "/c:/dynamix/dynamix-tribes v1.10.5+ultra3 #1/config"
+
+_USBclanDestPath1 = "\\Riker\SISKO_C\Dynamix\Dynamix-Tribes v1.10.5+ultra3 #1\config\"  ; aka SECTOR_000
+_USBclanDestPath2 = "\\Sisko\sisko_i\Dynamix-Tribes v1.10.5+ultra3\Tribes\config\"      ; aka USS_DEFIANT
+_USBclanDestPath3 = "\\janeway\janeway_i\Dynamix-Tribes v1.10.5+ultra3\Tribes\config\"      ; aka USS_VOYAGER
+
+_masterPassword_maxsize = 8
+
+_masterPassword_chars = "aAbBcCdDeEFgGhHmMnNpPqQrRsSTuUvVwWxXyYz3456789"
+_masterPassword_chars_len = StrLen( _masterPassword_chars)
+
+_masterPassword_spchars = "$^&*+?"
+_masterPassword_spchars_len = StrLen( _masterPassword_spchars)
+
+_pref_lastMission_token = "$pref::lastMission"
+
+_USBtribesMissionsReg_nameINI = "tribesMissionsRegistry"
+
+; Comment out the next line to run this program in a production environment
+;goto skip02202000
+
+_winNTdir = StrReplace( StrCat( DirWindows(0), "\"), "\\", "\")
+
+__usbTribesMissionsReg_ini = StrCat( _winNTdir, _USBtribesMissionsReg_nameINI, ".ini")
+_usbTribesMissionsReg_ini = StrCat( _USBtribesMissionsReg_nameINI, ".ini")
+
+_usbTribesMissionsReg_sect = "tribes-missions"
+_usbBashirMissionsReg_sect = "bashir"
+_usbRikerMissionsReg_sect = "riker"
+_usbSiskoMissionsReg_sect = "sisko"
+_usbJanewayMissionsReg_sect = "janeway"
+_usbRiker2MissionsReg_sect = "riker2"
+_usbSisko2MissionsReg_sect = "sisko2"
+_usbRandomMissionsReg_key = "random-missions-path"
+_usbTribesPathReg_key = "tribes-path"
+_usbMissionsCacheReg_key = "missions-cache"
+_usbClanPathReg_key = "ClanRegistry"
+_usbConfigPathReg_key = "config-path"
+_usbServersListReg_key = "Servers"
+_usbServersListReg_delim = ","
+; 
+
+;param1 = "IGNORE"
+;param2 = "C:\tribes-v1.11 04-29-2000a\base\missions\"
+
+If IsDefined( param1)
+	_myIGNORE = param1
+Else
+	_ftypes = "All Files|%_types%"
+	_fpath = AskFileName( "Path for Tribes Missions?", "C:\", _ftypes, "", 1)
+	_fpath = FilePath( _fpath)
+Endif
+
+if (StrCmp( _myIGNORE, _tokenIGNORE) <> 0)
+	If IsDefined( param2)
+		_usbClanRegistry = param2
+	Else
+		_ftypes = "All Files|%_types%"
+		_usbClanRegistry = AskFileName( "Select the file the {USB} Clan Registry resides in ?", "C:\", _rtypes, "", 1)
+	Endif
+	
+	If IsDefined( param3)
+		_USBclanDestPath1 = param3
+	Else
+		_USBclanDestPath1 = AskLine( "RIKER aka SECTOR_000", "Destination fully qualified path name on RIKER aka SECTOR_000 ?", _USBclanDestPath1)
+	Endif
+	
+	If IsDefined( param4)
+		_USBclanDestPath2 = param4
+	Else
+		_USBclanDestPath2 = AskLine( "SISKO aka USS_DEFIANT", "Destination fully qualified path name on SISKO aka USS_DEFIANT ?", _USBclanDestPath2)
+	Endif
+	
+	If IsDefined( param5)
+		_USBclanDestPath3 = param5
+	Else
+		_USBclanDestPath3 = AskLine( "JANEWAY aka USS_VOYAGER", "Destination fully qualified path name on JANEWAY aka USS_VOYAGER ?", _USBclanDestPath3)
+	Endif
+	
+	If IsDefined( param6)
+		if StriCmp( param6, _TRUE) == 0
+			b_tribesPriorityHigh = @TRUE
+		else
+			b_tribesPriorityHigh = @FALSE
+		endif
+	Else
+		b_tribesPriorityHigh = AskYesNo( "Tribes Process Priority Control", "Make Tribes Process HIGH Priority ?")
+	Endif
+	
+	If IsDefined( param6)
+		_tribesEXEprocessID = param6
+	Else
+		_tribesEXEprocessID = AskLine( "Tribes Process ID", "Tribes Process ID ?", _tribesEXEprocessID)
+	Endif
+else
+	If IsDefined( param2)
+		_fpath = param2
+	Else
+		_ftypes = "All Files|%_types%"
+		_fpath = AskFileName( "Path for Tribes Missions?", "C:\", _ftypes, "", 1)
+		_fpath = FilePath( _fpath)
+	Endif
+endif
+
+__fpath = StrCat( _fpath, "..\..\")
+
+goto skip2 ; normally we skip over the section we use for testing - DUH !
+
+:skip1
+
+If IsDefined( param3)
+	_testFlag = param3
+Else
+	q = AskYesNo('Test Flag', 'Do you want to test this program ?')
+	If q == @YES Then _testFlag = q
+Endif
+
+If _testFlag == @YES Then goto skipMissionChange
+
+:skip2
+
+while 1
+	if (StrCmp( _myIGNORE, _tokenIGNORE) <> 0)
+		; iterate thru all the servers to do this
+		_serversList = IniReadPvt( _usbTribesMissionsReg_sect, _usbServersListReg_key, "", _usbTribesMissionsReg_ini)
+		for ix = 1 to ItemCount( _serversList, _usbServersListReg_delim)
+			aServer = ItemExtract( ix, _serversList, _usbServersListReg_delim)
+			_fpath = StrCat( IniReadPvt( "%aServer%", _usbTribesPathReg_key, "", _usbTribesMissionsReg_ini), IniReadPvt( "%aServer%", _usbRandomMissionsReg_key, "", _usbTribesMissionsReg_ini))
+	;		Gosub randomMissionChange
+		next
+	else
+		Gosub randomMissionChange
+	endif
+
+:skipMissionChange
+
+;goto skip02202000
+if (StrCmp( _myIGNORE, _tokenIGNORE) <> 0) Then goto skip02202000
+
+	for ii = 1 to 15
+		_smallestX = 640
+		_smallestY = 480
+		_smallestWinName = ""
+		winList = WinItemize()
+		kk = 0
+		for ij = 1 to ItemCount( winList, @TAB)
+			aWindow = ItemExtract( ij, winList, @TAB)
+			if (StrCmp( aWindow, tribeStatWindowName) == 0) || (StrIndexNc( aWindow, programHaltedWindowName, 1, @FWDSCAN) <> 0)
+;				SendKeysTo( aWindow, "{ENTER}")
+				ErrorMode(@OFF)
+				aPos = WinPosition( aWindow)
+				ErrorMode(@CANCEL)
+				aPosUX = ItemExtract( 1, aPos, ",")
+				aPosUY = ItemExtract( 2, aPos, ",")
+				aPosBX = ItemExtract( 3, aPos, ",")
+				aPosBY = ItemExtract( 4, aPos, ",")
+				_curX = Max(aPosUX, aPosBX) - Min(aPosUX, aPosBX)
+				_curY = Max(aPosUY, aPosBY) - Min(aPosUY, aPosBY)
+				if (_curX < _smallestX) && (_curY < _smallestY)
+					_smallestX = _curX
+					_smallestY = _curY
+					_smallestWinName = aWindow
+					kk = kk + 1
+				endif
+			endif
+		next
+		if (kk > 0) && (StrLen( _smallestWinName) > 0)
+			ErrorMode(@OFF)
+			SendKeysTo( _smallestWinName, "{ENTER}")
+			ErrorMode(@CANCEL)
+;Message( "DEBUG", "_smallestWinName = %_smallestWinName%, _smallestX = %_smallestX%, _smallestY = %_smallestY%")
+;			q = AskYesNo('DEBUG', 'Continue ?')
+;			If q == @YES Then exit
+		endif
+
+;infiniteSpawnWindowName = "InfiniteSpawn v1.1"
+;tribesWindowName = "tribes.exe"
+
+		ErrorMode(@OFF)
+		_pos = WinPlaceGet( @NORMAL, infiniteSpawnWindowName)
+		ErrorMode(@CANCEL)
+
+;		Message( "DEBUG", "%infiniteSpawnWindowName% = %_pos%")
+;		q = AskYesNo('DEBUG', 'Continue ?')
+;		If q <> @YES Then exit
+
+		if ItemCount(_pos, " ") == 4
+			ErrorMode(@OFF)
+			_aPosUX = ItemExtract( 1, _pos, " ")
+			ErrorMode(@CANCEL)
+
+			ErrorMode(@OFF)
+			_aPosUY = ItemExtract( 2, _pos, " ")
+			ErrorMode(@CANCEL)
+
+			ErrorMode(@OFF)
+			_aPosLX = ItemExtract( 3, _pos, " ")
+			ErrorMode(@CANCEL)
+
+			ErrorMode(@OFF)
+			_aPosLY = ItemExtract( 4, _pos, " ")
+			ErrorMode(@CANCEL)
+
+			ErrorMode(@OFF)
+			_dX = Max(_aPosUX, _aPosLX) - Min(_aPosUX, _aPosLX)
+			ErrorMode(@CANCEL)
+
+			ErrorMode(@OFF)
+			_dY = Max(_aPosUY, _aPosLY) - Min(_aPosUY, _aPosLY)
+			ErrorMode(@CANCEL)
+		endif
+
+;		Message( "DEBUG", "%infiniteSpawnWindowName% (%_pos%) _dX = %_dX% _dY = %_dY%")
+;		q = AskYesNo('DEBUG', 'Continue ?')
+;		If q <> @YES Then exit
+
+		If IsDefined( _dX)
+			ErrorMode(@OFF)
+			if ( (_dX < 512) || (_dX > 512) ) then _dX = 512
+			ErrorMode(@CANCEL)
+		endif
+
+		If IsDefined( _dY)
+			ErrorMode(@OFF)
+			if ( (_dY < 175) || (_dY > 175) ) then _dY = 175
+			ErrorMode(@CANCEL)
+		endif
+
+		If IsDefined( _dX) && IsDefined( _dY)
+			ErrorMode(@OFF)
+			WinPlaceSet( @NORMAL, infiniteSpawnWindowName, "1 1 %_dX% %_dY%")  ; upper-x upper-y lower-x lower-y
+			ErrorMode(@CANCEL)
+		endif
+
+		_wnames = WinItemize()
+		for _i = 1 to ItemCount(_wnames, @TAB)
+			_awname = ItemExtract( _i, _wnames, @TAB)
+			if StrIndexNc(_awname, tribesWindowName, 1, @FWDSCAN) <> 0
+				ErrorMode(@OFF)
+				_pos2 = WinPlaceGet( @NORMAL, _awname)
+				ErrorMode(@CANCEL)
+		
+;				Message( "DEBUG", "%_awname% = %_pos2%")
+;				q = AskYesNo('DEBUG', 'Continue ?')
+;				If q <> @YES Then exit
+
+				if ItemCount(_pos2, " ") == 4
+					ErrorMode(@OFF)
+					_aPos2UX = ItemExtract( 1, _pos2, " ")
+					ErrorMode(@CANCEL)
+
+					ErrorMode(@OFF)
+					_aPos2UY = ItemExtract( 2, _pos2, " ")
+					ErrorMode(@CANCEL)
+
+					ErrorMode(@OFF)
+					_aPos2LX = ItemExtract( 3, _pos2, " ")
+					ErrorMode(@CANCEL)
+
+					ErrorMode(@OFF)
+					_aPos2LY = ItemExtract( 4, _pos2, " ")
+					ErrorMode(@CANCEL)
+
+					ErrorMode(@OFF)
+					_dX2 = Max(_aPos2UX, _aPos2LX) - Min(_aPos2UX, _aPos2LX)
+					ErrorMode(@CANCEL)
+
+					ErrorMode(@OFF)
+					_dY2 = (Max(_aPos2UY, _aPos2LY) - Min(_aPos2UY, _aPos2LY)) + _dY
+					ErrorMode(@CANCEL)
+				endif
+
+;				Message( "DEBUG", "%_awname% (%_pos2%) _dY = %_dY% _dX2 = %_dX2% _dY2 = %_dY2%")
+;				q = AskYesNo('DEBUG', 'Continue ?')
+;				If q <> @YES Then exit
+		
+				ErrorMode(@OFF)
+				WinPlaceSet( @NORMAL, _awname, "5 %_dY% %_dX2% %_dY2%")  ; upper-x upper-y lower-x lower-y
+				ErrorMode(@CANCEL)
+				break
+			endif
+		next
+
+		TimeDelay( 4)
+	next
+
+:skip02202000
+
+	if (StrCmp( _myIGNORE, _tokenIGNORE) == 0)
+		TimeDelay( 5)
+
+		Now = TimeYmdHms( )
+		consoleLogFileName = StrCat( __fpath, "console.log")
+		consoleLogNewFileName = StrCat( __fpath, "console_", StrReplace( StrSub(Now,1,10), ":", "-"), ".log")
+
+		if ( (FileExist( consoleLogFileName) == @TRUE) && (FileExist( consoleLogNewFileName) == @FALSE) )
+			FileRename( consoleLogFileName, consoleLogNewFileName)
+		endif
+	else
+		Now = TimeYmdHms( )
+		Midnight = strcat(StrSub(Now,1,11), "00:00:00")
+		Seconds = TimeDiffSecs(Now, Midnight)
+		_Seconds = TimeDiffSecs(Midnight, Now)
+		__usbClanRegistry_ini = StrCat( _winNTdir, _USBclanRegistry_nameINI, ".ini")
+		_fDate = FileYmdHms( __usbClanRegistry_ini)
+		_fDateDiff = TimeDiffSecs(Now, _fDate)
+		_serversList = IniReadPvt( _usbTribesMissionsReg_sect, _usbServersListReg_key, "", _usbTribesMissionsReg_ini)
+		for ix = 1 to ItemCount( _serversList, _usbServersListReg_delim)
+			aServer = ItemExtract( ix, _serversList, _usbServersListReg_delim)
+			_fpath = StrCat( IniReadPvt( "%aServer%", _usbTribesPathReg_key, "", _usbTribesMissionsReg_ini))
+			consoleLogFileName = StrCat( _fpath, "console.log")
+			consoleLogNewFileName = StrCat( _fpath, "console_", StrReplace( StrSub(Now,1,10), ":", "-"), ".log")
+	
+			if ( (FileExist( consoleLogFileName) == @TRUE) && (FileExist( consoleLogNewFileName) == @FALSE) )
+				FileRename( consoleLogFileName, consoleLogNewFileName)
+			endif
+		next
+		BoxCaption( 1, StrCat( wName, "_fDateDiff %_fDateDiff% _USBclanRegistryMaxSecs %_USBclanRegistryMaxSecs% ..."))
+		if (_fDateDiff >= _USBclanRegistryMaxSecs)
+			_tdow = (TimeJulianDay( Now)+5) mod 7
+			if ( (_tdow == 0) && (FileExist( _usbClanRegistry) != @FALSE) )
+	;			gosub readUSBRegistryINI
+				FileTimeSet(__usbClanRegistry_ini, Midnight)
+	
+				; Clear the mission list cache once a week
+				_serversList = IniReadPvt( _usbTribesMissionsReg_sect, _usbServersListReg_key, "", _usbTribesMissionsReg_ini)
+				for ix = 1 to ItemCount( _serversList, _usbServersListReg_delim)
+					aServer = ItemExtract( ix, _serversList, _usbServersListReg_delim)
+					IniWritePvt( "%aServer%", _usbMissionsCacheReg_key, "", _usbTribesMissionsReg_ini)
+				next
+			endif
+		else
+			if (FileExist( _usbClanRegistry) != @FALSE)
+				_srcSize = FileSize( _usbClanRegistry)
+				_srcDate = FileYmdHms( _usbClanRegistry)
+	
+				_serversList = IniReadPvt( _usbTribesMissionsReg_sect, _usbServersListReg_key, "", _usbTribesMissionsReg_ini)
+				for ix = 1 to ItemCount( _serversList, _usbServersListReg_delim)
+					aServer = ItemExtract( ix, _serversList, _usbServersListReg_delim)
+					_USBclanDestPath = StrCat( IniReadPvt( "%aServer%", _usbTribesPathReg_key, "", _usbTribesMissionsReg_ini), IniReadPvt( "%aServer%", _usbConfigPathReg_key, "", _usbTribesMissionsReg_ini))
+					_destName = StrCat( _USBclanDestPath, __usbClanRegistry)
+					if (FileExist( _destName) != @FALSE)
+						ErrorMode(@OFF)
+						_destSize = FileSize( _destName)
+						ErrorMode(@CANCEL)
+			
+						ErrorMode(@OFF)
+						_destDate = FileYmdHms( _destName)
+						ErrorMode(@CANCEL)
+						_diffSeconds = TimeDiffSecs(_srcDate, _destDate)
+						if ( (_srcSize != _destSize) || (_diffSeconds != 0) )
+							BoxCaption( 1, StrCat( wName, "Updating %_destName%..."))
+							ErrorMode(@OFF)
+							FileCopy( _usbClanRegistry, _destName, @FALSE)
+							ErrorMode(@CANCEL)
+						endif
+					endif
+				next
+			endif
+		endif
+	
+		TimeDelay( 60)
+	endif
+
+
+endwhile
+
+;Message( "DEBUG", "There are %i_flist% missions to choose from... %_mission_name%")
+
+exit
+
+
+:buildUSBRegistryINI
+	_usbClanRegistry_ini = StrCat( _USBclanRegistry_nameINI, ".ini")
+
+	fold = FileOpen( _usbClanRegistry, "READ")
+	while @TRUE
+		x = StrTrim( FileRead(fold))
+		If x == "*EOF*" Then Break
+		k = StrIndexNc( x, _USBclanRegistry_token, 1, @FWDSCAN)
+		if k > 0
+			xx = StrSub( x, k + StrLen( _USBclanRegistry_token), StrLen( x))
+			if ItemCount( xx, _USBclanRegistry_delimToken) > 0
+				y = ItemExtract( 1, xx, _USBclanRegistry_delimToken)
+				kk = StrIndexNc( x, _USBclanRegistry_rvalueToken, k + 1, @FWDSCAN)
+				if kk > 0
+					kz = StrIndexNc( x, _USBclanRegistry_endToken, kk + 1, @FWDSCAN)
+					if kz > 0
+						z = StrSub( x, kk + StrLen( _USBclanRegistry_rvalueToken) + 1, kz - (kk + StrLen( _USBclanRegistry_rvalueToken)) - 2)
+						IniWritePvt( _USBclanRegistry_sectionINI, y, z, _usbClanRegistry_ini)
+					endif
+				endif
+			endif
+	   endif
+	endwhile
+	FileClose(fold)
+return
+
+
+:randomPassword
+	b_used_specChar = @false
+	new_password = ""
+	For i = 1 to _masterPassword_maxsize
+		new_password = StrCat( new_password, StrSub( _masterPassword_chars, Random( _masterPassword_chars_len - 1) + 1, 1))
+		if b_used_specChar == @false
+			c = Random( 4)
+			Switch c
+				case 0
+					break
+				case 1
+					new_password = StrCat( new_password, StrSub( _masterPassword_spchars, Random( _masterPassword_spchars_len - 1) + 1, 1))
+					b_used_specChar = @true
+					break
+				case 2
+					break
+				case 3
+					break
+				case 4
+					break
+				case c    ; default case
+					break
+			EndSwitch
+		endif
+	Next
+return
+
+
+
+:readUSBRegistryINI
+	_usbClanRegistry_new = StrCat( _usbClanRegistry, ".new")
+	_usbClanRegistry_ini = StrCat( _USBclanRegistry_nameINI, ".ini")
+
+	fold = FileOpen( _usbClanRegistry, "READ")
+	fnew = FileOpen( _usbClanRegistry_new, "WRITE")
+	while @TRUE
+		x = StrTrim( FileRead(fold))
+		If x == "*EOF*" Then Break
+		k = StrIndexNc( x, _USBclanRegistry_token, 1, @FWDSCAN)
+		if k > 0
+			xx = StrSub( x, k + StrLen( _USBclanRegistry_token), StrLen( x))
+			if ItemCount( xx, _USBclanRegistry_delimToken) > 0
+				y = StrTrim( ItemExtract( 1, xx, _USBclanRegistry_delimToken))
+				kk = StrIndexNc( x, _USBclanRegistry_rvalueToken, k + 1, @FWDSCAN)
+				if kk > 0
+					kz = StrIndexNc( x, _USBclanRegistry_endToken, kk + 1, @FWDSCAN)
+					if kz > 0
+						z = StrTrim( StrSub( x, kk + StrLen( _USBclanRegistry_rvalueToken) + 1, kz - (kk + StrLen( _USBclanRegistry_rvalueToken)) - 2))
+						v = IniReadPvt( _USBclanRegistry_sectionINI, y, "", _usbClanRegistry_ini)
+						if StrLen( v) == 0
+							IniWritePvt( _USBclanRegistry_sectionINI, y, z, _usbClanRegistry_ini)
+							v = z
+						endif
+						Gosub randomPassword
+						if (StriCmp( y, _USBclanRegistry_lastToken) != 0) && (StriCmp( v, _USBclanRegistryBANNED_token) != 0)
+							x = StrReplace( x, z, new_password)
+							_USBclanMailTo = v ; chamge this line of code to send the e-mail to the correct recipient
+							tnew = FileOpen( _temp_text_file_name, "WRITE")
+							text = StrCat( "", "%_USBclanMailSubj% To: %v%", @cr)
+							FileWrite(tnew, text)
+							text = StrCat( "", @cr, @lf)
+
+;							FileWrite(tnew, text)
+;							text = StrCat( "", "Your {USB} Clan Password has changed.", @cr)
+;							FileWrite(tnew, text)
+;							text = StrCat( "", @cr, @lf)
+;							FileWrite(tnew, text)
+;							text = StrCat( "", "Old Password: %z%", @cr)
+;							FileWrite(tnew, text)
+;							text = StrCat( "", "New Password: %new_password%", @cr)
+;							FileWrite(tnew, text)
+;							text = StrCat( "", @cr, @lf)
+;							FileWrite(tnew, text)
+
+							_backup_text_file_name = StrReplace( _text_file_name, ".txt", StrCat( "-", StrReplace( StrSub(Now,1,10), ":", "-"), ".txt"))
+							if FileExist( _backup_text_file_name) == @FALSE
+								ErrorMode(@OFF)
+								resp = FileCopyAttr( _text_file_name, _backup_text_file_name, @FALSE, "R")
+								ErrorMode(@CANCEL)
+							endif
+
+							ftext = FileOpen( _text_file_name, "READ")
+							while @TRUE
+								xx = StrTrim( FileRead(ftext))
+								If xx == "*EOF*" Then Break
+								FileWrite(tnew, xx)
+							endwhile
+							FileClose(ftext)
+
+							text = StrCat( "", @cr, @lf)
+							FileWrite(tnew, text)
+							text = StrCat( "", "{USB}Spiderman", @cr)
+							FileWrite(tnew, text)
+							FileClose(tnew)
+							BoxCaption( 1, StrCat( wName, "E-Mail message to %_USBclanMailTo% Subj: %_USBclanMailSubj% ..."))
+							resp = smtpSendFile( _USBclanSMTPServer, _USBclanMailFrom, _USBclanMailTo, _USBclanMailSubj, _temp_text_file_name)
+							BoxCaption( 1, StrCat( wName, "E-Mail message to %_USBclanMailFrom% Subj: %_USBclanMailSubj% ..."))
+							resp = smtpSendFile( _USBclanSMTPServer, _USBclanMailFrom, _USBclanMailFrom, _USBclanMailSubj, _temp_text_file_name)
+						endif
+;						resp = AskYesNo( "Continue ?", "y (%y%) z (%z%) v (%v%) new_password (%new_password%)")
+;						if resp == @NO
+;							break
+;						endif
+					endif
+				endif
+			endif
+	   endif
+		FileWrite(fnew, x)
+	endwhile
+	FileClose(fnew)
+	FileClose(fold)
+	FileDelete( _usbClanRegistry)
+	FileRename( _usbClanRegistry_new, _usbClanRegistry)
+
+return
+
+	; this FTP code works but seems to cause problems with Tribes ?!?  Who knows why or how or even if...
+	hSession = ftpOpen( _USBclanFTPServer1, _USBclanFTPUserID1, _USBclanFTPPwd1, "", 99)
+	if !IsNumber(hSession)
+		rs = smtpSendText( _USBclanSMTPServer, _USBclanMailFrom, _USBclanMailFrom, "FTP Open Error Server #1", "hSession (%hSession%)")
+		return
+	endif
+	resp = ftpChDir(hSession, _USBclanFTPPath1)
+	if StrLen( resp) > 0
+		rs = smtpSendText( _USBclanSMTPServer, _USBclanMailFrom, _USBclanMailFrom, "FTP ChDir Error Server #1", StrCat( "hSession (%hSession%) resp (", resp, ")"))
+		return
+	endif
+	resp = ftpDelete(hSession, __usbClanRegistry)
+	if StrLen( resp) > 0
+		rs = smtpSendText( _USBclanSMTPServer, _USBclanMailFrom, _USBclanMailFrom, "FTP Delete Error Server #1", StrCat( "hSession (%hSession%) resp (", resp, ")"))
+;		return
+	endif
+	resp = ftpPut(hSession, _usbClanRegistry, __usbClanRegistry, "B")
+	if StrLen( resp) > 0
+		rs = smtpSendText( _USBclanSMTPServer, _USBclanMailFrom, _USBclanMailFrom, "FTP Put Error Server #1", StrCat( "hSession (%hSession%) resp (", resp, ")"))
+		return
+	endif
+	ftpClose(hSession)
+return
+
+
+:randomMissionChange
+	_prevDir = DirGet()
+	ErrorMode(@OFF)
+	resp = DirChange( _fpath)
+	ErrorMode(@CANCEL)
+	if resp == @true
+		_flist = IniReadPvt( "%aServer%", _usbMissionsCacheReg_key, "", _usbTribesMissionsReg_ini)
+		if StrLen( _flist) == 0
+			_flist = FileItemize( _types)
+			ignore_flist = FileItemize( "1_%_types%|2_%_types%|3_%_types%|4_%_types%|5_%_types%|6_%_types%|7_%_types%|8_%_types%|9_%_types%")
+			
+			for i = 1 to ItemCount( ignore_flist, @TAB)
+				_mname = ItemExtract( i, ignore_flist, @TAB)
+				k = ItemLocate( _mname, _flist, @TAB)
+				_flist = ItemRemove(k, _flist, @TAB)
+			next
+			IniWritePvt( "%aServer%", _usbMissionsCacheReg_key, _flist, _usbTribesMissionsReg_ini)
+		endif
+		
+		i_flist = ItemCount( _flist, @TAB)
+		
+		i_mission = Random( i_flist) + 1
+		_mission_name = ItemExtract( i_mission, _flist, @TAB)
+		_mission_name = FileRoot( _mission_name)
+	
+		if StrLen( _mission_name) < 1
+			_mission_name = ItemExtract( 1, _flist, @TAB)
+			_mission_name = FileRoot( _mission_name)
+		endif
+		
+		c_fpath = StrReplace( _fpath, _fpath_base_missions, _fpath_config)
+		sc_fpath = StrCat( c_fpath, _serverConfig)
+		scnew_fpath = StrCat( c_fpath, _serverConfig, ".new")
+		
+		ErrorMode(@OFF)
+		LastError()
+		fold = FileOpen( sc_fpath, "READ")
+		ErrorMode(@CANCEL)
+		if fold <> 0
+			fnew = FileOpen( scnew_fpath, "WRITE")
+			while @TRUE
+				x = FileRead(fold)
+				If x == "*EOF*" Then Break
+				k = StrIndexNc( x, _pref_lastMission_token, 1, @FWDSCAN)
+				if k > 0
+					x = StrCat( _pref_lastMission_token, ' = "', _mission_name, '";')
+			   endif
+				FileWrite(fnew, x)
+			endwhile
+			FileClose(fnew)
+			FileClose(fold)
+
+			FileDelete( sc_fpath)
+			FileRename( scnew_fpath, sc_fpath)
+		
+			BoxCaption( 1, StrCat( wName, "There are %i_flist% missions to choose from... Next Mission %_mission_name% (%pos%)"))
+		else
+			_lastError = LastError()
+			BoxCaption( 1, StrCat( wName, "Last Error code was %_lastError%"))
+		endif
+	endif
+	resp = DirChange( _prevDir)
+return
+

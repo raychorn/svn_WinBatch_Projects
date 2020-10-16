@@ -1,0 +1,18 @@
+:beginSQL
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM
+;OF 10 OPEN CONNECTION HANDLES
+;If IsDefined( hdbc) == @NO
+    hdbc = qAllocConnect(henv)
+
+    If hdbc == -1
+      retcode = qLastCode()
+		Message( "odbcLIB WARNING", "qAllocConnect failed %retcode%")
+      Exit
+    Endif
+
+    ;SQL_LOGIN_TIMEOUT - SETS OPTIONS FOR SQL CONNECTIONS
+    qSetConnOpt(hdbc, 103, 5, 0)
+;Endif
+
+return
+

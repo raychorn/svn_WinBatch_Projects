@@ -1,0 +1,223 @@
+; FTP-parser.wbt
+
+_delimiter = "~"
+
+_expected_field_count = 36
+
+_line_count = 0
+
+_file_format0 = 1
+_file_format1 = 1
+
+_file_format_processor1 = "processASCIIdelimitedType1"
+
+while 1
+
+	types = "All Files|*.*|"
+	fname = AskFileName( "Adecco FTP File Parser Sample", "", types, "", 1)
+;	 Message( "File selected was", fname)
+
+	_processInputFileVar = "fname"
+	Gosub processInputFile
+
+endwhile
+
+exit
+
+
+:processInputFile
+; _processInputFileVar ... the name of the variable that holds the input file name
+; _username .............. the username from the input file
+; _password .............. the password from the input file
+; _total_records ......... the total records value from the input file
+; _file_format ........... the file format value from the input file
+
+If FileExist( %_processInputFileVar%) == @TRUE
+	_first_line = @TRUE
+	fhand = FileOpen( %_processInputFileVar%, "READ")
+	while @TRUE				; Loop till break do us end
+		aLine = FileRead( fhand)
+		If aLine == "*EOF*" Then Break
+		If _first_line == @TRUE
+			i = ItemCount( aLine, _delimiter)
+			If i == 4
+				_username = ItemExtract( 1, aLine, _delimiter)
+				_password = ItemExtract( 2, aLine, _delimiter)
+				_total_records = ItemExtract( 3, aLine, _delimiter)
+				_file_format = ItemExtract( 4, aLine, _delimiter)
+
+				_file_format_acceptable = @FALSE
+				
+				For ii = 1 to _file_format0
+					If _file_format == _file_format%ii%
+						_file_format_acceptable = @TRUE
+						_file_format_processed = @FALSE
+						_subroutine = _file_format_processor%ii%
+						ErrorMode( @OFF)
+						Gosub %_subroutine%
+						ErrorMode( @CANCEL)
+					Endif
+				Next
+ 
+				pif_error_code = 0
+				
+				If _file_format_acceptable <> @TRUE
+					Message( "ERROR", StrCat( "The selected file named '", %_processInputFileVar%, "' has an unacceptable file format type (", _file_format, ") in the file header record (", aLine, ")."))
+					pif_error_code = pif_error_code | 1
+				Endif
+
+				If _file_format_processed <> @TRUE
+					Message( "ERROR", StrCat( "The selected file named '", %_processInputFileVar%, "' did NOT get processed."))
+					pif_error_code = pif_error_code | 2
+				Endif
+
+				If _total_records <> _line_count
+					Message( "ERROR", StrCat( "The selected file named '", %_processInputFileVar%, "' had ", _line_count, " invoice lines to process, ", _total_records, " lines expected."))
+					pif_error_code = pif_error_code | 4
+				Endif
+				
+				If pif_error_code > 0
+					break
+				Endif
+			Else
+				Message( "ERROR", StrCat( "The selected file named '", %_processInputFileVar%, "' has an invalid file header record (", aLine, ")."))
+				break
+			Endif
+			
+			_first_line = @FALSE
+			_line_count = _line_count + 1
+		Endif
+	endwhile
+	FileClose(fhand)
+Else
+	Message( "ERROR", StrCat( "The selected file named '", %_processInputFileVar%, "' does NOT exist."))
+Endif
+
+return
+
+
+:processASCIIdelimitedType1
+; _username
+; _password
+; _total_records
+; _file_format
+
+_file_format_processed = @TRUE
+
+If IsInt( _total_records) <> @TRUE
+	Message( "DEBUG", StrCat( "processASCIIdelimitedType1 _total_records (", _total_records, ") is NOT a Numeric value."))
+Endif
+
+If (StrLen( _username) > 0) && (StrLen( _password) > 0) && (_total_records > 1)
+	Message( "DEBUG", "processASCIIdelimitedType1 _username=%_username%, _password=%_password%, _total_records=%_total_records%, _file_format=%_file_format%")
+
+	while @TRUE				; Loop till break do us end
+		aLine = FileRead( fhand)
+		If aLine == "*EOF*" Then Break
+		field0 = ItemCount( aLine, _delimiter)
+		If field0 <> _expected_field_count
+			Message( "ERROR", StrCat( "Something wrong with this '", aLine, "', field0='", field0, "' on line #", _line_count, "."))
+			_file_format_processed = @FALSE
+
+			_s = ""
+			For ij = 1 to field0
+				field%ij% = ItemExtract( ij, aLine, _delimiter)
+				_s = StrCat( _s, "f", ij, "=", field%ij%, ", ")
+			Next
+			Message( "DEBUG", StrCat( "processASCIIdelimitedType1 _s=", _s, ""))
+
+			break
+		Else
+			_s = ""
+			For ij = 1 to field0
+				field%ij% = ItemExtract( ij, aLine, _delimiter)
+				_s = StrCat( _s, "f", ij, "=", field%ij%, ", ")
+
+				_file_format_acceptable = @FALSE
+				Switch ij
+					case 1		; Subcontractor ID	- String
+						break
+					case 2		; Branch Code		- String
+						break
+					case 3		; Customer Number	- String
+						break
+					case 4		; Invoice Number	- String
+						break
+					case 5		; Invoice Date		- Date
+						break
+					case 6		; Week Ending Date	- Date
+						break
+					case 7		; Sale Tax Rate		- Numeric
+						break
+					case 8		; Sale Tax Amount	- Numeric
+						break
+					case 9		; Invoice Total		- Numeric
+						break
+					case 10		; Week Ending Date	- Date
+						break	
+					case 11		; Regular Hours		- Numeric
+						break
+					case 12		; Overtime Hours	- Numeric
+						break
+					case 13		; Double Time Hours - Numeric
+						break
+					case 14		; Regular Billing Rate - Numeric
+						break
+					case 15		; Overtime Billing Rate - Numeric
+						break
+					case 16		; Double Billing Rate  - Numeric
+						break
+					case 17		; Regular Amount	- Numeric
+						break
+					case 18		; Overtime Amount	- Numeric
+						break
+					case 19		; Double Time Amount - Numeric
+						break
+					case 20		; Regular Pay Rate	 - Numeric
+						break
+					case 21		; Expense Description  - String
+						break
+					case 22		; First Name		   - String
+						break
+					case 23		; Middle Initial	   - String
+						break
+					case 24		; Last Name			   - String
+						break
+					case 25		; Social Security Number - Numeric
+						break
+					case 26		; Skill Description	 - String
+						break
+					case 27		; Skill Category	 - String
+						break
+					case 28		; Department Name	 - String
+						break
+					case 29		; Department Number	 - String
+						break
+					case 30		; Division Name		 - String
+						break
+					case 31		; Release Number	 - String
+						break
+					case 32		; Purchase Order Number	 - String
+						break
+					case 33		; Cost Center		 - String
+						break
+					case 34		; Special Billing	 - String
+						break
+					case 35
+						break
+					case 36		; Attention To		 - String
+						break
+				EndSwitch
+			Next
+			Message( "DEBUG", StrCat( "processASCIIdelimitedType1 _s=", _s, ""))
+		Endif
+
+		_line_count = _line_count + 1
+	endwhile
+
+Endif
+
+return
+
+
+

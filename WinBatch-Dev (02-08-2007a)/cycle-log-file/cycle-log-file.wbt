@@ -1,0 +1,37 @@
+; cycle-log-file.wbt
+
+_logFileName = "C:\TEMP\PDSetup911a.exe"
+
+for _i = 1 to 100
+	if IsDefined( param%_i%)
+		; param%_i% log file name to cycle
+		_logFileName = param%_i%
+	Else
+		break
+	Endif
+	
+	if FileExist( _logFileName) == @TRUE
+		_ext = FileExtension( _logFileName)
+		_dot_ext = StrCat(".", _ext)
+		
+		while @TRUE
+			_TimeYmdHms = TimeYmdHms()
+			_timeStamp = StrReplace( _TimeYmdHms, ":", "-")
+			_new_dot_ext = StrCat("_", _timeStamp, ".", _ext)
+			
+			__logFileName = StrReplace( _logFileName, _dot_ext, _new_dot_ext)
+		
+			if FileExist( __logFileName) == @FALSE
+				ErrorMode(@OFF)
+				FileRename( _logFileName, __logFileName)
+				ErrorMode(@CANCEL)
+				break
+			endif
+			timedelay( 10)
+		endwhile
+	endif
+next
+
+
+
+

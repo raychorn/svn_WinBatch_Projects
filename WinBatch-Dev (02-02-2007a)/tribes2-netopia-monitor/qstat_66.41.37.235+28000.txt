@@ -1,0 +1,3 @@
+T2S`66.41.37.235:28000`Alabaster`Firestorm`16`0`110`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game=base`mission=Capture the Flag`status=33`dedicated=1`bot_count=0`cpu_speed=850`info=Alabaster Tribes 2 Server`numteams=2
+

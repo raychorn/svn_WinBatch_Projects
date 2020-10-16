@@ -1,0 +1,271 @@
+; erp001-backup-sweeper.wbt
+
+;Debug( @ON)
+
+_wname = "erp001-backup-sweeper"
+wname = "%_wname%.wbt v1.0 (c)2004 FamiliesFirst, Inc., All Rights Reserved."
+
+CR = StrCat(Num2Char(13),Num2Char(10))
+
+_crlf = CR
+_tab = StrCat(Num2Char(9))
+
+_const_YYYYMMDD = "YYYY:MM:DD"
+
+_sortedFileList = ""
+
+;_pathName = "C:\@temp\erp001-backups"
+
+_pathName = "\\Erp001\erp001_d\Mssql7\BACKUP\"
+
+;goto skip001 ; remove this line for the production version
+
+If param0 > 0
+	_pathName = param1
+Else
+	_flags = 1|2
+	_pathName = AskDirectory( "%_appName% Path Name for the Backup Files Folder ? (%_pathName%)", "C:\", "","Are you sure?", _flags)
+Endif
+
+;:skip001 ; remove this line for the production version
+
+_i = StrIndex( _pathName, ":", 1, @FWDSCAN) + 1
+
+_driveLetter = StrSub( _pathName, 1, _i - 1)
+
+if StrLen(_driveLetter) == 0
+	_driveLetter = _pathName
+endif
+
+_fileNameLog = "%_driveLetter%\%_wname%.log"
+
+__pathName = StrCat( StrSub( _pathName, _i, StrLen(_pathName) - _i), "\")
+
+_fhandLog = FileOpen( _fileNameLog, "APPEND")
+
+_today = TimeDate()
+FileWrite( _fhandLog, "================================================================================ %_crlf%")
+
+_now = TimeYmdHms()
+_nowBegin = _now
+FileWrite( _fhandLog, "%_now% BEGIN :: %wname% %_crlf%")
+
+_param1 = StrSub( _pathName, 1, 2)
+_param2 = "_dirList"
+gosub _folderTree
+
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_tab% %_now% _dirTree built... %_crlf%")
+
+_dirList = ItemSort( _dirList, @tab)
+;A = AskItemList("All Folders", _dirList, @tab, @sorted, @single)
+
+_foldersList = ""
+for _i = 1 to ItemCount( _dirList, @tab)
+	_item = ItemExtract( _i, _dirList, @tab)
+	_foldersList = ItemInsert( StrCat( _driveLetter, _item, "\"), ItemCount( _foldersList, @tab), _foldersList, @tab)
+next
+
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_tab% %_now% _foldersList built... %_crlf%")
+
+;A = AskItemList("Selected Folders", _foldersList, @tab, @sorted, @single)
+
+; process - get files from each folder and look to see what the file date is - if file date is older than xx days then copy file to workstation then remove the file and log the fact.
+
+_totalFiles = 0
+_totalBytes = 0
+for _i = 1 to ItemCount( _foldersList, @tab)
+	_item = ItemExtract( _i, _foldersList, @tab)
+
+	_filesList%_i% = FileItemize( StrCat( _item, "*"))
+	_k = ItemCount( _filesList%_i%, @tab)
+
+	_fNameList%_i% = ""
+	for _ii = 1 to ItemCount( _filesList%_i%, @tab)
+		_item2 = ItemExtract( _ii, _filesList%_i%, @tab)
+		_fName = StrCat( _item, _item2)
+		if FileExist( _fName)
+			_fNameList%_i% = ItemInsert( _fName, ItemCount( _fNameList%_i%, @tab), _fNameList%_i%, @tab)
+		endif
+	next
+
+	_totalFiles = _totalFiles + _k
+
+	_totalBytes = _totalBytes + FileSize( _fNameList%_i%)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% _item = [%_item%] [%_k% files] %_crlf%")
+next
+
+_dirSize = DirSize( _pathName, 1)
+_diskFree = DiskFree( _driveLetter)
+
+; debug code begins
+;_diskFree = _diskFree / 1000
+; debug code ends
+
+; write today's data
+_nowShort = StrSub( _now, 1, StrLen( _const_YYYYMMDD))
+IniWritePvt( "%_wname%-%_nowShort%", "_now", "%_now%", "%_wname%.INI")
+IniWritePvt( "%_wname%-%_nowShort%", "_totalFiles", "%_totalFiles%", "%_wname%.INI")
+IniWritePvt( "%_wname%-%_nowShort%", "_totalBytes", "%_totalBytes%", "%_wname%.INI")
+IniWritePvt( "%_wname%-%_nowShort%", "_dirSize", "%_dirSize%", "%_wname%.INI")
+IniWritePvt( "%_wname%-%_nowShort%", "_diskFree", "%_diskFree%", "%_wname%.INI")
+
+; compute yesterday's date - YYYY:MM:DD:HH:MM:SS
+_newtime = TimeSubtract( _now, "0000:00:01:00:00:00")
+_newTimeShort = StrSub( _newtime, 1, StrLen( _const_YYYYMMDD))
+_totalFilesLast = IniReadPvt( "%_wname%-%_newTimeShort%", "_totalFiles", "-1", "%_wname%.INI")
+_totalBytesLast = IniReadPvt( "%_wname%-%_newTimeShort%", "_totalBytes", "-1", "%_wname%.INI")
+_dirSizeLast = IniReadPvt( "%_wname%-%_newTimeShort%", "_dirSize", "-1", "%_wname%.INI")
+_diskFreeLast = IniReadPvt( "%_wname%-%_newTimeShort%", "_diskFree", "-1", "%_wname%.INI")
+
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_tab% %_now% _totalFilesLast = [%_totalFilesLast%], _totalBytesLast = [%_totalBytesLast%], _dirSizeLast = [%_dirSizeLast%], _diskFreeLast = [%_diskFreeLast%] %_crlf%")
+
+_isCorrective = @False
+if (_totalFilesLast <> -1) && (_totalBytesLast <> -1) && (_dirSizeLast <> -1) && (_diskFreeLast <> -1)
+	; perform the analysis to determine if corrective actions should be taken
+	_dirSizeGrowth = Max( _dirSize, _dirSizeLast) - Min( _dirSize, _dirSizeLast)
+	_diskFreeShrinkage = Max( _diskFree, _diskFreeLast) - Min( _diskFree, _diskFreeLast)
+
+	IniWritePvt( "%_wname%-%_nowShort%", "_dirSizeGrowth", "%_dirSizeGrowth%", "%_wname%.INI")
+
+	if _dirSizeGrowth > _diskFree
+		_isCorrective = @True
+	endif
+
+	_mustFreeUpSize = 0
+	if _isCorrective == @True
+		_mustFreeUpSize = _dirSizeGrowth - _diskFree
+
+		_droppedFileSize = 0
+		_buildSortedFileList = @False
+		while (_droppedFileSize < _mustFreeUpSize)
+			; locate the biggest file to whack - the last one in the list
+			GoSub biggestFile
+	
+			if StrLen( _biggestFname) > 0
+				_now = TimeYmdHms()
+				FileWrite( _fhandLog, "%_tab% %_now% _biggestFname = [%_biggestFname%], _biggestSize = [%_biggestSize%], _biggestCoords = [%_biggestCoords%] %_crlf%")
+				_droppedFileSize = _droppedFileSize + _biggestSize
+				GoSub dropBiggestFile
+				_numDeleted = IniReadPvt( "%_wname%-%_nowShort%", "_numDeleted", "0", "%_wname%.INI")
+				_numDeleted = _numDeleted + 1
+				IniWritePvt( "%_wname%-%_nowShort%", "Deleted%_numDeleted%", "%_biggestFname%", "%_wname%.INI")
+				IniWritePvt( "%_wname%-%_nowShort%", "_numDeleted", "%_numDeleted%", "%_wname%.INI")
+			endif
+		endwhile
+	endif
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% _dirSizeGrowth = [%_dirSizeGrowth%], _diskFreeShrinkage = [%_diskFreeShrinkage%], _mustFreeUpSize = [%_mustFreeUpSize%] %_crlf%")
+
+endif
+
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_tab% %_now% _isCorrective = [%_isCorrective%], _totalFiles = [%_totalFiles%], _totalBytes = [%_totalBytes%], _dirSize = [%_dirSize%], _diskFree = [%_diskFree%] %_crlf%")
+
+_today = TimeDate()
+_now = TimeYmdHms()
+_ds = TimeDiffSecs(_now, _nowBegin)
+_dsv = _ds
+_dv = 60 * 60
+_hh = Int(_dsv / _dv)
+_dsv = _dsv - (_hh * _dv)
+_dv = 60
+_mm = Int(_dsv / _dv)
+_dsv = _dsv - (_mm * _dv)
+_ss = _dsv
+if _hh <= 9
+	_hh = "0%_hh%"
+endif
+if _mm <= 9
+	_mm = "0%_mm%"
+endif
+if _ss <= 9
+	_ss = "0%_ss%"
+endif
+_t = "%_hh%:%_mm%:%_ss%"
+FileWrite( _fhandLog, "%_today% END :: %wname% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS) %_crlf%")
+
+fileclose( _fhandLog)
+
+
+Exit
+
+
+:_folderTree
+	; _param2 holds the var name that gets the list - this only works when the tree is one folder deep - Doh !
+	%_param2% = DirItemize( StrCat( _pathName, "*"))
+Return
+
+
+:biggestFile
+	_biggestSize = -1
+	_biggestFname = ""
+	_biggestCoords = ""
+	for _i = 1 to ItemCount( _foldersList, @tab)
+		for _ii = 1 to ItemCount( _fNameList%_i%, @tab)
+			_fName = ItemExtract( _ii, _fNameList%_i%, @tab)
+			_fNameNodes = ItemCount( _fName, ",")
+			_fNameName = ItemExtract( 1, _fName, ",")
+			if FileExist( _fNameName)
+				if _fNameNodes < 2
+					_fSize = FileSize( _fNameName)
+					_fName = ItemInsert( _fSize, ItemCount( _fName, ","), _fName, ",")
+					_fNameList%_i% = ItemReplace( _fName, _ii, _fNameList%_i%, @tab)
+				else
+					_fSize = ItemExtract( 2, _fName, ",")
+				endif
+				if _buildSortedFileList == @True
+					_aNode = "%_fSize%|%_i%|%_ii%"
+;					if ItemCount( _sortedFileList, ",") < 100
+;					endif
+					; put the following line of code outside this test for the production version...
+					_sortedFileList = ItemInsert( _aNode, ItemCount( _sortedFileList, ","), _sortedFileList, ",")
+				endif
+				if _fSize > _biggestSize
+					_biggestSize = _fSize
+					_biggestFname = ItemExtract( 1, _fName, ",")
+					_biggestCoords = "%_i%,%_ii%"
+				endif
+			endif
+		next
+	next
+Return
+
+
+:dropBiggestFile
+	_i = ItemExtract( 1, _biggestCoords, ",")
+	_ii = ItemExtract( 2, _biggestCoords, ",")
+	_fNameList%_i% = ItemRemove( _ii, _fNameList%_i%, @tab)
+	FileDelete( _biggestFname)
+Return
+
+
+:sortSortedFileList
+	; List is an integer array of size == n
+	_swapped = @True; ; boolean variable
+	_i = ItemCount( _sortedFileList, ",") - 1;
+	while (_swapped && (_i >= 1))
+		_swapped = @False;
+		for _j = 1 to (_i - 1)
+		_aNode1 = ItemExtract( _j, _sortedFileList, ",")
+		_aSize1 = ItemExtract( 1, _aNode1, "|")
+		_aNode2 = ItemExtract( (_j + 1), _sortedFileList, ",")
+		_aSize2 = ItemExtract( 1, _aNode2, "|")
+		if (_aSize1 > _aSize2)
+			_sortedFileList = ItemReplace( _aNode2, _j, _sortedFileList, ",")
+			_sortedFileList = ItemReplace( _aNode1, (_j + 1), _sortedFileList, ",")
+			_swapped = @True; ; swapping happened
+		endif
+	  next
+	  _i = _i - 1
+	endwhile
+
+Return
+
+
+

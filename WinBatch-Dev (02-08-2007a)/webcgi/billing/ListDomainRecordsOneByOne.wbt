@@ -1,0 +1,24 @@
+:ListDomainRecordsOneByOne
+
+WebOut('<OPTION VALUE="', 0)
+If IsDefined( %sql_alias%1) == @YES
+    WebOut(%sql_alias%1, 0)
+Endif
+WebOut('">%_record_count%: ', 0)
+If IsDefined( %sql_alias%2) == @YES
+    WebOut(%sql_alias%2, 0)
+Endif
+WebOut(' ', 0)
+If IsDefined( %sql_alias%3) == @YES
+    WebOut(%sql_alias%3, 0)
+Endif
+WebOut('</OPTION>', _html_crlf)
+
+If IsDefined( _list_multi_mode) == @YES
+    _all_records_listed = StrCat( _all_records_listed, %sql_alias%1, @TAB)
+Endif
+
+_record_count = _record_count + 1
+
+return
+

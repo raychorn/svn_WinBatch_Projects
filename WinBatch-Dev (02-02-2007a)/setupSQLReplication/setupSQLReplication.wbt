@@ -1,0 +1,452 @@
+; setupReplication
+
+IntControl(29,@tab,0,0,0)    ; Standardize on tabs for file/dir delimiters
+
+_standardTimeoutValue = 60
+
+_sqlManager = "SQL Server Enterprise Manager"
+
+__sqlManager_delimiter = "-"
+__sqlManager_delimiter2 = "["
+__sqlManager_delimiter3 = "]"
+__sqlManager_delimiter4 = "\"
+
+_sqlManagerNodeA = "Console Root"
+_sqlManagerNodeB = "Microsoft SQL Servers"
+_sqlManagerNodeC = "SQL Server Group"
+
+_sqlManagerNodeD = "ASCENTPROD"
+_sqlManagerNodeE = "Databases"
+_sqlManagerNodeF = "Scient"
+_sqlManagerNodeG = "Publications"
+_sqlManagerNodeH = "ScientProduction"
+
+_sqlManagerNodeH1 = "Properties"
+
+_sqlManagerChildWinTitle = StrCat( _sqlManagerNodeA, __sqlManager_delimiter4, _sqlManagerNodeB)
+
+_sqlManagerLnk = "ENTERP~1.LNK"
+
+_testStr1 = "\Profiles\All Users\Start Menu\Programs\"
+
+_debugFlag = @FALSE
+_debugFName = "C:\@myFiles\myWinBatch\setupReplication\debug.txt"
+
+_profilesDir = StrCat(DirWindows(0), "Profiles\")
+_shortcutDir = ShortcutDir( "Start Menu")
+
+_profilesFileMask = "*.lnk"
+_profilesDirMask = "*.*"
+; 
+; 
+
+allwins = WinItemize()
+; mywind = AskItemList("Windows", allwins, @TAB, @sorted, @single)
+
+; Message( "Debug", "mywind = (%mywind%)")
+
+if WinExist( _sqlManager)
+;	Message( "Debug", "%_sqlManager% is running !")
+	WinActivate( _sqlManager)
+	SendKeysTo( _sqlManager, "{ALT}CX")
+	goto restartSQL7
+else
+;	Message( "Debug", "%_sqlManager% does NOT running - go find the shortcut !")
+	:restartSQL7
+	Gosub GoFindSQLShortcut
+	if StrLen( _fname) > 0
+		_pName = StrCat( _dName, "\", _fname)
+;		Message( "Debug", StrCat( "%_sqlManager% shortcut is ", _pName))
+		ErrorMode(@OFF)
+		LastError()
+		_ret = ShellExecute(_pName, "", "", @NORMAL, "")
+		ErrorMode(@CANCEL)
+		_lastErr = LastError()
+		if _ret == @TRUE
+			Gosub waitForWindowToAppear
+			if _twait > _standardTimeoutValue
+				Message( "ERROR-1", "%_sqlManager% apparently cannot be started at this time.")
+			endif
+			if _ret == @TRUE
+				; SQL Server Enterprise Manager is now running... Whew !
+				__sqlManager = WinGetActive()
+				_ic = ItemCount(__sqlManager, __sqlManager_delimiter)
+				if _ic > 1
+					_tok = StrTrim( ItemExtract( _ic, __sqlManager, __sqlManager_delimiter))
+					_in2 = StrIndex(_tok, __sqlManager_delimiter2, 1, @FWDSCAN)
+					if _in2 > 0
+						_in3 = StrIndex(_tok, __sqlManager_delimiter3, _in2 + 1, @FWDSCAN)
+						if _in3 > 0
+							_tok2 = StrSub( _tok, _in2 + 1, _in3 - _in2 - 1)
+							_ic = ItemCount(_tok2, __sqlManager_delimiter4)
+							if _ic > 2
+								_tok3a = StrTrim( ItemExtract( 1, _tok2, __sqlManager_delimiter4))
+								_tok3b = StrTrim( ItemExtract( 2, _tok2, __sqlManager_delimiter4))
+								_tok3c = StrTrim( ItemExtract( 3, _tok2, __sqlManager_delimiter4))
+								if _tok3a == _sqlManagerNodeA
+									if _tok3b == _sqlManagerNodeB
+										if _tok3c == _sqlManagerNodeC
+											; =======================================
+											WinActivate( _sqlManager)
+											SendKeysTo( _sqlManager, "{RIGHT}")
+											:sendDownArrowKey
+											SendKeysTo( _sqlManager, "{DOWN}")
+											:waitAndTryAgain
+											TimeDelay(2) ; give it time to figure itself out...
+											__sqlManagerWinTitle = WinGetActive()
+											_ic = ItemCount(__sqlManagerWinTitle, __sqlManager_delimiter)
+											if _ic > 1
+												; By the time we get here we can assume there were no problems and we can try to verify the proper node...
+												; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+												; If the Server isn't Registered then do it... 
+												_tok = StrTrim( ItemExtract( _ic, __sqlManagerWinTitle, __sqlManager_delimiter))
+												_in2 = StrIndex(_tok, __sqlManager_delimiter2, 1, @FWDSCAN)
+												if _in2 > 0
+													_in3 = StrIndex(_tok, __sqlManager_delimiter3, _in2 + 1, @FWDSCAN)
+													if _in3 > 0
+														_tok2 = StrSub( _tok, _in2 + 1, _in3 - _in2 - 1)
+														_ic = ItemCount(_tok2, __sqlManager_delimiter4)
+														if _ic > 3
+															_tok4a = StrTrim( ItemExtract( 1, _tok2, __sqlManager_delimiter4))
+															_tok4b = StrTrim( ItemExtract( 2, _tok2, __sqlManager_delimiter4))
+															_tok4c = StrTrim( ItemExtract( 3, _tok2, __sqlManager_delimiter4))
+															_tok4d = StrTrim( ItemExtract( 4, _tok2, __sqlManager_delimiter4))
+															if ( (_tok3a == _tok4a) && (_tok3b == _tok4b) && (_tok3c == _tok4c) )
+																_in4d1 = StrIndexNC(_tok4d, _sqlManagerNodeD, 1, @FWDSCAN)
+																if _in4d1 > 0
+																	Goto pressOnWithSetup
+																	; Okay - we got what we were looking for so now what ?
+																else
+																	; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+																	Goto sendDownArrowKey
+																endif
+															else
+																; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+																Goto sendDownArrowKey
+															endif
+														else
+															; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+															Goto sendDownArrowKey
+														endif
+													else
+														; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+														Goto sendDownArrowKey
+													endif
+												else
+													; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+													Goto sendDownArrowKey
+												endif
+											else
+												SendKeysTo( _sqlManager, "{ENTER}")
+												Goto waitAndTryAgain
+											endif
+											; =======================================
+											; Dismiss the little popup message boxes whenever they appear...
+											; Problem is how to determine when those pesky popups appear...
+										else
+											Message( "ERROR-4C", "%_sqlManager% apparently cannot be verified at this time.")
+										endif
+									else
+										Message( "ERROR-4b", "%_sqlManager% apparently cannot be verified at this time.")
+									endif
+								else
+									Message( "ERROR-4a", "%_sqlManager% apparently cannot be verified at this time.")
+								endif
+							else
+								Message( "ERROR-4", "%_sqlManager% apparently cannot be verified at this time.")
+							endif
+						else
+							Message( "ERROR-3", "%_sqlManager% apparently cannot be verified at this time.")
+						endif
+					else
+						Message( "ERROR-2", "%_sqlManager% apparently cannot be verified at this time.")
+					endif
+				else
+					Message( "ERROR-1a", "%_sqlManager% apparently cannot be verified at this time.")
+				endif
+			endif
+		endif
+	endif
+endif
+
+:pressOnWithSetup
+WinActivate( _sqlManager)
+SendKeysTo( _sqlManager, "{RIGHT}")
+TimeDelay(2) ; give it time to figure itself out...
+;Message( "Debug", "%_sqlManager% has verified things.")
+
+_GUIGoalLevel = 5
+_GUIGoal = _sqlManagerNodeE
+Gosub cruiseGUIForGoal
+;Message( "Debug", "%_sqlManager% has located the databases.")
+
+SendKeysTo( _sqlManager, "{RIGHT}")
+TimeDelay(2) ; give it time to figure itself out...
+
+_GUIGoalLevel = 6
+_GUIGoal = _sqlManagerNodeF
+Gosub cruiseGUIForGoal
+
+SendKeysTo( _sqlManager, "{RIGHT}")
+TimeDelay(2) ; give it time to figure itself out...
+
+_GUIGoalLevel = 7
+_GUIGoal = _sqlManagerNodeG
+Gosub cruiseGUIForGoal
+
+SendKeysTo( _sqlManager, "{RIGHT}")
+TimeDelay(2) ; give it time to figure itself out...
+
+_GUIGoalLevel = 8
+_GUIGoal = _sqlManagerNodeH
+Gosub cruiseGUIForGoal
+
+SendKeysTo( _sqlManager, "{RIGHT}")
+TimeDelay(2) ; give it time to figure itself out...
+
+Goto Main_Done
+
+;allwins = WinItemize()
+;mywind = AskItemList("Windows", allwins, @TAB, @sorted, @single)
+;Message( "Debug", "mywind = (%mywind%)")
+
+SendKeysChild(_sqlManager, _sqlManagerChildWinTitle, "{ALT}A")
+
+;SendKeysTo( _sqlManagerChildWinTitle, "{ALT}A")
+TimeDelay(2) ; give it time to figure itself out...
+
+SendKeysChild(_sqlManager, _sqlManagerChildWinTitle, "R")
+
+;SendKeysTo( _sqlManagerChildWinTitle, "R")
+TimeDelay(2) ; give it time to figure itself out...
+
+Gosub waitForPropertiesPopupWindow
+if _twait > _standardTimeoutValue
+	; we get here because the Properties dialog cannot be popped up...
+	Message( "ERROR-5", "%_sqlManager% apparently cannot locate the %_sqlManagerNodeH% %_sqlManagerNodeH1% pop-up dialog box at this time.")
+	Goto Main_ExitAndDie
+endif
+
+:Main_Done
+Message( "Debug", "%_sqlManager% has located the correct dialog box.")
+
+:Main_ExitAndDie
+exit
+
+:GoFindSQLShortcut
+; input  : _profilesDir ... contains the path name for the NT profiles
+; output : _sqlShortCutPath ... contains the shortcut's pathname or "" if not found
+
+	if _debugFlag == @TRUE
+		myfile=FileOpen(_debugFName,"WRITE")
+	endif
+
+;	Message( "Debug", "_shortcutDir=(%_shortcutDir%) _profilesDir=(%_profilesDir%)")
+
+	_dirBase=DirGet()
+	DirChange(_profilesDir)
+	BoxOpen("Find %_sqlManager% ShortCut","Scanning Directories")
+	sub1 = DirItemize(_profilesDirMask)
+	level=1
+	dir1=DirGet()
+	numdir1 = ItemCount(sub1, @tab)
+	index1 = 0
+	
+	:dsloop
+	If index%level% == numdir%level% Then Goto upalevel
+	index%level% = index%level% + 1
+	_dName = StrCat(dir%level%, ItemExtract(index%level%, sub%level%, @tab))
+	DirChange(_dName)
+	i = StrIndexNc(_dName, _testStr1, 1, @FWDSCAN)
+	if i > 0 
+		i
+	endif
+	_files = FileItemize(_profilesFileMask)
+	while ItemCount(_files, @tab) > 0
+		_fname = ItemExtract(1, _files, @tab)
+		_info = ShortcutInfo(_fname)
+
+		target=    ItemExtract(1, _info, @tab)
+		params=    ItemExtract(2, _info, @tab)
+		workdir=   ItemExtract(3, _info, @tab)
+		showmode=  ItemExtract(4, _info, @tab)
+		desc=      ItemExtract(5, _info, @tab)
+		hotkey=    ItemExtract(6, _info, @tab)
+		iconfile=  ItemExtract(7, _info, @tab)
+		iconindex= ItemExtract(8, _info, @tab)
+
+		_textStr = strcat(dir%level%,@crlf,_fname,@crlf,target,@crlf,params,@crlf,workdir,@crlf,showmode,@crlf,desc,@crlf,hotkey,@crlf,iconfile,@crlf,iconindex,@crlf)
+		if _debugFlag == @TRUE
+			FileWrite(myfile,_textStr)
+			FileWrite(myfile,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+		endif
+		_textStr = strcat(dir%level%,@crlf,_fname,@crlf,target,@crlf,params,@crlf,workdir,@crlf)
+		BoxText(_textStr)
+		i = StrIndexNc(params, _sqlManager, 1, @FWDSCAN)
+		if (i > 0)
+			if _debugFlag == @TRUE
+				FileClose(myfile)
+			endif
+			BoxShut()
+			DirChange(_dirBase)
+			return
+		endif
+		_files = ItemRemove(1, _files, @tab)
+	endwhile
+	if _debugFlag == @TRUE
+		FileWrite(myfile,"=========================================================")
+	endif
+	level = level + 1
+	dir%level% = DirGet()
+	sub%level% = DirItemize(_profilesDirMask)
+	numdir%level% = ItemCount(sub%level%, @tab)
+	index%level% = 0
+	goto dsloop
+	
+	:upalevel
+	drop(dir%level%,sub%level%,index%level%,numdir%level%)
+	level=level-1
+	if level!=0 then goto dsloop
+	DirChange(_dirBase)
+	
+	; -----------
+	; Termination
+	; -----------
+	BoxShut()
+	_fname = ""
+	if _debugFlag == @TRUE
+		FileClose(myfile)
+	endif
+return
+
+
+:waitForWindowToAppear
+	_twait = 0
+	_ret = @FALSE
+	while _ret == @FALSE
+		_ret = WinWaitExist(_sqlManager, 5)
+		if _ret == @TRUE
+			break
+		endif
+		_twait = _twait + 5
+		if _twait > _standardTimeoutValue
+			break
+		endif
+	endwhile
+	TimeDelay(1)
+return
+
+
+:cruiseGUIForGoal
+	; INPUT - _GUIGoalLevel ... The Level to target the goal for
+	;         _GUIGoal      ... The Level to target the goal for
+	; ToDo - Need Recovery from not having found the goal ?!?
+	; =======================================
+	WinActivate( _sqlManager)
+	:CFGG_sendDownArrowKey
+	__WinTitle = WinGetActive()
+	SendKeysTo( _sqlManager, "{DOWN}")
+	:CFGG_waitAndTryAgain
+	Gosub waitForWindowTitleToChange ; make sure the window"s title has really changed...
+	if _twait > _standardTimeoutValue
+		; we get here because we're at the bottom of the list...
+		; initially we simply stop looking however later on (post-production) we should take some other action to remain
+		; gracefully employed on behalf of our user community, etc.
+		Message( "Debug", "%_sqlManager% has finished traversing the list.")
+		Goto CFGG_Return
+	endif
+	TimeDelay(1) ; give it time to figure itself out...
+	__sqlManagerWinTitle = WinGetActive()
+	_ic = ItemCount(__sqlManagerWinTitle, __sqlManager_delimiter)
+	if _ic > 1
+		; By the time we get here we can assume there were no problems and we can try to verify the proper node...
+		; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+		; If the Server isn't Registered then do it... 
+		_tok = StrTrim( ItemExtract( _ic, __sqlManagerWinTitle, __sqlManager_delimiter))
+		_in2 = StrIndex(_tok, __sqlManager_delimiter2, 1, @FWDSCAN)
+		if _in2 > 0
+			_in3 = StrIndex(_tok, __sqlManager_delimiter3, _in2 + 1, @FWDSCAN)
+			if _in3 > 0
+				_tok2 = StrSub( _tok, _in2 + 1, _in3 - _in2 - 1)
+				_ic = ItemCount(_tok2, __sqlManager_delimiter4)
+				if _ic > 3
+					for _ilevel = 1 to _GUIGoalLevel
+						_tok%_GUIGoalLevel%_%_ilevel% = StrTrim( ItemExtract( _ilevel, _tok2, __sqlManager_delimiter4))
+					next
+					if _tok%_GUIGoalLevel%_%_GUIGoalLevel% == _GUIGoal
+						Goto CFGG_PressOn
+					else
+						; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+						Goto CFGG_sendDownArrowKey
+					endif
+				else
+					; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+					Goto CFGG_sendDownArrowKey
+				endif
+			else
+				; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+				Goto CFGG_sendDownArrowKey
+			endif
+		else
+			; Obviously we need to be able to deal with the problem of not finding what we are looking for at all...
+			Goto CFGG_sendDownArrowKey
+		endif
+	else
+		__WinTitle = WinGetActive()
+		SendKeysTo( _sqlManager, "{ENTER}")
+		Goto CFGG_waitAndTryAgain
+	endif
+	; =======================================
+	:CFGG_PressOn
+	Drop( _ic, _tok, _in2, _in3, _tok2, _ilevel)
+	for _ilevel = 1 to _GUIGoalLevel
+		Drop( _tok%_GUIGoalLevel%_%_ilevel%)
+	next
+	:CFGG_Return
+return
+
+
+:waitForWindowTitleToChange
+	_twait = 0
+	while @TRUE
+		WinActivate( _sqlManager)
+		_WinTitle = WinGetActive()
+		if __WinTitle == _WinTitle
+		else
+			break
+		endif
+		_twait = _twait + 1
+		if _twait > _standardTimeoutValue
+			break
+		endif
+		TimeDelay(1) ; give it time to figure itself out...
+	endwhile
+return
+
+
+:waitForPropertiesPopupWindow
+	_twait = 0
+	while @TRUE
+;		WinActivate( _sqlManager)
+		_WinTitle = WinGetActive()
+		_ix = StrIndexNc(_WinTitle, _sqlManagerNodeH, 1, @FWDSCAN)
+		if _ix > 0
+			_iy = StrIndexNc(_WinTitle, _sqlManagerNodeH1, _ix + Strlen(_sqlManagerNodeH) + 1, @FWDSCAN)
+			if _iy > 0
+				break
+			else
+				__WinTitle = WinGetActive()
+				SendKeysTo( _sqlManager, "{ENTER}") ; dismiss the errant pop-up window that may appear before the one we really want appears...
+				TimeDelay(1) ; give it time to figure itself out...
+			endif
+		endif
+		_twait = _twait + 1
+		if _twait > _standardTimeoutValue
+			break
+		endif
+		TimeDelay(1) ; give it time to figure itself out...
+	endwhile
+return
+
+
+

@@ -1,0 +1,65 @@
+; bookmarks-copy.wbt
+
+_drive = "D:"
+_driveZip = "I:"
+_dirroot = "\RayHorn\"
+_wsftp_root = "%_drive%%_dirroot%WS_FTP\"
+_norton_root = "%_drive%%_dirroot%Norton Utilities\"
+
+_netscape = "C:\Program Files\NETSCAPE\Users\rayhorn\bookmark.htm"
+_wsftp_ini = "C:\Program Files\WS_FTP\*.ini"
+_norton_nsd = "C:\Program Files\Norton Utilities\*.nsd"
+
+_my_bookmarks_copy = "%_drive%%_dirroot%bookmark.htm"
+
+ErrorMode(@OFF)
+rc1 = FileCopy( _netscape, _my_bookmarks_copy, @FALSE)
+ErrorMode(@CANCEL)
+
+ErrorMode(@OFF)
+rc2 = DirMake( _wsftp_root)
+ErrorMode(@CANCEL)
+
+ErrorMode(@OFF)
+rc3 = FileCopy( _wsftp_ini, _wsftp_root, @FALSE)
+ErrorMode(@CANCEL)
+
+_wsftp_rootZip = "%_driveZip%%_dirroot%WS_FTP\"
+
+ErrorMode(@OFF)
+rc4 = FileCopy( _netscape, "%_driveZip%%_dirroot%bookmark.htm", @FALSE)
+ErrorMode(@CANCEL)
+
+ErrorMode(@OFF)
+rc5 = DirMake( _wsftp_rootZip)
+ErrorMode(@CANCEL)
+
+ErrorMode(@OFF)
+rc6 = FileCopy( _wsftp_ini, _wsftp_rootZip, @FALSE)
+ErrorMode(@CANCEL)
+
+if (rc4 == @TRUE) && (rc1 == @TRUE)
+	ErrorMode(@OFF)
+	FileDelete( _my_bookmarks_copy)
+	ErrorMode(@CANCEL)
+endif
+
+if (rc6 == @TRUE) && (rc3 == @TRUE)
+	ErrorMode(@OFF)
+	FileDelete( "%_wsftp_root%\*.*")
+	ErrorMode(@CANCEL)
+
+	ErrorMode(@OFF)
+	DirRemove( _wsftp_root)
+	ErrorMode(@CANCEL)
+endif
+
+ErrorMode(@OFF)
+rc7 = DirMake( _norton_root)
+ErrorMode(@CANCEL)
+
+ErrorMode(@OFF)
+rc8 = FileCopy( _norton_nsd, _norton_root, @FALSE)
+ErrorMode(@CANCEL)
+
+

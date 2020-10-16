@@ -1,0 +1,221 @@
+; http://www.puresizzle.com/webmasters.htm
+
+AddExtender("WWWSK32I.DLL")
+
+_time_begin = TimeYmdHms( )
+total_bytes_transferred = 0
+secs = 0
+
+_delays = 1
+
+Decimals(2)
+
+bytes_in_KB = 1024.0
+bytes_in_MB = bytes_in_KB * 1024.0
+bytes_in_GB = bytes_in_MB * 1024.0
+
+url_wName = "URL-Blaster"
+
+logdir = "F:\208.128.219.19\winbatch\URL-Blaster\"
+
+If param0 > 0
+	; param1 is the logdir
+	logdir = param1
+Endif
+
+If param0 > 1
+	; param2 is the delay factor
+	_delays = Int( param2)
+Endif
+
+If param0 > 2
+	; param2 is the URL to blast
+	blasted_url = param3
+Else
+	blasted_url = AskLine(url_wName, "URL? http://...", "http://www.puresizzle.com/webmasters.htm")
+Endif
+
+while DirExist( logdir) == @FALSE
+	logdir = AskLine(url_wName, "Log File Path? c:\temp\...", "F:\208.128.219.19\winbatch\URL-Blaster\")
+	logdir = StrCat( logdir, "\")
+	logdir = StrReplace( logdir, "\\", "\")
+end while
+
+blasted_urls_domain_name = httpGetServer( blasted_url, "")
+If StrLen( blasted_urls_domain_name) < 1
+	Message( "WARNING", "Missing the domain name from %blasted_urls_domain_name%")
+Endif
+
+path = httpGetpath( blasted_url, "")
+fname = "%logdir%blaster.html"
+activityLogFile = "%logdir%ActivityLog.txt"
+	
+Gosub cycleActivityLogFile
+
+count = 0
+
+;DEBUG( @ON)
+
+BoxCaption(1,url_wName)
+
+while 1
+
+	count = count + 1
+
+	_symbol = "bytes"
+	t_bytes_transferred_text = "%total_bytes_transferred% %_symbol%"
+	If total_bytes_transferred > bytes_in_KB
+		_symbol = "KB"
+		total_KB_transferred = total_bytes_transferred / bytes_in_KB
+		t_bytes_transferred_text = "%total_KB_transferred% %_symbol%"
+		If total_bytes_transferred > bytes_in_MB
+			_symbol = "MB"
+			total_MB_transferred = total_bytes_transferred / bytes_in_MB
+			t_bytes_transferred_text = "%total_MB_transferred% %_symbol%"
+			If total_bytes_transferred > bytes_in_GB
+				_symbol = "GB"
+				total_GB_transferred = total_bytes_transferred / bytes_in_GB
+				t_bytes_transferred_text = "%total_GB_transferred% %_symbol%"
+			Endif
+		Endif
+	Endif
+
+	If secs > 0
+		total_bytes_transferred_rate = total_bytes_transferred / secs
+
+		_symbol = "Bps"
+		t_bytes_transferred_rate_text = "%total_bytes_transferred_rate% %_symbol%"
+		If total_bytes_transferred_rate > bytes_in_KB
+			_symbol = "KBps"
+			total_KB_transferred_rate = total_bytes_transferred_rate / bytes_in_KB
+			t_bytes_transferred_rate_text = "%total_KB_transferred_rate% %_symbol%"
+			If total_bytes_transferred_rate > bytes_in_MB
+				_symbol = "MBps"
+				total_MB_transferred_rate = total_bytes_transferred_rate / bytes_in_MB
+				t_bytes_transferred_rate_text = "%total_MB_transferred_rate% %_symbol%"
+				If total_bytes_transferred_rate > bytes_in_GB
+					_symbol = "GBps"
+					total_GB_transferred_rate = total_bytes_transferred_rate / bytes_in_GB
+					t_bytes_transferred_rate_text = "%total_GB_transferred_rate% %_symbol%"
+				Endif
+			Endif
+		Endif
+	Else
+		total_bytes_transferred_rate = 0
+	Endif
+	
+	line = "(1) %count% (PING: %secs% secs %t_bytes_transferred_text% %t_bytes_transferred_rate_text% %blasted_urls_domain_name%)..."
+	BoxCaption(1, "%url_wName% %line%")
+	Gosub appendToActivityLog
+
+	ErrorMode(@OFF)
+	blasted_url_pingable = wxPing( blasted_urls_domain_name)
+	ErrorMode(@CANCEL)
+
+	If blasted_url_pingable == @TRUE
+		line = "(2) %count% (HTTP: %secs% secs %t_bytes_transferred_text% %t_bytes_transferred_rate_text% %blasted_urls_domain_name% %path% %fname%)..."
+		BoxCaption(1, "%url_wName% %line%")
+		Gosub appendToActivityLog
+
+		a = httpRecvFile(blasted_urls_domain_name, path, fname, 0)
+		txt = "httpRecvFile Return code is %a%"
+
+		_fsize = FileSize( fname)
+		total_bytes_transferred = total_bytes_transferred + _fsize
+		
+		secs = Abs(Int(TimeDiffSecs( TimeYmdHms( ), _time_begin)))
+
+		line = "(3) %count% %secs% secs %t_bytes_transferred_text% %t_bytes_transferred_rate_text% (HTTP: %txt%)..."
+		BoxCaption(1, "%url_wName% %line%")
+		Gosub appendToActivityLog
+		
+		Delay( _delays)
+	Else
+;		 DEBUG( @ON)
+		line = "(4) %count% (PING FAILED: %blasted_urls_domain_name% - waiting 1 secs)..."
+		BoxCaption(1, "%url_wName% %line%")
+		Gosub appendToActivityLog
+		
+		Delay(1)
+;		 break
+	Endif
+
+endwhile
+
+exit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+:appendToActivityLog
+	_handle = FileOpen( activityLogFile, "APPEND")
+	If _handle > 0
+		line = StrCat( TimeDate(), ", ", line, @CR)
+		FileWrite(_handle, line)
+		FileClose(_handle)
+	Endif
+return
+
+
+:cycleActivityLogFile
+fex = FileExist( activityLogFile)
+
+Switch fex
+	case @TRUE
+		; cycle the current log file - look for an open slot and use it
+		i = 1
+		_found = @TRUE
+		while _found == @TRUE
+			_activityLogFile = "%logdir%ActivityLog-%i%.txt"
+			_fex = FileExist( _activityLogFile)
+			If _fex == @FALSE ; the candidate file does not exist so use it!
+				_found = _fex
+				If FileRename( activityLogFile, _activityLogFile) == @FALSE
+					; current log file cannot be renamed so we can't cycle it and... make one up using today's date, etc.
+					_token = StrReplace( TimeYmdHms( ), ":", "_")
+					activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+				Endif
+				break
+			Else
+				i = i + 1
+			Endif
+		endwhile
+	break
+	case 2
+		; current log file is in use so make one up using today's date, etc.
+		_token = StrReplace( TimeYmdHms( ), ":", "_")
+		activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+	break
+EndSwitch
+return
+
+
+:readInitFile
+init_file = "%logdir%init.txt"
+
+keywords0 = 1
+keywords1 = "blasted_url="
+
+handle = FileOpen( init_file, "READ")
+If handle > 0
+	while @TRUE				; Loop till break do us end
+		data = FileRead(handle)
+		If data == "*EOF*" Then Break
+
+		For _i = 1 to keywords0
+			i = StrIndexNc(data, keywords%_i%, 1, @FWDSCAN)
+			If i > 0
+				keyword = StrReplace(keywords%_i%, "=", "")
+				%keyword% = StrSub(data, i + StrLen( keywords%_i%), -1)
+			Endif
+		Next
+
+	endwhile
+	FileClose(handle)
+Endif
+return
+
+
+

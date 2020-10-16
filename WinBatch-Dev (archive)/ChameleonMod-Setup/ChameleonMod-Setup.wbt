@@ -1,0 +1,263 @@
+; {USB}Mayhem-Setup.wbt
+
+wName = "ChameleonMod-Setup Vers 1.10"
+
+_dir_name = "D:\Tribes2"
+
+_gamedataName = "GameData\"
+
+_defaultModName = "Chameleon_v110"
+__ApprovedVersion = "24834"
+__LastVersionRight = "0.%__ApprovedVersion%.0.0"
+
+_crlf = StrCat(Num2Char(13), Num2Char(10))
+
+_selfExtractorName = strcat(_defaultModName, ".exe")
+
+_winZIPName = "WinZip Self-Extractor"
+
+_winPlatform = WinVersion( 4)
+
+_batFileType = "bat"
+_cmdFileType = "cmd"
+
+_cmdFileName = "RunMayhemDedicatedServer.%_cmdFileType%"
+_lanCmdFileName = "RunMayhemPractice or LAN.%_cmdFileType%"
+
+_batFileName = "RunMayhemDedicatedServer.%_batFileType%"
+_lanBatFileName = "RunMayhemPractice or LAN.%_batFileType%"
+
+__patchVersionFile = "patch\PatchSettings.cfg"
+
+__LastVersionLeft = "LastVersion"
+
+if (_winPlatform <> 4)
+	Gosub GiveOSWarning
+endif
+
+__dirHome = IntControl(1004, 0, 0, 0, 0)
+
+_dirHome = FilePath( __dirHome)
+
+BoxCaption( 1, "%wName% - RESTRICTED USE - BE CAREFUL YOU HAVE PERMISSION TO USE...")
+
+_msgTxt = StrCat( "NOTICE: This program and ALL files associated with it are Protected by U.S Federal and International Copyright Laws and")
+_msgTxt = StrCat( _msgTxt, " may NOT be downloaded or used without the expressed prior written permission of the author(s).")
+message("%wName% - Copyright Notice", _msgTxt);
+
+while 1
+	_dir_name = AskDirectory( "Tribes2 Root Folder ? %_dir_name%", "", "", "Tribes2 Root Folder is", 2) 
+	exeFilePath = "%_dir_name%\GameData\Tribes2.exe"
+	_gameDataFolderName = strcat(_dir_name, _gamedataName)
+	_patchVersionFile = strcat(_dir_name, _gamedataName, __patchVersionFile)
+	if ( (FileExist( exeFilePath) == @TRUE) && (FileExist( _patchVersionFile) == @TRUE) && (DirExist( _gameDataFolderName) == @TRUE) )
+		break;
+	else
+		message( wName, "Please select a valid Tribes2 Root Folder name... Try again !")
+	endif
+endwhile
+
+Gosub ReadPatchVersionFile
+
+if (_CorrectPatchFound <> @TRUE)
+	_msg = strcat( "You are trying to install the ", _defaultModName, " Tribes2 Mod using an UNSUPPORTED Tribes2 Patch Level... Your Patch Level is ", _iRight, " however you need to have Patch Level ", __LastVersionRight, " installed.  Please Try again !")
+	message( wName, _msg)
+	_msg = "(1 of 4) Install all the Patches from Dynamix, using their updater system, including %__ApprovedVersion%."
+	_msg = strcat( _msg, _crlf, "(2 of 4) Do NOT manually install any Patches.")
+	message( wName, _msg)
+	_msg = "(3 of 4) If you did manually install some Patches make sure you have the file : PatchSettings.cfg in the Tribes2\GameData\patch\ folder."
+	_msg = strcat( _msg, _crlf, "(4 of 4) Make sure your PatchSettings.cfg file has the following line : LastVersion=%__LastVersionRight%.")
+	message( wName, _msg)
+	exit
+endif
+
+modRootPath = ""
+
+while 1
+	_modRootPath = AskLine(wName, "What RulesSet Name do you want to use ? (Hint: This is the RulesSet name that appears in the Tribes2 Servers List)", _defaultModName)
+	modRootPath = strcat(_dir_name, _gamedataName, _modRootPath)
+	if ( (strlen(_modRootPath) > 0) && (DirExist( modRootPath) == @FALSE) )
+		break
+	else
+		if (strlen(_modRootPath) < 1)
+			message( wName, "Please enter a valid folder name to be created under the %_dir_name% folder. Try again !")
+		else
+			if (DirExist( modRootPath) == @TRUE)
+				message( wName, "Please enter a valid folder name that does NOT now exist to be created under the %_dir_name%%_gamedataName% folder. Try again !")
+			endif
+		endif
+	endif
+endwhile
+
+_defaultModFolderName = strcat(_gameDataFolderName, _defaultModName)
+
+__selfExtractorName = strcat(_dirHome, _selfExtractorName)
+if (FileExist( __selfExtractorName) == @TRUE)
+	gosub InstalltheMod
+else
+	message( wName, "Missing the file called %_selfExtractorName% !  Find it and try again !")
+	exit
+endif
+
+exit
+
+:GiveOSWarning
+	_msg = "You are trying to install the %_defaultModName% Tribes2 Mod using an UNSUPPORTED OS..."
+	_msg = strcat( _msg, " You will NOT be at all happy with the way the %_defaultModName% Tribes2 Mod runs in the OS you are now using.")
+	_msg = strcat( _msg, " You will be far more happy with the way the %_defaultModName% Tribes2 Mod runs in WinNT 4.0 Server Sp6a or Win2000 Server Sp2 !")
+	_msg = strcat( _msg, " Please give some serious thought about using WinNT 4.0 Server Sp6a or Win2000 Server Sp2 !")
+	message( wName, _msg)
+return
+
+
+:GivePasswordWarning
+	_msg = "PLEASE be advised the %_defaultModName% Tribes2 Mod establishes a default $Host::AdminPassword which you MUST change in the prefs\serverPrefs.cs file using the Config Util !"
+	message( wName, _msg)
+return
+
+
+:InstalltheMod
+	message( wName, "OKAY, Now YOU are just about to install the %_defaultModName% Tribes2 Mod ! Press the OK button for this Message Box window and allow the setup program to run - DO NOT press any keys until told to do so... ")
+	Run( __selfExtractorName, "")
+
+	message("%wName% - Copyright Notice", _msgTxt);
+
+_okayToProceed = @False
+	while 1
+		allwins = WinItemize()
+;		mywind = AskItemList("Windows", allwins, @TAB, @unsorted, @single)
+		for i = 1 to ItemCount( allwins, @TAB)
+			_iWin = ItemExtract( i, allwins, @TAB)
+			_j = StrIndexNc( _iWin, _winZIPName, 1, @FWDSCAN)
+			if _j <> 0
+				break
+			endif
+		next
+		if WinExist( _iWin)
+			WinActivate( _iWin)
+			SendKeysTo( _iWin, _gameDataFolderName)
+			SendKeysTo( _iWin, "{TAB}")
+			SendKeysTo( _iWin, "{TAB}")
+			SendKeysTo( _iWin, "{ENTER}")
+			_okayToProceed = @True
+;			message( wName, "Be sure to close the %_iWin% window once the UNZIP process has completed... ")
+			_okayToProceed2 = @False
+			while 1
+				allwins2 = WinItemize()
+				for i = 1 to ItemCount( allwins2, @TAB)
+					_iWin2 = ItemExtract( i, allwins2, @TAB)
+					if ( (_iWin2 == _winZIPName) && (_iWin2 <> _iWin) )
+						if (WinExist( _iWin) && WinExist( _iWin2))
+							WinActivate( _iWin2)
+							SendKeysTo( _iWin2, "{ENTER}")
+							SendKeysTo( _iWin, "{ESC}")
+							_okayToProceed2 = @True
+						endif
+						break
+					endif
+				next
+				if (_okayToProceed2 == @True)
+					break
+				endif
+			endwhile
+			if (_okayToProceed == @True)
+				break
+			endif
+		endif
+	endwhile
+
+
+if (DirExist( _defaultModFolderName) == @FALSE)
+	message( wName, "Installation of the %_defaultModName% Tribes2 Mod was unsuccessful... (Reason: %_defaultModFolderName% folder is missing !) Please Try again !")
+	exit
+endif
+
+DirRename( _defaultModFolderName, modRootPath)
+
+_installedCmdFileName = strcat(modRootPath, "\", _cmdFileName)
+Gosub WriteDedicatedServerCmdFile
+
+_installedLanCmdFileName = strcat(modRootPath, "\", _lanCmdFileName)
+Gosub WriteDedicatedLanServerCmdFile
+
+_installedCmdFileName = strcat(modRootPath, "\", _batFileName)
+Gosub WriteDedicatedServerCmdFile
+
+_installedLanCmdFileName = strcat(modRootPath, "\", _lanBatFileName)
+Gosub WriteDedicatedLanServerCmdFile
+
+if (_winPlatform <> 4)
+	message( wName, "Installation of the %_defaultModName% Tribes2 Mod was a SUCCESS ! You may run the %_cmdFileName% Win95/98/Me batch file to start your Dedicated Server.")
+	Gosub GiveOSWarning
+else
+	message( wName, "Installation of the %_defaultModName% Tribes2 Mod was a SUCCESS ! You may run the %_cmdFileName% WinNT or Win2000 command file to start your Dedicated Server.")
+endif
+
+Gosub GivePasswordWarning
+
+return
+
+
+:ReadPatchVersionFile
+_CorrectPatchFound = @False
+if FileExist( _patchVersionFile) == @TRUE
+	fIN = FileOpen( _patchVersionFile, "READ")
+	while @TRUE				; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		if ItemCount( x, "=") == 2
+			_iLeft = ItemExtract( 1, x, "=")
+			_iRight = ItemExtract( 2, x, "=")
+			if (_iLeft == __LastVersionLeft) && (_iRight == __LastVersionRight)
+				_CorrectPatchFound = @TRUE
+				break
+			endif
+		endif
+	endwhile
+	FileClose(fIN)
+endif
+return
+
+
+:WriteDedicatedServerCmdFile
+	if (FileExist( _installedCmdFileName) == @TRUE)
+		FileAttrSet(_installedCmdFileName, "rAsh")
+	endif
+	fOUT = FileOpen( _installedCmdFileName, "WRITE")
+	FileWrite( fOUT, "REM Use this Command Batch file when using the Chameleon - Tribes 2 Infinite Spawn Vers 1.0.0 aka ispawn.exe")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, "if %%1. == .. if exist ..\console.log del ..\console.log")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, " cd ..\")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, "REM Uncomment the next line to use the Dynamix ispawn.exe")
+	FileWrite( fOUT, "REM ispawn.exe 28000 Tribes2.exe -dedicated -mod %_modRootPath%")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, "REM Comment the next line to use the Dynamix ispawn.exe")
+	FileWrite( fOUT, "Tribes2.exe -dedicated -mod %_modRootPath%")
+	FileClose(fOUT)
+	FileAttrSet(_installedCmdFileName, "RAsh")
+return
+
+
+:WriteDedicatedLanServerCmdFile
+	if (FileExist( _installedLanCmdFileName) == @TRUE)
+		FileAttrSet(_installedLanCmdFileName, "rAsh")
+	endif
+	fOUT = FileOpen( _installedLanCmdFileName, "WRITE")
+	FileWrite( fOUT, "REM Use this Command Batch file when using the Chameleon - Tribes 2 Infinite Spawn Vers 1.0.0 aka ispawn.exe")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, "if %%1. == .. if exist ..\console.log del ..\console.log")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, " cd ..\")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, "REM Uncomment the next line to use the Dynamix ispawn.exe")
+	FileWrite( fOUT, "REM ispawn.exe 28000 Tribes2.exe -nologin -dedicated -mod %_modRootPath%")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, "REM Comment the next line to use the Dynamix ispawn.exe")
+	FileWrite( fOUT, "Tribes2.exe -nologin -dedicated -mod %_modRootPath%")
+	FileClose(fOUT)
+	FileAttrSet(_installedLanCmdFileName, "RAsh")
+return
+
+

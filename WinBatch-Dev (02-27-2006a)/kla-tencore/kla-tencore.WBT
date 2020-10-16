@@ -1,0 +1,90 @@
+;************************************************************************
+; kla-tencore.wbt
+; 
+;************************************************************************
+
+_wname = "KLA-Tencore v1.0.0"
+wname = "%_wname% (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved."
+
+_myPathName = IntControl( 1004, 0, 0, 0, 0)
+_myPath = FilePath( _myPathName)
+_myName = StrReplace( _myPathName, _myPath, "")
+_myName = StrReplace( _myName, StrCat( ".", ItemExtract( ItemCount( _myName, "."), _myName, ".")), "")
+_wname_ = StrReplace( StrReplace( _wname, ".", "_"), " ", "_")
+_iniPath = '%_myPath%%_wname_%.INI'
+
+if FileExist(_iniPath) == @True
+	FileDelete(_iniPath)
+endif
+
+orgin_die_x = -4156.24;
+orgin_die_y = -243.38;
+die_pitch_x = 9380.992;
+die_pitch_y = 8354.920;
+xoffset = 0;
+yoffset = 0;
+die_x_array = '0, 1, 2,3,4,5,6,-1,-2,-3,-4,-5,-6,-1,-2,-3,-4,-5,-6,1,2,3,4,5,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,-1,-2,-3,-4,-5,-6,-7,-8,-9';
+die_y_array = '0, 1, 2,3,4,5,6,-1,-2,-3,-4,-5,-6,1,2,3,4,5,6,-1,-2,-3,-4,-5,-6,1,2,3,4,5,6,7,8,9,-1,-2,-3,-4,-5,-6,-7,-8,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0';
+x_array_0_0 = '-4002,688';
+y_array_0_0 = '7547,4449';
+x_focus = -60421.49;
+y_focus = -25288.59;
+Focus_pixelsize = 0.035;
+Focus_numpixels = 512;
+focus_frame_average = 1;
+focus_gain = 23.04;
+focus_offset = -0.04;
+number_of_dies_count = 0;
+number_of_dies_x = ItemCount(die_x_array, ",");
+number_of_dies_y = ItemCount(die_y_array, ",");
+number_of_dies = number_of_dies_x;
+points_per_die_x = ItemCount(x_array_0_0, ",");
+points_per_die_y = ItemCount(y_array_0_0, ",");
+points_per_die = points_per_die_x;
+xrel_array = x_array_0_0;
+yrel_array = y_array_0_0;
+
+IniWritePvt("Main", "number_of_dies", number_of_dies, _iniPath)
+IniWritePvt("Main", "points_per_die", points_per_die, _iniPath)
+
+IniWritePvt("Main", "orgin_die_x", orgin_die_x, _iniPath)
+IniWritePvt("Main", "orgin_die_y", orgin_die_y, _iniPath)
+IniWritePvt("Main", "die_pitch_x", die_pitch_x, _iniPath)
+IniWritePvt("Main", "die_pitch_y", die_pitch_y, _iniPath)
+
+while (number_of_dies_count < number_of_dies)
+	points_per_die_count = 0;
+	while (points_per_die_count < points_per_die)
+		die_x = ItemExtract( number_of_dies_count + 1, die_x_array, ",");
+		die_y = ItemExtract( number_of_dies_count + 1, die_y_array, ",");
+
+		xrel = ItemExtract( points_per_die_count + 1, xrel_array, ",") - orgin_die_x;
+		yrel = ItemExtract( points_per_die_count + 1, yrel_array, ",") - orgin_die_y;
+
+		imagex = orgin_die_x + (die_x * die_pitch_x) + xrel + xoffset;
+		imagey = orgin_die_y + (die_y * die_pitch_y) + yrel + yoffset;
+
+		dieOriginx = orgin_die_x + (die_x * die_pitch_x) + xoffset;
+		dieOriginy = orgin_die_y + (die_y * die_pitch_y) + yoffset;
+
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "dieOriginx", dieOriginx, _iniPath)
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "dieOriginy", dieOriginy, _iniPath)
+
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "die_x", die_x, _iniPath)
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "die_y", die_y, _iniPath)
+
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "xrel", xrel, _iniPath)
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "yrel", yrel, _iniPath)
+
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "imagex", imagex, _iniPath)
+		IniWritePvt("%number_of_dies_count%.%points_per_die_count%", "imagey", imagey, _iniPath)
+
+		points_per_die_count = points_per_die_count + 1;
+	end while
+	number_of_dies_count = number_of_dies_count + 1;
+end while
+
+exit
+
+
+

@@ -1,0 +1,40 @@
+;************************************************************************
+; py2exe_installer.wbt
+; 
+;************************************************************************
+
+AddExtender("WWZIP34I.DLL")
+
+_files = FileItemize('*.zip')
+
+zipFile = ""
+
+n = ItemCount( _files, @TAB)
+for i = 1 to n
+	name = ItemExtract( i, _files, @TAB)
+	if (StrLen(name) > 0) then
+		zUnZipFiles("d o", name, "*.*", "", "")
+		FileDelete( name)
+		zipFile = name
+		break
+	endif
+next
+
+_files = FileItemize('*win32.exe')
+
+n = ItemCount( _files, @TAB)
+for i = 1 to n
+	name = ItemExtract( i, _files, @TAB)
+	if (StrLen(name) > 0) then
+		ex = ItemExtract( 1, name, "-")
+		if (StrLen(zipFile) > 0) then
+			handle = FileOpen("cleanup.cmd", "WRITE")
+			FileWrite(handle, StrCat("del ",zipFile))
+			FileClose(handle)
+			Run( "cleanup.cmd", "")
+			FileDelete( "cleanup.cmd")
+		endif
+		Run( StrCat(ex,".exe"), "")
+		break
+	endif
+next

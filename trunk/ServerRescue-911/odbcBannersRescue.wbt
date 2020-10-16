@@ -1,0 +1,82 @@
+; odbcBannersRescue.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+AddExtender("WWWSK32I.DLL")
+
+_appName = "odbcBannersRescue"
+
+_err_num_text = "Error Number : <b>"
+_err_desc_text = "Error Description : <b>"
+_err_hints_text = "Some Hints: <b>"
+
+_URL = "http://xxx-sex.nu/banners/random.ihtml"
+
+If param0 > 0
+	_URL = param1
+Else
+	_URL = AskLine("ODBC Banners Rescue", "URL?", _URL)
+Endif
+
+fname = "c:\temp\%_appName%.txt"
+
+_response_code = 0 ; 200 stops the process assuming the web server is running
+
+urls_domain_name = httpGetServer( _URL, "")
+path = httpGetpath( _URL, "")
+
+while 1
+
+	line = "Sleeping for 60 secs..."
+	BoxCaption(1, "%_appName% %line%")
+
+	Delay( 60)
+
+	_response_code = -1
+	ErrorMode(@OFF)
+	_response_code = httpRecvFile(urls_domain_name, path, fname, 0)
+	ErrorMode(@CANCEL)
+	txt = "httpRecvFile Return code is %_response_code%"
+
+	line = txt
+	BoxCaption(1, "%_appName% %line%")
+
+	Gosub AnalyzeData
+endwhile
+
+exit
+
+
+:AnalyzeData
+fs = FileSize( fname)
+binbuf = BinaryAlloc( fs + 100)
+if binbuf == 0
+	Message("Error", "BinaryAlloc Failed")
+else
+	BinaryRead( binbuf, fname)
+
+;Error Number : <b>:i_error</b><br>
+;Error Description : <b>:i_errortext</b><br>
+;Some Hints: <b>:i_hinttext</b><br>
+
+	i_err_num = BinaryIndexNc( binbuf, 0, _err_num_text, @FWDSCAN)
+	i_err_desc = BinaryIndexNc( binbuf, 0, _err_desc_text, @FWDSCAN)
+	i_err_hints = BinaryIndexNc( binbuf, 0, _err_hints_text, @FWDSCAN)
+	
+	If (i_err_num > 0) && (i_err_desc > 0) && (i_err_hints > 0)
+		s = BinaryPeekStr( binbuf, i_err_num + StrLen( _err_num_text), i_err_desc - i_err_num)
+		s = httpStripHTML( s)
+		si = StrIndex( s, "350", 1, @FWDSCAN)
+		line = StrCat( "There might be a problem with the ODBC Banners Database!", " (", s, ") si=%si%")
+		BoxCaption(1, "%_appName% %line%")
+
+		Message( _appName, line)
+
+		If si > 0
+		Endif
+	Endif
+
+	binbuf = BinaryFree( binbuf)
+endif
+return
+

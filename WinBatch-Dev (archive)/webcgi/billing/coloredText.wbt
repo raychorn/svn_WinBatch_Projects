@@ -1,0 +1,26 @@
+:coloredText
+; _string ............ input - the text string being output
+; _foregroundColor ... input - the foreground Color
+; _backgroundColor ... input - the background Color
+
+If StrLen( _backgroundColor) > 0
+    WebOut('<TABLE BORDER="0" ALIGN="CENTER" BGCOLOR="%_backgroundColor%"><TBODY><COLDEFS><COLDEF></COLDEFS><ROWS><TR>', 0)
+    WebOut('<TD COLSTART="1">', 0)
+Endif
+
+If StrLen( _foregroundColor) > 0
+    WebOut('<FONT COLOR="%_foregroundColor%">', 0)
+Endif
+
+WebOut(_string, 0)
+
+If StrLen( _foregroundColor) > 0
+    WebOut('</FONT>', 0)
+Endif
+
+If StrLen( _backgroundColor) > 0
+    WebOut('</TD></TR></ROWS></TBODY></TABLE>', 0)
+Endif
+
+return
+

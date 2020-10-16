@@ -1,0 +1,131 @@
+;*********************************************************************************************************
+; mySQL-Analysis.wbt
+;
+; Purpose:  Automate the task of Comparing mySQL table schemas.
+;
+;*********************************************************************************************************
+
+#DefineFunction WriteAnalysisReportData( _fname, _data, _delim)
+	IntControl(73, 2,0,0,0)
+
+	fhand = FileOpen( _fname, "WRITE")
+	xCnt = ItemCount( _data, _delim)
+
+	xL = ""
+	for i = 1 to xCnt
+		xCs = ItemExtract( i, _data, _delim)
+		FileWrite( fhand, xCs)
+	next
+
+	FileClose(fhand)
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction ReadDataFromFile(_fname, _delim, _subDelim)
+	IntControl(73, 2,0,0,0)
+
+	data = ""
+	columnNamesList = ""
+	tableNamesList = ""
+	doneWithSourceColumns = @False
+	collectingTableData = @False
+
+	table_structure_for_symbol = "Table structure for"
+
+	fhand = FileOpen( _fname, "READ")
+	while @TRUE
+		x = FileRead(fhand)
+		If x == "*EOF*" Then Break
+		if ( (collectingTableData == @False) && (doneWithSourceColumns == @False) && (StrIndexNc( x, _subDelim, 1, @Fwdscan) > 0) )
+			doneWithSourceColumns = @True
+		endif
+		if doneWithSourceColumns == @False
+			columnNamesList = StrCat( columnNamesList, x)
+		else
+			iTok = StrIndexNc( x, table_structure_for_symbol, 1, @Fwdscan)
+			if iTok > 0
+				_name = StrSub( x, iTok + StrLen(table_structure_for_symbol), StrLen(x) - (iTok + StrLen(table_structure_for_symbol)) + 1)
+				tableNamesList = ItemInsert( _name, ItemCount( tableNamesList, ",") + 1, tableNamesList, ",")
+				tIndex = ItemCount(tableNamesList, ",")
+				collectingTableData = @True
+				dataArrayCnt%tIndex% = 0
+			else
+				dataArrayCnt%tIndex% = dataArrayCnt%tIndex% + 1
+				ttIndex = dataArrayCnt%tIndex%
+				dataArray_%tIndex%_%ttIndex% = x
+			endif
+		endif
+	endwhile
+	FileClose(fhand)
+
+	tCount = ItemCount( tableNamesList, ",")
+	iTotal = ItemCount( columnNamesList, ",")
+	for i = 1 to iTotal
+		anItem = ItemExtract( i, columnNamesList, ",")
+		_anItem = "`%anItem%`"
+		for j = 1 to tCount
+			aTableName = ItemExtract( j, tableNamesList, ",")
+			ttCount = dataArrayCnt%j%
+			isFound%j% = @False
+			for k = 1 to ttCount
+				xx = dataArray_%j%_%k%
+				if StrIndexNc( xx, _anItem, 1, @Fwdscan) > 0
+					isFound%j% = @True
+					break
+				endif
+			next
+			if isFound%j% == @False
+				if j == 1 then jj = 2
+				if j == 2 then jj = 1
+				wasFoundInOther = @False
+				if isFound%jj% == @True then wasFoundInOther = @True
+				otherTableName = ItemExtract( jj, tableNamesList, ",")
+				ttOtherCount = dataArrayCnt%jj%
+				xxOther = dataArray_%jj%_%k%
+				for k = 1 to ttOtherCount
+					xxOther = dataArray_%jj%_%k%
+					if StrIndexNc( xxOther, _anItem, 1, @Fwdscan) > 0
+						break
+					endif
+				next
+				data = ItemInsert( "%anItem% not found in %j% (%aTableName%) - wasFoundInOther = (%wasFoundInOther%) [%jj%] (%otherTableName%) {%xxOther%}", ItemCount( data, @TAB), data, @TAB)
+			endif
+		next
+	next
+
+	WriteAnalysisReportData( StrCat(_fname, ".report"), data, @TAB)
+
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+_wname = "mySQL-Analysis v1.0.0"
+wname = "%_wname% [mySQL-Analysis] (c)1990-2006 Hierarchical Applications Limited, All Rights Reserved."
+
+types="All Files|*.*|"
+fname = AskFileName( "mySQL Tables versus Query Analysis", "Z:\Sequoia Insurance Company (Brandtley Greenlaw)\mySQL Analysis", types, "", 1)
+
+fnameBase = FileBaseName( fname)
+
+_data = ReadDataFromFile(fname, ",", "#")
+
+exit
+
+
+

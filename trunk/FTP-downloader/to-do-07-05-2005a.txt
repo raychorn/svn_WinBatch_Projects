@@ -1,0 +1,7 @@
+To-Do
+
+1). Add code to tibco-ftp.wbt to create the temp folder it needs to use.
+
+2). Test again by downloading data again to see which files are downloaded a 2nd time, if any.
+
+3). Compile and deploy to myVisionDev.

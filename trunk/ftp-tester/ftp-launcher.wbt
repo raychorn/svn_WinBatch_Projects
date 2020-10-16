@@ -1,0 +1,230 @@
+; ftp-launcher.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(41, 1, 0, 0, 0) ; Y2K to 4 digit YYYY
+
+_appName = "ftp-launcher"
+
+wname_smalltalker = "HAL Smalltalker"
+
+wname_file_download = "File Download"
+wname_save_as = "Save As"
+
+_URL = "ftp://207.55.210.25:22/jumbo/webcelerator.exe"
+fname = "c:\temp\webcelerator.exe"
+
+_debug_mode_no = "no"
+_debug_mode_yes = "yes"
+
+_interactive_mode_no = "no"
+_interactive_mode_yes = "yes"
+
+internet_explorer = "iexplore.exe"
+
+netscape_browser = "netscape.exe"
+
+_debug_mode = _debug_mode_no
+
+_interactive_mode = _interactive_mode_yes
+
+If param0 > 0
+	_URL = param1
+Else
+	_URL = AskLine("%_appName%", "URL to process?", _URL)
+Endif
+
+If param0 > 1
+	fname = param2
+Else
+	fname = AskLine("%_appName%", "File Name to save to?", fname)
+Endif
+
+If param0 > 2
+	_debug_mode = param3
+Else
+	_debug_mode = AskLine("%_appName%", "Debug Mode? ('%_debug_mode_yes%' or '%_debug_mode_no%')", _debug_mode)
+Endif
+
+_max_secs = 60 * 5
+
+If param0 > 3
+	max_secs = param4
+Else
+	max_secs = AskLine("%_appName%", "Max Secs? ", _max_secs)
+Endif
+
+_web_browser = "N" ; default browser is Netscape
+
+If param0 > 4
+	web_browser = param5
+Else
+	web_browser = AskLine("%_appName%", "Web Browser? (I=Internet Explorer or N=Netscape) ", _web_browser)
+	
+	web_browser = StrUpper( web_browser)
+	If (web_browser <> "I") && (web_browser <> "N")
+		web_browser = "N"
+	Endif
+Endif
+
+urls_domain_name = httpGetServer( _URL, "")
+path = httpGetpath( _URL, "")
+
+;Message( "DEBUG", "_resultsFile=%_resultsFile%")
+;exit
+
+If _interactive_mode == _interactive_mode_yes
+
+	If web_browser == "I"
+		Run( internet_explorer, _URL)
+	Else
+		If web_browser == "N"
+			Run( netscape_browser, _URL)
+		Endif
+	Endif
+	
+	_begin_time = TimeYmdHms()
+	while WinExist( wname_file_download) == @FALSE
+		_now_time = TimeYmdHms()
+		If TimeDiffSecs( _now_time, _begin_time) > max_secs
+			break
+		Endif
+
+		Delay( 1)
+	endwhile
+
+	If WinExist( wname_file_download) == @TRUE
+		SendKeysTo( wname_file_download, '{ENTER}')
+		
+		_begin_time = TimeYmdHms()
+		while WinExist( wname_save_as) == @FALSE
+			_now_time = TimeYmdHms()
+			If TimeDiffSecs( _now_time, _begin_time) > max_secs
+				break
+			Endif
+
+			Delay( 1)
+		endwhile
+		
+		SendKeysTo( wname_save_as, '%fname%{ENTER}')
+	Endif
+Else
+	httpAuth( _userid, _passwd)
+
+	ErrorMode(@OFF)
+
+	_response_code = httpRecvQryF( urls_domain_name, path, "", _resultsFile, @hMethodGet) 
+
+	ErrorMode(@CANCEL)
+
+	Gosub GetResponseCodeText
+
+	handle = fileopen( _results_txt_File, "write")
+	filewrite(handle, "_response_code=%_response_code%")
+	filewrite(handle, _response_text)
+	fileclose(handle)
+
+	If StrCmp( _debug_mode, _debug_mode_no) <> 0
+		txt = "httpRecvFile Return code is %_response_code% in %_resultsFile%"
+		Message( "DEBUG", txt)
+	Endif
+Endif
+
+exit
+
+
+:cycleResultFile
+; fname ....... input - the name of the results file
+
+; cycle the current results file - look for an open slot and use it
+i = 1
+_found = @TRUE
+_today = StrReplace( TimeYmdHms( ), ":", "_")
+_resultsFile = "%fname%-%_today%.html"
+_results_txt_File = "%fname%-%_today%.txt"
+while _found == @TRUE
+	_fex = FileExist( _resultsFile)
+	If _fex == @FALSE ; the candidate file does not exist so use it!
+		_found = _fex
+		break
+	Else
+		i = i + 1
+		_resultsFile = "%fname%-%_today%-%i%.html"
+		_results_txt_File = "%fname%-%_today%-%i%.txt"
+	Endif
+endwhile
+
+return
+
+
+:GetResponseCodeText
+; _response_code ..... input - the response code
+; _response_text ..... output - the response text for the _response_code
+
+_response_text = "UNKNOWN"
+
+Switch _response_code
+	case 200
+		_response_text = "OK"
+		break
+	case 201
+		_response_text = "Created - Following a POST command, this indicates success, but the text of the response line indicates the URL of the new document."
+		break
+	case 202
+		_response_text = "Accepted - Request accepted for asynchronous processing."
+		break
+	case 203
+		_response_text = "Partial Information - Returned information may be cached or private."
+		break
+	case 204
+		_response_text = "No Response - Used for scripts that don't return a visible result."
+		break
+	case 301
+		_response_text = "Moved - Browsers with link editing capabilities should automatically link to the new reference."
+		break
+	case 302
+		_response_text = "Found - Same as move, except that linking to the found address doesn't make much sense, since the document URL is expected to change. This is a Location: header."
+		break
+	case 303
+		_response_text = "Method - Same as found, but a different method may be used to access the document; details about the method are sent in the message body."
+		break
+	case 304
+		_response_text = "Not modified - Use the local copy if it was cached."
+		break
+	case 400
+		_response_text = "Bad Request - Impossible request or syntax error"
+		break
+	case 401
+		_response_text = "Unauthorized - Request should be retried with proper authorization header."
+		break
+	case 402
+		_response_text = "Payment Required - Request should be retried with proper charge-to header."
+		break
+	case 403
+		_response_text = "Forbidden - Authorization will not help"
+		break
+	case 404
+		_response_text = "Not found - A document with that URL doesn't exist."
+		break
+	case 411
+		_response_text = "No such group - (NCSA httpd) the newsgroup in news:newsgroup doesn't exist."
+		break
+	case 500
+		_response_text = "Internal Error"
+		break
+	case 501
+		_response_text = "Not implemented - ``I'm sorry, Dave, I can't do that.''"
+		break
+	case 502 
+		_response_text = "Timed out  - (Seen in practice, not in the specification.)"
+		break
+	case response	 ; default case
+		_response_text = "UNKNOWN"
+		break
+EndSwitch
+
+_response_text = StrCat( _response_text, " - _response_code %_response_code%")
+
+return
+
+

@@ -1,0 +1,30 @@
+{USB} Clan Password Change Advice Notice To: 
+
+
+Your {USB} Clan Password has changed.
+
+
+Old Password: 
+New Password: HNv&xw8Nz
+
+
+Note your new password is composed of letters, numbers and special characters. De sure to enter your new password exactly as it appears in this message.
+
+
+You may need to wait until the next server reset or mission change whichever happens first BEFORE your new password will work however you may continue 
+using your old password until it can no longer be used.
+
+
+It is our policy to make passwords as difficult to guess or remember so we can keep your ability to enjoy our servers securely in your own hands while 
+at the same time making it as difficult as possible for others to abuse your clan name.
+
+
+DO NOT communicate your password to ANYONE whether they are a member of {USB} or not. In case your {USB} clan name is abused you may lose your ability 
+to connect using your clan name as well as your ability to Admin our servers.
+
+
+If you have a static IP address and DO NOT connect to the Internet using some kind of dial-up ISP we could use your Static IP Address in place of 
+your password since NOBODY else can be using your static IP Address since it is assigned to YOUR Internet Connection Account.
+
+
+{USB}Spiderman

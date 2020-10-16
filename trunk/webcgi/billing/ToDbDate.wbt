@@ -1,0 +1,27 @@
+:ToDbDate
+; param1 .... input/output - the name of the variable that holds the Db formatted DATETIME - 07-02-1998
+
+If param0 <> 1
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for FromDbDate</B></FONT>', _html_crlf)
+    return
+Endif
+
+_dbdate_sep = "-"
+
+If ItemCount( %param1%, _dbdate_sep) == 3
+    _mm = ItemExtract( 1, %param1%, _dbdate_sep)
+    _dd = ItemExtract( 2, %param1%, _dbdate_sep)
+    _yyyy = ItemExtract( 3, %param1%, _dbdate_sep)
+
+    If StrLen( _yyyy) < 4
+        _yyyy = 1900 + _yyyy
+    Endif
+
+    %param1% = StrCat( _yyyy, _dbdate_sep, _mm, _dbdate_sep, _dd)
+
+    Drop( _mm, _dd, _yyyy)
+Endif
+
+return
+
+

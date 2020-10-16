@@ -1,0 +1,128 @@
+:doQuery2
+;CONNECTS TO THE _datasource DATA SOURCE
+; _datasource ....... input - the datasource
+; hdbc .............. input - already opened
+; sql_stmnt ......... input - holds the SQL statement
+; sql_fetch ......... input - holds the fetchable flag @TRUE or @FALSE
+; retcode ........... output - used
+; hstmt ............. output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+retcode = qConnect(hdbc, _datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">qConnect failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)
+
+If hstmt == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">qAllocStmt failed %retcode%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt, sql_stmnt)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt=', _html_crlf)
+  WebOut(sql_stmnt, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+retcode = qFetch(hstmt)
+
+If (sql_fetch == @TRUE) && (retcode <> @qNoData)
+    cnameBuf = BinaryAlloc(260)
+    If cnameBuf == @FALSE
+        WebOut('<BR><B><FONT COLOR="RED">BinaryAlloc failed for cnameBuf</FONT></B><BR>', _html_crlf)
+        Exit
+    Endif
+
+    cvalueBuf = BinaryAlloc(260)
+    If cvalueBuf == @FALSE
+        WebOut('<BR><B><FONT COLOR="RED">BinaryAlloc failed for cvalueBuf</FONT></B><BR>', _html_crlf)
+        Exit
+    Endif
+
+    While @TRUE
+        If retcode == @qNoData Then Break
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qFetch failed %retcode%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        __id = 0
+        retcode = qGetData(hstmt, 1, "__id", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for __id</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        __fileid = 0
+        retcode = qGetData(hstmt, 2, "__fileid", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for __fileid</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        retcode = qGetData(hstmt, 3, "cnameBuf", 255)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for cnameBuf</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        If (retcode == @qSuccessInfo)  ; if the field was too small (This is how to handle errors)
+            msg = qError(hstmt, 2)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData error/status %msg% for cnameBuf</FONT></B><BR>', _html_crlf)
+        Endif
+
+        retcode = qGetData(hstmt, 4, "cvalueBuf", 255)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for cvalueBuf</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        If (retcode == @qSuccessInfo)  ; if the field was too small (This is how to handle errors)
+            msg = qError(hstmt, 2)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData error/status %msg% for cvalueBuf</FONT></B><BR>', _html_crlf)
+        Endif
+
+        __used = 0
+        retcode = qGetData(hstmt, 5, "__used", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">qGetData failed %retcode% for __used</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        __cname = BinaryPeekStr(cnameBuf, 0, BinaryEodGet(cnameBuf))
+        __cvalue = BinaryPeekStr(cvalueBuf, 0, BinaryEodGet(cvalueBuf))
+
+        sql_fetched = @TRUE
+
+        retcode = qFetch(hstmt)
+
+    EndWhile
+
+    BinaryFree(cnameBuf)
+    BinaryFree(cvalueBuf)
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+return
+

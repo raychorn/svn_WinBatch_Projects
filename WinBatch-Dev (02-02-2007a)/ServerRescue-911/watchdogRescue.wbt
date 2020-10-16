@@ -1,0 +1,340 @@
+; watchdogRescue.wbt
+
+AddExtender("WWWNT32I.DLL")
+AddExtender("WWWSK32I.DLL")
+
+_appName = "watchdogRescue"
+
+wName1 = "Installing Internet Watchdog / Monitor"
+wName2 = "Setup options"
+wName3 = "Select which tcpip services to test"
+wName4 = "WDOG"
+wName5 = "Internet WatchDog / Monitor" ; "  2.9m"
+
+control_name = "WatchDog Internet Monitor"
+
+item_file_name = "wdog.itm"
+_item_file_name = "_wdog.itm"
+
+If WinExist(wName5) == @TRUE
+	exit ; no point running if there are no problems to look at...
+Endif
+
+;_stopped_service = @TRUE ; make this @FALSE for the production release
+_stopped_service = @FALSE ; make this @FALSE for the production release
+
+If param0 > 0
+	_watchdog_dir = param1
+Else
+	_watchdog_dir = AskLine("WatchDog Rescue", "WatchDog Directory?", "c:\Watchdog")
+Endif
+
+If param0 > 1
+	If DirExist(param2) == @FALSE
+		DirMake(param2)
+	Endif
+
+	logdir = StrReplace( StrCat( param2, "\"), "\\", "\")
+Else
+	logdir = AskLine("WatchDog Rescue", "ActivityLog Directory?", "h:\watchdogRescue-Logs")
+Endif
+
+activityLogFile = "%logdir%ActivityLog.txt"
+
+Gosub cycleActivityLogFile
+
+_wName2_event_counter = 1
+_wName2_event_goal = 4
+
+_wName4_event_counter = 1
+_wName4_event_goal = 2
+
+_lineNum = 1
+
+_beginTime = GetTickCount( )
+_endGoal = _beginTime + (60 * 30 * 1000)
+_ticksNow = 0
+
+while 1
+
+;Message( "DEBUG", "_mode=%_mode%, _response_code=%_response_code%")
+
+	line = "(1) Gosub detectWatchdogProblems (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+	Gosub appendToActivityLog
+	BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+
+	Gosub detectWatchdogProblems
+
+	line = "(2) Sleeping... (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+	Gosub appendToActivityLog
+;	 BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+
+	Delay( 1)
+
+	_nowTime = GetTickCount( )
+	_ticksNow = _nowTime - _beginTime
+	If _ticksNow > _endGoal
+		line = "(2a) Timed-Out! (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+		Gosub appendToActivityLog
+		break
+	Endif
+
+	line = "(3) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+	Gosub appendToActivityLog
+;	 BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+
+endwhile
+
+exit
+
+:doSomethingWithWatchdogProblem
+
+	line = "(4) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (get the current state of the %control_name% service)......"
+	Gosub appendToActivityLog
+	BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+	
+	state = wntSvcStatus("", control_name, 0, 2)  ; get the current state of the WatchDog service
+
+	Switch state
+	  case 1
+		s = "1   SERVICE_STOPPED     The service is not running."
+
+		If _stopped_service == @TRUE
+			line = "(5) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (Ready to fuck with the files...)......"
+			Gosub appendToActivityLog
+			BoxCaption(1, "%_appName% %line%")
+			_lineNum = _lineNum + 1
+
+			watchdog_path = StrReplace( StrCat( _watchdog_dir, "\"), "\\", "\")
+			filename = StrCat( watchdog_path, item_file_name)
+			If FileExist( filename) <> @FALSE
+				line = "(6) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (Delete %filename%...)......"
+				Gosub appendToActivityLog
+				BoxCaption(1, "%_appName% %line%")
+				_lineNum = _lineNum + 1
+
+				FileDelete( filename)
+			Endif
+
+			_filename = StrCat( watchdog_path, _item_file_name)
+
+			line = "(7) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (Copy %filename% to %_filename%...)......"
+			Gosub appendToActivityLog
+			BoxCaption(1, "%_appName% %line%")
+			_lineNum = _lineNum + 1
+
+			FileCopy( _filename, filename, @FALSE)
+
+			line = "(8) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (ReStart %control_name% service...)......"
+			Gosub appendToActivityLog
+			BoxCaption(1, "%_appName% %line%")
+			_lineNum = _lineNum + 1
+
+			wntSvcStart("", control_name, 0, "", "")  ; start the WatchDog service
+			_state = 0
+			while _state <> 4
+				_state = wntSvcStatus("", control_name, 0, 2)  ; get the current state of the WatchDog service
+				Delay( 2)
+			endwhile
+
+			line = "(9) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (DONE!...)......"
+			Gosub appendToActivityLog
+			BoxCaption(1, "%_appName% %line%")
+			_lineNum = _lineNum + 1
+
+			__beginTime = GetTickCount( )
+			__endGoal = __beginTime + (60 * 5 * 1000)
+			__ticksNow = 0
+			while (WinExist(wName5) <> @TRUE)
+				Delay( 10)
+				__nowTime = GetTickCount( )
+				__ticksNow = __nowTime - __beginTime
+				If __ticksNow > __endGoal
+					break
+				Endif
+			endwhile
+			If (WinExist(wName5) == @TRUE)
+				WinIconize( wName5)
+			Endif
+
+			exit
+		Endif
+		
+		break
+	  case 2
+		s = "2   SERVICE_START_PENDING   The service is starting."
+		break
+	  case 3
+		s = "3   SERVICE_STOP_PENDING    The service is stopping."
+		break
+	  case 4
+		s = "4   SERVICE_RUNNING The service is running."
+
+		line = "(10) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (STOP the %control_name% service)......"
+		Gosub appendToActivityLog
+		BoxCaption(1, "%_appName% %line%")
+		_lineNum = _lineNum + 1
+
+		wntSvcControl("", control_name, 0, 1)  ; stop the WatchDog service
+		_state = 0
+		while _state <> 1
+			_state = wntSvcStatus("", control_name, 0, 2)  ; get the current state of the WatchDog service
+			Delay( 2)
+		endwhile
+
+		_stopped_service = @TRUE
+
+		line = "(11) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (The %control_name% service has been STOPPED!)......"
+		Gosub appendToActivityLog
+		BoxCaption(1, "%_appName% %line%")
+		_lineNum = _lineNum + 1
+
+		break
+	  case 5
+		s = "5   SERVICE_CONTINUE_PENDING    The service continue is pending."
+		break
+	  case 6
+		s = "6   SERVICE_PAUSE_PENDING   The service pause is pending."
+		break
+	  case 7
+		s = "7   SERVICE_PAUSED  The service is paused."
+		break
+	EndSwitch
+
+return
+
+
+:detectWatchdogProblems
+If (WinExist(wName1) == @TRUE) || (WinExist(wName2) == @TRUE) || (WinExist(wName3) == @TRUE) || (WinExist(wName4) == @TRUE) || (WinExist(wName5) == @TRUE)
+	line = "(12) Gosub correctWatchdogProblems (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+	Gosub appendToActivityLog
+	BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+
+	Gosub correctWatchdogProblems
+Else
+	If (WinExist(wName1) == @FALSE) && (WinExist(wName2) == @FALSE) && (WinExist(wName3) == @FALSE) && (WinExist(wName4) == @FALSE) && (WinExist(wName5) == @FALSE)
+		; this is the absense of ALL windows related to the WatchDog - this may happen AFTER the service has been stopped or before...
+		If _stopped_service == @TRUE
+			Gosub doSomethingWithWatchdogProblem
+		Endif
+	Endif
+Endif
+
+return
+
+
+:correctWatchdogProblems
+
+If (WinExist(wName1) == @TRUE)
+	line = "(13) correctWatchdogProblems for %wName1% (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+	Gosub appendToActivityLog
+	BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+
+	WinActivate( wName1)
+	SendKeysTo( wName1, '{ENTER}')
+Endif
+
+line = "(14a) correctWatchdogProblems for %wName2% (ticks %_ticksNow% of %_endGoal% event_counter %_wName2_event_counter% of %_wName2_event_goal%)..."
+Gosub appendToActivityLog
+BoxCaption(1, "%_appName% %line%")
+If (WinExist(wName2) == @TRUE)
+;	 If _wName2_event_counter < _wName2_event_goal
+		line = "(14) correctWatchdogProblems for %wName2% (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+		Gosub appendToActivityLog
+		BoxCaption(1, "%_appName% %line%")
+		_lineNum = _lineNum + 1
+
+		WinActivate( wName2)
+		SendKeysTo( wName2, '{TAB}{TAB}{TAB}{ENTER}')
+
+;		 _wName2_event_counter = _wName2_event_counter + 1
+;	 Endif
+Endif
+
+If (WinExist(wName3) == @TRUE)
+	line = "(15) correctWatchdogProblems for %wName3% (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+	Gosub appendToActivityLog
+	BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+
+	WinActivate( wName3)
+	SendKeysTo( wName3, '{ENTER}')
+Endif
+
+line = "(16a) correctWatchdogProblems for %wName4% (ticks %_ticksNow% of %_endGoal% event_counter %_wName4_event_counter% of %_wName4_event_goal%)..."
+Gosub appendToActivityLog
+BoxCaption(1, "%_appName% %line%")
+If (WinExist(wName4) == @TRUE)
+;	 If _wName4_event_counter < _wName4_event_goal
+		line = "(16) correctWatchdogProblems for %wName4% (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+		Gosub appendToActivityLog
+		BoxCaption(1, "%_appName% %line%")
+		_lineNum = _lineNum + 1
+
+		WinActivate( wName4)
+		SendKeysTo( wName4, '{ENTER}')
+
+;		 _wName4_event_counter = _wName4_event_counter + 1
+;	 Endif
+Endif
+
+If (WinExist(wName5) == @TRUE)
+	line = "(17) correctWatchdogProblems for %wName5% (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+	Gosub appendToActivityLog
+	BoxCaption(1, "%_appName% %line%")
+	_lineNum = _lineNum + 1
+
+	Gosub doSomethingWithWatchdogProblem
+Endif
+
+return
+
+
+:cycleActivityLogFile
+fex = FileExist( activityLogFile)
+
+Switch fex
+	case @TRUE
+		; cycle the current log file - look for an open slot and use it
+		i = 1
+		_found = @TRUE
+		while _found == @TRUE
+			_activityLogFile = "%logdir%ActivityLog-%i%.txt"
+			_fex = FileExist( _activityLogFile)
+			If _fex == @FALSE ; the candidate file does not exist so use it!
+				_found = _fex
+				If FileRename( activityLogFile, _activityLogFile) == @FALSE
+					; current log file cannot be renamed so we can't cycle it and... make one up using today's date, etc.
+					_token = StrReplace( TimeYmdHms( ), ":", "_")
+					activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+				Endif
+				break
+			Else
+				i = i + 1
+			Endif
+		endwhile
+	break
+	case 2
+		; current log file is in use so make one up using today's date, etc.
+		_token = StrReplace( TimeYmdHms( ), ":", "_")
+		activityLogFile = StrReplace( activityLogFile, ".txt", "%_token%.txt")
+	break
+EndSwitch
+return
+
+
+:appendToActivityLog
+	_handle = FileOpen( activityLogFile, "APPEND")
+	If _handle > 0
+		line = StrCat( TimeDate(), ", ", line, @CR)
+		FileWrite(_handle, line)
+		FileClose(_handle)
+	Endif
+return
+

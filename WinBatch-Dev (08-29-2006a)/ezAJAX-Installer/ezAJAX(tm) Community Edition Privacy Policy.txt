@@ -1,0 +1,5 @@
+Privacy Policy
+
+During the Registration process you will be asked to supply certain data elements that we require in order to create your Runtime License such as your EMail Address, your domain name or server name and your Machine ID.  We don't need to ask you for your Machine ID as we are able to determine this automatically by fetching this information from your OS.
+
+It is our policy to safeguard the information you provide to us and to use it for the sole purpose of providing you with a Runtime License so you can use our software for those purposes as outlined in the EULA.

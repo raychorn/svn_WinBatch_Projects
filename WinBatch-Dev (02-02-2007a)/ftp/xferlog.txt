@@ -1,0 +1,215 @@
+sending file \"C:/RayHorn/*.*\" to host \"24.1.117.184\" as file \"/g:/adecco\"
+- -
+connecting to 206.24.101.81:21
+Connected to 206.24.101.81 port 21
+220-
+220-Adecco FTP Proxy Server
+220-
+220-To connect to a site, supply the username and sitename that you'd
+220-like to use at the "Name" prompt. For example, if you'd like to use
+220-anonymous ftp to connect to ftp.uu.net, you'd supply the following:
+220-
+220-        anonymous@ftp.uu.net
+220-
+220-Ignore the default (in parentheses) that your local FTP program may be
+220-providing.
+220
+USER smalltalker@24.1.117.184
+331-(----GATEWAY CONNECTED TO 24.1.117.184----)
+331-(220-Serv-U FTP-Server v2.4a for WinSock ready...)
+331-(220-Welcome to the HAL Smalltalker, Inc.)
+331-(220-Sisko FTP Server - this FTP Server is)
+331-(220-RESTRICTED to the web hosting customers of)
+331-(220-HAL Smalltalker, Inc. ALL other use is)
+331-(220-ILLEGAL and strictly prohibited!)
+331-(220-)
+331-(220-Disclaimer: HAL Smalltalker, Inc. strictly)
+331-(220-prohibits ALL illegal materials and)
+331-(220-activities and cooperates fully with ALL law)
+331-(220-enforcement agencies whenever official)
+331-(220-complaints are sent to us through official)
+331-(220-channels.  Furthermore, HAL Smalltalker, Inc.)
+331-(220-is NOT responsible for the content of any)
+331-(220-websites hosted on our servers although we)
+331-(220-will terminate any website where illegal)
+331-(220-materials are found on an as-needed basis.)
+331-(220-In addition, HAL Smalltalker, Inc. strictly)
+331-(220-prohibits SPAMMING of ALL kinds.)
+331-(220-)
+331-(220-A Current Service Agreement is required to be)
+331-(220-on file for YOUR account BEFORE we will allow)
+331-(220-access to our FTP Server(s).)
+331-(220-See http://e-servers.net for a current)
+331-(220-Service Agreement and our Terms and Conditions)
+331-(220 for use.)
+331 User name okay, need password.
+PASS (hidden)
+230 User logged in, proceed.
+SYST
+215 UNIX Type: L8
+Host type (S): UNIX (standard)
+215 UNIX Type: L8! Transfer failed for C:/RayHorn/*.* from 24.1.117.184
+sending file \"C:/RayHorn/*.zip\" to host \"24.1.117.184\" as file \"/g:/adecco\"
+- -
+connecting to 206.24.101.81:21
+Connected to 206.24.101.81 port 21
+220-
+220-Adecco FTP Proxy Server
+220-
+220-To connect to a site, supply the username and sitename that you'd
+220-like to use at the "Name" prompt. For example, if you'd like to use
+220-anonymous ftp to connect to ftp.uu.net, you'd supply the following:
+220-
+220-        anonymous@ftp.uu.net
+220-
+220-Ignore the default (in parentheses) that your local FTP program may be
+220-providing.
+220
+USER smalltalker@24.1.117.184
+331-(----GATEWAY CONNECTED TO 24.1.117.184----)
+331-(220-Serv-U FTP-Server v2.4a for WinSock ready...)
+331-(220-Welcome to the HAL Smalltalker, Inc.)
+331-(220-Sisko FTP Server - this FTP Server is)
+331-(220-RESTRICTED to the web hosting customers of)
+331-(220-HAL Smalltalker, Inc. ALL other use is)
+331-(220-ILLEGAL and strictly prohibited!)
+331-(220-)
+331-(220-Disclaimer: HAL Smalltalker, Inc. strictly)
+331-(220-prohibits ALL illegal materials and)
+331-(220-activities and cooperates fully with ALL law)
+331-(220-enforcement agencies whenever official)
+331-(220-complaints are sent to us through official)
+331-(220-channels.  Furthermore, HAL Smalltalker, Inc.)
+331-(220-is NOT responsible for the content of any)
+331-(220-websites hosted on our servers although we)
+331-(220-will terminate any website where illegal)
+331-(220-materials are found on an as-needed basis.)
+331-(220-In addition, HAL Smalltalker, Inc. strictly)
+331-(220-prohibits SPAMMING of ALL kinds.)
+331-(220-)
+331-(220-A Current Service Agreement is required to be)
+331-(220-on file for YOUR account BEFORE we will allow)
+331-(220-access to our FTP Server(s).)
+331-(220-See http://e-servers.net for a current)
+331-(220-Service Agreement and our Terms and Conditions)
+331-(220 for use.)
+331 User name okay, need password.
+PASS (hidden)
+230 User logged in, proceed.
+SYST
+215 UNIX Type: L8
+Host type (S): UNIX (standard)
+215 UNIX Type: L8! Transfer failed for C:/RayHorn/*.zip from 24.1.117.184
+sending file \"C:/RayHorn/RayHorn.zip\" to host \"24.1.117.184\" as file \"/g:/adecco\"
+- -
+connecting to 206.24.101.81:21
+Connected to 206.24.101.81 port 21
+220-
+220-Adecco FTP Proxy Server
+220-
+220-To connect to a site, supply the username and sitename that you'd
+220-like to use at the "Name" prompt. For example, if you'd like to use
+220-anonymous ftp to connect to ftp.uu.net, you'd supply the following:
+220-
+220-        anonymous@ftp.uu.net
+220-
+220-Ignore the default (in parentheses) that your local FTP program may be
+220-providing.
+220
+USER smalltalker@24.1.117.184
+331-(----GATEWAY CONNECTED TO 24.1.117.184----)
+331-(220-Serv-U FTP-Server v2.4a for WinSock ready...)
+331-(220-Welcome to the HAL Smalltalker, Inc.)
+331-(220-Sisko FTP Server - this FTP Server is)
+331-(220-RESTRICTED to the web hosting customers of)
+331-(220-HAL Smalltalker, Inc. ALL other use is)
+331-(220-ILLEGAL and strictly prohibited!)
+331-(220-)
+331-(220-Disclaimer: HAL Smalltalker, Inc. strictly)
+331-(220-prohibits ALL illegal materials and)
+331-(220-activities and cooperates fully with ALL law)
+331-(220-enforcement agencies whenever official)
+331-(220-complaints are sent to us through official)
+331-(220-channels.  Furthermore, HAL Smalltalker, Inc.)
+331-(220-is NOT responsible for the content of any)
+331-(220-websites hosted on our servers although we)
+331-(220-will terminate any website where illegal)
+331-(220-materials are found on an as-needed basis.)
+331-(220-In addition, HAL Smalltalker, Inc. strictly)
+331-(220-prohibits SPAMMING of ALL kinds.)
+331-(220-)
+331-(220-A Current Service Agreement is required to be)
+331-(220-on file for YOUR account BEFORE we will allow)
+331-(220-access to our FTP Server(s).)
+331-(220-See http://e-servers.net for a current)
+331-(220-Service Agreement and our Terms and Conditions)
+331-(220 for use.)
+331 User name okay, need password.
+PASS (hidden)
+230 User logged in, proceed.
+SYST
+215 UNIX Type: L8
+Host type (S): UNIX (standard)
+TYPE I
+200 Type set to I.
+PORT 10,1,11,246,9,218
+200 PORT Command successful.
+STOR /g:/adecco
+550 adecco: Cannot create file.
+550 adecco: Cannot create file.! Transfer failed for C:/RayHorn/RayHorn.zip from 24.1.117.184
+sending file \"C:/RayHorn/RayHorn.zip\" to host \"24.1.117.184\" as file \"/g:/adecco/RayHorn.zip\"
+- -
+connecting to 206.24.101.81:21
+Connected to 206.24.101.81 port 21
+220-
+220-Adecco FTP Proxy Server
+220-
+220-To connect to a site, supply the username and sitename that you'd
+220-like to use at the "Name" prompt. For example, if you'd like to use
+220-anonymous ftp to connect to ftp.uu.net, you'd supply the following:
+220-
+220-        anonymous@ftp.uu.net
+220-
+220-Ignore the default (in parentheses) that your local FTP program may be
+220-providing.
+220
+USER smalltalker@24.1.117.184
+331-(----GATEWAY CONNECTED TO 24.1.117.184----)
+331-(220-Serv-U FTP-Server v2.4a for WinSock ready...)
+331-(220-Welcome to the HAL Smalltalker, Inc.)
+331-(220-Sisko FTP Server - this FTP Server is)
+331-(220-RESTRICTED to the web hosting customers of)
+331-(220-HAL Smalltalker, Inc. ALL other use is)
+331-(220-ILLEGAL and strictly prohibited!)
+331-(220-)
+331-(220-Disclaimer: HAL Smalltalker, Inc. strictly)
+331-(220-prohibits ALL illegal materials and)
+331-(220-activities and cooperates fully with ALL law)
+331-(220-enforcement agencies whenever official)
+331-(220-complaints are sent to us through official)
+331-(220-channels.  Furthermore, HAL Smalltalker, Inc.)
+331-(220-is NOT responsible for the content of any)
+331-(220-websites hosted on our servers although we)
+331-(220-will terminate any website where illegal)
+331-(220-materials are found on an as-needed basis.)
+331-(220-In addition, HAL Smalltalker, Inc. strictly)
+331-(220-prohibits SPAMMING of ALL kinds.)
+331-(220-)
+331-(220-A Current Service Agreement is required to be)
+331-(220-on file for YOUR account BEFORE we will allow)
+331-(220-access to our FTP Server(s).)
+331-(220-See http://e-servers.net for a current)
+331-(220-Service Agreement and our Terms and Conditions)
+331-(220 for use.)
+331 User name okay, need password.
+PASS (hidden)
+230 User logged in, proceed.
+SYST
+215 UNIX Type: L8
+Host type (S): UNIX (standard)
+TYPE I
+200 Type set to I.
+PORT 10,1,11,246,9,221
+200 PORT Command successful.
+STOR /g:/adecco/RayHorn.zip
+150 Opening BINARY mode data connection for rayhorn.zip.

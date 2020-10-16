@@ -1,0 +1,480 @@
+__appName = "kronosData"
+_appName = "%__appName% v1.21"
+
+; sets the file write line terminator to nothing - must issue line terminators manually
+IntControl (53, 0, 0, 0, 0)
+
+AddExtender("wwodb32i.dll")
+;AddExtender("WWWNT32I.DLL")
+
+;INITIALIZE VARIABLES
+
+;_debug = 1
+_debug = 0
+
+P_LEVEL1 = -1
+P_LEVEL3 = -1
+P_ACTIVE = ""
+
+_outputModeTerse = "-t"
+_outputModeVerbose = "-v"
+
+_odbcFolder = "\\Elgrande2\Programs\Abra\Programs\Data"
+_odbcFile = "\hrPersnl.DBF"
+
+const_DAVISRES_NPS_symbol = "DAVISRES/NPS"
+const_DAVISRES_symbol = "DAVIS RES"
+
+_dsn = "hrPersnl"
+_table = "hrPersnl"
+
+_fileName = "c:\hrpersnl.txt"
+
+If param0 > 0
+	_fileName = param1
+Else
+	_fileName = AskLine("%_appName%", "File Name for the Output ? (D:\Abra\hrpersnl.txt)", "D:\Abra\hrpersnl.txt")
+Endif
+
+_outputMode = _outputModeTerse
+
+If param0 > 1
+	_outputMode = param2
+Else
+	_outputMode = AskLine("%_appName%", "Output Mode ? (%_outputModeTerse% for terse [see log for warnings or errors] or %_outputModeVerbose% for verbose [see console for warnings or errors])", _outputModeTerse)
+Endif
+
+_crlf = StrCat(Num2Char(13), Num2Char(10))
+_tab = StrCat(Num2Char(9))
+
+_fileNameLog =  StrCat( FilePath( _fileName), __appName, ".Log")
+
+_fhandLog = FileOpen( _fileNameLog, "APPEND")
+
+_today = TimeDate()
+FileWrite( _fhandLog, "================================================================================ %_crlf%")
+
+_today = TimeDate()
+FileWrite( _fhandLog, "%_today% BEGIN :: %_appName% %_crlf%")
+
+_now = TimeYmdHms()
+_nowBegin = _now
+FileWrite( _fhandLog, "%_tab% %_now% _fileName :: [%_fileName%] %_crlf%")
+
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_tab% %_now% _outputMode :: [%_outputMode%] %_crlf%")
+
+_r = FileExist( StrCat(_odbcFolder, _odbcFile))
+_retcode = "@FALSE"
+IF _r == @TRUE
+	_retcode = "@TRUE"
+endif
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_tab% %_now% FileExist(%_odbcFolder%%_odbcFile%) :: [%_r% %_retcode%] %_crlf%")
+
+; The following may not be needed...
+;wntAddDrive(@default,@default,"\\Elgrande2\Programs\Abra\Programs\Data","E:",@false)
+;_now = TimeYmdHms()
+;FileWrite( _fhandLog, "%_tab% %_now% _outputMode :: [%_outputMode%] %_crlf%")
+
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+henv = qAllocEnv()
+
+If henv == -1
+	;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+	retcode = qLastCode()
+	IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+		Message("%_appName% :: Abend", "qAllocEnv failed (%retcode%)")
+	endif
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Abend :: qAllocEnv failed (%retcode%) %_crlf%")
+	Exit
+Endif
+
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM 
+;OF 10 OPEN CONNECTION HANDLES
+hdbc = qAllocConnect(henv) 
+
+If hdbc == -1
+	retcode = qLastCode()
+	IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+		Message("%_appName% :: Abend", "qAllocConnect failed (%retcode%)")
+	endif
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Abend :: qAllocConnect failed (%retcode%) %_crlf%")
+	Exit
+Endif
+
+;CONNECTS TO THE "SAMPLE" DATA SOURCE 
+;WITH THE DATA SOURCE NAME 'ContactDSN'
+retcode = qConnect(hdbc, _dsn, "", "") 
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)  
+	IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+		Message("%_appName% :: Abend", "qConnect failed (%retcode%). The ODBC DSN (DataSource Name) of %_dsn% is probably missing.")
+	endif
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Abend :: qConnect failed (%retcode%). The ODBC DSN (DataSource Name) of %_dsn% is probably missing. %_crlf%")
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Info :: PLS be sure your DSN called %_dsn% points directly to the folder that contains the .DBF files. %_crlf%")
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Info :: You can edit the ODBC file path directly using C:\WINNT\system32\regedt32.exe however you may not be able to do this using the ODBC Control Panel Applet. %_crlf%")
+	Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)  
+
+If hstmt == -1
+	retcode = qLastCode()
+	IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+		Message("%_appName% :: Abend", "qAllocStmt failed (%retcode%)")
+	endif
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Abend :: qAllocStmt failed (%retcode%) %_crlf%")
+	Exit
+Endif
+
+; SELECT P_EXEMPT, P_EMPNO, P_FNAME, P_MI, P_LNAME, P_ORIGHIRE, P_SUPERVIS, P_BIRTH, P_JOBTITLE, P_LEVEL1, P_LEVEL2, P_LEVEL3, P_LEVEL4, P_ACTIVE, P_HSTREET1, P_HCITY, P_HSTATE, P_HZIP, P_HCOUNTRY, P_EMPEMAIL
+; FROM hrPersnl
+; WHERE (P_LEVEL1 = N'70') AND (P_ACTIVE = N'a' OR P_ACTIVE = N'l' OR P_ACTIVE = N't') AND (P_LEVEL3 = N'100' OR P_LEVEL3 = N'200' OR P_LEVEL3 = N'520')
+
+;THE FOLLOWING EXECUTES AN SQL STATEMENT.
+;THE COLUMNS BELOW ARE ACTUAL COLUMN NAMES IN YOUR DATA SOURCE, ;E.G.,"LASTNAME":
+
+;retcode = qExecDirect(hstmt, "SELECT P_EXEMPT, P_EMPNO, P_FNAME, P_MI, P_LNAME, P_ORIGHIRE, P_SUPERVIS, P_BIRTH, P_JOBTITLE, P_LEVEL1, P_LEVEL2, P_LEVEL3, P_LEVEL4, P_ACTIVE, P_HSTREET1, P_HCITY, P_HSTATE, P_HZIP, P_HCOUNTRY, P_EMPEMAIL from %_table%")
+
+;retcode = qExecDirect(hstmt, "SELECT * from %_table% WHERE (P_LEVEL1 = N'70') AND (P_ACTIVE = N'a' OR P_ACTIVE = N'l' OR P_ACTIVE = N't') AND (P_LEVEL3 = N'100' OR P_LEVEL3 = N'200' OR P_LEVEL3 = N'520') ORDER BY P_EMPNO ASC, P_ANYCHANG DESC")
+
+_sql = "SELECT P_EXEMPT,P_EMPNO,P_FNAME,P_MI, P_LNAME,P_ORIGHIRE,P_SUPERVIS,P_BIRTH,P_JOBTITLE,P_LEVEL1,P_LEVEL2,P_LEVEL3,P_LEVEL4,P_ACTIVE,P_HSTREET1,P_HCITY,P_HSTATE,P_HZIP,P_HCOUNTRY,P_EMPEMAIL from %_table% ORDER BY P_EMPNO, P_ANYCHANG DESC"
+retcode = qExecDirect(hstmt, _sql)
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+		Message("%_appName% :: Abend", "qExecDirect failed (%retcode%)")
+	endif
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Abend :: qExecDirect failed (%retcode%) %_crlf%")
+	Exit
+Endif
+
+numcols = qNumRsltCol( hstmt)
+
+_fhand = FileOpen( _fileName, "WRITE")
+
+_EMPNO = ""
+
+While @TRUE
+  ;FETCHES A ROW OF DATA FROM A RESULT SET
+	retcode = qFetch(hstmt) 
+
+	If retcode == @qNoData Then Break
+
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "qFetch failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: qFetch failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+  ;RETRIEVES THE VALUE OF A COLUMN IN THE CURRENT ROW 
+  ;OF A RESULT SET
+	retcode = qGetData(hstmt, 1, "P_EXEMPT", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_EXEMPT qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_EXEMPT qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 2, "P_EMPNO", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_EMPNO qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_EMPNO qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 3, "P_FNAME", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_FNAME qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_FNAME qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	P_FNAME =  StrReplace( P_FNAME, '"', "" )
+
+	retcode = qGetData(hstmt, 4, "P_MI", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_MI qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_MI qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 5, "P_LNAME", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_LNAME qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_LNAME qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 6, "P_ORIGHIRE", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_ORIGHIRE qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_ORIGHIRE qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 7, "P_SUPERVIS", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_SUPERVIS qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_SUPERVIS qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 8, "P_BIRTH", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_BIRTH qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_BIRTH qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 9, "P_JOBTITLE", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_JOBTITLE qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_JOBTITLE qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 10, "P_LEVEL1", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_LEVEL1 qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_LEVEL1 qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 11, "P_LEVEL2", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_LEVEL2 qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_LEVEL2 qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 12, "P_LEVEL3", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_LEVEL3 qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_LEVEL3 qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 13, "P_LEVEL4", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_LEVEL4 qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_LEVEL4 qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 14, "P_ACTIVE", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_ACTIVE qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_ACTIVE qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 15, "P_HSTREET1", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_HSTREET1 qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_HSTREET1 qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 16, "P_HCITY", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_HCITY qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_HCITY qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 17, "P_HSTATE", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_HSTATE qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_HSTATE qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 18, "P_HZIP", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_HZIP qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_HZIP qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 19, "P_HCOUNTRY", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_HCOUNTRY qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_HCOUNTRY qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	retcode = qGetData(hstmt, 20, "P_EMPEMAIL", 80)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Abend", "P_EMPEMAIL qGetData failed (%retcode%)")
+		endif
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Abend :: P_EMPEMAIL qGetData failed (%retcode%) %_crlf%")
+		Break
+	Endif
+
+	IF StriCmp( _EMPNO, P_EMPNO ) != 0
+	; WHERE (P_LEVEL1 = N'70') AND (P_ACTIVE = N'a' OR P_ACTIVE = N'l' OR P_ACTIVE = N't') AND (P_LEVEL3 = N'100' OR P_LEVEL3 = N'200' OR P_LEVEL3 = N'520')
+	
+		if ( (P_LEVEL1 == 70) && ( (StriCmp( P_ACTIVE, "a" ) == 0) || (StriCmp( P_ACTIVE, "l" ) == 0) || (StriCmp( P_ACTIVE, "t" ) == 0) ) && ( (P_LEVEL3 == 100) || (P_LEVEL3 == 200) || (P_LEVEL3 == 520) ) )
+			; write the record to the text file
+	
+			IF StriCmp( P_LEVEL2, const_DAVISRES_NPS_symbol ) == 0
+				P_LEVEL2 = const_DAVISRES_symbol
+			endif
+	
+			IF _debug
+				FileWrite( _fhand, "EXEMPT=[%P_EXEMPT%]|")
+				FileWrite( _fhand, "EMPNO=[%P_EMPNO%]|")
+				FileWrite( _fhand, "FNAME=[%P_FNAME%]|")
+				FileWrite( _fhand, "MI=[%P_MI%]|")
+				FileWrite( _fhand, "LNAME=[%P_LNAME%]|")
+				FileWrite( _fhand, "ORIGHIRE=[%P_ORIGHIRE%]|")
+				FileWrite( _fhand, "SUPERVIS=[%P_SUPERVIS%]|")
+				FileWrite( _fhand, "BIRTH=[%P_BIRTH%]|")
+				FileWrite( _fhand, "JOBTITLE=[%P_JOBTITLE%]|")
+				FileWrite( _fhand, "LEVEL1=[%P_LEVEL1%]|")
+				FileWrite( _fhand, "LEVEL2=[%P_LEVEL2%]|")
+				FileWrite( _fhand, "LEVEL3=[%P_LEVEL3%]|")
+				FileWrite( _fhand, "LEVEL4=[%P_LEVEL4%]|")
+				FileWrite( _fhand, "ACTIVE=[%P_ACTIVE%]|")
+				FileWrite( _fhand, "HSTREET1=[%P_HSTREET1%]|")
+				FileWrite( _fhand, "HCITY=[%P_HCITY%]|")
+				FileWrite( _fhand, "HSTATE=[%P_HSTATE%]|")
+				FileWrite( _fhand, "HZIP=[%P_HZIP%]|")
+				FileWrite( _fhand, "HCOUNTRY=[%P_HCOUNTRY%]|")
+				FileWrite( _fhand, "EMPEMAIL=[%P_EMPEMAIL%]")
+				FileWrite( _fhand, _crlf)
+			else
+				FileWrite( _fhand, "%P_EXEMPT%|")
+				FileWrite( _fhand, "%P_EMPNO%|")
+				FileWrite( _fhand, "%P_FNAME%|")
+				FileWrite( _fhand, "%P_MI%|")
+				FileWrite( _fhand, "%P_LNAME%|")
+				FileWrite( _fhand, "%P_ORIGHIRE%|")
+				FileWrite( _fhand, "%P_SUPERVIS%|")
+				FileWrite( _fhand, "%P_BIRTH%|")
+				FileWrite( _fhand, "%P_JOBTITLE%|")
+				FileWrite( _fhand, "%P_LEVEL1%|")
+				FileWrite( _fhand, "%P_LEVEL2%|")
+				FileWrite( _fhand, "%P_LEVEL3%|")
+				FileWrite( _fhand, "%P_LEVEL4%|")
+				FileWrite( _fhand, "%P_ACTIVE%|")
+				FileWrite( _fhand, "%P_HSTREET1%|")
+				FileWrite( _fhand, "%P_HCITY%|")
+				FileWrite( _fhand, "%P_HSTATE%|")
+				FileWrite( _fhand, "%P_HZIP%|")
+				FileWrite( _fhand, "%P_HCOUNTRY%|")
+				FileWrite( _fhand, "%P_EMPEMAIL%")
+				FileWrite( _fhand, _crlf)
+			endif
+		Endif
+		_EMPNO = P_EMPNO
+	endif
+
+EndWhile
+
+fileclose( _fhand)
+
+_today = TimeDate()
+_now = TimeYmdHms()
+_ds = TimeDiffSecs(_now, _nowBegin)
+_dsv = _ds
+_dv = 60 * 60
+_hh = Int(_dsv / _dv)
+_dsv = _dsv - (_hh * _dv)
+_dv = 60
+_mm = Int(_dsv / _dv)
+_dsv = _dsv - (_mm * _dv)
+_ss = _dsv
+if _hh <= 9
+	_hh = "0%_hh%"
+endif
+if _mm <= 9
+	_mm = "0%_mm%"
+endif
+if _ss <= 9
+	_ss = "0%_ss%"
+endif
+_t = "%_hh%:%_mm%:%_ss%"
+FileWrite( _fhandLog, "%_today% END :: %_appName% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS) %_crlf%")
+
+fileclose( _fhandLog)
+
+;SQL_DROP  - RESETS OR FREES AN SQL STATEMENT HANDLE
+qFreeStmt(hstmt, 1)
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc)
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)

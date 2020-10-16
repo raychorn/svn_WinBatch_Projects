@@ -1,0 +1,48 @@
+; tribes2consolelog.wbt
+
+wName = "Tribes2 Console Log Manager Vers 1.1"
+
+; USAGE: Cycle the COnsole Log Once a Day at 12:00a every night
+
+_dir_name = "D:\Tribes2"
+
+If param0 > 0
+	; param1 is the directory path name for the root folder for the game aka D:\Tribes2
+	_dir_name = param1
+Else
+	while 1
+;		_dir_name = AskLine(wName, "Tribes2 root folder path ? %_dir_name%", _dir_name)
+		_dir_name = AskDirectory( "Tribes2 Root Folder ? %_dir_name%", "", "", "Tribes2 Root Folder is", 2) 
+		consoleLogFileName = "%_dir_name%\GameData\console.log"
+		if (FileExist( consoleLogFileName) == @TRUE)
+			break;
+		endif
+	endwhile
+Endif
+
+while 1
+	timeNow = TimeYmdHms()                         ; Gets Current Time
+	today = strcat( strsub( timeNow, 1, strlen( "0000:00:00") + 1), "00:00:00")
+	later = TimeAdd(today,"0000:00:01:00:00:00") ; Adds 1 day to today at midnite
+	BoxCaption( 1, "Waiting %later%")
+	TimeWait(later)                            ; Waits for that time to occur
+
+	BoxCaption( 1, "Cycling the Console Log...")
+	Gosub CycleConsoleLog
+	
+endwhile
+
+exit
+
+
+:CycleConsoleLog
+timeNow = TimeYmdHms()                         ; Gets Current Time
+consoleLogNewFileName = StrReplace( consoleLogFileName, ".log", strcat( "_", StrReplace( StrSub(timeNow,1,10), ":", "-"), ".log"))
+
+if ( (FileExist( consoleLogFileName) == @TRUE) && (FileExist( consoleLogNewFileName) == @FALSE) )
+	FileRename( consoleLogFileName, consoleLogNewFileName)
+endif
+return
+
+
+

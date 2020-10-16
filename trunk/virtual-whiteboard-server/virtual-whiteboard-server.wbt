@@ -1,0 +1,634 @@
+;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+
+; virtual-whiteboard-server.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_yyyy = ItemExtract( 1, TimeYmdHms(), ":")
+if _yyyy > 1999
+	_yyyy = StrCat( "1999-", _yyyy)
+endif
+wName = "virtual-whiteboard-server.wbt (c). Copyright %_yyyy% Ray Horn"
+
+_pName = "Virtual WhiteBoard Server v1.0" ; "WinBatch Graphics"
+
+_pixDName = "c:\temp\"
+
+IntControl(12,5,0,0,0)
+;;;;;;;; Assorted Colors ;;;;;;;;;
+DKBLUE="0,0,128"
+BLUE="0,0,255"
+LTGRAY="192,192,192"
+GRAY="128,128,128"
+DKGRAY="64,64,64"
+GREEN="0,255,0"
+RED="255,0,0"
+BLACK="0,0,0"
+WHITE="255,255,255"
+YELLOW="255,255,0"
+
+
+;;;;;  Generic code for drawing a box and  adding text to it.
+
+        ;Get title on screen
+             ;wbid = 99
+             ;BoxNew(wbid,rectTitle,1)
+             ;BoxColor(wbid,BLACK,0)
+             ;BoxDrawRect(wbid,"0,0,1000,1000",2)
+             ;BoxTextFont(wbid,"Arial",TitleHeight,170,0)   ; san-srif, ariel, size 20, bold, noitalic
+             ;BoxTextColor(wbid,RED)
+             ;BoxDrawText(wbid,rectTitleText,"Acme Aardvarks",0,32)
+
+;;;;;;;;;;;; This Example  ;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; Drawing the Main Box ;;;;;;;;
+;; Note the use of while 1. This use of while maintains
+;; the boxes until a user clicks on a button and exits 
+;; the while construction
+BoxesUp("100,100,900,900",@NORMAL)
+
+while 1
+
+   BoxColor(1,"0,0,128",4)
+	BoxCaption( 1, wName)
+;; Note: Here we specify 8 buttons numbered 1 to 8.
+;; You can change this. Edit the list of buttons here,
+;; go to the "Select a button" routine and add or subtract
+;; your button selection information. Then create a subroutine
+;; at the end of this script to do what you need done when
+;; the button is pushed. There is a sample for you to use.
+ 
+   BoxDrawRect(1,"0,0,1000,1000",2)
+
+   BoxTextFont(1,"Times",100,80,0|0)  
+   BoxTextColor(1,"255,255,0")
+   BoxDrawText(1,"325,550,1000,1000","Choose a Function",0,0);;;
+
+;;;;; This section creates the fancy banner headline in a box
+               rectNote="100,30,900,270"
+               NoteHeight=275
+               rectNoteText="70,200,950,800"
+               
+               rectnoteline1="0,0,1000,0"
+               rectNoteline2="1000,1000,1000,0"
+               rectNoteLine3="0,1000,1000,1000"
+               rectNoteLine4="0,0,0,1000"
+               notepenwidth=20
+               rectnoteline1b="40,150,960,150"
+               rectNoteline2b="960,840,960,150"
+               rectNoteLine3b="40,840,960,840"
+               rectNoteLine4b="40,150,40,840"
+               notepenwidthb=10
+               wbid=2
+               Thermid=3
+               Noteid=4
+        BoxNew(Noteid,rectNote,1)
+        BoxColor(Noteid,LTGRAY,0)       ; Light Gray no gradient
+        BoxDrawRect(Noteid,"",2)
+;;;;;  --------- This line changes the headline font -----------------        
+        BoxTextFont(Noteid,"Arial",NoteHeight,170,0)
+        BoxTextColor(Noteid,RED)
+        
+        BoxPen(Noteid,WHITE,notepenwidth)
+        boxdrawline(Noteid,rectNoteLine1)
+        boxdrawline(Noteid,rectNoteLine4)
+        BoxPen(Noteid,GRAY,notepenwidth)
+        boxdrawline(Noteid,rectNoteLine2)
+        boxdrawline(Noteid,rectNoteLine3)
+        BoxPen(Noteid,WHITE,notepenwidthb)
+        boxdrawline(Noteid,rectNoteLine2b)
+        boxdrawline(Noteid,rectNoteLine3b)
+        BoxPen(Noteid,GRAY,notepenwidthb)
+        boxdrawline(Noteid,rectNoteLine1b)
+        boxdrawline(Noteid,rectNoteLine4b)
+        
+        ;BoxDataTag(Noteid,"NOTE")
+
+        ;   BoxDataClear(NoteId,"NOTE")
+
+
+;;;;;  ----------- The BoxDrawText  line creates the headline text. Copy (don't move)
+;;;;; this line anywhere in this script you need to change the headline text.
+
+
+
+           BoxDrawText( Noteid, rectNoteText, _pName, 1, 4)
+
+	_maxButtons = 0
+
+	_maxButtons = _maxButtons + 1
+   bSnapScreen = _maxButtons
+   BoxButtonDraw( 1, bSnapScreen, "&Snap ScreenShot",  "100,320,350,390")
+
+	_maxButtons = _maxButtons + 1
+   bHelp = _maxButtons
+   BoxButtonDraw( 1, bHelp, "&Help", "550,860,700,930")  
+
+	_maxButtons = _maxButtons + 1
+   bExit = _maxButtons   
+   BoxButtonDraw( 1, bExit, "E&xit", "750,860,900,930")    
+
+	_maxButtons = _maxButtons + 1
+   bShow = _maxButtons   
+   BoxButtonDraw( 1, bShow, "S&how Images", "100,420,350,510")
+
+   ; +++
+
+   iBox=0
+   BoxButtonWait()
+   while iBox==0
+      for x=1 to _maxButtons
+         if BoxButtonStat(1,x) then iBox=x
+      next
+   end while
+
+
+;;; Select a button  ;;;;
+
+    
+   if iBox
+      BoxDataClear(1,"TOP")
+      switch iBox
+         case bExit
+            exit
+            break
+         case bSnapScreen
+            gosub DoSnapScreen
+            break
+         case bShow
+            gosub DoShow
+            break
+         case bHelp
+            gosub DoHelp
+            break
+      end switch
+
+   endif
+end while
+exit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+:DoSnapScreen
+;	Message( "DoSnapScreen", "Yippee !")
+	Gosub saveScreenShot
+return
+
+
+:DoShow
+	Message( "DoShow", "Yippee !")
+return
+
+; _pixDName
+
+:DoHelp
+     text1="You can add help text to your script easily. "
+     text2="Just edit the DoHelp sub routine to add your instructions."
+     text3="Remember, you can always use the WinHelp() function to call Windows help files."
+     text=StrCat(text1, text2, text3)
+     Message("Help",text)
+Return     
+     
+:Empty
+     Message("Empty","This can be used for your own purposes.")
+Return
+
+
+:saveScreenShot
+;This code will snapshot the screen to the clipboard,
+; Add a BMP file header and write out the data as
+; a legal bmp file.  Requires WinBatch 98A or newer
+Snapshot(0)
+sss_size=BinaryClipGet(0,8)
+sss_bb=BinaryAlloc(sss_size)
+BinaryClipGet(sss_bb,8)
+
+sss_bb2=BinaryAlloc(sss_size+14)
+BinaryPokeStr(sss_bb2,0,"BM")
+BinaryPoke4(sss_bb2,2,sss_size+14)
+sss_tableloc=BinaryPeek4(sss_bb,0)+14
+BinaryPoke4(sss_bb2,10,sss_tableloc)
+BinaryCopy(sss_bb2,14,sss_bb,0,sss_size)
+BinaryWrite(sss_bb2,"screenshot.bmp")
+BinaryFree(sss_bb)
+BinaryFree(sss_bb2)
+Drop( sss_size, sss_bb, sss_bb2, sss_tableloc)
+Message("All","Done")
+return
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+:DODRAW
+     BoxCaption(1,"Scribble")
+     BoxNew(2,"0,0,1000,1000",0)
+     BoxPen(2,RED,1)
+        BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930")
+     BoxDataTag(2,"FRED")
+     Exclusive(@ON)
+     olda="500,500"
+     while 1
+        BoxDataClear(2,"FRED")
+        a=MouseInfo(6)
+        a=strreplace(a," ",",")
+        BoxDrawLine(2,"%olda%,%a%")
+        olda=a
+        if BoxButtonStat(1,bExit)==1 then break
+     endwhile
+     BoxDestroy(2)
+Return
+
+:DOLINES
+     BoxCaption(1,"That Old Line")
+     BoxNew(2,"0,0,1000,1000",0)
+     BoxColor(2,BLACK,0)
+     BoxDrawRect(2,"0,0,1000,1000",2)
+     BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930") 
+     BoxDataTag(2,"APPLE")
+     
+     p1=200
+     p2=200
+     p3=400
+     p4=400
+     
+     v1=10
+     v2=-20
+     v3=-5
+     v4=15
+     
+     bb=1
+     ErrorMode(@OFF)
+     while 1
+        if BoxButtonStat(1,bExit)==1 then break
+        if LastError()==10108
+           BoxDataClear(2,"APPLE")
+           BoxPen(2,"%r%,%g%,%b%",1)
+        endif
+        if bb==1
+           BoxDataClear(2,"APPLE")
+           gosub randcolor
+           BoxPen(2,"%r%,%g%,%b%",1)
+           bb=0
+        endif
+        BoxDrawLine(2,"%p1%,%p2%,%p3%,%p4%")
+        bb=0
+        for q=1 to 4
+            p%q%=p%q%+v%q%
+            if p%q% <= 0
+               p%q%=0
+               v%q%=Int(Random(10))+1
+               bb=1
+            endif
+            if p%q% >= 1000
+               p%q%=1000
+               v%q%=-Int(Random(10))-1
+               bb=1
+            endif
+        next
+     endwhile
+     BoxDestroy(2)
+Return
+
+:DOBOXES
+     BoxCaption(1,"Random Rectangles")
+     BoxNew(2,"0,0,1000,1000",0)
+     BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930")
+     BoxDataTag(2,"ACORN")
+     ErrorMode(@OFF)
+     while 1
+        if BoxButtonStat(1,bExit)==1 then break
+        x=Random(1000)
+        y=Random(1000)
+        s=Random(1000)
+        t=Random(1000)
+        r=Random(255)
+        g=Random(255)
+        b=Random(255)
+        BoxColor(2,"%r%,%g%,%b%",0)
+        BoxDrawRect(2,"%x%,%y%,%s%,%t%",2) 
+        if LastError()==10108
+            BoxDataClear(2,"ACORN")
+            BoxUpdates(1,3)
+        endif
+     endwhile
+     ErrorMode(@CANCEL)
+     BoxDestroy(2)
+Return
+
+:DODOTS
+     BoxCaption(1,"Driving Me Dotty")
+     BoxNew(2,"0,0,1000,1000",0)
+     BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930") 
+     BoxColor(2,BLACK,0)
+     BoxDrawRect(2,"0,0,1000,1000",2)
+     brk=0
+     x=500
+     y=500
+     oldxx=0
+     oldyy=0
+     z=5
+     z2=10
+     BoxDataTag(2,"SAM")
+     while 1
+        BoxDataClear(2,"SAM")
+        gosub RandColor
+        BoxColor(2,"%r%,%g%,%b%",0)
+        for q=1 to 100
+          x1=x-z
+          x2=x+z
+          y1=y-z
+          y2=y+z
+          BoxDrawCircle(2,"%x1%,%y1%,%x2%,%y2%",2)
+          ww=Int(Random(100))
+          if ww>16
+             xx=oldxx
+             yy=oldyy
+          else
+             xx=ww&3
+             if xx==3 then xx=0
+             yy=(ww&12)>>2
+             if yy==3 then yy=0
+          endif
+          
+          if x<=0 then xx=2
+          if x>=1000 then xx=1
+          if y<=0 then yy=2
+          if y>=1000 then yy=1
+          oldxx=xx
+          oldyy=yy
+          if xx==2 then x=x+z2
+          if xx==1 then x=x-z2
+          if yy==2 then y=y+z2
+          if yy==1 then y=y-z2
+        if BoxButtonStat(1,bExit)==1
+           brk=1
+           break
+        endif
+        next
+        if brk==1 then break
+     endwhile
+     BoxDestroy(2)
+Return
+
+:DOTEXT
+        BoxCaption(1,"Fontopia")
+        BoxNew(2,"0,0,1000,500",0)
+        BoxColor(2,LTGRAY,2)
+        BoxColor(1,LTGRAY,0)
+        BoxButtonDraw(1,bExit,"E&xit","750,860,900,930") 
+        BoxDrawRect(2,"0,0,1000,1000",2)
+        BoxDrawRect(1,"0,500,1000,1000",2)
+        words="The quick brown fox went happy stroll dark woods looking for something tasty dinner soon found picnic basket full yummy goodies "
+        wc=ItemCount(words," ")
+        BoxTextColor(1,BLACK)
+         ;;;;;;;;;
+        BoxTextFont(1,"",20,0,0)
+        BoxTextColor(1,RED)
+        BoxDrawText(1,"25,510,1000,545","Results shown will vary with installed fonts...",0,0)
+        BoxTextColor(1,BLACK)
+        fonttype=0
+        xxx=25
+        yyy=xxx+225
+        BoxTextFont(1,"",30,fonttype,0)
+        BoxDrawText(1,"%xxx%,550,%yyy%,600","Normal",0,0)
+        BoxTextFont(1,"Times New Roman",30,fonttype,4)
+        BoxDrawText(1,"%xxx%,625,%yyy%,675","Times New Roman",0,0)
+        BoxTextFont(1,"Arial",30,fonttype,8)
+        BoxDrawText(1,"%xxx%,700,%yyy%,750","Arial",0,0)
+        BoxTextFont(1,"Modern",30,fonttype,12)
+        BoxDrawText(1,"%xxx%,775,%yyy%,825","Modern",0,0)
+        BoxTextFont(1,"Script",30,fonttype,16)
+        BoxDrawText(1,"%xxx%,850,%yyy%,900","Script",0,0)
+        BoxTextFont(1,"Old English Text MT",30,fonttype,22)
+        BoxDrawText(1,"%xxx%,925,%yyy%,975","Old English",0,0)
+        fonttype=100
+        xxx=275
+        yyy=xxx+225
+        BoxTextFont(1,"",30,fonttype,0)
+        BoxDrawText(1,"%xxx%,550,%yyy%,600","Italic",0,0)
+        BoxTextFont(1,"Times New Roman",30,fonttype,4)
+        BoxDrawText(1,"%xxx%,625,%yyy%,675","Times New Roman",0,0)
+        BoxTextFont(1,"Arial",30,fonttype,8)
+        BoxDrawText(1,"%xxx%,700,%yyy%,750","Arial",0,0)
+        BoxTextFont(1,"Modern",30,fonttype,12)
+        BoxDrawText(1,"%xxx%,775,%yyy%,825","Modern",0,0)
+        BoxTextFont(1,"Script",30,fonttype,16)
+        BoxDrawText(1,"%xxx%,850,%yyy%,900","Script",0,0)
+        BoxTextFont(1,"Old English Text MT",30,fonttype,20)
+        BoxDrawText(1,"%xxx%,925,%yyy%,975","Old English",0,0)
+        fonttype=70
+        xxx=525
+        yyy=xxx+225
+        BoxTextFont(1,"",30,fonttype,0)
+        BoxDrawText(1,"%xxx%,550,%yyy%,600","Bold",0,0)
+        BoxTextFont(1,"Times New Roman",30,fonttype,4)
+        BoxDrawText(1,"%xxx%,625,%yyy%,675","Times New Roman",0,0)
+        BoxTextFont(1,"Arial",30,fonttype,8)
+        BoxDrawText(1,"%xxx%,700,%yyy%,750","Arial",0,0)
+        BoxTextFont(1,"Modern",30,fonttype,12)
+        BoxDrawText(1,"%xxx%,775,%yyy%,825","Modern",0,0)
+        BoxTextFont(1,"Script",30,fonttype,16)
+        BoxDrawText(1,"%xxx%,850,%yyy%,900","Script",0,0)
+        BoxTextFont(1,"Old English Text MT",30,fonttype,20)
+        BoxDrawText(1,"%xxx%,925,%yyy%,975","Old English",0,0)
+        fonttype=170
+        xxx=775
+        yyy=xxx+225
+        BoxTextFont(1,"",30,fonttype,0)
+        BoxDrawText(1,"%xxx%,550,%yyy%,600","Bold Italic",0,0)
+        BoxTextFont(1,"Times New Roman",30,fonttype,4)
+        BoxDrawText(1,"%xxx%,625,%yyy%,675","Times New Roman",0,0)
+        BoxTextFont(1,"Arial",30,fonttype,8)
+        BoxDrawText(1,"%xxx%,700,%yyy%,750","Arial",0,0)
+        BoxTextFont(1,"Modern",30,fonttype,12)
+        BoxDrawText(1,"%xxx%,775,%yyy%,825","Modern",0,0)
+        BoxTextFont(1,"Script",30,fonttype,16)
+        BoxDrawText(1,"%xxx%,850,%yyy%,900","Script",0,0)
+        BoxTextFont(1,"Old English Text MT",30,fonttype,20)
+        BoxDrawText(1,"%xxx%,925,%yyy%,975","Old English",0,0)
+        
+        
+        BoxDataTag(2,"PEACHY")
+        brk=0
+        cnt=0
+        wash=0
+        while 1
+           for i=1 to wc
+                cnt=cnt+1
+                gosub randcolor
+                BoxTextColor(2,"%r%,%g%,%b%")
+                x=Random(800)
+                y=Random(800)
+                s=x+Random(200)
+                t=y+Random(200)
+                fontsize=max(10,min(t-y,Random(200)))
+                BoxTextFont(2, "", fontsize, 10+Random(80)+ (100*Int(Random(1))), (Int(Random(4)+1)*4 ))
+                BoxDrawText(2,"%x%,%y%,%s%,%t%",ItemExtract(i,words," "),0,0)
+                if BoxButtonStat(1,bExit)
+                    brk=1
+                    break
+                endif
+                if cnt==200
+                   cnt=0
+                   wash=wash+1
+                   if wash==8 then wash=0
+                   BoxColor(2,"%r%,%g%,%b%",wash)
+                   BoxDrawRect(2,"0,0,1000,1000",2)
+                endif
+           next i
+           BoxDataClear(2,"PEACHY")
+           if brk then break
+        endwhile
+        BoxDestroy(2)
+Return
+
+:DOTHERM
+
+     rectutext="100,100,1000,900"
+     rectTherm="200,350,800,650"
+     rectButton="0,0,100,100"
+     rectThermLine1="100,550,900,550"
+     rectThermLine2="900,550,900,800"
+     rectThermLine3="900,800,100,800"
+     rectThermLine4="100,800,100,550"
+     ThermPenWidth=20
+     rectThermText1="100,50,1000,199"
+     rectThermPercent="490,625,550,725"
+     rectTopHalf="0,0,1000,210"
+     rectBotHalf="0,210,1000,1000" 
+     rectTitle="100,20,900,170"
+     rectTitleText="10,10,790,140"
+     TitleHeight=950
+     rectNote="100,30,900,270"
+     NoteHeight=400
+     rectNoteText="70,200,950,800"
+     
+     rectnoteline1="0,0,1000,0"
+     rectNoteline2="1000,1000,1000,0"
+     rectNoteLine3="0,1000,1000,1000"
+     rectNoteLine4="0,0,0,1000"
+     notepenwidth=20
+     rectnoteline1b="40,150,960,150"
+     rectNoteline2b="960,840,960,150"
+     rectNoteLine3b="40,840,960,840"
+     rectNoteLine4b="40,150,40,840"
+     notepenwidthb=10
+     Thermid=3
+     Noteid=4
+             ; Make main window look nice
+             BoxColor(1,"128,0,0",1)
+             BoxDrawRect(1,"0,0,1000,1000",2)
+             BoxCaption(1,"Are we making any progress here?")
+             
+
+             
+   ;;;;Do note box
+             BoxNew(Noteid,rectNote,1)
+             BoxColor(Noteid,LTGRAY,0)       ; Light Gray no gradient
+             BoxDrawRect(Noteid,"",2)
+             
+             BoxTextFont(Noteid,"Arial",NoteHeight,170,0)
+             BoxTextColor(Noteid,RED)
+             
+             BoxPen(Noteid,WHITE,notepenwidth)
+             boxdrawline(Noteid,rectNoteLine1)
+             boxdrawline(Noteid,rectNoteLine4)
+             BoxPen(Noteid,GRAY,notepenwidth)
+             boxdrawline(Noteid,rectNoteLine2)
+             boxdrawline(Noteid,rectNoteLine3)
+             BoxPen(Noteid,WHITE,notepenwidthb)
+             boxdrawline(Noteid,rectNoteLine2b)
+             boxdrawline(Noteid,rectNoteLine3b)
+             BoxPen(Noteid,GRAY,notepenwidthb)
+             boxdrawline(Noteid,rectNoteLine1b)
+             boxdrawline(Noteid,rectNoteLine4b)
+             
+             BoxDataTag(Noteid,"NOTE")
+             BoxDrawText(Noteid,rectNoteText,"Initializing...",1,4)
+             
+             
+             
+             ;Draw thermoneter outline
+             BoxNew(Thermid,rectTherm,2)
+             BoxUpdates(Thermid,0)
+             BoxCaption(Thermid,"Name Goes Here")
+             BoxColor(Thermid,LTGRAY,0)
+             BoxDrawRect(Thermid,"",2)
+             ; Draw updating thermometer here
+             ; there are 3 virtual pixels per percent
+             ; we have to draw 3 boxes and some text...
+             BoxDataTag(Thermid,"FRED")
+             BoxCaption(Thermid,"Please wait. Stepping through example...")
+             
+             FilesToCopy=16
+             FilesCopied=0
+             
+             for FilesCopied=1 to FilesToCopy
+                BoxDataClear(Thermid,"FRED")
+                BoxUpdates(Thermid,0)
+                BoxColor(Thermid,GREEN,0)
+                xxx= 100+((800*FilesCopied)/FilesToCopy)
+                per=(100.0*FilesCopied)/FilesToCopy
+                per=Int(per)
+                BoxDrawRect(Thermid,"104,554,%xxx%,796",2)
+                BoxColor(Thermid,GRAY,0)
+                BoxDrawRect(Thermid,"%xxx%,554,896,796",2)
+                BoxPen(Thermid,BLACK,ThermPenWidth)
+                boxdrawline(Thermid,rectThermLine1)
+                boxdrawline(Thermid,rectThermLine2)
+                boxdrawline(Thermid,rectThermLine3)
+                boxdrawline(Thermid,rectThermLine4)
+                
+                if per<50 then BoxTextColor(Thermid,WHITE)
+                BoxDrawText(Thermid,rectThermPercent,"%per%%%",0,0)
+                BoxTextColor(Thermid,BLACK)
+                BoxColor(Thermid,LTGRAY,0)
+                BoxDrawText(Thermid,rectThermText1,"Steps completed: %FilesCopied%",1,0)
+                BoxDataClear(NoteId,"NOTE");;;
+                BoxDrawText(Noteid,rectNoteText,"Showing Progress",1,4);;;
+                BoxUpdates(Thermid,2)
+                TimeDelay(Random(1.0))   ;Fake passage of time
+             next
+             BoxTextColor(Noteid,GREEN)        
+             BoxDrawText(Noteid,rectNoteText,"Example Complete",1,4)        
+             Message("Company Name Goes Here","Example Complete!!")
+             BoxDestroy(Thermid)
+             BoxDestroy(Noteid)
+Return
+
+:RANDCOLOR
+        r=Int(Random(255))
+        g=Int(Random(255))
+        b=Int(Random(255))
+        q=min(r,g,b)
+        if q==r then r=0
+        if q==g then g=0
+        if q==b then b=0
+        q=max(r,g,b)
+        if q==r then r=255
+        if q==g then g=255
+        if q==b then b=255
+      
+     Return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

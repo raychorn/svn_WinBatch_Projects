@@ -1,0 +1,266 @@
+__appName = "AgencyPolicy"
+_appName = "%__appName% v2.0"
+
+;FamiliesFirst c2003
+;Agency Policy Script 
+;
+;Usage START /WAIT AgencyPolicy.exe %USERNAME% %USERDOMAIN% %COMPUTERNAME% %urlHost%
+;
+; where :: urlHost is either appdev/ffintra or ffintranet and is the base name for the web server
+
+AddExtender("WWWSK32I.DLL")
+
+WinHide( "WBT")
+
+_windirName = "windir"
+_wintempName = "temp"
+_wintmpName = "tmp"
+
+_windir = Environment(_windirName)
+_wintemp = Environment(_wintempName)
+_wintmp = Environment(_wintmpName)
+
+;INITIALIZE VARIABLES
+
+;_debug = 1
+_debug = 0
+
+UserName = "UnDefined"
+UserDomain = "UnDefined"
+ComputerName = "UnDefined"
+
+_urlHost = "appdev/ffintra"
+
+If IsDefined( param1)
+	UserName = param1
+Else
+	UserName = AskLine("%_appName%", "UserName ? (rhorn)", "UnDefined-UserName")
+Endif
+
+If IsDefined( param2)
+	UserDomain = param2
+Else
+	UserDomain = AskLine("%_appName%", "UserDomain ? (FF_PDC1)", "UnDefined-UserDomain")
+Endif
+
+If IsDefined( param3)
+	ComputerName = param3
+Else
+	ComputerName = AskLine("%_appName%", "ComputerName ? (appdev)", "UnDefined-ComputerName")
+Endif
+
+If IsDefined( param4)
+	_urlHost = param4
+Else
+	_urlHost = AskLine("%_appName%", "URL Host ? (appdev/ffintra or ffintranet)", "ffintranet")
+Endif
+
+_loggingOpt = @False
+
+If IsDefined( param5)
+	if param5 == 1
+		_loggingOpt = @True
+	endif
+Endif
+
+_urlPrompts = "http://%_urlHost%/it/agencypolicy/getPrompts.cfm"
+
+_UserName = urlEncode( UserName)
+_UserDomain = urlEncode( UserDomain)
+_ComputerName = urlEncode( ComputerName)
+_urlEntry = "http://%_urlHost%/it/agencypolicy/getEntry.cfm"
+_urlEntryQry = "UserName_vc=%_UserName%&UserDomain_vc=%_UserDomain%&ComputerName_vc=%_ComputerName%"
+
+_urlInsert = "http://%_urlHost%/it/agencypolicy/insertEntry.cfm"
+_urlInsertQry = "UserName_vc=%_UserName%&UserDomain_vc=%_UserDomain%&ComputerName_vc=%_ComputerName%"
+
+; Message("%_appName%", "UserName (%UserName%), UserDomain (%UserDomain%), ComputerName (%ComputerName%)")
+
+_crlf = StrCat(Num2Char(13), Num2Char(10))
+_tab = StrCat(Num2Char(9))
+
+_myFPath = IntControl( 1004, 0, 0, 0, 0)
+_myPath =  FilePath( _myFPath)
+_fileNameLog =  StrCat( "%_myPath%%__appName%", ".Log")
+
+if _loggingOpt == @True
+	_fhandLog = FileOpen( _fileNameLog, "APPEND")
+endif
+
+_today = TimeDate()
+
+if _loggingOpt == @True
+	FileWrite( _fhandLog, "%_today% BEGIN :: %_appName% %_crlf%")
+endif
+
+_now = TimeYmdHms()
+_nowBegin = _now
+
+if _loggingOpt == @True
+	FileWrite( _fhandLog, "%_tab% %_now% UserName (%UserName%), UserDomain (%UserDomain%), ComputerName (%ComputerName%)")
+endif
+
+prompt_text0 = 0
+prompt_p1 = ""
+
+; ====================== *** ==========================
+
+_serverHost = httpGetServer(_urlPrompts, "")
+_serverPath = httpGetpath(_urlPrompts, "")
+_tempFName = "%_wintemp%\AgencyPolicy.txt"
+
+prompt_p1 = httpRecvText( _serverHost, _serverPath, 2048, 0)
+
+;Message("%_appName%", "UName (%UserName%), UDomain (%UserDomain%), CName (%ComputerName%), Host (%_urlHost%), _resp (%_resp%)")
+
+; ====================== *** ==========================
+
+_serverHost = httpGetServer(_urlEntry, "")
+_serverPath = httpGetpath(_urlEntry, "")
+_tempFName = "%_wintemp%\AgencyPolicy.txt"
+
+_resp = httpRecvQryF( _serverHost, _serverPath, _urlEntryQry, _tempFName, @hMethodGet) 
+
+_fsize = FileSize( _tempFName)
+
+;Message("%_appName%", "_resp (%_resp%), _tmp (%_tempFName%), _fsize (%_fsize%)")
+
+_dataExists = 0
+
+if _resp == 200
+	_txt = ""
+	_fhand = FileOpen( _tempFName, "READ")
+	while @TRUE             ; Loop till break do us end
+		x = FileRead(_fhand)
+		If x == "*EOF*" Then Break
+		x = StrTrim( x)
+		_txt = StrCat( _txt, x)
+		if x == 1
+			_dataExists = _dataExists + 1
+			break
+		endif
+	endwhile
+	fileclose( _fhand)
+endif
+
+;Message("%_appName%", "_txt (%_txt%), _dataExists (%_dataExists%)")
+
+
+ErrorMode(@OFF)
+FileDelete( _tempFName)
+ErrorMode(@CANCEL)
+
+; ====================== *** ==========================
+
+if _dataExists == 0
+
+	prompts = StrReplace( prompt_p1, "|", @TAB)
+
+; =====================================================
+	MyDialogFormat=`WWWDLGED,5.0`
+	
+	MyDialogCaption=`FamiliesFirst Inc. Agency Policy (%_txt%)`
+
+	MyDialogX=28
+	MyDialogY=111
+	MyDialogWidth=245
+	MyDialogHeight=190
+
+	_ctrls = 0
+	_y = 2
+	for _i = 1 to ItemCount( prompt_p1, "|")
+		p%_i% = StrTrim( StrReplace( StrReplace( ItemExtract( _i, prompt_p1, "|"), @CRLF, ""), @TAB, ""))
+		_nn = _i
+		if _i < 10
+			_nn = "0%_i%"
+		endif
+		_p = p%_i%
+		MyDialog%_nn%=`8,%_y%,238,DEFAULT,VARYTEXT,p%_i%,"%_p%"`
+		_y = _y + 9
+		_ctrls = _ctrls + 1
+	next
+
+	MyDialogNumControls=_ctrls + 2
+	
+	_ctrls = _ctrls + 1
+	MyDialog%_ctrls%=`4,172,64,DEFAULT,PUSHBUTTON,DEFAULT,"AGREE",1`
+	_ctrls = _ctrls + 1
+	MyDialog%_ctrls%=`176,172,64,DEFAULT,PUSHBUTTON,DEFAULT,"DISAGREE",2`
+	
+; =====================================================
+; =====================================================
+
+while @TRUE
+		retval = Dialog("MyDialog")
+		if retval == 1
+			_q = "Yes"
+			q = @YES
+			break
+		endif
+		if retval == 2
+			_q = "No"
+			q = @NO
+			break
+		endif
+	endwhile        
+	
+	_now = TimeYmdHms()
+
+	if _loggingOpt == @True
+		FileWrite( _fhandLog, "%_tab% %_now% prompt_p1 (%_q%) [%q%]")
+	endif
+
+	if q == @YES
+		; ====================== *** ==========================
+		_serverHost = httpGetServer(_urlInsert, "")
+		_serverPath = httpGetpath(_urlInsert, "")
+		_tempFName = "%_wintemp%\AgencyPolicy.txt"
+		
+		_resp = httpRecvQryF( _serverHost, _serverPath, _urlInsertQry, _tempFName, @hMethodGet) 
+
+		ErrorMode(@OFF)
+		FileDelete( _tempFName)
+		ErrorMode(@CANCEL)
+		; ====================== *** ==========================
+
+	else
+		IntControl(12, 1+5, 0, 0, 0)  ; Tell WIL not to complain when box is closed
+
+		IntControl( 66, 0, 1, 0, 0) ; log the user off due to failure to comply with the Agency Policy
+		exit
+	endif
+
+endif
+
+_today = TimeDate()
+_now = TimeYmdHms()
+_ds = TimeDiffSecs(_now, _nowBegin)
+_dsv = _ds
+_dv = 60 * 60
+_hh = Int(_dsv / _dv)
+_dsv = _dsv - (_hh * _dv)
+_dv = 60
+_mm = Int(_dsv / _dv)
+_dsv = _dsv - (_mm * _dv)
+_ss = _dsv
+if _hh <= 9
+	_hh = "0%_hh%"
+endif
+if _mm <= 9
+	_mm = "0%_mm%"
+endif
+if _ss <= 9
+	_ss = "0%_ss%"
+endif
+_t = "%_hh%:%_mm%:%_ss%"
+if _loggingOpt == @True
+	FileWrite( _fhandLog, "%_today% END :: %_appName% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS)")
+endif
+
+if _loggingOpt == @True
+	fileclose( _fhandLog)
+endif
+
+exit
+
+

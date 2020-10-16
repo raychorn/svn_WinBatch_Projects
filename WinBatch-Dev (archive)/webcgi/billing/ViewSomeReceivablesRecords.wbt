@@ -1,0 +1,7 @@
+:ViewSomeReceivablesRecords
+
+__html_template_filename%sql_level% = __viewReceivablesRecord_html
+Call( StrCat( _cgi_dir, "_ViewADbRecordViaHTML.wbc"), "")
+
+return
+

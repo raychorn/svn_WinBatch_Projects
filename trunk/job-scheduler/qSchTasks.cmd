@@ -1,0 +1,1 @@
+schtasks /Query > schtasks.txt

@@ -1,0 +1,664 @@
+;************************************************************************
+; swf-viewer.wbt
+;************************************************************************
+
+target_id = 35
+
+_targetMask = "__printjob__"
+_fpath = "Z:\Ruby In Steel\BigFix_DSS\reports\public\uploads\export\__printjob__\"
+
+_wname = "SWF-Viewer v1.0.1"
+wname = "%_wname% (c)1978-2007 Hierarchical Applications Limited, All Rights Reserved."
+
+_wname_ = StrReplace( StrReplace( _wname, ".", "_"), " ", "_")
+
+const_targetMask_symbol = "targetMask"
+const_fpath_symbol = "fpath"
+
+_myPathName = IntControl( 1004, 0, 0, 0, 0)
+_myPath = FilePath( _myPathName)
+_iniPath = '%_myPath%%_wname_%.INI'
+
+if FileExist(_iniPath) == @False
+	IniWritePvt("Main", const_targetMask_symbol, _targetMask, _iniPath)
+	IniWritePvt("Main", const_fpath_symbol, _fpath, _iniPath)
+endif
+targetMask = IniReadPvt ("Main", const_targetMask_symbol, _targetMask, _iniPath)
+fpath = IniReadPvt ("Main", const_fpath_symbol, _fpath, _iniPath)
+
+
+#DefineSubroutine ErrorProcessing(deleteIni,showerr,logfile)  
+	WbError = LastError()
+	WbTextcode = WbError
+	If WbError==1668||WbError==2669||WbError==3670
+		; 1668 ; "Minor user-defined error"
+		; 2669 ; "Moderate user-defined error"
+		; 3670 ; "Severe user-defined error"
+		WbError = ItemExtract(1,IntControl(34,-1,0,0,0),":")
+		WbTextcode = -1
+	EndIf
+	WbErrorString = IntControl(34,WbTextcode,0,0,0)
+	WbErrorDateTime = TimeYmdHms()
+	WbErrorFile = StrCat(DirWindows(0),"WWWBATCH.INI")
+	If deleteIni
+		FileDelete(WbErrorFile)
+		IniWritePvt(WbErrorDateTime,"CurrentScript",WbErrorHandlerFile      ,WbErrorFile)
+		IniWritePvt(WbErrorDateTime,"ErrorValue"   ,WbError                 ,WbErrorFile)
+		IniWritePvt(WbErrorDateTime,"ErrorString"  ,WbErrorString           ,WbErrorFile)
+		IniWritePvt(WbErrorDateTime,"ScriptLine"   ,WbErrorHandlerLine      ,WbErrorFile)
+		IniWritePvt(WbErrorDateTime,"ScriptOffset" ,WbErrorHandlerOffset    ,WbErrorFile)
+		IniWritePvt(WbErrorDateTime,"VarAssignment",WbErrorHandlerAssignment,WbErrorFile)
+		IniWritePvt(WbErrorDateTime,"VarInSegment" ,WbErrorInSegment,WbErrorFile)
+		IniWritePvt("","","",WbErrorFile)
+	Endif  
+	WbErrorMsgText = StrCat(WbErrorDateTime,@CRLF)
+	WbErrorMsgText = StrCat(WbErrorMsgText,"Current Script: ",WbErrorHandlerFile,@CRLF)
+	WbErrorMsgText = StrCat(WbErrorMsgText,"Error# [",WbError,"]",@CRLF)
+	WbErrorMsgText = StrCat(WbErrorMsgText,"Error Text: ",wberrortextstring,@CRLF)
+	WbErrorMsgText = StrCat(WbErrorMsgText,"[Extended Information] ",wberroradditionalinfo,@CRLF,@CRLF)
+	WbErrorMsgText = StrCat(WbErrorMsgText,"On Line:",@CRLF,WbErrorHandlerLine,@CRLF)
+	WbErrorMsgText = StrCat(WbErrorMsgText,"Offset: ",WbErrorHandlerOffset,@CRLF)
+	If (WbErrorHandlerAssignment>"") Then %WbErrorHandlerAssignment% = "UNKNOWN"
+	WbErrorMsgText = StrCat(WbErrorMsgText,"Assignment/Variable: ",WbErrorHandlerAssignment,@CRLF)
+	If (WbErrorInSegment>"") Then WbErrorMsgText = StrCat(WbErrorMsgText,"In UDF/UDS: ",WbErrorInSegment,@CRLF)
+	If logfile
+		cSep = StrCat(StrFill("=",50),@CRLF)
+		cLogFile = StrCat(dirscript(),"log.err")
+		If ! FileExist(cLogFile) Then FilePut(cLogFile,StrCat("Error Log",@CRLF,cSep))
+		FilePut(cLogFile,StrCat(FileGet(cLogFile),WbErrorMsgText,cSep))
+	Endif
+	If showerr Then Message("wbErrorHandler",WbErrorMsgText)
+	Return(1)
+#EndSubroutine
+
+
+#DefineFunction weekOfMonth(dom)
+	IntControl(73, 2,0,0,0)
+
+	weekNum = 1
+	while ((dom - 7) > 0)
+		weekNum = weekNum + 1
+		dom = dom - 7
+	endwhile
+	Return(weekNum)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction getTargetFileName(_targetMask,_id)
+	IntControl(73, 2,0,0,0)
+
+	Return("%_targetMask%%_id%.jpg")
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction isAlphaNumeric(str)
+	hUser32 = DllLoad(StrCat(DirWindows(1),"USER32.DLL"))
+	
+	sUnicode = ChrStringToUnicode(str)
+	For x = 1 To StrLen(sUnicode)
+		item =  Char2Num(StrSub(sUnicode,x,1))
+		If !DllCall(hUser32,long:"IsCharAlphaNumericW",word:item)
+			DllFree(hUser32)
+			Return @FALSE
+		EndIf
+	Next
+	
+	DllFree(hUser32)
+	Return @TRUE
+#EndFunction
+
+
+#DefineFunction isAlpha(str)
+	hUser32 = DllLoad(StrCat(DirWindows(1),"USER32.DLL"))
+	
+	sUnicode = ChrStringToUnicode(str)
+	For x = 1 To StrLen(sUnicode)
+		item =  Char2Num(StrSub(sUnicode,x,1))
+		If !DllCall(hUser32,long:"IsCharAlphaW",word:item)
+			DllFree(hUser32)
+			Return @FALSE
+		EndIf
+	Next
+	
+	DllFree(hUser32)
+	Return @TRUE
+#EndFunction
+
+
+#DefineFunction splitAlphaNumeric(str)
+	IntControl(73, 2,0,0,0)
+
+	list_alpha = ""
+	list_numeric = ""
+	ch = StrSub( str, 1, 1)
+	first_ch_alpha = (isAlpha(ch))
+	first_ch_numeric = @False
+	if (first_ch_alpha == @False)
+		first_ch_numeric = ( (isAlphaNumeric(ch)) || (ch == "-") )
+	endif
+	n = StrLen(str)
+	b_canSwitch = @True
+	if (first_ch_alpha)	; grab alpha until no alpha are found
+		b_bucket = 1
+		for i = 1 to n
+			ch = StrSub( str, i, 1)
+			if ( (isAlpha(ch) == @False) && (isAlphaNumeric(ch)) )
+				if (b_canSwitch)
+					b_bucket = b_bucket + 1
+					b_canSwitch = @False
+				endif
+			endif
+			Switch b_bucket
+			   Case 1
+					list_alpha = StrCat(list_alpha,ch)
+			      Break
+			   Case 2
+					list_numeric = StrCat(list_numeric,ch)
+			      Break
+			EndSwitch
+		next
+	else						; grab numeric until no numeric are found
+		b_bucket = 2
+		for i = 1 to n
+			ch = StrSub( str, i, 1)
+			b_isNumeric = ( (isAlpha(ch) == @False) && ( (isAlphaNumeric(ch) == @True) || (ch == "-") ) )
+			if (b_isNumeric == @False)
+				if (b_canSwitch)
+					b_bucket = b_bucket - 1
+					b_canSwitch = @False
+				endif
+			endif
+			Switch b_bucket
+			   Case 1
+					list_alpha = StrCat(list_alpha,ch)
+			      Break
+			   Case 2
+					list_numeric = StrCat(list_numeric,ch)
+			      Break
+			EndSwitch
+		next
+	endif
+	Return(StrCat(list_alpha, @TAB, list_numeric))
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction daysOfWeekList()
+	IntControl(73, 2,0,0,0)
+
+	Return("FR SA SU MO TU WE TH")
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction dayOfWeekByName(str)
+	IntControl(73, 2,0,0,0)
+
+	day = ItemLocate( str, daysOfWeekList(), " ")
+	Return(day)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction dayOfWeekName(_YmdHms_string)
+	IntControl(73, 2,0,0,0)
+
+	dt_spec = _YmdHms_string
+	if (StrLen(dt_spec) == 0)
+		dt_spec = TimeYmdHms()
+	endif
+	julianDay = TimeJulianDay(dt_spec)
+	dow = julianDay mod 7
+	dow = dow + 1
+	day = ItemExtract(dow,daysOfWeekList(), " ")
+
+	Return(day)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction lastDayOfMonthForCriteria(_YmdHms_string, dow)
+	IntControl(73, 2,0,0,0)
+
+	jultodate = TimeJulianDay(_YmdHms_string) 
+	
+	year = ItemExtract(1,_YmdHms_string,":")
+	Month = ItemExtract(2,_YmdHms_string,":")
+	Day = ItemExtract(3,_YmdHms_string,":")
+	
+	ldom=31
+	if (month==9 || month==4 || month==6 || month==11) then ldom=30
+	if month==2
+	   ldom=28
+	   if ((year mod 4)==0) then ldom=29
+	endif   
+	
+	lastdateofmonth = "%year%:%month%:%ldom%:00:00:00"
+	jullast = TimeJulianDay(lastdateofmonth)
+	_lastday = ((jullast + 5) mod 7) + dow
+	if _lastday!=0
+	   last_date = TimeSubtract(lastdateofmonth,"00:00:%_lastday%:00:00:00")
+	else
+	   last_date = lastdateofmonth
+	endif
+
+	Return(last_date)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction dayOfWeek(_YmdHms_string)
+	IntControl(73, 2,0,0,0)
+
+	dt_spec = _YmdHms_string
+	if (StrLen(dt_spec) == 0)
+		dt_spec = TimeYmdHms()
+	endif
+	julianDay = TimeJulianDay(dt_spec)
+	dow = julianDay mod 7
+	dow = dow + 1
+
+	Return(dow)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction printReport(_objExplorer,_closeBrowser)
+	IntControl(73, 2,0,0,0)
+
+	objBrowserDoc = _objExplorer.Document
+	
+	OLECMDID_PRINT = 6
+	
+	OLECMDEXECOPT_DONTPROMPTUSER  = 2
+	
+	PRINT_DONTBOTHERUSER = 1
+	PRINT_WAITFORCOMPLETION = 2
+	pvaIn = ObjectType("I2",PRINT_WAITFORCOMPLETION|PRINT_DONTBOTHERUSER)
+	pvaOut = ObjectType("NULL","")
+	
+	_objExplorer.ExecWB(OLECMDID_PRINT,OLECMDEXECOPT_DONTPROMPTUSER,pvaIn, pvaOut)
+	
+	TimeDelay(10)
+
+	if (_closeBrowser)
+		_objExplorer.quit
+		
+		ObjectClose(objBrowserDoc)
+		ObjectClose(_objExplorer)
+		
+		_objExplorer = ""
+	endif
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction waitForFileNamed(_targetFileName,_maxTicks)
+	IntControl(73, 2,0,0,0)
+
+	_ticks = 0
+	while @True
+		if (FileExist( _targetFileName))
+			break
+		else
+			TimeDelay( 1)
+		endif
+		_ticks = _ticks + 1
+		if (_ticks > _maxTicks)
+			break
+		endif
+	endwhile
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction launchBrowser(_url,_addressbar,_statusbar,_menubar,_toolbar,_visible,_width,_height)
+	IntControl(73, 2,0,0,0)
+
+	objExplorer = ObjectCreate("InternetExplorer.Application")
+	objExplorer.addressbar = _addressbar
+	objExplorer.statusbar = _statusbar
+	objExplorer.menubar = _menubar
+	objExplorer.toolbar = _toolbar
+	objExplorer.visible = _visible
+	objExplorer.Width = _width
+	objExplorer.Height = _height
+	objExplorer.Left = 0
+	objExplorer.Top = 0
+	
+	objExplorer.navigate(_url)
+	
+	While ( (objExplorer.busy) || (objExplorer.readystate <> 4) )
+	   TimeDelay(1)
+	EndWhile
+
+	Return(objExplorer)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction doesCalendarSpecMatchToday(_spec)
+	IntControl(73, 2,0,0,0)
+
+	retBool = @False
+
+	firstTok = ItemExtract( 1, _spec, ";")
+	if (firstTok == "DTSTART")
+		beginDate = ItemExtract( 2, _spec, ";")
+		_TZID = ""
+		_DateSpec = ""
+		_YYYY = ""
+		_MM = ""
+		_DD = ""
+		_HH = ""
+		_HH_MM = ""
+		_HH_SS = ""
+		_RRULE = ""
+		_RRULE_Freq = ""
+		_INTERVAL = ""
+		_INTERVAL_Spec = ""
+		_INTERVAL_Mod = ""
+		_INTERVAL_Mod_Type = ""
+		_INTERVAL_Mod_Value = ""
+		n = ItemCount( _spec, ";")
+		if (n > 2) then ; RRULE:
+			_RRULE = ItemExtract( 3, _spec, ";")
+			if (n > 3) then ; INTERVAL=
+				_INTERVAL = ItemExtract( 4, _spec, ";")
+				if (n > 4) then ; INTERVAL Modifier
+					_INTERVAL_Mod = ItemExtract( 5, _spec, ";")
+				endif
+			endif
+		endif
+		if ( (StrLen(_RRULE) > 0) && (ItemCount( _RRULE, ":") == 2) )
+			_RRULE_Freq = ItemExtract( 2, ItemExtract( 2, _RRULE, ":"), "=")
+		endif
+		if ( (StrLen(_INTERVAL) > 0) && (ItemCount( _INTERVAL, "=") == 2) )
+			_INTERVAL_Spec = ItemExtract( 2, _INTERVAL, "=")
+		endif
+		if ( (StrLen(_INTERVAL_Mod) > 0) && (ItemCount( _INTERVAL_Mod, "=") == 2) )
+			_INTERVAL_Mod_Type = ItemExtract( 1, _INTERVAL_Mod, "=")
+			_INTERVAL_Mod_Value = ItemExtract( 2, _INTERVAL_Mod, "=")
+		endif
+		if ( (StrLen(beginDate) > 0) && (ItemCount( beginDate, ":") == 2) )
+			_TZID = ItemExtract( 1, beginDate, ":")
+			_DateSpec = ItemExtract( 2, beginDate, ":")
+			if (StrLen(_DateSpec) > 0)
+				_YYYY = StrSub( _DateSpec, 1, 4)
+				_MM = StrSub( _DateSpec, 5, 2)
+				_DD = StrSub( _DateSpec, 7, 2)
+				if (ItemCount( _DateSpec, "T") == 2)
+					_HH = ItemExtract( 2, _DateSpec, "T")
+					_HH_MM = StrSub( _HH, 3, 2)
+					_HH_SS = StrSub( _HH, 5, 2)
+					_HH = StrSub( _HH, 1, 2)
+				endif
+			endif
+		endif
+		if (StrLen(_RRULE_Freq) > 0)
+			; There is a RRULE so figure out what it means...
+			dt1 = "%_YYYY%:%_MM%:%_DD%:%_HH%:%_HH_MM%:%_HH_SS%"
+			dt2 = TimeYmdHms()
+			secs = TimeDiffSecs(dt2, dt1)
+
+			i = ItemLocate( _RRULE_Freq, "HOURLY,DAILY,WEEKLY,MONTHLY", ",")
+			Switch i
+			   Case 1
+					; _INTERVAL_Spec is the number of hours.
+					; iterate over the hours beginning with the starting datetime until the current datetime has been reached.
+					; put datetime into this format "YYYY:MM:DD:HH:MM:SS" then use TimeAdd() to interate over the datetime until today is reached.
+					_dt1 = dt1
+					_hh_ = ItemExtract(4,dt2,":")
+					_mm_ = ItemExtract(5,dt2,":")
+					_ss_ = ItemExtract(6,dt2,":")
+					_dt2 = "%_YYYY%:%_MM%:%_DD%:%_hh_%:%_mm_%:%_ss_%"
+					_secs = TimeDiffSecs(_dt2, _dt1)
+					if (_secs < 0) then _secs = _secs + (3600 * 24)
+					hours = int(_secs / 3600)
+					hours_mod = hours mod _INTERVAL_Spec
+					if (hours_mod == 0)
+						retBool = @TRUE
+					endif
+			      Break
+			   Case 2
+					; _INTERVAL_Spec is the number of days
+					days = int(secs / (3600 * 24))
+					days_mod = days mod _INTERVAL_Spec
+					if (days_mod == 0)
+						retBool = @TRUE
+					endif
+			      Break
+			   Case 3
+					; _INTERVAL_Spec is the number of weeks
+					weeks = int(secs / (3600 * 24 * 7))
+					weeks_mod = weeks mod _INTERVAL_Spec
+					; BEGIN: There is more to this part of the problem such as the day of the week, etc.
+					dow1 = dayOfWeekName(dt1)
+					dow2 = dayOfWeekName(dt2)
+					if ( (StrUpper( _INTERVAL_Mod_Type) == "BYDAY") && (weeks_mod == 0) && (dow1 == dow2) )
+						retBool = @TRUE
+					endif
+					; END! There is more to this part of the problem such as the day of the week, etc.
+			      Break
+			   Case 4
+					; _INTERVAL_Spec is the number of months
+					months = int(secs / (3600 * 24 * 30.4375))
+					months_mod = months mod _INTERVAL_Spec
+					if (months_mod == 0)
+						; BEGIN: There is more to this part of the problem such as the day of the month, etc.
+						b_matches = @False
+						i_mod_type = ItemLocate( StrUpper(_INTERVAL_Mod_Type), "BYDAY,BYMONTHDAY", ",")
+						Switch i_mod_type
+						   Case 1
+								_list = splitAlphaNumeric(_INTERVAL_Mod_Value)
+								dom2 = ItemExtract(3,dt2,":")
+								_cWom = weekOfMonth(dom2)
+								_eDow = dayOfWeekByName(ItemExtract(1,_list,@TAB))
+								_cDow = dayOfWeek(dt2)
+								_eLastDt = lastDayOfMonthForCriteria(dt2, _eDow)
+								_eLastWom = weekOfMonth(ItemExtract(3,_eLastDt,":"))
+								if (ItemCount( _list,@TAB))
+									_selector = ItemExtract(2,_list,@TAB)
+									Switch _selector
+									   Case -1
+											b_matches = (_eLastWom == _cWom)
+									      Break
+									   Case -2
+											b_matches = ((_eLastWom - 1) == _cWom)
+									      Break
+										Case response
+											b_matches = (_cWom == _selector)
+										   Break
+									EndSwitch
+								endif
+						      Break
+						   Case 2
+								dom2 = ItemExtract(3,dt2,":")
+								b_matches = ItemLocate( dom2, _INTERVAL_Mod_Value, "|")
+						      Break
+						EndSwitch
+						if ( (months_mod == 0) && (b_matches) )
+							retBool = @TRUE
+						endif
+						; END! There is more to this part of the problem such as the day of the month, etc.
+					endif
+			      Break
+			EndSwitch
+		else
+			; No RRULE therefore there is only a single date to check...
+		endif
+	endif
+
+	Return(retBool)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction fetchNextReportToPrint()
+	IntControl(73, 2,0,0,0)
+
+	report_id_list = ""
+
+	AddExtender("wwodb44i.dll")
+	list = StrUpper( qDriverList() )
+	If ! StrIndex(list,"MYSQL ODBC 3.51 DRIVER",0,@FWDSCAN) Then return '-1' 
+	
+	DB = 0
+	DB = CreateObject("ADODB.Connection")
+	
+	cConn = 'DRIVER={MySQL ODBC 3.51 Driver};SERVER=192.168.105.67;DATABASE=reports_development;UID=root;PWD=foobarbaz;OPTION=3'
+	DB.Open(cConn)
+
+	cSQL = "SELECT reports.id, reports.name, reports.next_scheduled_run, reports.user_id FROM reports WHERE (reports.next_scheduled_run IS NOT NULL)"
+	
+	;let's see what we did
+	RS = CreateObject("ADODB.Recordset")
+	RS.CursorLocation = 3   ; adUseClient
+	RS.Open(cSQL,cConn,1,4)
+	RS.MoveFirst
+	while (!RS.EOF)
+		id = RS.Fields.Item("id").Value()
+		name = RS.Fields.Item("name").Value()
+		next_scheduled_run = RS.Fields.Item("next_scheduled_run").Value()
+		user_id = RS.Fields.Item("user_id").Value()
+		if (doesCalendarSpecMatchToday(next_scheduled_run))
+			report_id_list = ItemInsert( id, ItemCount( report_id_list, @TAB), report_id_list, @TAB)
+		endif
+		RS.MoveNext
+	endwhile
+	RS.Close()
+	
+	:end
+	DB.Close()
+	RS = 0
+	DB = 0
+
+	Return(report_id_list)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction printReportForId(_targetMask,_id)
+	IntControl(73, 2,0,0,0)
+
+	targetFileName = StrCat(fpath,getTargetFileName(_targetMask,_id))
+	if (FileExist( targetFileName))
+		FileDelete( targetFileName)
+	endif
+	
+	objExplorer = launchBrowser("http://localhost:3000/BigFixDSS/dss.swf?rhorn:foobar:%_id%",@FALSE,@FALSE,@FALSE,@FALSE,@FALSE,1024,768)
+	
+	waitForFileNamed(targetFileName,300)
+	
+	printReport(objExplorer, @TRUE)
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+_title = wname
+
+list_of_report_ids = fetchNextReportToPrint()
+
+n = ItemCount( list_of_report_ids, @TAB)
+;Message( "Debug Info", "list_of_report_ids=(%list_of_report_ids%)")
+;exit
+for i = 1 to n
+	target_id = ItemExtract( i, list_of_report_ids, @TAB)
+	printReportForId(targetMask,target_id)
+next
+
+; Run only once per hour... no more often than this...
+
+

@@ -1,0 +1,355 @@
+; registry-backup.wbt
+
+IntControl( 29, @TAB, 0, 0, 0)
+IntControl( 41, 1, 0, 0, 0)
+
+_TRUE = "TRUE"
+_FALSE = "FALSE"
+
+_equalsSign = "="
+
+_stringOutputThreshold = 250
+
+_wName = "registry-backup"
+wName = "%_wName%.wbt"
+
+b_useINI = @FALSE
+
+_dashIndexDotIni = "-Index.ini"
+_dashDataDotIni = "-Data.ini"
+
+_fileSerialNum = StrReplace( TimeYmdHms(), ":", "_")
+
+_tempPath = "C:\temp\"
+_filename = "D:\myWinbatch\registry-backup\registry-backup_1999_06_15_19_00_22.txt" ; default file name mainly used for debugging/testing and the like.
+
+_dirname = DirGet()
+_iniNameIndex = StrCat( StrReplace( StrCat( _dirname, "\"), "\\", "\"), "%_wName%_", _fileSerialNum, "_", _dashIndexDotIni)
+_iniNameData = StrReplace( _iniNameIndex, _dashIndexDotIni, _dashDataDotIni)
+_iniIndexSection = "Index"
+_iniIndexKeyName = "Count"
+_iniIndexKeyValue = 0
+_iniItemsKeyName = "Items"
+
+_text = ""
+_level = 1
+_separator = "\"
+
+_keyCount = 0
+
+_key_name = "SOFTWARE\DENNY"
+
+_modeBackup = "-b"
+_modeRestore = "-r"
+_mode = _modeBackup
+
+If param0 > 0
+	; param1 is the run mode which is _modeBackup or _modeRestore - the default is _modeBackup
+Else
+	_mode = StrTrim( AskLine( wName, "Mode of operation ? (%_modeBackup% or %_modeRestore%)", _mode))
+Endif
+
+if (StriCmp( _mode, _modeBackup) <> 0) && (StriCmp( _mode, _modeRestore) <> 0)
+	_mode = _modeBackup
+endif
+
+if StriCmp( _mode, _modeBackup) == 0
+	Gosub DoBackup
+else
+	Gosub DoRestore
+endif
+
+exit
+
+
+:DoRestore
+If param0 > 1
+	; param2 is the file name for the previously saved backup file
+	_filename = param2
+Else
+;	_filename = StrTrim( AskLine( wName, "File Name ?", _filename))
+
+	_types = "All Files|*.*"
+	_filename = AskFileName( "SelectFile", "C:\", _types, "", 1)
+Endif
+
+DirMake( _tempPath)
+_tempPath = StrReplace( StrCat( _tempPath, "\"), "\\", "\")
+
+_fout = FileOpen( StrCat( _tempPath, _wName, "-DEBUG.txt"), "WRITE")
+
+_registryKey = ""
+
+_fhand = FileOpen( _filename, "READ")
+while @TRUE             ; Loop till break do us end
+	aLine = FileRead( _fhand)
+	If aLine == "*EOF*" Then Break
+
+	; New Rules - Data elements have been split into 3 parts with the last part split into multiple lines since there was a line length problem
+		_valueName = aLine
+		if ItemCount( _valueName, @TAB) > 1
+			_valueName = ItemExtract( 2, _valueName, @TAB)
+		endif
+		_fci = StrIndex( _valueName, "[", 1, @FWDSCAN) + 1
+		_lci = StrIndex( _valueName, "]", _fci, @FWDSCAN) - 2
+		if _lci < 0
+			_lci = StrLen( _valueName)
+		endif
+		_valueName = StrSub( _valueName, _fci, _lci)
+
+		aLine = FileRead( _fhand)
+		If aLine == "*EOF*" Then Break
+
+		_datatype = aLine
+		_fci = StrIndex( _datatype, "[", 1, @FWDSCAN) + 1
+		_lci = StrIndex( _datatype, "]", _fci, @FWDSCAN) - 2
+		if _lci < 0
+			_lci = StrLen( _datatype)
+		endif
+		_datatype = StrSub( _datatype, _fci, _lci)
+
+		aLine = FileRead( _fhand)
+		If aLine == "*EOF*" Then Break
+
+	; Rules - if we see an "=" then we have some data to parse otherwise we have a registry keyname or a key address
+	if ItemCount( aLine, _equalsSign) > 2
+		; we have some data to parse
+		_valueName = ItemExtract( 1, aLine, _equalsSign)
+		if ItemCount( _valueName, @TAB) > 1
+			_valueName = ItemExtract( 2, _valueName, @TAB)
+		endif
+		_fci = StrIndex( _valueName, "[", 1, @FWDSCAN) + 1
+		_lci = StrIndex( _valueName, "]", _fci, @FWDSCAN) - 2
+		if _lci < 0
+			_lci = StrLen( _valueName)
+		endif
+		_valueName = StrSub( _valueName, _fci, _lci)
+		_datatype = ItemExtract( 2, aLine, _equalsSign)
+		_fci = StrIndex( _datatype, "[", 1, @FWDSCAN) + 1
+		_lci = StrIndex( _datatype, "]", _fci, @FWDSCAN) - 2
+		if _lci < 0
+			_lci = StrLen( _datatype)
+		endif
+		_datatype = StrSub( _datatype, _fci, _lci)
+		_datavalue = ItemExtract( 3, aLine, _equalsSign)
+		_fci = StrIndex( _datavalue, "[", 1, @FWDSCAN) + 1
+		_lci = StrIndex( _datavalue, "]", _fci, @FWDSCAN) - 2
+		if _lci < 0
+			_lci = StrLen( _datavalue)
+		endif
+		_datavalue = StrSub( _datavalue, _fci, _lci)
+
+;		filewrite( _fout, StrCat( _registryKey, "-->[", _valueName, "]=[", _datatype, "]=[", _datavalue, "]"))
+		filewrite( _fout, StrCat( "BEGIN: ", _registryKey))
+		filewrite( _fout, StrCat( @TAB, "-->[", _valueName, "]"))
+		filewrite( _fout, StrCat( @TAB, "[", _datatype, "]"))
+		filewrite( _fout, StrCat( @TAB, "[", _datavalue, "]"))
+		filewrite( _fout, StrCat( "END: ", _registryKey))
+		filewrite( _fout, "")
+	else
+		; we have some key goop to process
+		; this tells us where in the registry the data will go
+		; only key goop with data after it will cause data to be stored in the registry
+		; not sure how we will deal with collisions... you know, overwriting extant data elements
+		_registryKey = aLine
+	endif
+endwhile
+FileClose( _fhand)
+
+FileClose( _fout)
+
+return
+
+
+
+:DoBackup
+If param0 > 1
+	; param2 is the base key name for the backup operation
+	_key_name = param2
+Else
+	_key_name = StrTrim( AskLine( wName, "Base Key Name ?", _key_name))
+Endif
+
+If param0 > 2
+	; param3 is the use INI file flag - FALSE means don't use INI files else TRUE
+	b_useINI = StriCmp( param3, _TRUE)
+Else
+	b_useINI = StriCmp( StrTrim( AskLine( wName, "Use INI files ? (%_TRUE% or %_FALSE%)", _FALSE)), _TRUE) == 0
+Endif
+
+if b_useINI <> @TRUE
+	If param0 > 3
+		; param4 is the build INI index file flag - FALSE means don't build an INI index file else TRUE
+		b_buildINIindex = StriCmp( param4, _TRUE)
+	Else
+		b_buildINIindex = StriCmp( StrTrim( AskLine( wName, "Build an INI Index file ? (%_TRUE% or %_FALSE%)", _FALSE)), _TRUE) == 0
+	Endif
+endif
+
+_beginTime = TimeYmdHms()
+
+; here we validate the _tempPath variable and form a proper path name, you know with a "\" at the end.
+DirMake( _tempPath)
+
+_tempPath = StrReplace( StrCat( _tempPath, "\"), "\\", "\")
+_fhandle = FileOpen( "%_wName%_%_fileSerialNum%.txt", "WRITE")
+
+Gosub GetKeys
+
+fileclose( _fhandle)
+
+if b_useINI || b_buildINIindex
+	IniWritePvt( _iniIndexSection, _iniIndexKeyName, "%_iniIndexKeyValue%", _iniNameIndex)
+endif
+
+_finisTime = TimeYmdHms()
+
+_elapsedSecs = TimeDiffSecs( _finisTime, _beginTime)
+__elapsedSecs = _elapsedSecs
+
+_elapsed_HH = _elapsedSecs / 3600
+_elapsedSecs = _elapsedSecs - (_elapsed_HH * 3600)
+if _elapsed_HH < 10
+	_elapsed_HH = "0%_elapsed_HH%"
+endif
+
+_elapsed_MM = _elapsedSecs / 60
+_elapsedSecs = _elapsedSecs - (_elapsed_MM * 60)
+if _elapsed_MM < 10
+	_elapsed_MM = "0%_elapsed_MM%"
+endif
+
+_elapsed_SS = _elapsedSecs
+if _elapsed_SS < 10
+	_elapsed_SS = "0%_elapsed_SS%"
+endif
+
+_elapsedSecs = __elapsedSecs
+
+Message( "%wName%", "_keyCount=(%_keyCount%), _elapsedSecs=(%_elapsedSecs%), %_elapsed_HH%:%_elapsed_MM%:%_elapsed_SS%")
+return
+
+
+
+:GetKeys
+if IsDefined( _root%_level%)
+	if _plevel > 1
+	   _root = _key_name
+		if StrLen( _root) > 0
+			_root = StrCat( _root, "\")
+		endif
+		for j = 2 to _level
+		   _root = StrCat( _root, _root%j%)
+			if j <= _plevel
+			   _root = StrCat( _root, _separator)
+			endif
+		next
+	else
+	    _root = _text
+	endif
+else
+    _root = _key_name
+	if StrLen( _root) > 0
+		_root = StrCat( _root, "\")
+	endif
+endif
+
+ErrorMode(@OFF)
+_key%_level% = RegOpenkey( @RegMachine, _root)
+_who%_level% = RegQueryKeys( _key%_level%)
+RegClosekey( _key%_level%)
+ErrorMode(@CANCEL)
+
+_plevel = _level
+_level = _level + 1
+_i%_plevel% = 1
+while _i%_plevel% <= ItemCount( _who%_plevel%, @TAB)
+	_root%_level% = ItemExtract( _i%_plevel%, _who%_plevel%, @TAB)
+	if _plevel < 2
+		if StrLen( _key_name) > 0
+			_text = StrCat( _key_name, _separator)
+		endif
+	endif
+	if _plevel > 1
+		_text = StrCat( _text, _separator)
+	endif
+	_text = StrCat( _text, _root%_level%)
+	_text = StrReplace( _text, StrCat( _separator, _separator), _separator)
+	filewrite( _fhandle, _text)
+
+	_iniIndexKeyValue = _iniIndexKeyValue + 1
+
+	if b_useINI || b_buildINIindex
+	;	IniWritePvt( _iniIndexSection, _iniIndexKeyName, "%_iniIndexKeyValue%", _iniNameIndex)
+
+		IniWritePvt( _iniIndexSection, "%_iniIndexKeyValue%", _text, _iniNameIndex)
+	endif
+
+	WinTitle( "", StrCat( "%wName% - %_iniIndexKeyValue% ", _text))
+
+	ErrorMode(@OFF)
+	_items = RegQueryItem( @REGMACHINE, _text)
+	ErrorMode(@CANCEL)
+
+	_jj = ItemCount( _items, @TAB)
+
+	if StrLen( _items) > _jj
+;		filewrite( _fhandle, StrCat( @TAB, "[", StrReplace( _items, @TAB, ","), "]"))
+		for _ii = 1 to _jj
+;			IniWritePvt( _text, "%_ii%", ItemExtract( _ii, _items, @TAB), _iniNameData)
+			_valueName = ItemExtract( _ii, _items, @TAB)
+			ErrorMode(@OFF)
+			_key%_plevel% = RegOpenkey( @RegMachine, _text)
+;			_value = RegQueryValue( _key%_plevel%, StrCat( "[", _valueName, "]"))
+			_datatype = RegEntryType( _key%_plevel%, StrCat( "[", _valueName, "]"))
+			_datavalue = RegQueryEx( _key%_plevel%, StrCat( "[", _valueName, "]"), @tab, _datatype)
+			RegClosekey( _key%_plevel%)
+			ErrorMode(@CANCEL)
+;			filewrite( _fhandle, StrCat( @TAB, "[", _valueName, "]=[", _value, "] of _datatype=[", _datatype, "]=[", _datavalue, "]"))
+;			filewrite( _fhandle, StrCat( @TAB, "[", _valueName, "]=[", _datatype, "]=[", _datavalue, "]"))
+			filewrite( _fhandle, StrCat( @TAB, "[", _valueName, "]"))
+			filewrite( _fhandle, StrCat( @TAB, "[", _datatype, "]"))
+			_xLen = StrLen( _datavalue)
+			; +++
+			if _xLen > _stringOutputThreshold
+				_xFirst = 1
+				_xLast = Min( _xLen, _stringOutputThreshold)
+				while _xLast > 0
+					if _xFirst <= _stringOutputThreshold
+						_outputLine = StrCat( @TAB, "[", StrSub( _datavalue, _xFirst, _xLast))
+					else
+						_outputLine = StrCat( @TAB, StrSub( _datavalue, _xFirst, _xLast))
+					endif
+					if _xLast < _stringOutputThreshold
+						_outputLine = StrCat( _outputLine, "]")
+					endif
+					filewrite( _fhandle, _outputLine)
+					_xFirst = _xFirst + _xLast
+					_xLen_xFirst = _xLen - _xFirst
+					_xLast = Min( _xLen_xFirst, _stringOutputThreshold)
+				endwhile
+			else
+				filewrite( _fhandle, StrCat( @TAB, "[", _datavalue, "]"))
+			endif
+		next
+	endif
+
+	if b_useINI
+		IniWritePvt( _text, _iniIndexKeyName, "%_jj%", _iniNameData)
+		for _ii = 1 to _jj
+			IniWritePvt( _text, "%_ii%", ItemExtract( _ii, _items, @TAB), _iniNameData)
+		next
+	endif
+
+	_keyCount = _keyCount + 1
+	Gosub GetKeys
+	_i%_plevel% = _i%_plevel% + 1
+endwhile
+;for _i%_plevel% = 1 to ItemCount( _who%_plevel%, @TAB)
+;next
+_level = _level - 1
+_text = ItemRemove( ItemCount( _text, _separator), _text, _separator)
+Drop( _i%_plevel%, _key%_plevel%, _who%_plevel%, _root%_plevel%, _i%_plevel%)
+_plevel = _level - 1
+return
+

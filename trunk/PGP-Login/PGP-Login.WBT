@@ -1,0 +1,151 @@
+;************************************************************************
+; PGP-Login.wbt
+; 
+;************************************************************************
+
+#DefineFunction ObscurePhrase(str) 
+	IntControl(73, 2,0,0,0)
+	t = ""
+	
+	j = StrLen(str)
+	for i = 0 to j - 1
+		_ch = StrSub( str, j - i, 1)
+		_ch = Num2Char(Char2Num(_ch) + 128)
+		t = StrCat(t, _ch)
+	next
+	Return(t)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction UnObscurePhrase(t)
+	IntControl(73, 2,0,0,0)
+	str = ""
+	
+	j = StrLen(t)
+	for i = 0 to j - 1
+		_ch = StrSub( t, j - i, 1)
+		_ch = Num2Char(Char2Num(_ch) - 128)
+		str = StrCat(str, _ch)
+	next
+	Return(str)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction CheckSum(str)
+	IntControl(73, 2,0,0,0)
+	cksum = 0
+	
+	j = StrLen(str)
+	for i = 1 to j
+		_ch = StrSub( str, i, 1)
+		cksum = cksum + Char2Num(_ch)
+	next
+	Return(cksum)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+_wname = "PGP-Login v1.0.3"
+wname = "%_wname% (c)1990-2008, Hierarchical Applications Limited, All Rights Reserved."
+
+;t = ObscurePhrase("sisko@7660$boo")
+
+t_pw = "οοβ¤°¶¶·ΐολσισ"
+
+pw = AskPassword("Security Check", "Please enter your password ?")
+t_str = UnObscurePhrase(t_pw)
+If StriCmp(pw, t_str) == 0
+	goto pw_okay
+else
+	Pause("Security breach", "Invalid password entered,")
+	exit
+endif
+
+:pw_okay
+
+_pgpWinNameA = "Enter Passphrase"
+_pgpWinName2 = "PGP Enter Passphrase for Key"
+
+_pgpWinNameB = "Unlock disk"
+
+t = "ηξομωαδμμασσαεθτξισξεετλγυζοτεφομι"
+cksum_t = 8016
+cksum_str = 3664
+;t = ObscurePhrase(_pgpPassPhrase)
+
+cst = CheckSum(t)
+if cst == cksum_t
+	str = UnObscurePhrase(t)
+	css = CheckSum(str)
+	if css <> cksum_str
+		Message("ERROR", "Unable to proceed due to a security problem... Something was tampered with.")
+		exit
+	endif
+else
+	Message("ERROR", "Unable to proceed due to a security problem... Something was tampered with.")
+	exit
+endif
+
+_cnt = 0
+_cntMax = 9
+
+msMax = 1000 * (60 * 2)				; 2 mins max...
+
+msBegin = GetTickCount()         ; Returns number of clock ticks used by Windows since Windows started.
+while 1
+	if ( (WinExist( _pgpWinNameA) == @TRUE) || (WinExist( _pgpWinNameB) == @TRUE) || (WinExist( _pgpWinName2) == @TRUE) )
+		_winname = ''
+		if (WinExist( _pgpWinNameA) == @TRUE)
+			_winname = _pgpWinNameA
+		else
+			if (WinExist( _pgpWinNameB) == @TRUE)
+				_winname = _pgpWinNameB
+			endif
+		endif
+		if strlen(_winname) > 0
+			WinActivate( _winname)
+			SendKeysTo( _winname, str)
+			if (WinExist( _pgpWinName2) == @TRUE) then SendKeysTo( _pgpWinName2, str)
+	;		TimeDelay(1)
+	;		SendKeysTo( _pgpWinNameA, "{TAB}{TAB}{TAB}")
+	;		TimeDelay(1)
+			SendKeysTo( _winname, "{ENTER}")
+			if (WinExist( _pgpWinName2) == @TRUE) then SendKeysTo( _pgpWinName2, "{ENTER}")
+			_cnt = _cnt + 1
+			break
+		endif
+	endif
+	msNow = GetTickCount()         ; Returns number of clock ticks used by Windows since Windows started.
+	msDiff = msNow - msBegin
+	if ( (_cnt > _cntMax) || (msDiff > msMax) ) then exit
+	BoxCaption(1, "%_cnt% of %_cntMax% / %msDiff% of %msMax%")
+	TimeDelay(1)
+end while
+
+exit
+
+
+

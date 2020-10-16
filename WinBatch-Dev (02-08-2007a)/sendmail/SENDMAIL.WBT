@@ -1,0 +1,236 @@
+; sendmail.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_wName = "sendmail"
+wName = "%_wName%.wbt"
+
+_tempPath = "C:\MY DOCUMENTS"
+
+_quote = Num2Char( 34)
+
+_tempPath = StrReplace( StrCat( _tempPath, "\"), "\\", "\")
+
+_mserver  = "mail.hal-smalltalker.com"
+_whofrom  = "rahorn@shl.com"
+_whoto  = "wireless@hal-smalltalker.com"
+_ccto  = _whoto
+_dasubj = "Re:"
+_dafile  = "%_tempPath%FYI - I have to leave early a minimum of twice a week....txt"
+
+_toToken = "To:"
+_subjToken = "Subject:"
+
+_specialCmdLineOption = "-f"
+
+_b_specialCmdLineOptionGiven = @FALSE
+
+if IsDefined( param1)
+	; param1 is the SMTP server name or IP address
+	_mserver = param1
+Else
+	_mserver = AskLine(wName, "SMTP Address? %_mserver%", _mserver)
+Endif
+
+if IsDefined( param2)
+	; param2 is the e-mail From address
+	_whofrom = param2
+Else
+	_whofrom = AskLine(wName, "E-Mail From Address? %_whofrom%", _whofrom)
+Endif
+
+; Debug code - remove the following 2 lines once debugging has been completed.
+param3 = _specialCmdLineOption
+param4 = _dafile
+
+if IsDefined( param3)
+	; param3 is the e-mail To address
+	if (Strcmp( param3, _specialCmdLineOption) == 0) && (IsDefined( param4)) && (FileExist( param4) <> @FALSE)
+		_dafile = param4
+		Gosub parseMessageTemplateFile
+		_b_specialCmdLineOptionGiven = @TRUE
+	else
+		_whoto = param3
+	endif
+Else
+	_whoto = AskLine(wName, "E-Mail To Address? %_whoto%", _whoto)
+Endif
+
+if IsDefined( param4)
+	; param4 is the e-mail Subject line
+	_dasubj = param4
+Else
+	_dasubj = AskLine(wName, "E-Mail Subject Line? (%_dasubj%)", _dasubj)
+Endif
+
+if _b_specialCmdLineOptionGiven <> @TRUE
+	if IsDefined( param5)
+		; param5 is the e-mail message file name
+		_dafile = param5
+	Else
+		_dafile = AskLine(wName, "Message file name with path? (%_dafile%)", _dafile)
+	Endif
+	
+	if (FileExist( _dafile) == @FALSE)
+		Message( "ERROR", "Invalid or Missing file named (%_dafile%)")
+	endif
+endif
+
+BoxCaption( 1, wName)
+
+Gosub sendMail
+
+Gosub logMail
+
+exit
+
+
+; rc = smtpSendFile( _mserver, _whofrom, _whoto, _dasubj, _dafile)
+
+:logMail
+BoxCaption( 1, StrCat( wName, "Appending to LOG File..."))
+new = FileOpen( StrCat( _tempPath, _wName, ".log"), "APPEND")
+
+if IsDefined( _mserver)
+	FileWrite( new, StrCat( TimeDate(), " : _mserver=(", _mserver, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for _mserver"))
+endif
+
+if IsDefined( _whofrom)
+	FileWrite( new, StrCat( TimeDate(), " : _whofrom=(", _whofrom, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for _whofrom"))
+endif
+
+if IsDefined( _whoto)
+	FileWrite( new, StrCat( TimeDate(), " : _whoto=(", _whoto, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for _whoto"))
+endif
+
+if IsDefined( _dasubj)
+	FileWrite( new, StrCat( TimeDate(), " : _dasubj=(", _dasubj, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for _dasubj"))
+endif
+
+if IsDefined( _dafile)
+	FileWrite( new, StrCat( TimeDate(), " : _dafile=(", _dafile, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for _dafile"))
+endif
+
+if IsDefined( rc_sendMail)
+	FileWrite( new, StrCat( TimeDate(), " : rc_sendMail=(", rc_sendMail, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for rc_sendMail"))
+endif
+
+if IsDefined( _wxGetLastErr)
+	FileWrite( new, StrCat( TimeDate(), " : _wxGetLastErr=(", _wxGetLastErr, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for _wxGetLastErr"))
+endif
+
+if IsDefined( rc_sendMail_cc)
+	FileWrite( new, StrCat( TimeDate(), " : rc_sendMail_cc=(", rc_sendMail_cc, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for rc_sendMail_cc"))
+endif
+
+if IsDefined( _wxGetLastErr_cc)
+	FileWrite( new, StrCat( TimeDate(), " : _wxGetLastErr=(", _wxGetLastErr_cc, ")"))
+else
+	FileWrite( new, StrCat( TimeDate(), " : Missing a value for _wxGetLastErr_cc"))
+endif
+
+FileWrite( new, "========================================")
+FileWrite( new, "")
+FileClose(new)
+return
+
+
+:sendMail
+BoxCaption( 1, StrCat( wName, "_mserver=(%_mserver%), _whofrom=(%_whofrom%), _whoto=(%_whoto%)"))
+ErrorMode(@OFF)
+rc_sendMail = smtpSendFile( _mserver, _whofrom, _whoto, _dasubj, _dafile)
+ErrorMode(@CANCEL)
+
+If rc_sendMail <> @TRUE
+	_wxGetLastErr = wxGetLastErr()
+	rc_sendMail = "@FALSE"
+;	Message( "ERROR", "SMTP error? rc=%rc%")
+else
+	rc_sendMail = "@TRUE"
+Endif
+
+ErrorMode(@OFF)
+rc_sendMail_cc = smtpSendFile( _mserver, _whofrom, _ccto, _dasubj, _dafile)
+ErrorMode(@CANCEL)
+
+If rc_sendMail_cc <> @TRUE
+	_wxGetLastErr_cc = wxGetLastErr()
+	rc_sendMail_cc = "@FALSE"
+;	Message( "ERROR", "SMTP error? rc=%rc%")
+else
+	rc_sendMail_cc = "@TRUE"
+Endif
+return
+
+
+:parseMessageTemplateFile
+Drop( _toValue, _subjValue)
+_fin = FileOpen( _dafile, "READ")
+;:pmtf_loop
+while @TRUE             ; Loop till break do us end
+	_aLine = FileRead( _fin)
+	If (_aLine == "*EOF*") Then Break
+	_i = StrIndexNc( _aLine, _toToken, 1, @FWDSCAN)
+	if _i <> 0
+		_toValue = StrTrim( StrSub( _aLine, _i + StrLen( _toToken) + 1, StrLen( _aLine) - StrLen( _toToken) - 1))
+		sd_str = "_toValue"
+		Gosub stripDelims
+		if (IsDefined( _subjValue))
+			Break
+		endif
+	endif
+	_i = StrIndexNc( _aLine, _subjToken, 1, @FWDSCAN)
+	if _i <> 0
+		_subjValue = StrTrim( StrSub( _aLine, _i + StrLen( _subjToken) + 1, StrLen( _aLine) - StrLen( _subjToken) - 1))
+		sd_str = "_subjValue"
+		Gosub stripDelims
+		if (IsDefined( _toValue))
+			Break
+		endif
+	endif
+	If (IsDefined( _toValue)) && (IsDefined( _subjValue)) Then Break
+endwhile
+FileClose( _fin)
+If (IsDefined( _toValue)) && (IsDefined( _subjValue))
+	Drop( param5)
+	_whoto = _toValue
+	_dasubj = _subjValue
+	_dafile = param4
+	Drop( param3)
+	Drop( param4)
+endif
+return
+
+
+:stripDelims
+; Input/Output sd_str ... holds the name of the string variable being processed
+; Temp sd_tcf ........... holds the first char from %sd_str%
+; Temp sd_tclen ......... holds the length of %sd_str%
+; Temp sd_tcl ........... holds the last char from %sd_str%
+sd_tcf = StrSub( %sd_str%, 1, 1)
+sd_tclen = StrLen( %sd_str%)
+sd_tcl = StrSub( %sd_str%, sd_tclen, 1)
+if sd_tcf == sd_tcl
+	%sd_str% = StrSub( %sd_str%, 2, sd_tclen - 2)
+endif
+Drop( sd_tcf, sd_tclen, sd_tcl)
+return
+

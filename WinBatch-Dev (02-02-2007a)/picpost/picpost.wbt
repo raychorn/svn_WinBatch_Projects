@@ -1,0 +1,67 @@
+; picpost.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_delays = 1
+
+url_wName = "picpost.wbt"
+
+_dir_name = "E:\pics\www.picpost.com\"
+
+_pattern = "0*.*"
+
+_prefix = "asian-"
+
+If param0 > 0
+	; param1 is the directory name
+	_dir_name = param1
+Else
+	_dir_name = AskLine(url_wName, "Pics Path? %_dir_name%", _dir_name)
+Endif
+
+If param0 > 1
+	; param2 is the pattern to match
+	_pattern = param2
+Else
+	_pattern = AskLine(url_wName, "File Pattern? %_pattern%", _pattern)
+Endif
+
+If param0 > 2
+	; param3 is the file prefix to use
+	_prefix = param3
+Else
+	_prefix = AskLine(url_wName, "File Prefix? %_prefix%", _prefix)
+Endif
+
+BoxCaption(1,url_wName)
+
+_dir_name = StrReplace( StrCat( _dir_name, "\"), "\\", "\")
+
+_filepath = StrCat( _dir_name, _pattern)
+
+_files = FileItemize( _filepath)
+
+_count = ItemCount( _files, @TAB)
+
+_newfilepath = StrCat( _dir_name, StrCat( _prefix, _pattern))
+
+Message( "DEBUG", "_dir_name=%_dir_name%, _pattern=%_pattern%, _prefix=%_prefix%, _count=%_count%, _filepath=%_filepath%, _newfilepath=%_newfilepath%")
+
+;FileRename( _filepath, _newfilepath)
+
+For i = 1 to _count
+	_f = ItemExtract( i, _files, @TAB)
+	_p = StrCat( _dir_name, _f)
+	_n = StrCat( _dir_name, StrCat( _prefix, _f))
+;	 _n = StrCat( _prefix, _f)
+
+	BoxCaption(1, "%url_wName% - %_p% --> %_n%")
+
+	FileRename( _p, _n)
+Next
+
+exit
+
+

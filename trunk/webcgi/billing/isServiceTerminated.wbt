@@ -1,0 +1,11 @@
+:isServiceTerminated
+
+_field_name = "SERVICE-TERMINATED="
+
+Gosub getCustomerRecordField
+
+_isServiceTerminated = (StrLen( _aField) > 0)
+
+return
+
+

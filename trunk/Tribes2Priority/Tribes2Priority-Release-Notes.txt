@@ -1,0 +1,19 @@
+Quick readme on this release of Tribes2Priority.EXE - The Tribes2 Utility to Make Tribes2 the Highest Priority.
+
+-------------------
+Installation
+-------------------
+
+Make a folder under C:\Program Files or the like and then double click Tribes2Priority.exe
+
+Works ONLY with WinNT 4.0 and Win2000 - this works GREAT for those running the Client and works best for Servers when you don't run Tribes2 Server as a Service.
+
+---------------------
+Contact
+---------------------
+
+This is an early release, more features to come.  
+Please send comments and bug reports to 
+halsmalltalker@hotmail.com
+
+Thank you and enjoy!

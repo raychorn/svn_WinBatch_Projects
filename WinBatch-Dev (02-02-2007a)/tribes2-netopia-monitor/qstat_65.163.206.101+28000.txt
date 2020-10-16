@@ -1,0 +1,3 @@
+T2S`65.163.206.101:28000`Cip's MAYHEM! |Clan FAT|`Katabatic`40`2`40`0
+queryversion=VER5`net_protocol=39`minimum_net_protocol=39`build_version=23115`game=base`mission=Capture the Flag`status=5`dedicated=1`linux=1`bot_count=2`cpu_speed=750`info=Welcome. Play with maturity or don't play at all. Vehicle stealing = kick -- don't do it. Admin: Ciparis|FAT ciparis@clanfat.org`numteams=2
+

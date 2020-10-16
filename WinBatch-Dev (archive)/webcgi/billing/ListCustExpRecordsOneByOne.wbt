@@ -1,0 +1,38 @@
+:ListCustExpRecordsOneByOne
+
+t_test_mm_i = StrIndex( %sql_alias%3, "/", 1, @FWDSCAN)
+If t_test_mm_i > 0
+    t_test_exp_mm = StrSub( %sql_alias%3, 1, t_test_mm_i - 1)
+
+    If t_test_exp_mm < t_test_mm
+        WebOut('<OPTION VALUE="', 0)
+        If IsDefined( %sql_alias%1) == @YES
+            WebOut(%sql_alias%1, 0)
+            WebOut(_CustomerList_delimiter, 0)
+            i_max_string_len = StrLen( %sql_alias%1)
+            If (i_max_string_len + StrLen( %sql_alias%2) + 1) > _max_string_len
+                WebOut( StrSub( %sql_alias%2, 1, _max_string_len - i_max_string_len - 3), 0)
+                WebOut('...', 0)
+            Else
+                WebOut(%sql_alias%2, 0)
+            Endif
+            Drop( i_max_string_len)
+        Endif
+        WebOut('">%_record_count%: ', 0)
+        If IsDefined( %sql_alias%2) == @YES
+            WebOut(%sql_alias%2, 0)
+        Endif
+        WebOut(' Exp. ', 0)
+        WebOut(%sql_alias%3, 0)
+        WebOut('</OPTION>', _html_crlf)
+
+        _record_count = _record_count + 1
+    Endif
+    
+    Drop( t_test_exp_mm)
+Endif
+
+Drop( t_test_mm_i)
+
+return
+

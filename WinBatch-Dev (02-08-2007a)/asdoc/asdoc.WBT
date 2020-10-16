@@ -1,0 +1,52 @@
+;************************************************************************
+; asdoc.wbt
+; 
+;************************************************************************
+
+_wname = "asdoc v1.0.0"
+wname = "%_wname% (c)1990-2007 Hierarchical Applications Limited, All Rights Reserved."
+
+#DefineFunction makeFolders(dir)
+	IntControl(73, 2,0,0,0)
+
+	_fname = ""
+	for i = 1 to ItemCount( dir, "\")
+		tok = ItemExtract( i, dir, "\")
+		_fname = StrCat(_fname, tok, "\")
+		if (DirExist(_fname) == @False) then
+			DirMake(_fname)
+		endif
+	next
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+flags = 1|2
+basedir = AskDirectory("Select Working Directory (Source Folder)", "Z:\", "","Are you sure?",flags)
+
+Flex_dir = "C:\Program Files\Adobe\Flex Builder 2"
+
+FlexSDK_dir = "%Flex_dir%\Flex SDK 2"
+
+FlexSDK_bin_dir = "%FlexSDK_dir%\bin"
+
+AsDocs_dir = "%FlexSDK_bin_dir%\asdoc.exe"
+
+AppClasses_dir = basedir
+
+Output_dir = "%basedir%output\AppDocs"
+
+makeFolders(Output_dir)
+
+ShellExecute( AsDocs_dir, '-doc-sources %AppClasses_dir% -window-title "ASDOC" -output %Output_dir%', FlexSDK_bin_dir, @NORMAL, @WAIT)
+
+exit
+
+

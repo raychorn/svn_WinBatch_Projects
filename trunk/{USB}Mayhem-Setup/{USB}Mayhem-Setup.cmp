@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src={USB}Mayhem-Setup.wbt
+Targ=P:\myWinbatch\{USB}Mayhem-Setup\{USB}TAC2Mayhem_v172-Setup.exe
+Icon=P:\myWinbatch\tribes2missions\won.ico
+CmpVersion=2
+[Options]
+TechWebPage=http://tac2tribesmayhem.com
+RunHidden=0
+[Version Info]
+Comments=http://tac2tribesmayhem.com
+CompanyName=HAL Smalltalker, Inc.
+FileDescription={USB}Mayhem-Setup Vers 1.72
+FileVersion=1.72
+InternalName={USB}Mayhem-Setup.exe
+LegalCopyright=(c). Copyright 1990-2001 All Rights Reserved
+LegalTrademarks=http://tac2tribesmayhem.com
+OriginalFilename={USB}Mayhem-Setup.exe
+ProductName={USB}Mayhem-Setup
+ProductVersion=1.72
+[Other Files]
+Count=1
+File001=P:\myWinbatch\{USB}Mayhem-Setup\{USB}TAC2Mayhem_v172.exe
+[Extenders]
+Count=0

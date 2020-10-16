@@ -1,0 +1,187 @@
+;************************************************************************
+; code-locker.wbt
+; 
+;************************************************************************
+
+AddExtender("WWZIP34I.DLL")
+
+#DefineFunction ObscurePhrase(str) 
+	IntControl(73, 2,0,0,0)
+	t = ""
+	
+	j = StrLen(str)
+	for i = 0 to j - 1
+		_ch = StrSub( str, j - i, 1)
+		_ch = Num2Char(Char2Num(_ch) + 128)
+		t = StrCat(t, _ch)
+	next
+	Return(t)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction UnObscurePhrase(t)
+	IntControl(73, 2,0,0,0)
+	str = ""
+	
+	j = StrLen(t)
+	for i = 0 to j - 1
+		_ch = StrSub( t, j - i, 1)
+		_ch = Num2Char(Char2Num(_ch) - 128)
+		str = StrCat(str, _ch)
+	next
+	Return(str)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction CheckSum(str)
+	IntControl(73, 2,0,0,0)
+	cksum = 0
+	
+	j = StrLen(str)
+	for i = 1 to j
+		_ch = StrSub( str, i, 1)
+		cksum = cksum + Char2Num(_ch)
+	next
+	Return(cksum)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction CleanupA(b)
+	IntControl(73, 2,0,0,0)
+	
+	if FileExist( "codelocker.zip") then FileDelete( "codelocker.zip")
+	if FileExist( "7z.exe") then FileDelete( "7z.exe")
+	if FileExist( "7-zip.dll") then FileDelete( "7-zip.dll")
+	if FileExist( "7z.dll") then FileDelete( "7z.dll")
+
+	Return(@True)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction CleanupB(fName)
+	IntControl(73, 2,0,0,0)
+	
+	FileDelete( "%fName%\*.*")
+	DirRemove( fName)
+
+	Return(@True)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+t_pw = "ïïâ¤°¶¶·Àïëóéó"
+
+_commands = "ZIP"
+
+;_cmd = "ZIP"
+_cmd = ""
+_path = ""
+
+If param0 > 0
+	_cmd = param1
+Endif
+
+
+if (_cmd == "ZIP")
+	_myPathName = IntControl( 1004, 0, 0, 0, 0)
+	_myPath = FilePath( _myPathName)
+	flags = 1|2
+	_path = AskDirectory("ZIP Which Folder ?", _myPath, _myPath, "Are you sure ?", flags)
+	if (StrSub( _path, StrLen(_path), 1) <> "\") then _path = StrCat(_path,"\")
+	if (StrSub( _myPath, StrLen(_myPath), 1) <> "\") then _myPath = StrCat(_myPath,"\")
+	goto RunZipper
+endif
+
+:Execute
+
+; unzip into temp folder based on the ENV setting for the temp folder.
+tempPath = Environment("TMP")
+if (StrLen(tempPath) == 0) then tempPath = Environment("TEMP")
+if (StrSub( tempPath, StrLen(tempPath), 1) <> "\") then tempPath = StrCat(tempPath,"\")
+tempFolder = StrCat(tempPath,StrReplace( TimeYmdHms(), ":", "_"))
+DirMake( tempFolder)
+t_pwd = UnObscurePhrase(t_pw)
+;RunHideWait( "7z.exe", '-aoa x codelocker.zip -p%t_pwd% -o"%tempFolder%"')
+RunHideWait( "7z.exe", '-aoa x codelocker.zip -o"%tempFolder%"')
+files = FileItemize( "%tempFolder%\*.exe")
+theExe = ItemExtract( 1, files, @TAB)
+if FileExist( theExe)
+	p = ""
+	for i = 1 to param0
+		p = StrCat(p,param%i%," ")
+	next
+	CleanupA(1)
+	ErrorMode(@OFF)
+	;Message( "Debug Info", StrCat("%tempFolder%\%theExe% ",p))
+	RunWait( "%tempFolder%\%theExe%", p)
+	ErrorMode(@CANCEL)
+	CleanupB(tempFolder)
+else
+	CleanupA(1)
+	CleanupB(tempFolder)
+endif
+
+exit
+
+:RunZipper
+
+if (StrLen(_path) > 0)
+	DirChange( _path)
+	zName = "%_myPath%codelocker.zip"
+	if FileExist( zName) then FileDelete( zName)
+	xzipper = zZipFiles("R 9", zName, "*.*", "")
+	AskItemlist("ZIP Activity Report", xzipper, @TAB, @UNSORTED, @SINGLE)
+	DirChange( _myPath)
+	;7zDown(1)
+	if FileExist( "codelocker.zip")
+		RunHideWait( "7z.exe", '-aoa x codelocker.zip -o"codelocker\"')
+		FileDelete( "codelocker.zip")
+	endif
+	;7zUp(1)
+	DirChange( "codelocker")
+	t_pwd = UnObscurePhrase(t_pw)
+	;RunHideWait( "..\7z.exe", 'a -tzip -mx9 -p%t_pwd% "..\codelocker.zip" -r')
+	RunHideWait( "..\7z.exe", 'a -tzip -mx9 "..\codelocker.zip" -r')
+	FileDelete( "*.*")
+	DirChange( "..")
+	DirRemove( "codelocker")
+endif
+

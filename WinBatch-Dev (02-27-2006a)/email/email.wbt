@@ -1,0 +1,118 @@
+; email.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_wName = "email"
+wName = "%_wName%.wbt"
+
+_tempPath = "C:\TEMP\"
+
+_quote = Num2Char( 34)
+
+_tempPath = StrReplace( StrCat( _tempPath, "\"), "\\", "\")
+
+_mserver  = "mail.hal-smalltalker.com"
+_whofrom  = "single@smalltalker.com"
+_whoto  = "wireless@hal-smalltalker.com"
+_ccto  = _whoto
+_dasubj = "Re:"
+_dafile  = "%_tempPath%FYI - I have to leave early a minimum of twice a week....txt"
+
+_toToken = "To:"
+_subjToken = "Subject:"
+
+_specialCmdLineOption = "-f"
+
+_b_specialCmdLineOptionGiven = @FALSE
+
+BoxCaption( 1, wName)
+
+_ftypes = "All Files|*.txt"
+_fpath = AskFileName( "Message text File?", "C:\", _ftypes, "", 1)
+
+if StrLen( _fpath) > 0
+	toStr = _whoto
+	fromStr = _whofrom
+	smtpStr = _mserver
+	
+	msgStr = _fpath
+	
+	gosub EMailDialog
+	
+	_dasubj = subjStr
+	_dafile = msgStr
+	
+	_whoto = toStr
+	_whofrom = fromStr
+	_mserver = smtpStr
+	
+	if ButtonPushed <> 2
+		Gosub sendMail
+	else
+		message( "Message Aborted", "toStr=%toStr%, fromStr=%fromStr%, smtpStr=%smtpStr%, subjStr=%subjStr%, msgStr=%msgStr%")
+	endif
+endif
+
+exit
+
+
+; rc = smtpSendFile( _mserver, _whofrom, _whoto, _dasubj, _dafile)
+
+:sendMail
+BoxCaption( 1, StrCat( wName, "_mserver=(%_mserver%), _whofrom=(%_whofrom%), _whoto=(%_whoto%)"))
+ErrorMode(@OFF)
+rc_sendMail = smtpSendFile( _mserver, _whofrom, _whoto, _dasubj, _dafile)
+ErrorMode(@CANCEL)
+
+If rc_sendMail <> @TRUE
+	_wxGetLastErr = wxGetLastErr()
+	rc_sendMail = "@FALSE"
+	Message( "ERROR", "SMTP error? rc=%rc%")
+else
+	rc_sendMail = "@TRUE"
+Endif
+
+ErrorMode(@OFF)
+rc_sendMail_cc = smtpSendFile( _mserver, _whofrom, _ccto, _dasubj, _dafile)
+ErrorMode(@CANCEL)
+
+If rc_sendMail_cc <> @TRUE
+	_wxGetLastErr_cc = wxGetLastErr()
+	rc_sendMail_cc = "@FALSE"
+	Message( "ERROR", "SMTP error? rc=%rc%")
+else
+	rc_sendMail_cc = "@TRUE"
+Endif
+return
+
+
+:EMailDialog
+
+MyEMailGizmoFormat=`WWWDLGED,5.0`
+
+MyEMailGizmoCaption=`E-Mail Gizmo`
+MyEMailGizmoX=83
+MyEMailGizmoY=102
+MyEMailGizmoWidth=250
+MyEMailGizmoHeight=100
+MyEMailGizmoNumControls=11
+
+MyEMailGizmo01=`34,0,36,DEFAULT,STATICTEXT,DEFAULT,"To:"`
+MyEMailGizmo02=`70,0,162,DEFAULT,EDITBOX,toStr,"To Address"`
+MyEMailGizmo03=`34,14,36,DEFAULT,STATICTEXT,DEFAULT,"From:"`
+MyEMailGizmo04=`70,14,162,DEFAULT,EDITBOX,fromStr,"From Address"`
+MyEMailGizmo05=`34,28,36,DEFAULT,STATICTEXT,DEFAULT,"SMTP Server:"`
+MyEMailGizmo06=`70,28,162,DEFAULT,EDITBOX,smtpStr,"mail.hal-smalltalker.com"`
+MyEMailGizmo07=`34,42,36,DEFAULT,STATICTEXT,DEFAULT,"Subject:"`
+MyEMailGizmo08=`70,42,162,DEFAULT,EDITBOX,subjStr,"Subject"`
+MyEMailGizmo09=`70,56,162,DEFAULT,EDITBOX,msgStr,""`
+MyEMailGizmo10=`70,70,64,DEFAULT,PUSHBUTTON,DEFAULT,"Submit",1`
+MyEMailGizmo11=`168,70,64,DEFAULT,PUSHBUTTON,DEFAULT,"Cancel",2`
+
+ButtonPushed=Dialog("MyEMailGizmo")
+
+return
+
+

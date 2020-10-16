@@ -1,0 +1,16 @@
+2006:02:01:20:21:57 BEGIN :: renameFiles v1.0 [Rename Files] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved. 
+
+_pathTarget = [\\riker\Riker_J\Backups\@SVN]
+_filePattern = [backup_volume.bkf]
+2006:02:01:20:23:25 num_lst = [1], _dName = [\\riker\Riker_J\Backups\@SVN\backup_volume.bkf]
+2006:02:01:20:31:24 BEGIN :: renameFiles v1.0 [Rename Files] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved. 
+
+_pathTarget = [\\riker\Riker_J\Backups\@SVN]
+_filePattern = [backup_volume.bkf]
+2006:02:01:20:31:28 num_lst = [1], _dName = [\\riker\Riker_J\Backups\@SVN\backup_volume.bkf]
+2006:02:01:20:32:32 BEGIN :: renameFiles v1.0 [Rename Files] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved. 
+
+_pathTarget = [\\riker\Riker_J\Backups\@SVN]
+_filePattern = [backup_volume.bkf]
+2006:02:01:20:32:35 num_lst = [1], _dName = [\\riker\Riker_J\Backups\@SVN\backup_volume.bkf]
+2006:02:01:20:32:59 Rename = [\\riker\Riker_J\Backups\@SVN\backup_volume.bkf] to [\\riker\Riker_J\Backups\@SVN\backup_volume (2006_02_01_20_32_38).bkf]

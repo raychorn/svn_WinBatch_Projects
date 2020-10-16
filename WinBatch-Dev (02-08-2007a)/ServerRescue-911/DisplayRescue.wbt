@@ -1,0 +1,47 @@
+; DisplayRescue.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+_appName = "DisplayRescue"
+
+wName00 = "DisplayRescue"
+
+wName1 = "Invalid Display Settings"
+wName2 = "Change Display"
+wName3 = "Display Properties"
+
+while (WinExist(wName1) == @TRUE)
+
+	If (WinExist(wName1) == @TRUE)
+		ErrorMode(@OFF)
+		WinActivate(wName1)
+		SendKeysTo(wName1, `{ESC}`)
+		ErrorMode(@CANCEL)
+	Endif
+
+endwhile
+
+while (WinExist(wName2) == @TRUE)
+
+	If (WinExist(wName2) == @TRUE)
+		ErrorMode(@OFF)
+		WinActivate(wName2)
+		SendKeysTo(wName2, `{ESC}`)
+		ErrorMode(@CANCEL)
+	Endif
+
+endwhile
+
+while (WinExist(wName3) == @TRUE)
+
+	If (WinExist(wName3) == @TRUE)
+		ErrorMode(@OFF)
+		WinActivate(wName3)
+		SendKeysTo(wName3, `{ESC}`)
+		ErrorMode(@CANCEL)
+	Endif
+
+endwhile
+
+exit
+

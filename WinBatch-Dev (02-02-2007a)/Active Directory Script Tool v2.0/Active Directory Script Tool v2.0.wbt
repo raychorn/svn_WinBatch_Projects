@@ -1,0 +1,611 @@
+; Active Directory Script Tool v2.0.wbt
+
+;Debug( @ON)
+
+AddExtender("wwctl32i.dll")
+AddExtender("WWINT33I.DLL")
+
+_wname = "Active Directory Script Tool v2.0"
+wname = "%_wname% (c)2004 FamiliesFirst, Inc., All Rights Reserved."
+
+CR = StrCat(Num2Char(13),Num2Char(10))
+
+_crlf = CR
+_tab = StrCat(Num2Char(9))
+
+_groupName = "Campus Staff"
+_userName = "Ray Horn"
+
+const_termServPropWinName = "Terminal Services Properties"
+
+const_partialWinNameProperties = " Properties"
+
+const_functionSearchUser = "2. Search User"
+const_functionSearchGroup = "3. Search Group"
+const_functionSearchLDAP = "1. Search LDAP"
+
+const_subFuncTermServices = "1. Terminal Services Profile"
+const_subFuncCycleLogin = "2. Disable/Enable Logins"
+const_subFuncDisableLogins = "3. Disable Logins"
+const_subFuncEnableLogins = "4. Enable Logins"
+
+const_termLine1Title = "Terminal Services User Profile"
+const_termLine1Prompt = "Profile Path ?"
+
+const_termLine2Title = "Terminal Services Home Folder"
+const_termLine2Prompt = "T:\ drive should be mapped to ?"
+
+const_termLine1 = "\\davdc01\mfprofile$\%%username%%"
+const_termLine2 = "\\davdc01\mfusers$\%%username%%"
+
+_windowName = "Active Directory Users and Computers"
+_windowName2 = "Find Users, Contacts, and Groups"
+
+const_sellLink = "C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools\%_windowName%.lnk"
+
+_tryAgainCount = 0
+_tryAgainMax = 5
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+_webdataFilename = "%_myPath%webdata.txt"
+
+_logFilename = "%_myPath%%_wname%.log"
+
+_proceedMode = @NO
+
+_distinguishedName = "OU=Program,DC=familiesfirstinc,DC=org"
+
+_url = "http://appdev/it/ldap/index.cfm?_distinguishedName=%_distinguishedName%&_scope=oneLevel&_action=csv&_debug=False"
+
+_fhandLog = FileOpen( _logFilename, "APPEND")
+
+FileWrite( _fhandLog, "================================================================================ %_crlf%")
+
+_now = TimeYmdHms()
+_nowBegin = _now
+FileWrite( _fhandLog, "%_now% BEGIN :: %wname% %_crlf%")
+
+;list = StrCat(const_functionSearchUser,@tab,const_functionSearchGroup,@tab,const_functionSearchLDAP)
+list = StrCat(const_functionSearchUser,@tab,const_functionSearchLDAP)
+item = AskItemList("Functions", list, @tab, @sorted, @single)
+
+_now = TimeYmdHms()
+FileWrite( _fhandLog, "%_now% item :: %item% %_crlf%")
+
+if item == const_functionSearchLDAP
+	Gosub runModeSelection
+
+	_distinguishedName = AskLine("LDAP Distinguished Name", "_distinguishedName ?", _distinguishedName)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% _distinguishedName :: %_distinguishedName% %_crlf%")
+
+	Gosub readFromUrl
+
+	if FileExist( _webdataFilename) == @True
+		_userName = ""
+		_fhand = FileOpen( _webdataFilename, "READ")
+		while @TRUE             ; Loop till break do us end
+			x = FileRead(_fhand)
+			If x == "*EOF*" Then Break
+			if StrLen(StrTrim( x)) > 0
+				_userName = ItemInsert( StrTrim( x), ItemCount( _userName, ","), _userName, ",")
+			endif
+		endwhile
+		FileClose(_fhand)
+	endif
+
+	_a = AskYesNo( "Accept the whole List ?", _userName)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% Accept the whole List ? :: %_a% %_crlf%")
+
+	if _a == @NO
+		groupName = AskItemList("LDAP Users", _userName, ",", @sorted, @multiple)
+	else
+		groupName = _userName
+	endif
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% groupName :: %groupName% %_crlf%")
+
+	Gosub subFunctionSelection
+
+	if ItemLocate( const_subFuncTermServices, _subFunc_item, @tab) <> 0
+		if StrLen(groupName) > 0
+			_termLine1 = AskLine( const_termLine1Title, const_termLine1Prompt, const_termLine1)
+
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_now% _termLine1 :: %_termLine1% %_crlf%")
+
+			_termLine2 = AskLine( const_termLine1Title, const_termLine1Prompt, const_termLine2)
+
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_now% _termLine2 :: %_termLine2% %_crlf%")
+
+			Gosub functionSearchUser
+		endif
+	endif
+endif
+
+if IsDefined(thisvar) == @NO
+	Gosub subFunctionSelection
+endif
+
+if IsDefined(_runMode) == @NO
+	Gosub runModeSelection
+endif
+
+if ItemLocate( const_subFuncTermServices, _subFunc_item, @tab) <> 0
+	if item == const_functionSearchUser
+		groupName = AskLine("LDAP User Name", "User Name ? %CR%(also accepts comma delimited lists of usernames)", _userName)
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% groupName :: %groupName% %_crlf%")
+
+		_termLine1 = AskLine( const_termLine1Title, const_termLine1Prompt, const_termLine1)
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% _termLine1 :: %_termLine1% %_crlf%")
+
+		_termLine2 = AskLine( const_termLine1Title, const_termLine1Prompt, const_termLine2)
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% _termLine2 :: %_termLine2% %_crlf%")
+
+		Gosub functionSearchUser
+	else
+		if item == const_functionSearchGroup
+			_groupName = AskLine("LDAP Group Name", "MemberOf ? (Group Name)", _groupName)
+
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_now% _groupName :: %_groupName% %_crlf%")
+
+			Gosub functionSearchGroup
+		endif
+	endif
+endif
+
+if WinExist(_windowName2) == @True
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% WinExist(%_windowName2%) :: @True %_crlf%")
+
+	SendKeysTo(_windowName2, "!f")
+	TimeDelay(1)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% Closing :: %_windowName2% %_crlf%")
+	
+	SendKeysTo(_windowName2, "c")
+	TimeDelay(1)
+endif
+
+if WinExist(_windowName) == @True
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% WinExist(%_windowName%) :: @True %_crlf%")
+
+	SendKeysTo(_windowName, "!f")
+	TimeDelay(1)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% Closing :: %_windowName% %_crlf%")
+	
+	SendKeysTo(_windowName, "x")
+	TimeDelay(1)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% WinWaitClose(%_windowName%) %_crlf%")
+
+	WinWaitClose(_windowName)
+endif
+
+_today = TimeDate()
+_now = TimeYmdHms()
+_ds = TimeDiffSecs(_now, _nowBegin)
+_dsv = _ds
+_dv = 60 * 60
+_hh = Int(_dsv / _dv)
+_dsv = _dsv - (_hh * _dv)
+_dv = 60
+_mm = Int(_dsv / _dv)
+_dsv = _dsv - (_mm * _dv)
+_ss = _dsv
+if _hh <= 9
+	_hh = "0%_hh%"
+endif
+if _mm <= 9
+	_mm = "0%_mm%"
+endif
+if _ss <= 9
+	_ss = "0%_ss%"
+endif
+_t = "%_hh%:%_mm%:%_ss%"
+FileWrite( _fhandLog, "%_today% END :: %wname% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS) %_crlf%")
+
+FileClose(_fhandLog)
+
+Exit
+
+
+:openRuntimeLog
+	if FileExist( _logFilename) == @TRUE
+		Run("notepad.exe", _logFilename)
+		_windowNameLog = "%_logFilename% - Notepad"
+		if WinWaitExist(_windowNameLog, 30) == @TRUE
+			SendKeysTo(_windowNameLog, "!e")
+			TimeDelay(1)
+	
+			SendKeysTo(_windowNameLog, "a")
+			TimeDelay(1)
+	
+			SendKeysTo(_windowNameLog, "^{END}")
+			TimeDelay(1)
+		endif
+	endif
+return
+
+
+:subFunctionSelection
+	_subFunc_list = StrCat(const_subFuncTermServices,@tab,const_subFuncCycleLogin,@tab,const_subFuncDisableLogins,@tab,const_subFuncEnableLogins)
+	_subFunc_item = AskItemList("Sub Functions", _subFunc_list, @tab, @sorted, @multiple)
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% _subFunc_item :: %_subFunc_item% %_crlf%")
+return
+
+
+:runModeSelection
+	_runMode = AskYesNo( "Want to run this LIVE and commit changes to LDAP ?", "Are you sure about this ?")
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% _runMode :: %_runMode% %_crlf%")
+return
+
+
+:functionSearchUser
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% Entering :: functionSearchUser() %_crlf%")
+
+	_iMaxCount = ItemCount( groupName, ",")
+	for _i = 1 to _iMaxCount
+		_groupName = ItemExtract(_i, groupName, ",")
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% #%_i% of %_iMaxCount% _groupName :: %_groupName% %_crlf%")
+
+		if ( (_i > 1) && (_proceedMode == @NO) ) then
+			_proceedMode = AskYesNo( "Want to run this without stopping after each user ?", "Are you sure about this ?")
+
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_now% _proceedMode :: %_proceedMode% %_crlf%")
+
+		endif
+		Gosub functionSearchGroup
+	next
+
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% Returning :: functionSearchUser() %_crlf%")
+
+return
+
+
+:functionSearchGroup
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_now% Entering :: functionSearchGroup() %_crlf%")
+
+	if WinExist(_windowName) == @FALSE
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% WinExist(%_windowName%) :: @FALSE %_crlf%")
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% const_sellLink :: %const_sellLink% %_crlf%")
+
+		ShellExecute(const_sellLink, "", "", @NORMAL, "")
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% WinWaitExist(%_windowName%, 30) %_crlf%")
+
+		_retCode = WinWaitExist(_windowName, 30)
+		TimeDelay(1)
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% _retCode :: %_retCode% %_crlf%")
+	
+	endif
+	
+	if WinExist(_windowName2) == @FALSE
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% WinExist(%_windowName2%) :: @FALSE %_crlf%")
+
+		SendKeysTo(_windowName, "!a")
+		TimeDelay(1)
+		
+		SendKeysTo(_windowName, "i")
+		TimeDelay(1)
+	endif
+	
+	; "Find Users, Contacts, and Groups"
+	if WinExist(_windowName2) == @True
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% WinExist(%_windowName2%) :: @True %_crlf%")
+:tryAgain
+		SendKeysTo(_windowName2, "!a")
+		TimeDelay(1)
+
+		_aUserName = _groupName
+		_aFullName = _aUserName
+		if item == const_functionSearchLDAP
+			_aUserName =  ItemExtract( 2, _groupName, "|")
+			_aFullName = ItemExtract( 1, _groupName, "|")
+		endif
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% _aUserName/_aFullName :: %_aUserName%/%_aFullName% %_crlf%")
+
+		SendKeysTo(_windowName2, _aUserName)
+		TimeDelay(1)
+		
+		SendKeysTo(_windowName2, "{ENTER}")
+		TimeDelay(1)
+		
+		SendKeysTo(_windowName2, "!e")
+		TimeDelay(1)
+		
+		SendKeysTo(_windowName2, "a")
+		TimeDelay(1)
+		
+		SendKeysTo(_windowName2, "!f")
+		TimeDelay(1)
+		
+		SendKeysTo(_windowName2, "r")
+		TimeDelay(1)
+		
+		; retrieve the displayName
+		_windowName3 = "Nothing"
+		b = _windowName3
+		a = WinItemize()
+		_k = 1
+		while _k <= ItemCount( a, @tab)
+			_b = ItemExtract(_k, a, @tab)
+			_pos = StrIndexNc(_b, const_partialWinNameProperties, 1, @FWDSCAN)
+			if _pos == 0
+				a = ItemRemove( _k, a, @tab)
+			else
+				_windowName3 = _b
+				break
+				_k = _k + 1
+			endif
+		endwhile
+	;	b = AskItemList("Choose a Window",a,@tab,@unsorted,@single)
+		if ( IsDefined(_windowName3) && (WinExist(_windowName3) == @True) )
+			b = _windowName3
+		else
+			SendKeysTo(_windowName2, "!n")
+			TimeDelay(1)
+
+			SendKeysTo(_windowName2, "^{HOME}")
+			TimeDelay(1)
+
+			SendKeysTo(_windowName2, "{DOWN}")
+			TimeDelay(1)
+
+			_tryAgainCount = _tryAgainCount + 1
+
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_now% Warning - Not able to locate the user's window :: Goto tryAgain [Attempt %_tryAgainCount% of %_tryAgainMax%] %_crlf%")
+
+			if _tryAgainCount < _tryAgainMax
+				Goto tryAgain
+			else
+				_now = TimeYmdHms()
+				FileWrite( _fhandLog, "%_now% Warning - Not able to locate the user's window :: Giving Up ! %_crlf%")
+			endif
+		endif
+	;	Gosub discoverWindows
+
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% _windowName3 :: %_windowName3% %_crlf%")
+
+	endif
+
+	if WinExist(_windowName3) == @True
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_now% WinExist(%_windowName3%) :: @True %_crlf%")
+
+		if item == const_functionSearchGroup
+			SendKeysTo(_windowName3, "+{TAB}")
+			TimeDelay(1)
+			
+			SendKeysTo(_windowName3, "{RIGHT}")
+			TimeDelay(1)
+		endif
+	
+		if ( (item == const_functionSearchUser) || (item == const_functionSearchLDAP) )
+			SendKeysTo(_windowName3, "+{TAB}")
+			TimeDelay(1)
+	
+			SendKeysTo(_windowName3, "{UP}")
+			TimeDelay(1)
+	
+			SendKeysTo(_windowName3, "{RIGHT}")
+			TimeDelay(1)
+	
+			SendKeysTo(_windowName3, "!P")
+			TimeDelay(1)
+	
+			SendKeysTo(_windowName3, _termLine1)
+			TimeDelay(1)
+	
+			SendKeysTo(_windowName3, "!T")
+			TimeDelay(1)
+	
+			SendKeysTo(_windowName3, _termLine2)
+			TimeDelay(1)
+	
+			if _runMode == @YES
+				SendKeysTo(_windowName3, "{ENTER}")
+				TimeDelay(1)
+
+				if WinExist(const_termServPropWinName) == @True
+					_now = TimeYmdHms()
+					FileWrite( _fhandLog, "%_now% WinExist(%const_termServPropWinName%) :: @True %_crlf%")
+
+					SendKeysTo(const_termServPropWinName, "{ENTER}")
+					TimeDelay(1)
+				endif
+			else
+				SendKeysTo(_windowName3, "{ESC}")
+				TimeDelay(1)
+			endif
+
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_now% WinWaitClose(%_windowName3%) %_crlf%")
+
+			WinWaitClose(_windowName3)
+	
+		endif
+	else
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% ERROR: Expected %_windowName3% %_crlf%")
+;		Message( wname, "ERROR: Expected %_windowName3% !")
+	endif
+	
+return
+
+
+:readFromUrl
+	tophandle = iBegin(0,"","")
+	datahandle = iUrlOpen(tophandle, _url)
+	if FileExist( _webdataFilename) == @True
+		FileDelete( _webdataFilename)
+	endif
+	xx = iReadData(datahandle, _webdataFilename)
+	iClose(datahandle)
+	iClose(tophandle)
+return
+
+
+:discoverWindows
+; This script creates a report on the windows visible at the time
+; the report is run.  Run the script.  Choose a top-level
+; window of interest, and it will show pertinent information
+; that may be necessary to use the Control Manager extender.
+
+; Note that Tabbed dialogs sometimes must be displayed before
+; their controls are brought into existence.  So when using
+; tabbed dialogs, tab to the correct dialog first.  The
+; cWndInfo example shows how to move thru a tabbed dialog.
+
+fname="%_myPath%trash.txt"
+
+;a=WinItemize()
+;b=AskItemList("Choose a Window",a,@tab,@unsorted,@single)
+
+hwnd=DllHwnd(b)
+myfile=FileOpen(fname,"WRITE")
+
+workwnd=hwnd
+gosub gettextandclass
+FileWrite(myfile,"P   C   C   C   C")
+FileWrite(myfile,"A   H   H   H   H")
+FileWrite(myfile,"R   I   I   I   I")
+FileWrite(myfile,"E   L   L   L   L")
+FileWrite(myfile,"N   D   D   D   D")
+FileWrite(myfile,strcat(strfix("T   2   3   4   5"," ",21),strfix("CLASS"," ",26),strfix("IDENT"," ",7),"TITLE"))
+
+FileWrite(myfile,strfill("-",80))
+FileWrite(myfile,strcat(strfix("TOP"," ",21),strfix(class," ",26),strfix(ident," ",7),text))
+
+gosub ProcessChildren
+FileClose(myfile)
+
+Run("notepad.exe",fname)
+return
+
+:ProcessChildren
+nextchild=cWndInfo(workwnd,8)
+ChildCount=0
+if nextchild==0
+   FileWrite(myfile,"    X                NONE")
+else
+   while nextchild
+       ChildCount=ChildCount+1
+       workwnd=nextchild
+       gosub gettextandclass
+       FileWrite(myfile," ")
+       FileWrite(myfile,strcat("    ",strfix(ChildCount," ",17),strfix(class," ",26),strfix(ident," ",7),text))
+
+       nextchild=cWndInfo(workwnd,6)
+
+       gosub ProcessGrandchildren    ; note this destroys workwnd variable....
+   endwhile
+endif
+return
+
+:ProcessGrandchildren
+grandchild=cWndInfo(workwnd,8)
+GrandCount=0
+if grandchild==0
+   FileWrite(myfile,"        X            NONE")
+else
+   while grandchild
+       GrandCount=GrandCount+1
+       workwnd=grandchild
+       gosub gettextandclass
+       FileWrite(myfile,strcat("        ",strfix(GrandCount," ",13),strfix(class," ",26),strfix(ident," ",7),text))
+
+       grandchild=cWndInfo(workwnd,6)
+
+       gosub ProcessGreatGrandChildren
+   endwhile
+endif
+
+return
+
+:ProcessGreatGrandchildren
+greatgrandchild=cWndInfo(workwnd,8)
+greatGrandCount=0
+if greatgrandchild==0
+   FileWrite(myfile,"            X        NONE")
+else
+   while greatgrandchild
+       greatGrandCount=greatGrandCount+1
+       workwnd=greatgrandchild
+       gosub gettextandclass
+       FileWrite(myfile,strcat("            ",strfix(greatGrandCount," ",9),strfix(class," ",26),strfix(ident," ",7),text))
+
+       greatgrandchild=cWndInfo(workwnd,6)
+       gosub processlevel5
+   endwhile
+endif
+
+return
+
+:ProcessLevel5
+L5child=cWndInfo(workwnd,8)
+L5Count=0
+if l5child==0
+   FileWrite(myfile,"                X    NONE")
+else
+   while l5child
+       l5count=L5Count+1
+       workwnd=l5child
+       gosub gettextandclass
+       FileWrite(myfile,strcat("                ",strfix(L5Count," ",5),strfix(class," ",26),strfix(ident," ",7),text))
+
+       l5child=cWndInfo(workwnd,6)
+
+       gosub processlevel5
+   endwhile
+endif
+
+return
+
+
+:GETTEXTANDCLASS
+text=cWndInfo(workwnd,0)
+ident=cWndInfo(workwnd,1)
+class=cWndInfo(workwnd,2)
+return   
+

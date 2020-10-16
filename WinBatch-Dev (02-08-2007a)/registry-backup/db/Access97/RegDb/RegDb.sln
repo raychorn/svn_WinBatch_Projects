@@ -1,0 +1,22 @@
+Microsoft Visual Studio Solution File, Format Version 1.00
+Project("{4F174C21-8C12-11D0-8340-0000F80270F8}") = "RegDb", "RegDb.dbp", "{94A3F151-2C29-11D3-AA47-00A0C9CE5B7E}"
+	ProjectSection(SourceCodeControl) = preProject
+		SccProjectName = \u0022$/WinBatch\u0020Projects/registry-backup/RegDb\u0022,\u0020INAAAAAA
+		SccAuxPath = \\\\Sisko\\sisko_d\\MSVS6\\VSS,
+		SccLocalPath = .
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(LocalDeployment) = postSolution
+		StartupProject = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+	GlobalSection(BuildOrder) = postSolution
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccProjectName = \u0022$/WinBatch\u0020Projects/registry-backup/RegDb\u0022,\u0020INAAAAAA
+		SccAuxPath = \\\\Sisko\\sisko_d\\MSVS6\\VSS,
+		SccLocalPath = .
+	EndGlobalSection
+	GlobalSection(DeploymentRoot) = postSolution
+	EndGlobalSection
+EndGlobal

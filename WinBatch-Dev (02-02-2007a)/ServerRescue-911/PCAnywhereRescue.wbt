@@ -1,0 +1,383 @@
+; PCAnywhereRescue.wbt
+
+_wName = "PCAnywhereRescue"
+
+wName0 = 4
+
+;wName1 = "RIKER"
+;ip1 = "cybercash-net.com"
+;keys1 = "r"
+;pcAnywhere1 = "Server 1.CHF"
+;wPos1 = "0 506 405 955"
+
+wName1 = "KIRK"
+ip1 = "207.55.200.252"
+keys1 = "r"
+pcAnywhere1 = "Kirk.CHF"
+wPos1 = "0 506 405 955"
+
+;wName2 = "RIKER"
+wName2 = "UNUSED"
+ip2 = "209.233.167.2"
+keys2 = "r"
+pcAnywhere2 = "RIKER.CHF"
+;wPos2 = "405 506 811 955"
+;wPos2 = "405 405 912 955"
+wPos2 = "405 506 812 956"
+
+wName3 = "PICARD2"
+ip3 = "e-servers.net"
+keys3 = "p"
+pcAnywhere3 = "Server 2.CHF"
+wPos3 = "0 60 405 508"
+
+;wName4 = "DATA2"
+wName4 = "SISKO"
+ip4 = "209.233.167.21"
+keys4 = "d"
+pcAnywhere4 = "Sisko.CHF"
+wPos4 = "405 59 811 507"
+
+admin_shortcut_dir = "C:\WINNT\Profiles\Administrator\Start Menu\Administrative Tools (Common)"
+server_rescue_911_winname = "ServerRescue-911"
+server_rescue_911_shortcut = "%server_rescue_911_winname%.LNK"
+
+server_rescue_911 = StrReplace( StrCat( admin_shortcut_dir, "\", server_rescue_911_shortcut), "\\", "\")
+
+If FileExist( server_rescue_911) <> @TRUE
+	Message( "%_wName%", "Missing %server_rescue_911%")
+	exit
+Endif
+
+while 1
+
+	BoxCaption(1, "%_wName% - detectPCAnywhereServer")
+
+	Gosub detectPCAnywhereServer
+	
+	Delay( 5)
+	
+endwhile
+
+exit
+
+:doSomethingWithPCA
+	BoxCaption(1, "%_wName% - doSomethingWithPCA %wName%")
+
+	If StrLen( pcAnywhere) > 0
+		If WinExist(wName) == @TRUE
+			ErrorMode(@OFF)
+			_wPos = WinPlaceGet(@NORMAL, wName)
+			ErrorMode(@CANCEL)
+			If Strcmp( wPos, _wPos) <> 0
+				wuy = ItemExtract(2, wPos, " ")
+				wly = ItemExtract(4, wPos, " ")
+
+				_wuy = ItemExtract(2, _wPos, " ")
+				_wly = ItemExtract(4, _wPos, " ")
+				
+				ErrorMode(@OFF)
+				dy = wly - wuy
+				_dy = _wly - _wuy
+				ddy = Max( _dy, dy) - Min( _dy, dy)
+				ErrorMode(@CANCEL)
+
+				If ddy < (dy / 2)
+;				 Delay( 2)
+					If WinExist(wName) == @TRUE
+						BoxCaption(1, "%_wName% - doSomethingWithPCA WinPlaceSet %wName% at %wPos%")
+						ErrorMode(@OFF)
+						WinPlaceSet(@NORMAL, wName, wPos)
+						ErrorMode(@CANCEL)
+					Endif
+				Endif
+			Endif
+;			 WinTitle(wName, "%wName% _wly=%_wly%, _wuy=%_wuy%, _dy=%_dy%, wly=%wly%, wuy=%wuy%, dy=%dy%")
+		Endif
+	Endif
+return
+
+
+:detectPCAnywhereServer
+pcAnywhere = ""
+ip = ""
+keys = ""
+wName = ""
+wPos = ""
+
+___foundOne = 0
+for i = 1 to wName0
+	___foundOne%i% = 0
+	BoxCaption(1, StrCat( _wName, " - detectPCAnywhereServer WinExist ", wName%i%))
+	If WinExist(wName%i%) == @TRUE
+		ip = ip%i%
+		keys = keys%i%
+		pcAnywhere = pcAnywhere%i%
+		wName = wName%i%
+		wPos = wPos%i%
+		
+		___foundOne = ___foundOne + 1
+		___foundOne%i% = ___foundOne%i% + 1
+		Gosub doSomethingWithPCA
+	Endif
+next
+
+If ___foundOne < wName0
+;	 Gosub startPCAnywhereServer
+Endif
+
+If (___foundOne1 == 0) && (___foundOne2 == 0) ; && (___foundOne4 == 0)
+	Delay( 10)
+	If WinExist( server_rescue_911_winname) == @FALSE
+		info = ShortcutInfo( server_rescue_911)
+
+		target =	ItemExtract( 1, info, @tab)		   
+		params =	ItemExtract( 2, info, @tab)		   
+		workdir =	ItemExtract( 3, info, @tab)		   
+		showmode =	ItemExtract( 4, info, @tab)		   
+		desc =		ItemExtract( 5, info, @tab)		   
+		hotkey =	ItemExtract( 6, info, @tab)		   
+		iconfile =	ItemExtract( 7, info, @tab)		   
+		iconindex = ItemExtract( 8, info, @tab)		   
+
+;		 ShellExecute( target, params, workdir, showmode, "")
+	Else
+		WinIconize( server_rescue_911_winname)
+	Endif
+Else
+	If (___foundOne1 <> 0) && (___foundOne2 <> 0) ; && (___foundOne4 <> 0)
+		If WinExist( server_rescue_911_winname) == @TRUE
+			WinClose( server_rescue_911_winname)
+		Endif
+	Endif
+Endif
+
+return
+
+
+:choosePCAnywhereServer
+pcAnywhere = ""
+ip = ""
+keys = ""
+wName = ""
+wPos = ""
+
+for i = 1 to wName0
+	BoxCaption(1, StrCat( _wName, " - choosePCAnywhereServer WinExist ? ", wName%i%))
+	If WinExist(wName%i%) == @FALSE
+		ip = ip%i%
+		keys = keys%i%
+		pcAnywhere = pcAnywhere%i%
+		wName = wName%i%
+		wPos = wPos%i%
+		break
+	Endif
+next
+
+return
+
+
+:startPCAnywhereServer
+Gosub choosePCAnywhereServer
+
+pcANYWHEREwindow = "pcANYWHERE Waiting..."
+
+BoxCaption(1, StrCat( _wName, " - startPCAnywhereServer ", pcAnywhere))
+
+while StrLen( pcAnywhere) > 0
+	; Start-Up the appropriate PCAnywhere Window as required.
+;	 RunShell("C:\Program Files\pcANYWHERE 8.0\awrem32.exe", "C:\Program Files\pcANYWHERE 8.0\DATA\%pcAnywhere%", "C:\Program Files\pcANYWHERE 8.0\DATA", @NORMAL, @NOWAIT)
+
+	ta = GetTickCount( )
+	; wait for the waiting window to appear
+	while WinExist(pcANYWHEREwindow) == @FALSE
+		tb = GetTickCount( )
+		_tb = tb - ta
+		BoxCaption(1, StrCat( _wName, " - startPCAnywhereServer waiting (appear) ", pcAnywhere, " ", pcANYWHEREwindow, " %_tb%"))
+		If _tb > 1000
+			break
+		Endif
+	endwhile
+
+	Delay(2)
+
+	If WinExist(pcANYWHEREwindow) == @TRUE
+		mins = 1
+		BoxCaption(1, StrCat( _wName, " - startPCAnywhereServer dumdedum ", pcAnywhere, " ", pcANYWHEREwindow))
+		Gosub dumdedum
+	Endif
+
+	ta = GetTickCount( )
+	; wait for the waiting window to disappear
+	while WinExist(pcANYWHEREwindow) == @TRUE
+		tb = GetTickCount( )
+		_tb = tb - ta
+		BoxCaption(1, StrCat( _wName, " - startPCAnywhereServer waiting (disappear) ", pcAnywhere, " ", pcANYWHEREwindow, " %_tb%"))
+		If _tb > 1000
+			break
+		Endif
+	endwhile
+
+	If WinExist(pcANYWHEREwindow) == @TRUE
+;		 Gosub quitPCAnywhereConnect
+	Else
+		ta = GetTickCount( )
+		; wait for the wName window to appear
+		while WinExist(wName) == @FALSE
+			tb = GetTickCount( )
+			_tb = tb - ta
+			BoxCaption(1, StrCat( _wName, " - startPCAnywhereServer waiting (appear: %wName%) ", pcAnywhere, " ", pcANYWHEREwindow, " %_tb%"))
+			If _tb > 1000
+				break
+			Endif
+		endwhile
+
+		;"upper-x upper-y lower-x lower-y"
+		while 1
+			If WinExist(wName) == @FALSE
+				break
+			Else
+				wuy = ItemExtract(2, wPos, " ")
+				wly = ItemExtract(4, wPos, " ")
+
+				ErrorMode(@OFF)
+				_wPos = WinPlaceGet(@NORMAL, wName)
+				ErrorMode(@CANCEL)
+				_wuy = ItemExtract(2, _wPos, " ")
+				_wly = ItemExtract(4, _wPos, " ")
+				
+				dy = wly - wuy
+				_dy = _wly - _wuy
+				ddy = Max( _dy, dy) - Min( _dy, dy)
+				If ddy < (dy / 2)
+					break
+				Endif
+				BoxCaption(1, "%_wName% - %wName% _wly=%_wly%, _wuy=%_wuy%, _dy=%_dy%, wly=%wly%, wuy=%wuy%, dy=%dy%")
+				WinTitle(wName, "%wName% _wly=%_wly%, _wuy=%_wuy%, _dy=%_dy%, wly=%wly%, wuy=%wuy%, dy=%dy%")
+			Endif
+		endwhile
+
+		If WinExist(wName) == @TRUE
+			ErrorMode(@OFF)
+			WinPlaceSet(@NORMAL, wName, wPos)
+			ErrorMode(@CANCEL)
+;		 WinZoom (wName)
+;		 WinPlaceSet(@ZOOMED, wName, wPos)
+			server%keys% = keys
+		Endif
+	Endif
+
+	Delay(5)
+	
+	Gosub choosePCAnywhereServer
+
+endwhile
+
+return
+
+
+:_choosePCAnywhereServer
+pcAnywhere = ""
+ip = ""
+keys = ""
+wName = ""
+wPos = ""
+
+wName0 = 4
+wName1 = "RIKER"
+ip1 = "cybercash-net.com"
+keys1 = "r"
+pcAnywhere1 = "Server 1.CHF"
+wPos1 = "0 506 405 955"
+
+wName2 = "ZONE1"
+ip2 = "adult-zone.com"
+keys2 = "z"
+pcAnywhere2 = "Server 1.CHF"
+wPos2 = "405 506 811 955"
+
+wName3 = "PICARD2"
+ip3 = "e-servers.net"
+keys3 = "p"
+pcAnywhere3 = "Server 2.CHF"
+wPos3 = "0 60 405 508"
+
+wName4 = "DATA2"
+ip4 = "adultservers.net"
+keys4 = "d"
+pcAnywhere4 = "Server3.CHF"
+wPos4 = "405 59 811 507"
+
+If WinExist("PICARD2") == @FALSE
+	;Picard2
+	ip = "e-servers.net"
+	keys = "p"
+	pcAnywhere = "Server 2.CHF"
+	wName = "PICARD2"
+	wPos = "0 60 405 508"
+Else
+	If WinExist("DATA2") == @FALSE
+		;Data2
+		ip = "adultservers.net"
+		keys = "d"
+		pcAnywhere = "Server3.CHF"
+		wName = "DATA2"
+		wPos = "405 59 811 507"
+	Else
+		If WinExist("RIKER") == @FALSE
+			; Riker
+			ip = "cybercash-net.com"
+			keys = "r"
+			pcAnywhere = "Server 1.CHF"
+			wName = "RIKER"
+			wPos = "0 506 405 955"
+		Else
+			If WinExist("ZONE1") == @FALSE
+				;Zone1
+				ip = "adult-zone.com"
+				keys = "z"
+				pcAnywhere = "Zone1.CHF"
+				wName = "ZONE1"
+				wPos = "405 506 811 955"
+			Else
+				pcAnywhere = ""
+				ip = ""
+				keys = ""
+				wName = ""
+				wPos = ""
+			Endif
+		Endif
+	Endif
+Endif
+return
+
+
+:dumdedum
+goal = mins * 60
+timer = 0
+While timer < goal
+	remain = goal - timer
+	if WinExist(pcANYWHEREwindow)	 ; Make user user did not close it manually
+		WinTitle(pcANYWHEREwindow, "%pcANYWHEREwindow% %ip% (%remain% seconds left)")
+	else
+		return
+	endif
+	Delay(10)
+	timer = timer + 10
+	; Wait for PCAnywhere to make the connection
+	if WinExist(pcANYWHEREwindow)	 ; Make user user did not close it manually
+		WinActivate(pcANYWHEREwindow)
+		SendKeysTo(pcANYWHEREwindow, keys)
+		SendKeysTo(pcANYWHEREwindow, `{ENTER}`)
+	else
+		return
+	endif
+EndWhile
+Return
+
+:quitPCAnywhereConnect
+WinActivate(pcANYWHEREwindow)
+SendKeysTo(pcANYWHEREwindow, `{ESC}`)
+Return
+
+

@@ -1,0 +1,22 @@
+:ListReceivableRecords
+
+_record_count = 1
+
+WebOut('<FONT SIZE="4">', _html_crlf)
+
+sql_stmnt = "SELECT c.custname, r.custid, r.webid, w.domain_name, w.ip, r.thedate, r.fee_due, r.notes FROM receivables r, customer c, website w WHERE r.custid=c.id AND r.webid=w.id AND r.custid=%_custid% AND r.pid IS NULL ORDER BY r.thedate DESC"
+
+_table = "receivables"
+sql_fetch_map = "S64,I,I,S128,S32,D,N,S255"
+sql_fetch_cols = "custname,custid,webid,domain_name,ip,thedate,fee_due,notes"
+sql_level = ""
+sql_fetch_gosub = "ListRecvRecordsOneByOne"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+WebOut('</FONT>', _html_crlf)
+
+return
+

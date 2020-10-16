@@ -1,0 +1,19 @@
+:SplitCustNameFromID
+; param1 .... input - the name of the variable that holds the __custid - custId+custName
+; param2 .... output - the name of the variable that holds the _custid - custId
+; param3 .... output - the name of the variable that holds the _custname - custName
+; param4 .... input - the name of the variable that holds the _CustomerList_delimiter
+
+If param0 <> 4
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for SplitCustNameFromID</B></FONT>', _html_crlf)
+    return
+Endif
+
+%param2% = %param1%
+If StrIndex( %param1%, %param4%, 1, @FWDSCAN) > 0
+    %param2% = ItemExtract( 1, %param1%, %param4%)
+    %param3% = ItemExtract( 2, %param1%, %param4%)
+Endif
+Drop( %param1%)
+return
+

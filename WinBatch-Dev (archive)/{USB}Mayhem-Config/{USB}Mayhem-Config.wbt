@@ -1,0 +1,75 @@
+; {USB}Mayhem-Config.wbt
+
+wName = "{USB}Mayhem-Config Vers 1.00"
+
+_dir_name = "D:\Tribes2"
+
+_gamedataName = "GameData\"
+
+__dirHome = IntControl(1004, 0, 0, 0, 0)
+
+_dirHome = FilePath( __dirHome)
+
+while 1
+	_dir_name = AskDirectory( "Tribes2 Root Folder ? %_dir_name%", "", "", "Tribes2 Root Folder is", 2) 
+	exeFilePath = "%_dir_name%\GameData\Tribes2.exe"
+	_gameDataFolderName = strcat(_dir_name, _gamedataName)
+	if ( (FileExist( exeFilePath) == @TRUE) && (DirExist( _gameDataFolderName) == @TRUE) )
+		break;
+	else
+		message( wName, "Please select a valid Tribes2 Root Folder name... Try again !")
+	endif
+endwhile
+
+; Build a routine that can read a single variable and then change a single variable one variable at a time...
+Gosub ReadAutoexecCsFile
+
+exit
+
+
+
+:ReadPatchVersionFile
+_CorrectPatchFound = @False
+if FileExist( _patchVersionFile) == @TRUE
+	fIN = FileOpen( _patchVersionFile, "READ")
+	while @TRUE				; Loop till break do us end
+		x = FileRead( fIN)
+		If x == "*EOF*" Then Break
+		if ItemCount( x, "=") == 2
+			_iLeft = ItemExtract( 1, x, "=")
+			_iRight = ItemExtract( 2, x, "=")
+			if (_iLeft == __LastVersionLeft) && (_iRight == __LastVersionRight)
+				_CorrectPatchFound = @TRUE
+				break
+			endif
+		endif
+	endwhile
+	FileClose(fIN)
+endif
+return
+
+
+:WriteDedicatedServerCmdFile
+if FileExist( _installedCmdFileName) == @TRUE
+	fOUT = FileOpen( _installedCmdFileName, "WRITE")
+	FileWrite( fOUT, "del ..\console.log")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, " cd ..\")
+	FileWrite( fOUT, " ispawn.exe 28000 Tribes2.exe -dedicated -mod %_modRootPath%")
+	FileClose(fOUT)
+endif
+return
+
+
+:WriteDedicatedLanServerCmdFile
+if FileExist( _installedLanCmdFileName) == @TRUE
+	fOUT = FileOpen( _installedLanCmdFileName, "WRITE")
+	FileWrite( fOUT, "del ..\console.log")
+	FileWrite( fOUT, "")
+	FileWrite( fOUT, " cd ..\")
+	FileWrite( fOUT, " ispawn.exe 28000 Tribes2.exe -nologin -dedicated -mod %_modRootPath%")
+	FileClose(fOUT)
+endif
+return
+
+

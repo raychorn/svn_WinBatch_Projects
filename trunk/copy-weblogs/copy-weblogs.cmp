@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=copy-weblogs.wbt
+Targ=P:\myWinbatch\copy-weblogs\copy-weblogs.exe
+Icon=P:\myWinbatch\copy-weblogs\hal-smalltalker.ico
+CmpVersion=2
+[Options]
+TechWebPage=http://www.t2chameleon.com
+RunHidden=0
+[Version Info]
+Comments=http://www.t2chameleon.com
+CompanyName=HAL Smalltalker, Inc.
+FileDescription=copy-weblogs
+FileVersion=1.0
+InternalName=copy-weblogs.exe
+LegalCopyright=<c>. Copyright 1990-2001 HAL Smalltalker, Inc., All Rights Reserved...
+LegalTrademarks=http://www.t2chameleon.com
+OriginalFilename=copy-weblogs.exe
+ProductName=copy-weblogs
+ProductVersion=1.0
+[Other Files]
+Count=1
+File001=P:\myWinbatch\copy-weblogs\test.cmd
+[Extenders]
+Count=0

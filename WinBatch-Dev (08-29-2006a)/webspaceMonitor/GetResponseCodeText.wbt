@@ -1,0 +1,70 @@
+:GetResponseCodeText
+; _response_code ..... input - the response code
+; _response_text ..... output - the response text for the _response_code
+
+_response_text = "UNKNOWN"
+
+Switch _response_code
+	case 200
+		_response_text = "OK"
+		break
+	case 201
+		_response_text = "Created - Following a POST command, this indicates success, but the text of the response line indicates the URL of the new document."
+		break
+	case 202
+		_response_text = "Accepted - Request accepted for asynchronous processing."
+		break
+	case 203
+		_response_text = "Partial Information - Returned information may be cached or private."
+		break
+	case 204
+		_response_text = "No Response - Used for scripts that don't return a visible result."
+		break
+	case 301
+		_response_text = "Moved - Browsers with link editing capabilities should automatically link to the new reference."
+		break
+	case 302
+		_response_text = "Found - Same as move, except that linking to the found address doesn't make much sense, since the document URL is expected to change. This is a Location: header."
+		break
+	case 303
+		_response_text = "Method - Same as found, but a different method may be used to access the document; details about the method are sent in the message body."
+		break
+	case 304
+		_response_text = "Not modified - Use the local copy if it was cached."
+		break
+	case 400
+		_response_text = "Bad Request - Impossible request or syntax error"
+		break
+	case 401
+		_response_text = "Unauthorized - Request should be retried with proper authorization header."
+		break
+	case 402
+		_response_text = "Payment Required - Request should be retried with proper charge-to header."
+		break
+	case 403
+		_response_text = "Forbidden - Authorization will not help"
+		break
+	case 404
+		_response_text = "Not found - A document with that URL doesn't exist."
+		break
+	case 411
+		_response_text = "No such group - (NCSA httpd) the newsgroup in news:newsgroup doesn't exist."
+		break
+	case 500
+		_response_text = "Internal Error"
+		break
+	case 501
+		_response_text = "Not implemented - ``I'm sorry, Dave, I can't do that.''"
+		break
+	case 502 
+		_response_text = "Timed out  - (Seen in practice, not in the specification.)"
+		break
+	case response	 ; default case
+		_response_text = "UNKNOWN"
+		break
+EndSwitch
+
+_response_text = StrCat( _response_text, " - _response_code %_response_code%")
+
+return
+

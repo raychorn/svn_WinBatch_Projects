@@ -1,0 +1,66 @@
+:InsertCustomerNameIntoDb
+; param1 ................ input - the name of the string variable that holds the customer name to insert into the database
+; settings_cvalue ....... input - the customer name to insert into the database
+; __debug ............... input - @TRUE to show debugging goop else @FALSE to hide the debugging goop - default is @FALSE if undefined
+; customer_id ........... output - the customer id for the customer from the database
+; customer_custname ..... output - the file name for the dir name from the database
+If param0 <> 1
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for InsertCustomerNameIntoDb</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+Gosub beginSQL2
+
+_param1 = %param1%
+
+sql_fetch = @TRUE
+sql_stmnt2 = "SELECT id, custname FROM customer WHERE (custname = '%_param1%')"
+Call( "doExecSQLForCustomerName.wbc", "sql_stmnt2")
+
+Gosub endSQL2
+
+If __debug <> @FALSE
+    WebOut('<BR><B><FONT COLOR="BLUE">(1) sql_stmnt=', _html_crlf)
+    WebOut(sql_stmnt, _html_crlf)
+    WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+Endif
+
+If sql_fetched <> @TRUE
+    Gosub beginSQL2
+
+    sql_fetch = @FALSE
+    sql_stmnt2 = "INSERT INTO customer (custname) VALUES ('%_param1%')"
+    Call( "doExecSQLForCustomerName.wbc", "sql_stmnt2")
+
+    Gosub endSQL2
+
+    Gosub beginSQL2
+
+    sql_fetch = @TRUE
+    sql_stmnt2 = "SELECT id, custname FROM customer WHERE (custname = '%_param1%')"
+    Call( "doExecSQLForCustomerName.wbc", "sql_stmnt2")
+
+    Gosub endSQL2
+
+    If __debug <> @FALSE
+        If sql_fetched <> @TRUE
+            WebOut('<BR><B><FONT COLOR="RED">(2) sql_stmnt=', _html_crlf)
+            WebOut(sql_stmnt, _html_crlf)
+            WebOut(' <BR>Retcode %retcode%, sql_fetched=%sql_fetched%</FONT></B><BR>', _html_crlf)
+        Else
+            WebOut('<BR><B><FONT COLOR="BLUE">(2) customer_id=(%customer_id%), customer_custname=(%customer_custname%)</FONT></B><BR>', _html_crlf)
+        Endif
+    Endif
+
+Else
+    If __debug <> @FALSE
+        WebOut('<BR><B><FONT COLOR="BLUE">(2) customer_id=(%customer_id%), customer_custname=(%customer_custname%)</FONT></B><BR>', _html_crlf)
+    Endif
+Endif
+
+return
+

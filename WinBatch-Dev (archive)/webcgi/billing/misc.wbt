@@ -1,0 +1,20 @@
+:misc
+
+WebOut('<FORM ACTION="%this_cgi%" METHOD="POST">', _html_crlf)
+WebOut('<B>For which date? <SMALL>(%root%)</SMALL> <SELECT NAME="_thedate" SIZE="1">', _html_crlf)
+
+; the ODBC goop goes here for the following query
+;        <iHTML dbname=":datasource" 
+;            SQL="SELECT thedate FROM webtrends WHERE (website_name = ':root') ORDER BY thedate;"
+;            FAILURE=""
+;            OUTPUT="<OPTION VALUE=:1>:1</OPTION>">
+
+WebOut('</SELECT></B>', _html_crlf)
+WebOut('<INPUT TYPE="HIDDEN" NAME="root" VALUE="%root%">', _html_crlf)
+WebOut('<INPUT TYPE="HIDDEN" NAME="action" VALUE="ViewWebTrendsForDate">', _html_crlf)
+WebOut('<INPUT TYPE="SUBMIT" NAME="Submit1" VALUE="View WebTrends Report">', _html_crlf)
+WebOut('</FORM>', _html_crlf)
+
+return
+
+

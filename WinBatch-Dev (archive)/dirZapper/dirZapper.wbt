@@ -1,0 +1,1619 @@
+; dirZapper.wbt
+
+
+; Setting for the VentureSource 5 in CFM conversion effort for VentureOne circa. 08-14-2000 thru 09-01-2000
+;_param1 = "Custom Tags Run #2"
+;param1 = "H:\myFiles\VentureOne.Com\myDevFiles\VentureSource 5 in CFM\%_param1%\Templates\"
+;if DirExist( param1)
+;else
+;	param1 = StrReplace( param1, "H:\", "J:\")
+;endif
+;param2 = "-vst"
+;param3 = "-v"
+
+; Open Issues:
+;
+; 1). 30 day Trial Disabler via Registry
+; 2). 30 day Trial Countdown display ?!?
+; 3). HTTP download via ZIP file
+; 4). FTP download via ZIP file
+; 5). Submit via AddSoft after purchase goes thru and real registration is delivered
+; 6). Submit to Search Engines via WebSoft
+; 7). Link Exchange and other banner ad systems
+
+_productName = "dirZapper v1.3"
+
+_var_list_delimiter = @TAB
+
+_doubleQuoteASCII = 34
+
+_plusSign = "+"
+_equalsSign = "="
+_asteriskSymbol = "="
+_dateSymbol = ":"
+_slashSymbol = "/"
+_doubleBackSlashSymbol = "\\"
+_backSlashSymbol = "\"
+_openSquareBracketSign = "["
+_closeSquareBracketSign = "]"
+
+_cfmTemplateFileType = ".cfm"
+_htmlTemplateFileType = ".htm"
+_loadKeywordTokenSep = " "
+_loadKeywordToken = "load%_loadKeywordTokenSep%"
+
+_dateFormatTemplate = "mm/dd/yyyy"
+_dateFormatTemplateLen = StrLen( _dateFormatTemplate)
+
+_blankTimeFormatTemplate = ":00:00:00"
+
+_file_last_modified = 2
+_file_last_accessed = 3
+
+_filedateHitCount = 0
+
+_vsTemplatesHitCount = 0
+_vsTemplatesHitErrCount = 0
+
+_ERRORCODE = 11118 
+
+AddExtender("WWZIP32I.DLL")
+
+IntControl (5, 1, 0, 0, 0)
+IntControl( 29, _var_list_delimiter, 0, 0, 0)
+IntControl( 41, 1, 0, 0, 0)
+
+goto skipTrialRegistration
+
+;Declare Function SetCursor Lib "user32" Alias "SetCursor" (ByVal hCursor As Long) As Long
+;Declare Function GetCursor Lib "user32" Alias "GetCursor" () As Long
+
+vbNormal = 0
+vbHourglass = 11
+
+_dllname = strcat( dirwindows(1), "USER32.DLL")
+_a1 = DllCall( _dllname, lpstr:"SetCursor", long:vbHourglass)
+
+Gosub selfRegisterTrial
+
+_a1 = DllCall( _dllname, lpstr:"SetCursor", long:vbNormal)
+
+Gosub myNagwareDialog
+
+:skipTrialRegistration
+
+_tempPath = "C:\WINDOWS\TEMP"
+
+_wName = "dirZapper"
+wName = "%_wName%.wbt"
+
+_logFname = "%_wName%.log"
+
+_modeDeleteROFiles = "-d"
+_modeDirSize = "-s"
+_modeZIPFiles = "-z"
+_modeConvertFiles = "-c"
+_modeFindByDateFiles = "-fd"
+_modeVSTemplateProcessor = "-vst"
+_modeDirCompare = "-cmp"
+
+_modeDirSizeCode = 0
+_modeDeleteROFilesCode = 1
+_modeZIPFilesCode = 2
+_modeConvertFilesCode = 3
+_modeFindByDateFilesCode = 4
+_modeVSTemplateProcessorCode = 5
+_modeDirCompareCode = 6
+
+_modeTerseRun = "-t"
+_modeVerboseRun = "-v"
+
+_modeTerseCode = 0
+_modeVerboseCode = 1
+
+_normalFileAttrs = "rash"
+_noFileAttrsSet = "----"
+
+_zipOptions = "S R 9" ; S=system+hidden included, R=recurse dirs, 9=slowest compression
+
+if IsDefined( param1)
+	; param1 base directory
+	_tempPath = param1
+Else
+	_tempPath = StrTrim( AskDirectory( "Base Directory ? ", "", _tempPath, "Are you sure you want to choose this directory?", 2))
+	param1 = _tempPath
+Endif
+
+; figure out where the custom tags will live...
+_j = ItemCount( param1, _backSlashSymbol)
+_TemplatesBaseTok = ItemExtract( _j, param1, _backSlashSymbol)
+_i = StrIndex( param1, StrCat( _backSlashSymbol, _TemplatesBaseTok), 1, @FWDSCAN)
+_TemplatesBaseName = ""
+if _i > 0
+	_TemplatesBaseName = StrSub( param1, 1, _i - 1)
+endif
+
+_tempPath = StrReplace( StrCat( _tempPath, _backSlashSymbol), _doubleBackSlashSymbol, _backSlashSymbol)
+
+if DirExist( _tempPath)
+else
+	Message( "%_productName% ERROR", "The PathName (%_tempPath%) specified does not exist... Unable to continue processing...")
+	exit
+endif
+
+_mode = _modeDirSize
+
+if IsDefined( param2)
+	; param2 is the run mode which is _modeDeleteROFiles or _modeDirSize - the default is _modeDirSize
+	_mode = param2
+Else
+	_mode = StrTrim( AskLine( wName, "Mode of operation ? ( %_modeDeleteROFiles%, %_modeDirSize%, %_modeZIPFiles%, %_modeConvertFiles%, %_modeFindByDateFiles%, %_modeVSTemplateProcessor% or %_modeDirCompare% )", _mode))
+Endif
+
+__mode = _mode
+
+Gosub determineModeCode
+
+_logFname = ""
+_logfhand = -1
+if _mode <> _modeDirCompareCode
+	_logFname = StrCat( _tempPath, _logFname)
+	
+	_logfhand = FileOpen( _logFname, "WRITE")
+	
+	FileWrite( _logfhand, StrCat( TimeDate(), " : _tempPath=", _tempPath))
+	
+	FileWrite( _logfhand, StrCat( TimeDate(), " : Mode of operation=%_mode% or %__mode%"))
+endif
+
+if _mode == _modeDirSizeCode
+	_runMode = _modeVerboseCode
+else
+	_runMode = _modeTerseRun
+
+	if IsDefined( param3)
+		; param3 is the run mode which is _modeTerseRun or _modeVerboseRun - the default is _modeTerseRun
+		_runMode = param3
+	Else
+		_runMode = StrTrim( AskLine( wName, "Mode of run ? (%_modeTerseRun% or %_modeVerboseRun%)", _runMode))
+	Endif
+	
+	__runMode = _runMode
+
+	if (StriCmp( _runMode, _modeTerseRun) <> 0) && (StriCmp( _runMode, _modeVerboseRun) <> 0)
+		_runMode = _modeTerseCode
+	endif
+	
+	if (StriCmp( _runMode, _modeVerboseRun) == 0)
+		_runMode = _modeVerboseCode
+	endif
+	
+	if (StriCmp( _runMode, _modeTerseRun) == 0)
+		_runMode = _modeTerseCode
+	endif
+endif
+
+_fileSpec = "*.*"
+
+if _mode == _modeConvertFilesCode
+
+	_fileSpec = "*.cfm"
+
+	if IsDefined( param4)
+		; param4 is the file spec to search for
+		_fileSpec = param4
+	Else
+		_fileSpec = StrTrim( AskLine( wName, "FileSpec to search for ? (somefiles*.* or the like)", _fileSpec))
+	Endif
+
+	_fileRenameTarget = "*.cfm=*.asp"
+
+	if IsDefined( param5)
+		; param5 file rename target
+		_fileRenameTarget = param5
+	Else
+		_fileRenameTarget = StrTrim( AskLine( wName, "File Rename Target ? (*.cfm=*.asp)", _fileRenameTarget))
+	Endif
+
+endif
+
+_today = TimeYmdHms( )
+_dateSpec = StrCat( ItemExtract( 2, _today, _dateSymbol), _slashSymbol, ItemExtract( 3, _today, _dateSymbol), _slashSymbol, ItemExtract( 1, _today, _dateSymbol))  ; uses format YYYY:MM:DD:HH:MM:SS.
+
+if _mode == _modeFindByDateFilesCode
+	if IsDefined( param4)
+		; param4 is the date to search for
+		_dateSpec = param4
+	Else
+		:askForDateAgain
+		_dateSpec = StrTrim( AskLine( wName, "Date to search for ? (mm/dd/yyyy such as 08/26/1999 or the like)", _dateSpec))
+		if StrLen( _dateSpec) < _dateFormatTemplateLen
+			Message( "ERROR - Date Entry", "Did you enter that date correctly ?  Try again...")
+			Goto askForDateAgain
+		endif
+		_dateSpec = StrCat( ItemExtract( 3, _dateSpec, _slashSymbol), _dateSymbol, ItemExtract( 1, _dateSpec, _slashSymbol), _dateSymbol, ItemExtract( 2, _dateSpec, _slashSymbol))  ; uses format YYYY:MM:DD:HH:MM:SS.
+		_dateSpec = StrReplace( StrCat( StrSub( _dateSpec, 1, _dateFormatTemplateLen), _blankTimeFormatTemplate), _slashSymbol, _dateSymbol)
+;		Message( "_dateSpec", _dateSpec)
+	Endif
+
+endif
+
+
+if _mode == _modeZIPFilesCode
+endif
+
+if _logfhand <> -1
+	FileWrite( _logfhand, StrCat( TimeDate(), " : Mode of run=%_runMode% or %__runMode%"))
+endif
+
+if _mode == _modeZIPFilesCode
+	if IsDefined( param4)
+		; param4 is the ZIP command line options inside "double quotes"
+		_zipOptions = param4
+	Else
+		_zipOptions = StrTrim( AskLine( wName, "ZIP Options ? ()", _zipOptions))
+	Endif
+
+	_fileroot = FileRoot( _tempPath)
+	_fileext = FileExtension( _tempPath)
+	if ItemCount( _tempPath, _backSlashSymbol) > 0
+	else
+	endif
+	_myArchiveFileName = StrCat( _tempPath, _fileroot, ".", _fileext)
+
+	d = FileExist("myarchive.zip")
+	if d == 1
+		_xzipper = zZipFiles( "g R", "myarchive.zip", "f*.*|c*.*", "DISCLAIM.TXT|JUNK.TXT")
+		c=askitemlist(Strlen(xzipper), xzipper, @lf, @unsorted, @single)
+	endif
+else
+	Goto skipZIP
+endif 
+
+:skipZIP
+;This file traverses the directory tree and performs a set of functions such as deleting all files with the option
+;of setting the R/O bit to some value so all files can be deleted.
+;
+Drop( _ret, _le)
+ErrorMode(@OFF)
+_ret = DirChange( _tempPath)
+ErrorMode(@CANCEL)
+if IsDefined( _ret) && (_ret == @TRUE)
+else
+	_le = LastError()
+endif
+
+_logText = ""
+if IsDefined( _ret)
+	_logText = StrCat( _logText, "DirChange _tempPath=<", _tempPath, "> _ret=%_ret%")
+endif
+
+if IsDefined( _le)
+	_logText = StrCat( _logText, " and _le=%_le%")
+endif
+
+if _logfhand <> -1
+	FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+endif
+
+_files = FileItemize( _fileSpec)
+
+if _logfhand <> -1
+	FileWrite( _logfhand, StrCat( TimeDate(), " : _files=(", _files, ")"))
+endif
+
+tot = 0
+
+if _mode == _modeDirSizeCode
+	if _runMode == _modeVerboseCode
+		BoxOpen("%_productName% File Size Scanner","Reading Initial Directories")
+	endif
+	tot = FileSize( _files)
+else
+	if _mode == _modeDeleteROFilesCode
+		tot = ItemCount( _files, @TAB)
+
+		if _logfhand <> -1
+			FileWrite( _logfhand, StrCat( TimeDate(), " : tot=%tot%"))
+		endif
+
+;		FileAttrSet( _files, _normalFileAttrs)
+;		FileDelete( _files)
+		Gosub myDeleteAllFiles
+	else
+		if _mode == _modeConvertFilesCode
+			Gosub myConvertAllFiles
+		else
+			if _mode == _modeFindByDateFilesCode
+				Gosub myFindByDateAllFiles
+			else
+				if _mode == _modeVSTemplateProcessorCode
+					if _runMode == _modeVerboseCode
+						BoxOpen("%_productName% VS4 to VS5 JSP Template Processor","Reading Initial Directories")
+					endif
+;					Gosub myProcessTemplatesAllFiles
+				else
+				endif
+			endif
+		endif
+	endif
+endif
+
+sub1 = DirItemize("*.*")
+
+if _logfhand <> -1
+	FileWrite( _logfhand, StrCat( TimeDate(), " : sub1=(", sub1, ")"))
+endif
+
+totdir=0
+level=1
+dir1=DirGet()
+numdir1 = ItemCount(sub1, @tab)
+if _mode == _modeDeleteROFilesCode
+	tot = tot + numdir1
+	if _logfhand <> -1
+		FileWrite( _logfhand, StrCat( TimeDate(), " : tot=(%tot%), numdir1=(%numdir1%)"))
+	endif
+endif
+index1 = 0
+  
+:dsloop
+if IsKeyDown(@CTRL | @SHIFT)
+	if (AskYesNo( "%_wName%", "Do you want to terminate this script?") == @YES)
+		break ; exit anytime the @CTRL or @SHIFT key(s) are pressed ?!?
+	endif
+endif
+If index%level% == numdir%level% Then Goto upalevel
+index%level% = index%level% + 1
+
+Drop( _ret, _le)
+ErrorMode(@OFF)
+_aDir = StrCat( dir%level%, ItemExtract(index%level%, sub%level%, @tab))
+_ret = DirChange( _aDir)
+ErrorMode(@CANCEL)
+if IsDefined( _ret) && (_ret == @TRUE)
+else
+	_le = LastError()
+endif
+
+_logText = ""
+if IsDefined( _ret)
+	_logText = StrCat( _logText, "DirChange _aDir=<", _aDir, "> _ret=%_ret%")
+endif
+
+if IsDefined( _le)
+	_logText = StrCat( _logText, " and _le=%_le%")
+endif
+
+if _logfhand <> -1
+	FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+endif
+
+if _runMode == _modeVerboseCode
+	if _mode == _modeDirSizeCode
+		BoxText(strcat("Level=",level,@crlf,"Total=",tot,@crlf,dir%level%))
+	else
+		if _mode == _modeDeleteROFilesCode
+			BoxText(strcat("Level=",level,@crlf,"Files=",tot,@crlf,dir%level%))
+		else
+			if _mode == _modeVSTemplateProcessorCode
+				BoxText(strcat("Level=",level,@crlf,"Files=",tot,@crlf,dir%level%))
+			else
+			endif
+		endif
+	endif
+endif
+totdir=totdir+1
+_files = FileItemize("*.*")
+if _mode == _modeDirSizeCode
+	tot = tot + FileSize(_files)
+else
+	if _mode == _modeDeleteROFilesCode
+		tot = tot + ItemCount( _files, @TAB)
+;		FileAttrSet( _files, _normalFileAttrs)
+;		FileDelete( _files)
+		Gosub myDeleteAllFiles
+	else
+		if _mode == _modeConvertFilesCode
+			Gosub myConvertAllFiles
+		else
+			if _mode == _modeFindByDateFilesCode
+				Gosub myFindByDateAllFiles
+			else
+				if _mode == _modeVSTemplateProcessorCode
+					Gosub myProcessTemplatesAllFiles
+				else
+				endif
+			endif
+		endif
+	endif
+endif
+level = level + 1
+dir%level% = DirGet()
+sub%level% = DirItemize("*.*")
+numdir%level% = ItemCount(sub%level%, @tab)
+if _mode == _modeDeleteROFilesCode
+	tot = tot + numdir%level%
+endif
+index%level% = 0
+goto dsloop
+  
+:upalevel
+; here we want to delete the directory named: dir%level%
+if _mode == _modeDeleteROFilesCode
+	Drop( _ret, _le)
+	ErrorMode(@OFF)
+	_ret = DirChange( "..")
+	ErrorMode(@CANCEL)
+	if IsDefined( _ret) && (_ret == @TRUE)
+	else
+		_le = LastError()
+	endif
+	
+	_logText = ""
+	if IsDefined( _ret)
+		_logText = StrCat( _logText, "DirChange _ret=%_ret%")
+	endif
+	
+	if IsDefined( _le)
+		_logText = StrCat( _logText, " and _le=%_le%")
+	endif
+	
+	if _logfhand <> -1
+		FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+	endif
+
+
+	Drop( _ret, _le)
+	_aDir = dir%level%
+	_aLen = StrLen( _aDir)
+	_aPos = StrIndex( _aDir, _backSlashSymbol, _aLen, @BACKSCAN)
+	if _aPos == _aPos ; there is a trailing backslash char to remove ?!?
+		_aDir = StrSub( _aDir, 1, _aPos - 1)
+	endif
+	ErrorMode(@OFF)
+	_ret = DirRemove( _aDir)
+	ErrorMode(@CANCEL)
+	if IsDefined( _ret) && (_ret == @TRUE)
+	else
+		_le = LastError()
+	endif
+endif
+
+drop(dir%level%,sub%level%,index%level%,numdir%level%)
+level=level-1
+if level!=0 then goto dsloop
+ 
+; -----------
+; Termination
+; -----------
+if _runMode == _modeVerboseCode
+	BoxShut()
+endif
+
+; +++
+If StrLen(tot) < 9 Then tot = StrCat(StrFill("", 9 - StrLen(tot)), tot)
+tot = StrCat(StrSub(tot,1,3),",",StrSub(tot,4,3),",",StrSub(tot,7,3))
+tot = StrTrim(tot)
+If StrSub(tot, 1, 1) == "," Then tot = StrSub(tot, 2, StrLen(tot) - 1)
+tot = StrTrim(tot)
+If StrSub(tot, 1, 1) == "," Then tot = StrSub(tot, 2, StrLen(tot) - 1)
+tot = StrTrim(tot)
+if _runMode == _modeVerboseCode
+	if _mode == _modeDirSizeCode
+		Message("%totdir% Subdirectories scanned", "Total size %tot% bytes.")
+	else
+		if _mode == _modeDeleteROFilesCode
+			Message("%totdir% Subdirectories scanned", "Deleted %tot% files.")
+		else
+			if _mode == _modeFindByDateFilesCode
+				Message("Stats", "%_filedateHitCount% files found by date in %totdir% directories scanned.")
+			else
+				if _mode == _modeVSTemplateProcessorCode
+					_logText = StrCat( "", "%_vsTemplatesHitCount% files found by date in %totdir% directories scanned. %_vsTemplatesHitErrCount% %_loadKeywordToken%keyword processing errors during this run.")
+					if _logfhand <> -1
+						FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+					endif
+
+					Message("Stats", _logText)
+				else
+				endif
+			endif
+		endif
+	endif
+endif
+if _logfhand <> -1
+	FileClose( _logfhand)
+endif
+Exit
+   
+   
+:myDeleteAllFiles
+; _files .............. INPUT - the list of files to process @TAB delimited
+; _i ................ TEMPVAR - temporary variable used for looping, etc.
+; _aFile ............ TEMPVAR - temporary variable used for file manipulations
+; _fab .............. TEMPVAR - temporary variable used for file attrs BEFORE file operations
+; _noFileAttrsSet ..... CONST - constant value (see above)
+; _faa .............. TEMPVAR - temporary variable used for file attrs AFTER file operations
+; _ret .............. TEMPVAR - temporary variable holds the return value
+; _le ............... TEMPVAR - temporary variable holds the last error value
+for _i = 1 to ItemCount( _files, @TAB)
+	_aFile = ItemExtract( _i, _files, @TAB)
+	_fab = FileAttrGet( _aFile)
+	if StrCmp( _fab, _noFileAttrsSet) <> 0
+		_fab = StrLower( _fab)
+		ErrorMode(@OFF)
+		FileAttrSet( _aFile, _fab)
+		ErrorMode(@CANCEL)
+		_faa = FileAttrGet( _aFile)
+	endif
+
+	Drop( _ret, _le)
+	ErrorMode(@OFF)
+	_ret = FileDelete( _aFile)
+	ErrorMode(@CANCEL)
+	if IsDefined( _ret)
+	else
+		_le = LastError()
+	endif
+next
+Drop( _i, _aFile, _fab, _faa, _ret, _le)
+return   
+   
+
+:myConvertAllFiles
+; _files .............. INPUT - the list of files to process @TAB delimited
+; _i ................ TEMPVAR - temporary variable used for looping, etc.
+; _aFile ............ TEMPVAR - temporary variable used for file manipulations
+; _ret .............. TEMPVAR - temporary variable holds the return value
+; _le ............... TEMPVAR - temporary variable holds the last error value
+
+if StrIndex( _fileRenameTarget, _equalsSign, 1, @FWDSCAN) > 0
+	_LH_fileRenameTarget = StrReplace( ItemExtract( 1, _fileRenameTarget, "="), _asteriskSymbol, "")
+	_RH_fileRenameTarget = StrReplace( ItemExtract( 2, _fileRenameTarget, "="), _asteriskSymbol, "")
+endif
+
+for _i = 1 to ItemCount( _files, @TAB)
+	_aFile = ItemExtract( _i, _files, @TAB)
+
+	__aFile = ""
+	if StrIndex( _aFile, _LH_fileRenameTarget, 1, @FWDSCAN) > 0
+		__aFile = StrReplace( _aFile, _LH_fileRenameTarget, _RH_fileRenameTarget)
+
+		_logText = StrCat( _logText, "myConvertAllFiles source file=%_aFile%")
+		_logText = StrCat( _logText, "dest file=%__aFile%, ")
+
+		Drop( _ret, _le)
+		ErrorMode(@OFF)
+		_ret = FileRename( _aFile, __aFile)
+		ErrorMode(@CANCEL)
+		if IsDefined( _ret)
+			_logText = StrCat( _logText, "_ret=%_ret% ")
+		else
+			_le = LastError()
+			_logText = StrCat( _logText, "_le=%_le% ")
+		endif
+
+		if _logfhand <> -1
+			FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+		endif
+	endif
+
+next
+Drop( _i, _aFile, _fab, _faa, _ret, _le)
+return   
+   
+
+:myProcessTemplatesAllFiles
+; _files .............. INPUT - the list of files to process @TAB delimited
+; _i ................ TEMPVAR - temporary variable used for looping, etc.
+; _aFile ............ TEMPVAR - temporary variable used for file manipulations
+; _ret .............. TEMPVAR - temporary variable holds the return value
+; _le ............... TEMPVAR - temporary variable holds the last error value
+
+; skip files preceeded with a "+" sign
+; process the rest as templates
+
+for _i = 1 to ItemCount( _files, @TAB)
+	_aFile = ItemExtract( _i, _files, @TAB)
+
+	if ( (StrIndex( _aFile, _plusSign, 1, @FWDSCAN) == 0) && (StrIndex( _aFile, _htmlTemplateFileType, 1, @FWDSCAN) > 0) )
+		; if the file name does not have a plus sign then process the template...
+		; first suck the file into a space where it can be processed ...
+		_vsTemplatesHitCount = _vsTemplatesHitCount + 1
+		Gosub scanForSquareBrackets
+	endif
+
+next
+Drop( _i, _aFile, _fab, _faa, _ret, _le)
+return   
+   
+
+
+
+:scanForSquareBrackets
+	if StrIndex( _logFname, _aFile, 1, @FWDSCAN) == 0
+		; figure out the name of the new custom tag file
+		; make a temp file for the goop we are to add
+		; insert the CFM_ calling code inline
+		; +++
+
+		_ti = StrIndex( _aDir, _TemplatesBaseName, 1, @FWDSCAN)
+		if _ti > 0
+		else
+			_ti = StrLen( _aDir)
+		endif
+
+		_tj = StrIndex( _aFile, _htmlTemplateFileType, 1, @FWDSCAN)
+		if _tj > 0
+		else
+			_tj = StrLen( _aFile)
+		endif
+		_TemplateName = StrCat( StrReplace( StrSub( _aDir, StrLen(_TemplatesBaseName) + 1, StrLen( _aDir) - _ti), "\", ""), StrSub( _aFile, 1, StrLen( _aFile) - _tj))
+		_TemplateName_temp = StrCat( _TemplatesBaseName, "\", _TemplateName, ".tmp")
+		_TemplateName_tempB = StrCat( _TemplatesBaseName, "\", _TemplateName, ".tmpB")
+
+		; we only know how to call this CF_ once we have reached the end of the file... do this during post-processing
+		_TemplateName_tempC = StrCat( _TemplatesBaseName, "\", _TemplateName, "-caller.cfm")
+
+		_TemplateName_errCodeName = StrCat( _TemplatesBaseName, "\", "_ERRORCODE.wbt")
+		if FileExist( _TemplateName_errCodeName) == @FALSE
+			_errCodeFile = FileOpen(_TemplateName_errCodeName, "WRITE")
+			FileWrite( _errCodeFile, "_ERRORCODE = %_ERRORCODE% ")
+			FileClose(_errCodeFile)
+		else
+			_errCodeFile = FileOpen(_TemplateName_errCodeName, "READ")
+			x = FileRead(_errCodeFile)
+			Execute %x%
+			FileClose(_errCodeFile)
+		endif
+
+		_errCodeInit = @FALSE
+
+		_tempFile = FileOpen(_TemplateName_temp, "WRITE")		; this is the template main temp file - inline goop during scan
+		_tempBFile = FileOpen(_TemplateName_tempB, "WRITE")	; this is the secondary template temp file - aka the temp header file - goop here goes at the beginning of the template file during post-processing
+
+		_var_list = ""
+		_parm_list = ""
+
+		old = FileOpen(_aFile, "READ")
+	
+		_logText = StrCat( "", "myProcessTemplatesAllFiles --> scanForSquareBrackets DirGet()=", DirGet())
+		if _logfhand <> -1
+			FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+		endif
+
+		_logText = StrCat( "", "myProcessTemplatesAllFiles --> scanForSquareBrackets source file=%_aFile%")
+		if _logfhand <> -1
+			FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+		endif
+	
+		while @TRUE             ; Loop till break do us end
+			x = FileRead(old)
+			If x == "*EOF*" Then Break
+			_x0 = 1
+			_xlen = StrLen( x)
+			if _x0 == _xlen
+				FileWrite( _tempFile, x)
+			else
+				while _x0 < _xlen
+					_x1 = StrIndex( x, _openSquareBracketSign, _x0, @FWDSCAN)
+					_x2 = StrIndex( x, _closeSquareBracketSign, _x1 + 1, @FWDSCAN)
+					_x1a = StrIndex( x, _backSlashSymbol, _x1, @BACKSCAN)
+					_x2a = StrIndex( x, _backSlashSymbol, _x2, @FWDSCAN)
+					if ( (_x1 > 0) && (_x2 > 0) )
+						if ( ( (_x1a == 0) || ((_x1a - 1) <> _x1) ) && ( (_x2a == 0) || ((_x2a - 1) <> _x2) ) )
+							_xtok = StrSub( x, _x1, ((_x2 - _x1) + 1))
+
+							; sometimes the item between the [...] is just a literal rather than a variable being passed from the Java Object Model
+
+							_xtokLenB1 = StrLen( _xtok)
+							_xtokFiltered = StrReplace( _xtok, "<", "")
+							_xtokLenA1 = StrLen( _xtokFiltered)
+
+							_xtokLenB2 = StrLen( _xtok)
+							_xtokFiltered = StrReplace( _xtok, Num2Char( _doubleQuoteASCII), "")
+							_xtokLenA2 = StrLen( _xtokFiltered)
+
+							if ( (_xtokLenA1 == _xtokLenB1) && (_xtokLenA2 == _xtokLenB2) )
+								if _x0 == 1
+									_logText = StrCat( "", "myProcessTemplatesAllFiles --> scanForSquareBrackets x=(", x, ")")
+									if _logfhand <> -1
+										FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+									endif
+								endif
+								
+								; keyword load in the _xtok means this is an invocation of a custom tag otherwise this is a variable replacement thingy
+		
+								_x1oad = StrIndex( _xtok, _loadKeywordToken, 1, @FWDSCAN)
+								if _x1oad > 0
+									_xtok2 = StrSub( _xtok, 2, StrLen( _xtok) - 2)
+									if ItemCount( _xtok2, _loadKeywordTokenSep) == 2
+										_xtok21 = ItemExtract( 1, _xtok2, _loadKeywordTokenSep)
+										_xtok22 = ItemExtract( 2, _xtok2, _loadKeywordTokenSep)
+		
+										_logText = StrCat( "", "myProcessTemplatesAllFiles --> scanForSquareBrackets _xtok2=(", _xtok2, ") _xtok21=(", _xtok21, ") _xtok22=(", _xtok22, ")")
+										if _logfhand <> -1
+											FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+										endif
+		
+										__xtok22 = StrCat( _TemplatesBaseTok, StrReplace( StrReplace( _xtok22, ".", ""), "/", ""))
+										; Apply some heuristics to locate the name if already processed... might get a better match for later...
+										_xtok22Files = FileItemize( StrCat( _TemplatesBaseName, "\", "*", _cfmTemplateFileType))
+										for _xi = 1 to ItemCount( _xtok22Files, _var_list_delimiter)
+											_xiC = ItemExtract( _xi, _xtok22Files, _var_list_delimiter)
+											if StrIndexNc( _xiC, __xtok22, 1, @FWDSCAN) > 0
+												__xtok22 = StrReplace( _xiC, _cfmTemplateFileType, "")
+												__xtok22 = StrReplace( __xtok22, _htmlTemplateFileType, "")
+												break
+											else
+											endif
+										next
+										FileWrite( _tempFile, "<CF_%__xtok22%>")
+									else
+										_vsTemplatesHitErrCount = _vsTemplatesHitErrCount + 1
+										_logText = StrCat( "", "myProcessTemplatesAllFiles --> scanForSquareBrackets _xtok processing error - cannot parse %_loadKeywordToken% directive")
+										if _logfhand <> -1
+											FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+										endif
+									endif
+								else
+									; check the _var_list to see if the variable has already been processed...
+		
+									if _errCodeInit == @FALSE
+										FileWrite( _tempBFile, "<cfset _ERRORCODE = 0>")
+										FileWrite( _tempBFile, "")
+										_errCodeInit = @TRUE
+									endif
+		
+									_vari = ItemLocate( _xtok, _var_list, _var_list_delimiter)
+									if _vari == 0
+										_var_list = ItemInsert( _xtok, ItemCount( _var_list, _var_list_delimiter) + 1, _var_list, _var_list_delimiter)
+		
+										__xtok = StrSub( _xtok, 2, StrLen( _xtok) - 2)
+		
+										_errCodeFile = FileOpen(_TemplateName_errCodeName, "WRITE")
+										_ERRORCODE = _ERRORCODE + 1
+										FileWrite( _errCodeFile, "_ERRORCODE = %_ERRORCODE% ")
+										FileClose(_errCodeFile)
+		
+										FileWrite( _tempBFile, StrCat( "<cfif NOT IsDefined(", Num2Char( _doubleQuoteASCII), "Attributes.%__xtok%", Num2Char( _doubleQuoteASCII), ")>"))
+										FileWrite( _tempBFile, StrCat( @TAB, "<cfset _ERRORCODE = %_ERRORCODE%>"))
+										FileWrite( _tempBFile, StrCat( @TAB, "<CFthrow"))
+										FileWrite( _tempBFile, StrCat( @TAB, "TYPE = ", Num2Char( _doubleQuoteASCII), "TEMPLATES", Num2Char( _doubleQuoteASCII), ""))
+										FileWrite( _tempBFile, StrCat( @TAB, "MESSAGE = ", Num2Char( _doubleQuoteASCII), "Missing Attributes.%__xtok%", Num2Char( _doubleQuoteASCII), ""))
+										FileWrite( _tempBFile, StrCat( @TAB, "DETAIL = ", Num2Char( _doubleQuoteASCII), "%_TemplateName%.cfm", Num2Char( _doubleQuoteASCII), ""))
+										FileWrite( _tempBFile, StrCat( @TAB, "ERRORCODE = ", Num2Char( _doubleQuoteASCII), "#_ERRORCODE#", Num2Char( _doubleQuoteASCII), ""))
+										FileWrite( _tempBFile, "<cfelse>")
+										FileWrite( _tempBFile, "</cfif>")
+										FileWrite( _tempBFile, "")
+	
+										x = StrReplace( x, _xtok, "<cfoutput>#Attributes.%__xtok%#</cfoutput>")
+
+										; write out the chunk of code for this part of the puzzle - the Caller template
+										; _parm_list
+										if ItemLocate( __xtok, _parm_list, _var_list_delimiter) == 0
+											_parm_list = ItemInsert( __xtok, ItemCount( _parm_list, _var_list_delimiter) + 1, _parm_list, _var_list_delimiter)
+										else
+										endif
+									else
+									endif
+									_logText = StrCat( "", "myProcessTemplatesAllFiles --> scanForSquareBrackets _xtok=(", _xtok, ")")
+									if _logfhand <> -1
+										FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+									endif
+								endif
+							else
+								_logText = StrCat( "", "myProcessTemplatesAllFiles --> scanForSquareBrackets Heuristic test for literal inside _xtok PASSED !")
+								if _logfhand <> -1
+									FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+									FileWrite( _logfhand, StrCat( TimeDate(), " : ", _xtok))
+								endif
+							endif
+
+							_x0 = _x2 + 1
+						else
+							FileWrite( _tempFile, x)
+							; \[\] is present - Javascript override appears here
+							break
+						endif
+					else
+						FileWrite( _tempFile, x)
+						; [] is not present
+						break
+					endif
+				endwhile
+			endif
+		endwhile
+		FileClose(old)
+
+		_logText = ""
+		if _logfhand <> -1
+			FileWrite( _logfhand, _logText)
+		endif
+
+		FileClose(_tempFile)
+		FileClose(_tempBFile)
+
+		; template post-processing goes here
+		_TemplateName_cfm = StrCat( _TemplatesBaseName, "\", _TemplateName, ".cfm")
+		_cfmFile = FileOpen(_TemplateName_cfm, "WRITE")
+
+		FileWrite( _cfmFile, "<!--- ")
+
+		__parms = StrCat( "<CF_", _TemplateName)
+
+	; _parm_list
+		for _xi = 1 to ItemCount( _parm_list, _var_list_delimiter)
+			_xp = ItemExtract( _xi, _parm_list, _var_list_delimiter)
+			__parms = StrCat( __parms, " ", _xp, "=", Num2Char( _doubleQuoteASCII), _xp, Num2Char( _doubleQuoteASCII))
+		next
+
+		__parms = StrCat( __parms, ">")
+
+		FileWrite( _cfmFile, __parms)
+		FileWrite( _cfmFile, "")
+		FileWrite( _cfmFile, " --->")
+		FileWrite( _cfmFile, "")
+
+		old = FileOpen(_TemplateName_tempB, "READ")
+		while @TRUE             ; Loop till break do us end
+			x = FileRead(old)
+			If x == "*EOF*" Then Break
+			FileWrite( _cfmFile, x)
+		endwhile
+		FileClose(old)
+
+		old = FileOpen(_TemplateName_temp, "READ")
+		while @TRUE             ; Loop till break do us end
+			x = FileRead(old)
+			If x == "*EOF*" Then Break
+			FileWrite( _cfmFile, x)
+		endwhile
+		FileClose(old)
+
+		FileClose(_cfmFile)
+
+		; make sure the input filename gets a "+" so we skip it next time...
+		FileRename( _aFile, StrCat( _plusSign, _aFile) )
+
+		; delete the temp files and press on...
+		if FileExist( _TemplateName_temp)
+			FileDelete( _TemplateName_temp)
+		endif
+		if FileExist( _TemplateName_tempB)
+			FileDelete( _TemplateName_tempB)
+		endif
+
+		Drop( old, x, _x1, _x2, _x1a, _x2a, _xtok, _x0, _xlen, _x1oad, _xtok2, _tempFile, _TemplateName, _TemplateName_temp, _TemplateName_tempB, _tempBFile, _var_list)
+		Drop( _TemplateName_errCodeName, _errCodeFile, _TemplateName_tempC, __xtok22, _xtok22Files)
+	endif
+return
+
+
+:myFindByDateAllFiles
+; _files .............. INPUT - the list of files to process @TAB delimited
+; _dateSpec ........... INPUT - the date spec as entered by the user
+; _tempPath ........... INPUT - the current path where the _files reside
+; _i ................ TEMPVAR - temporary variable used for looping, etc.
+; _aFile ............ TEMPVAR - temporary variable used for file manipulations
+; _ret .............. TEMPVAR - temporary variable holds the return value
+; _le ............... TEMPVAR - temporary variable holds the last error value
+; _fileDate ......... TEMPVAR - temporary variable holds the file's date/time
+; _daysDiff ......... TEMPVAR - temporary variable
+
+for _i = 1 to ItemCount( _files, @TAB)
+	_aFile = ItemExtract( _i, _files, @TAB)
+
+	_fileDate = FileTimeGetEx( StrReplace( StrCat( DirGet(), _doubleBackSlashSymbol, _aFile), _doubleBackSlashSymbol, _backSlashSymbol), _file_last_modified)  ; Uses YYYY:MM:DD:HH:MM:SS
+
+;	Message( "DEBUG", "_fileDate=(%_fileDate%), _dateSpec=(%_dateSpec%)")
+
+	_daysDiff = TimeDiffDays( _fileDate, _dateSpec)
+	; +++
+	if _daysDiff == 0
+		_filedateHitCount = _filedateHitCount + 1
+
+		_logText = StrCat( "", "myFindByDateAllFiles ")
+		_logText = StrCat( _logText, "_filedateHitCount=%_filedateHitCount%, ")
+		_logText = StrCat( _logText, "_aFile=%_aFile%, ")
+		_logText = StrCat( _logText, "_fileDate=%_fileDate%, ")
+		_logText = StrCat( _logText, "_dateSpec=%_dateSpec%, ")
+		_logText = StrCat( _logText, "_daysDiff=%_daysDiff%, ")
+
+;		Drop( _ret, _le)
+;		ErrorMode(@OFF)
+;		_ret = FileRename( _aFile, __aFile)
+;		ErrorMode(@CANCEL)
+;		if IsDefined( _ret)
+;			_logText = StrCat( _logText, "_ret=%_ret% ")
+;		else
+;			_le = LastError()
+;			_logText = StrCat( _logText, "_le=%_le% ")
+;		endif
+
+		if _logfhand <> -1
+			FileWrite( _logfhand, StrCat( TimeDate(), " : ", _logText))
+		endif
+
+	endif
+
+next
+Drop( _i, _aFile, _ret, _le, _fileDate, _daysDiff)
+return   
+   
+
+
+:myNagwareDialog
+
+;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+
+IntControl(12,5,0,0,0)
+;;;;;;;; Assorted Colors ;;;;;;;;;
+DKBLUE="0,0,128"
+BLUE="0,0,255"
+LTGRAY="192,192,192"
+GRAY="128,128,128"
+DKGRAY="64,64,64"
+GREEN="0,255,0"
+RED="255,0,0"
+BLACK="0,0,0"
+WHITE="255,255,255"
+YELLOW="255,255,0"
+
+__URL = "http://shareware.hal-smalltalker.com/dirZapper"
+
+;;;;;;;;;;;; This Example  ;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; Drawing the Main Box ;;;;;;;;
+;; Note the use of while 1. This use of while maintains
+;; the boxes until a user clicks on a button and exits 
+;; the while construction
+BoxesUp("100,100,900,900",@NORMAL)
+
+while 1
+	_URL = __URL
+
+   BoxColor(1,"0,0,128",4)
+   BoxCaption(1, StrCat( "NagWare Pop-Up Window (c). Copyright 1999 HAL Smalltalker, Inc. ", _URL))
+;; Note: Here we specify 8 buttons numbered 1 to 8.
+;; You can change this. Edit the list of buttons here,
+;; go to the "Select a button" routine and add or subtract
+;; your button selection information. Then create a subroutine
+;; at the end of this script to do what you need done when
+;; the button is pushed. There is a sample for you to use.
+
+	bButtons=3 
+   bExit=1   
+   bHelp=2
+
+   bURL=3
+
+   BoxDrawRect(1,"0,0,1000,1000",2)
+
+   BoxTextFont(1,"Times",50,80,0|0)
+   BoxTextColor(1,"255,255,0")
+   BoxDrawText(1,"10,280,1000,1000","%_productName% Shareware License",0,0)
+
+   BoxTextFont(1,"Times",25,80,0|0)
+   BoxDrawText(1,"10,350,1000,1000","You may use %_productName% for 30 days prior to Registration. If you decide to continue using this product",0,0)
+   BoxDrawText(1,"10,380,1000,1000","after this initial period, you must register this product and pay a registration fee to HAL Smalltalker, Inc.",0,0)
+   BoxDrawText(1,"10,410,1000,1000","If you do not register, you may not continue to use the software. ",0,0)
+
+   BoxDrawText(1,"10,460,1000,1000","This Shareware program may be copied and distributed without fee as a single, unmodified, intact entity, ",0,0)
+   BoxDrawText(1,"10,490,1000,1000","as long as it is not part of another system.",0,0)
+
+   BoxDrawText(1,"10,550,1000,1000","You may not alter, merge, modify, or adapt this Shareware program in anyway including disassembling or",0,0)
+   BoxDrawText(1,"10,580,1000,1000","decompiling. You may modify the examples and resource files as part of your use of the program.",0,0)
+
+   BoxDrawText(1,"10,640,1000,1000","This Shareware program is distributed AS IS. HAL Smalltalker, Inc. DISCLAIMS ALL WARRANTIES ",0,0)
+   BoxDrawText(1,"10,670,1000,1000","ON THIS PROGRAM INCLUDING, WITHOUT LIMITATION, ALL IMPLIED WARRANTIES OF ",0,0)
+   BoxDrawText(1,"10,700,1000,1000","MERCHANTABILITY AND FITNESS. In no event will HAL Smalltalker, Inc. be liable for ",0,0)
+   BoxDrawText(1,"10,730,1000,1000","any damages arising out of the use or the inability to use this program.",0,0)
+
+   BoxTextFont(1,"Times",22,80,0|0)
+   BoxDrawText(1,"10,790,1000,1000","Copyright © 1990-1999 HAL Smalltalker, Inc.",0,0)
+   BoxDrawText(1,"10,820,1000,1000","%_productName% is a servicemark of HAL Smalltalker, Inc.",0,0)
+
+;;;;; This section creates the fancy banner headline in a box
+               rectNote="100,30,900,270"
+               NoteHeight=400
+               rectNoteText="70,200,950,800"
+               
+               rectnoteline1="0,0,1000,0"
+               rectNoteline2="1000,1000,1000,0"
+               rectNoteLine3="0,1000,1000,1000"
+               rectNoteLine4="0,0,0,1000"
+               notepenwidth=20
+               rectnoteline1b="40,150,960,150"
+               rectNoteline2b="960,840,960,150"
+               rectNoteLine3b="40,840,960,840"
+               rectNoteLine4b="40,150,40,840"
+               notepenwidthb=10
+               wbid=2
+               Thermid=3
+               Noteid=4
+        BoxNew(Noteid,rectNote,1)
+        BoxColor(Noteid,LTGRAY,0)       ; Light Gray no gradient
+        BoxDrawRect(Noteid,"",2)
+;;;;;  --------- This line changes the headline font -----------------        
+        BoxTextFont(Noteid,"Arial",NoteHeight,170,0)
+        BoxTextColor(Noteid,RED)
+        
+        BoxPen(Noteid,WHITE,notepenwidth)
+        boxdrawline(Noteid,rectNoteLine1)
+        boxdrawline(Noteid,rectNoteLine4)
+        BoxPen(Noteid,GRAY,notepenwidth)
+        boxdrawline(Noteid,rectNoteLine2)
+        boxdrawline(Noteid,rectNoteLine3)
+        BoxPen(Noteid,WHITE,notepenwidthb)
+        boxdrawline(Noteid,rectNoteLine2b)
+        boxdrawline(Noteid,rectNoteLine3b)
+        BoxPen(Noteid,GRAY,notepenwidthb)
+        boxdrawline(Noteid,rectNoteLine1b)
+        boxdrawline(Noteid,rectNoteLine4b)
+        
+        ;BoxDataTag(Noteid,"NOTE")
+
+        ;   BoxDataClear(NoteId,"NOTE")
+
+
+;;;;;  ----------- The BoxDrawText  line creates the headline text. Copy (don't move)
+;;;;; this line anywhere in this script you need to change the headline text.
+
+
+
+	BoxDrawText(Noteid,rectNoteText,"%_productName%",1,4)
+
+	i1 = Random( 2)
+	i2 = Random( 1)
+
+	if i1 == 0
+		upperX1 = 100
+		upperY1 = 860
+		lowerX1 = 550
+		lowerY1 = 930
+
+		if i2 == 0
+			upperX2 = 600
+			upperY2 = 860
+			lowerX2 = 750
+			lowerY2 = 930
+
+			upperX3 = 800
+			upperY3 = 860
+			lowerX3 = 950
+			lowerY3 = 930
+		else
+			upperX2 = 800
+			upperY2 = 860
+			lowerX2 = 950
+			lowerY2 = 930
+
+			upperX3 = 600
+			upperY3 = 860
+			lowerX3 = 750
+			lowerY3 = 930
+		endif
+	else
+		if i1 == 1
+			upperX1 = 300
+			upperY1 = 860
+			lowerX1 = 750
+			lowerY1 = 930
+
+			if i2 == 0
+				upperX2 = 100
+				upperY2 = 860
+				lowerX2 = 250
+				lowerY2 = 930
+	
+				upperX3 = 800
+				upperY3 = 860
+				lowerX3 = 950
+				lowerY3 = 930
+			else
+				upperX2 = 800
+				upperY2 = 860
+				lowerX2 = 950
+				lowerY2 = 930
+	
+				upperX3 = 100
+				upperY3 = 860
+				lowerX3 = 250
+				lowerY3 = 930
+			endif
+		else
+			if i1 == 2
+				upperX1 = 500
+				upperY1 = 860
+				lowerX1 = 950
+				lowerY1 = 930
+
+				if i2 == 0
+					upperX2 = 100
+					upperY2 = 860
+					lowerX2 = 250
+					lowerY2 = 930
+		
+					upperX3 = 300
+					upperY3 = 860
+					lowerX3 = 450
+					lowerY3 = 930
+				else
+					upperX2 = 300
+					upperY2 = 860
+					lowerX2 = 450
+					lowerY2 = 930
+		
+					upperX3 = 100
+					upperY3 = 860
+					lowerX3 = 250
+					lowerY3 = 930
+				endif
+			else
+			endif
+		endif
+	endif
+
+;	Message( "DEBUG", "i1=%i1%, i2=%i2%, %upperX1%,%upperY1%,%lowerX1%,%lowerY1%, %upperX2%,%upperY2%,%lowerX2%,%lowerY2%, %upperX3%,%upperY3%,%lowerX3%,%lowerY3%")
+
+   BoxButtonDraw(1,bURL,   "&Register %_productName% Get v2.0 FREE",  "%upperX1%,%upperY1%,%lowerX1%,%lowerY1%")
+   BoxButtonDraw(1,bHelp,    "&Help",  "%upperX2%,%upperY2%,%lowerX2%,%lowerY2%")
+
+	if _trialOkay == @TRUE
+	   BoxButtonDraw(1,bExit,    "Continue",  "%upperX3%,%upperY3%,%lowerX3%,%lowerY3%")
+	endif
+
+   BoxTextFont(1,"Times",32,80,0|0)
+   BoxDrawText(1,"10,950,1000,1000","There are %_daysDiff% days left in your Trial period.",0,0)
+   
+   iBox=0
+   BoxButtonWait()
+   while iBox==0
+      for x=1 to bButtons
+         if BoxButtonStat(1,x) then iBox=x
+      next
+   end while
+
+
+;;; Select a button  ;;;;
+
+    
+   if iBox
+      BoxDataClear(1,"TOP")
+      switch iBox
+         case bExit
+				return
+            break
+         case bURL
+            gosub DoBrowser
+            break
+         case bHelp
+            gosub DoHelp
+            break
+      end switch
+
+   endif
+end while
+return
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+:DoBrowser
+	_URL = __URL
+	Gosub openBrowser
+Return
+
+
+:DoHelp
+	_URL = StrReplace( StrCat( DirGet(), "\product-help.html"), _doubleBackSlashSymbol, _backSlashSymbol)
+	Gosub openBrowser
+Return     
+     
+
+
+:openBrowser
+; INPUT _URL ... this is the URL to open using the browser of choice...
+	ErrorMode(@OFF)
+	Run( "iexplore.exe", _URL)
+	ErrorMode(@CANCEL)
+
+	_LE = LastError()
+	if _LE > 0
+		; Can't locate IE so now we look for some variant of Netscape Navigator
+		ErrorMode(@OFF)
+		Run( "netscape.exe", _URL)
+		ErrorMode(@CANCEL)
+
+		_LE = LastError()
+		if _LE > 0
+			; Can't locate IE or Netscape Navigator so now we have to ask the user which browser should be used...
+			types = "All EXEs|*.exe;*.com;*.pif;*.lnk|"
+			fn1 = AskFileName( "Select your favorite browser", "C:\", types, "iexplore.exe", 1)
+			ErrorMode(@OFF)
+			Run( fn1, _URL)
+			ErrorMode(@CANCEL)
+
+			_LE = LastError()
+			if _LE > 0
+				Message( "ERROR - Unable to launch your web browser...", "Corrective Action: Install Internet Explorer 5.0 and try again... We favor using IE 5.0 and so should you.")
+				exit
+			else
+				; stick this value into the Registry so next time you won't need to ask... do this in the next version
+			endif
+		endif
+	endif
+
+Return
+
+
+:selfRegisterTrial
+;;;;;;;;;;;;;;;; Self-Registration via Registry ;;;;;;;;;;;;;;;;;;;;
+; Goal: Design a means of Self-Registering a software product such
+;       that it can 'know' when the trial period has expired and
+;       also so it can keep people from 'hacking' the mechanism.
+; Idea: Cryptography ?!? WOuld need to deploy objects that can
+;       allow this to happen... Feasible? Try using NachoTech CP32...
+
+; Got this far because All Systems are Go !
+; To Do:
+;         1). Look for the Registry Key and Value in the right place.
+;         2). Create or Read the Registration Key (Key is the Date + Random_Digits + Guard_Digits + CRC encrypted using a standard key)
+;         3). Write or Validate the Registration Key
+;         4). Determine if the product may run
+;         5). Display the Time Remaining or Exit with a message directing user to Register, etc.
+
+Gosub doTrialRegistration
+
+return
+
+
+:doTrialRegistration
+	_trialOkay = @TRUE
+
+	_daysDiff = 30
+
+	_SoftwareREGMACHINEkeyname = "Software\HAL Smalltalker Inc."
+	_trialValueName = "[ ]"
+
+	_azAZ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	_azAZlen = StrLen( _azAZ)
+
+	_zdat = "z.dat"
+	_zzip = "z.zip"
+
+	_hexDigits = "0123456789ABCDEF"
+
+	_checkDigits1 = 6
+	_checkDigits2 = 6
+	_checkDigits3 = 6
+
+	_openOrCreateKeyName = _SoftwareREGMACHINEkeyname
+	Gosub openOrCreateKey
+
+	RegClosekey( _openOrCreateKey)
+	; Okay, now the _SoftwareREGMACHINEkeyname exists
+
+	_openOrCreateKeyName = StrCat( _SoftwareREGMACHINEkeyname, "\dirZapper")
+	Gosub openOrCreateKey
+
+	ErrorMode(@OFF)
+	LastError()
+	_zdata = RegQueryBin( _openOrCreateKey, _trialValueName)
+	; _zdata holds the encrypted value we need to decrypt
+	ErrorMode(@CANCEL)
+
+	_LE = LastError()
+	if _LE > 0
+		; Create an encrypted value to shove into the Registry... 
+		_todayStr = StrReplace( StrSub( TimeYmdHms(), 1, 10), ":", "") ; YYYY:MM:DD:HH:MM:SS
+		Gosub getRandomStr
+		_randomStr1 = _randomStr
+		Gosub getRandomStr
+		_randomStr2 = _randomStr
+		_plainText = ""
+		_m = Max( StrLen( _todayStr), StrLen( _randomStr1), StrLen( _randomStr2))
+		for _i = 1 to _m
+			if _i <= StrLen( _randomStr1)
+				_plainText = StrCat( _plainText, StrSub( _randomStr1, _i, 1))
+			endif
+			if _i <= StrLen( _todayStr)
+				_plainText = StrCat( _plainText, StrSub( _todayStr, _i, 1))
+			endif
+			if _i <= StrLen( _randomStr2)
+				_plainText = StrCat( _plainText, StrSub( _randomStr2, _i, 1))
+			endif
+		next
+		_j = StrLen( _plainText)
+		_k = 0
+		for _i = 1 to _j
+			_k = _k + StrSub( _plainText, _i, 1)
+		next
+		_kk = 0
+		for _i = 1 to _j by 2
+			_kk = _kk + StrSub( _plainText, _i, 2)
+		next
+		_kkk = 0
+		for _i = 1 to _j by 4
+			_kkk = _kkk + StrSub( _plainText, _i, 4)
+		next
+		_kStr = StrFixLeft( "%_k%", "0", _checkDigits1)
+		_kkStr = StrFixLeft( "%_kk%", "0", _checkDigits2)
+		_kkkStr = StrFixLeft( "%_kkk%", "0", _checkDigits3)
+
+		_m = Max( StrLen( _kStr), StrLen( _kkStr), StrLen( _kkkStr))
+		for _i = 1 to _m
+			if _i <= StrLen( _kStr)
+				_plainText = StrCat( _plainText, StrSub( _kStr, _i, 1))
+			endif
+			if _i <= StrLen( _kkStr)
+				_plainText = StrCat( _plainText, StrSub( _kkStr, _i, 1))
+			endif
+			if _i <= StrLen( _kkkStr)
+				_plainText = StrCat( _plainText, StrSub( _kkkStr, _i, 1))
+			endif
+		next
+
+;		:debugLoop1
+
+		__plainText = ""
+		for _i = 1 to StrLen( _plainText)
+			_randNum = Random( _azAZlen - 1)
+			_randLetter = StrSub( _azAZ, _randNum + 1, 1)
+			if StrLen( _randLetter) < 1
+				_randNum = Random( (_azAZlen / 2) - 1)
+				_randLetter = StrSub( _azAZ, _randNum + 1, 1)
+			endif
+			__plainText = StrCat( __plainText, StrSub( _plainText, _i, 1), _randLetter)
+			_pLen = StrLen( __plainText)
+			if (_pLen mod 2) <> 0
+;				Message( "Debug:", "Something's wrong...")
+			endif
+			_L2 = StrSub( __plainText, _pLen - 1, 2)
+			if IsNumber( StrSub( _L2, 1, 1)) <> @TRUE
+;				Message( "Debug:", "Something's wrong...")
+			endif
+			if IsNumber( StrSub( _L2, 2, 1)) <> @FALSE
+;				Message( "Debug:", "Something's wrong...")
+			endif
+		next
+
+;		goto debugLoop1
+
+		_plainText = __plainText
+
+		; Cross check this for possible problems...
+
+		handle = FileOpen( _zdat, "WRITE")
+		filewrite( handle, _plainText)
+		fileclose( handle)
+
+		xzipper = zZipFiles( "m 9", _zzip, _zdat, "")
+
+		if FileExist( _zzip)
+			fs = FileSize( _zzip)
+			binbuf = BinaryAlloc( fs + 100)
+			if binbuf == 0
+				Message( "Error - Unable to initialize your Trial User License", "Memory allocation error - Your OS may be corrupt or you may need to buy more RAM...")
+				_trialOkay = @FALSE
+				return
+			else
+				BinaryRead( binbuf, _zzip)
+				_eod = BinaryEodGet( binbuf)
+				; convert the binary buffer's contents into a string of hex digits
+				_zdata = ""
+				for _i = 0 to _eod
+					_byte = BinaryPeek( binbuf, _i)
+					_msb = (_byte & 240) >> 4
+					_lsb = _byte & 15
+					_zdata = StrCat( _zdata, StrSub( _hexDigits, _msb + 1, 1), StrSub( _hexDigits, _lsb + 1, 1), " ")
+				next
+				binbuf = BinaryFree( binbuf)
+			endif
+		else
+			Message( "Error - Unable to initialize your Trial User License", "Your hard drive may be full or corrupt; suggest running hard drive diagnostics...")
+			_trialOkay = @FALSE
+			return
+		endif
+
+		; Poor man's Crypto - almost none...
+
+		RegSetBin( _openOrCreateKey, _trialValueName, _zdata) ; "00 01 22 AB FF 00"
+		FileDelete( _zzip)
+	else
+		; _zdata holds the encrypted value we need to decrypt
+		_len = ItemCount( _zdata, " ")
+		binbuf = BinaryAlloc( _len + 128)
+		if binbuf == 0
+			Message( "Error - Unable to initialize your Trial User License", "Memory allocation error - Your OS may be corrupt or you may need to buy more RAM...")
+			_trialOkay = @FALSE
+			return
+		else
+			for _i = 0 to _len
+				_hex = ItemExtract( _i + 1, _zdata, " ")
+				_msb = StrSub( _hex, 1, 1)
+				_lsb = StrSub( _hex, 2, 1)
+				_byte = ((StrIndexNc( _hexDigits, _msb, 1, @FWDSCAN) - 1) << 4) | (StrIndexNc( _hexDigits, _lsb, 1, @FWDSCAN) - 1)
+				BinaryPoke( binbuf, _i, _byte)
+			next
+			BinaryWrite( binbuf, _zzip)
+			binbuf = BinaryFree( binbuf)
+			xzipper = zUnZipFiles( "", _zzip, "*.*", "", "")
+			FileDelete( _zzip)
+			if FileExist( _zdat)
+				handle = FileOpen( _zdat, "READ")
+				_plainText = FileRead( handle)
+				FileClose( handle)
+				FileDelete( _zdat)
+
+				__plainText = ""
+				for _i = 1 to StrLen( _plainText) by 2
+					__plainText = StrCat( __plainText, StrSub( _plainText, _i, 1))
+				next
+				_checkDigits = _checkDigits1 + _checkDigits2 + _checkDigits3
+				__k = StrSub( __plainText, StrLen( __plainText) - _checkDigits + 1, _checkDigits)
+
+				_kStr = ""
+				_kkStr = ""
+				_kkkStr = ""
+
+				for _i = 1 to StrLen( __k) by 3
+					_kStr = StrCat( _kStr, StrSub( __k, _i, 1))
+					_kkStr = StrCat( _kkStr, StrSub( __k, _i + 1, 1))
+					_kkkStr = StrCat( _kkkStr, StrSub( __k, _i + 2, 1))
+				next
+
+				_plainText = StrSub( __plainText, 1, StrLen( __plainText) - _checkDigits)
+				_j = StrLen( _plainText)
+				_k = 0
+				for _i = 1 to _j
+					_k = _k + StrSub( _plainText, _i, 1)
+				next
+				_kk = 0
+				for _i = 1 to _j by 2
+					_kk = _kk + StrSub( _plainText, _i, 2)
+				next
+				_kkk = 0
+				for _i = 1 to _j by 4
+					_kkk = _kkk + StrSub( _plainText, _i, 4)
+				next
+
+				if _k <> _kStr
+					Message( "Error - Unable to initialize your Trial User License", "Looks like maybe someone has been messing around with something they didn't understand...")
+					_trialOkay = @FALSE
+					return
+				endif
+
+				if _kk <> _kkStr
+					Message( "Error - Unable to initialize your Trial User License", "Looks like maybe someone has been messing around with something they didn't understand...")
+					_trialOkay = @FALSE
+					return
+				endif
+
+				if _kkk <> _kkkStr
+					Message( "Error - Unable to initialize your Trial User License", "Looks like maybe someone has been messing around with something they didn't understand...")
+					_trialOkay = @FALSE
+					return
+				endif
+
+				_todayStr = ""
+				for _i = 1 to StrLen( _plainText) by 3
+					_todayStr = StrCat( _todayStr, StrSub( _plainText, _i + 1, 1))
+				next
+
+				ErrorMode(@OFF)
+				LastError()
+				_todayStr = StrCat( StrSub( _todayStr, 1, 4), ":", StrSub( _todayStr, 5, 2), ":", StrSub( _todayStr, 7, 2), ":00:00:00")
+				ErrorMode(@CANCEL)
+				_LE = LastError()
+
+				ErrorMode(@OFF)
+				LastError()
+				_trialTarget = TimeAdd( _todayStr, "0000:00:30:00:00:00") ; Add 30 days to the Trial init date to determine if the result is < current date
+				ErrorMode(@CANCEL)
+				_LE = LastError()
+
+				_today = TimeYmdHms()
+;				_today = TimeAdd( _today, "0000:00:30:00:00:00")
+
+				ErrorMode(@OFF)
+				LastError()
+				_daysDiff = TimeDiffDays( _trialTarget, _today)
+				ErrorMode(@CANCEL)
+				_LE = LastError()
+
+				if (_LE == 0) && (_daysDiff > 0)
+					_trialOkay = @TRUE
+				endif
+			else
+				Message( "Error - Unable to initialize your Trial User License", "Your hard drive may be full or corrupt; suggest running hard drive diagnostics...")
+				_trialOkay = @FALSE
+				return
+			endif
+		endif
+	endif
+
+	ErrorMode(@OFF)
+	RegClosekey( _openOrCreateKey)
+	ErrorMode(@CANCEL)
+Return
+
+
+:openOrCreateKey
+; INPUT _openOrCreateKeyName ... the name of the kay to open or create
+; OUTPUT _openOrCreateKey ...... the kay handle
+	ErrorMode(@OFF)
+	LastError()
+	_openOrCreateKey = RegOpenkey( @REGMACHINE, _openOrCreateKeyName)
+	ErrorMode(@CANCEL)
+
+	_LE = LastError()
+	if _LE > 0
+		; The Key didn't exist so make one...
+		ErrorMode(@OFF)
+		LastError()
+		_openOrCreateKey = RegCreateKey( @REGMACHINE, _openOrCreateKeyName)
+		ErrorMode(@CANCEL)
+
+		_LE = LastError()
+		if _LE > 0
+			Message( "Fatal System ERROR", "Unable to run this program in Trial mode. Your Registry may be corrupt.")
+			exit
+		endif
+	endif
+return
+
+
+:getRandomStr
+	_randomStr = ""
+	for _i = 1 to StrLen( _todayStr)
+		_num = Random( 9)
+		_randomStr = StrCat( _randomStr, "%_num%")
+	next
+return
+
+
+
+:determineModeCode
+	if (StriCmp( _mode, _modeDeleteROFiles) == 0)
+		_mode = _modeDeleteROFilesCode
+		return
+	else
+		if (StriCmp( _mode, _modeDirSize) == 0)
+			_mode = _modeDirSizeCode
+			return
+		else
+			if (StriCmp( _mode, _modeZIPFiles) == 0)
+				_mode = _modeZIPFilesCode
+				return
+			else
+				if (StriCmp( _mode, _modeConvertFiles) == 0)
+					_mode = _modeConvertFilesCode
+					return
+				else
+					if (StriCmp( _mode, _modeFindByDateFiles) == 0)
+						_mode = _modeFindByDateFilesCode
+						return
+					else
+						if (StriCmp( _mode, _modeVSTemplateProcessor) == 0)
+							_mode = _modeVSTemplateProcessorCode
+							return
+						else
+							if (StriCmp( _mode, _modeDirCompare) == 0)
+								_mode = _modeDirCompareCode
+								return
+							else
+							endif
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+	_mode = _modeDirSizeCode
+return
+
+
+

@@ -1,0 +1,36 @@
+:unSecureData
+; param1 ....... input - the name of the string variable that holds the data being acted upon
+
+If param0 <> 1
+    return
+Endif
+
+If IsDefined( i) == @YES
+    i_unSecureData = i
+Endif
+
+If IsDefined( s) == @YES
+    s_unSecureData = s
+Endif
+
+s = ""
+For i = 1 to StrLen( %param1%)
+    s = StrCat( s, Num2Char( Char2Num( StrSub( %param1%, i, 1)) & 127))
+Next
+%param1% = s
+
+Drop( i, s)
+
+If IsDefined( i_unSecureData) == @YES
+    i = i_unSecureData
+    Drop( i_unSecureData)
+Endif
+
+If IsDefined( s_unSecureData) == @YES
+    s = s_unSecureData
+    Drop( s_unSecureData)
+Endif
+
+return
+
+

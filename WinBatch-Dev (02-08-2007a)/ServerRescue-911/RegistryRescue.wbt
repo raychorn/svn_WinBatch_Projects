@@ -1,0 +1,79 @@
+; RegistryRescue.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+IntControl(41, 1, 0, 0, 0)
+
+_wName = "RegistryRescue"
+
+wName = "Registry Editor"
+wName_HKLM = "HKEY_LOCAL_MACHINE"
+
+registryEditor = "C:\WINNT\system32\regedt32.exe"
+registryDir = "C:\WebSite\support\registry"
+
+Run( registryEditor, "")
+
+; we need to wait a while here but not sure how long - let the registry editor come online...
+_secs = 0
+max_secs = 30
+_begin = TimeYmdHms( )
+while (_secs < max_secs) && (WinExist(wName) == @FALSE)
+	If (_secs > max_secs) || (WinExist(wName) == @TRUE)
+		break
+	Endif
+	Delay( 1)
+	_secs = Abs(Int(TimeDiffSecs( TimeYmdHms( ), _begin)))
+endwhile
+
+If WinExist(wName) == @TRUE
+
+	If WinExistChild( wName, wName_HKLM)
+		WinActivChild( wName, wName_HKLM)
+		
+		SendMenusTo(wName, "View Find Key")
+
+		Delay( 2)
+
+		SendKey(`SOFTWARE`)
+
+		Delay( 2)
+
+		SendKey(`!c`)
+
+		Delay( 2)
+
+		SendKey(`!F`)
+
+		Delay( 2)
+
+		SendKey(`{ESC}`)
+
+		Delay( 2)
+
+		SendMenusTo(wName, "Registry Save Subtree As")
+
+		Delay( 2)
+
+		__time = TimeYmdHms( )
+		_time = StrCat( StrReplace( StrSub( __time, 1, 10), ":", ""), "_", StrReplace( StrSub( __time, 11, -1), ":", "")) ; YYYY:MM:DD:HH:MM:SS
+	
+		DirMake( registryDir)
+		SendKey(`%registryDir%\REGISTRY-%_time%.TXT`)
+
+		Delay( 2)
+
+		SendKey(`!S`)
+
+		Delay( 2)
+
+		SendMenusTo(wName, "Registry Exit")
+	Else
+		Message( "%_wName%", "ERROR: Missing window named %wName%")
+	Endif
+Else
+	Message( "%_wName%", "ERROR: Missing window named %wName%")
+Endif
+
+exit
+

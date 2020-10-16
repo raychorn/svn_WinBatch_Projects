@@ -1,0 +1,138 @@
+:ReadCustomerRecord
+; param1 ......................... input - the name of the string variable that holds the filename that contains the customer's records
+; param2 ......................... input - the variable prefix
+; %param2%0 ...................... output - the number of customer records
+; %param2%N ...................... output - a customer record
+; binbuf_RCR ..................... output - binary buffer that contains the entire record for this customer
+If param0 <> 2
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for ReadCustomerRecord</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( handle) == @YES
+    handle_RCR = handle
+Endif
+
+If IsDefined( aLine) == @YES
+    aLine_RCR = aLine
+Endif
+
+If IsDefined( aString) == @YES
+    aString_RCR = aString
+Endif
+
+If IsDefined( bytes) == @YES
+    bytes_RCR = bytes
+Endif
+
+If IsDefined( i) == @YES
+    i_RCR = i
+Endif
+
+If IsDefined( ic) == @YES
+    ic_RCR = ic
+Endif
+
+If IsDefined( aRec) == @YES
+    aRec_RCR = aRec
+Endif
+
+If IsDefined( _param2) == @YES
+    _param2_RCR = _param2
+Endif
+
+%param2%0 = 0
+handle = FileOpen( param1, "READ")
+If handle <> 0
+    while @TRUE
+        aLine = FileRead( handle)
+        If aLine == "*EOF*" Then Break
+        aString = aLine
+;        Gosub unSecureData
+        Call( "unSecureData.wbc", "aString")
+        aString = StrReplace( StrTrim( aString), "'", "")
+        ic = ItemCount(aString, "=")
+        If ic > 0
+            %param2%0 = %param2%0 + 1
+            _param2 = %param2%0
+            %param2%%_param2% = aString
+        Else
+            WebOut('<FONT COLOR="RED"><B>ERROR - CANNOT PROCESS aString=(%aString%) ic=%ic% FROM FILE %param1%</B></FONT>', _html_crlf)
+        Endif
+    endwhile
+
+    fileclose( handle)
+
+    bytes = 0
+    For i=1 to %param2%0
+        aRec = %param2%%i%
+        bytes = bytes + StrLen( aRec)
+    Next
+
+;WebOut('<FONT COLOR="BLUE"><B>DEBUG - bytes=(%bytes%)</B></FONT><BR>', _html_crlf)
+
+    binbuf_RCR = BinaryAlloc( bytes + 128)
+
+;_param2 = %param2%0
+;WebOut('<FONT COLOR="BLUE"><B>(2) DEBUG - %param2%0=(%_param2%)</B></FONT><BR>', _html_crlf)
+
+    BinaryPokeStr(binbuf_RCR, BinaryEodGet(binbuf_RCR), @CR) ; add in a bogus filler to keep index searches from returning a 0 when the first record is found
+    For i=1 to %param2%0
+        aRec = %param2%%i%
+        BinaryPokeStr(binbuf_RCR, BinaryEodGet(binbuf_RCR), StrCat( aRec, @TAB))
+
+;WebOut('<FONT COLOR="BLUE"><B>DEBUG - aRec=(%aRec%)</B></FONT><BR>', _html_crlf)
+    Next
+
+; Be sure to FREE the binary buffer once processing has been completed
+;    BinaryFree( binbuf_RCR)
+
+Else
+    WebOut('<FONT COLOR="RED"><B>ERROR - CANNOT OPEN FILE %param1%</B></FONT>', _html_crlf)
+Endif
+
+Drop( handle, aLine, aString, bytes, aRec, ic, i)
+
+If IsDefined( handle_RCR) == @YES
+    handle = handle_RCR
+    Drop( handle_RCR)
+Endif
+
+If IsDefined( aLine_RCR) == @YES
+    aLine = aLine_RCR
+    Drop( aLine_RCR)
+Endif
+
+If IsDefined( aString_RCR) == @YES
+    aString = aString_RCR
+    Drop( aString_RCR)
+Endif
+
+If IsDefined( bytes_RCR) == @YES
+    bytes = bytes_RCR
+    Drop( bytes_RCR)
+Endif
+
+If IsDefined( ic_RCR) == @YES
+    ic = ic_RCR
+    Drop( ic_RCR)
+Endif
+
+If IsDefined( i_RCR) == @YES
+    i = i_RCR
+    Drop( i_RCR)
+Endif
+
+If IsDefined( aRec_RCR) == @YES
+    aRec = aRec_RCR
+    Drop( aRec_RCR)
+Endif
+
+If IsDefined( _param2_RCR) == @YES
+    _param2 = _param2_RCR
+    Drop( _param2_RCR)
+Endif
+
+return
+
+

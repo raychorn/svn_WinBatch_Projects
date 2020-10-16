@@ -1,0 +1,122 @@
+; This script creates a report on the windows visible at the time
+; the report is run.  Run the script.  Choose a top-level
+; window of interest, and it will show pertinent information
+; that may be necessary to use the Control Manager extender.
+
+; Note that Tabbed dialogs sometimes must be displayed before
+; their controls are brought into existence.  So when using
+; tabbed dialogs, tab to the correct dialog first.  The
+; cWndInfo example shows how to move thru a tabbed dialog.
+
+AddExtender("wwctl32i.dll")
+fname="trash.txt"
+
+a=WinItemize()
+b=AskItemList("Choose a Window",a,@tab,@unsorted,@single)
+
+hwnd=DllHwnd(b)
+myfile=FileOpen(fname,"WRITE")
+
+workwnd=hwnd
+gosub gettextandclass
+FileWrite(myfile,"P   C   C   C   C")
+FileWrite(myfile,"A   H   H   H   H")
+FileWrite(myfile,"R   I   I   I   I")
+FileWrite(myfile,"E   L   L   L   L")
+FileWrite(myfile,"N   D   D   D   D")
+FileWrite(myfile,strcat(strfix("T   2   3   4   5"," ",21),strfix("CLASS"," ",26),strfix("IDENT"," ",7),"TITLE"))
+
+FileWrite(myfile,strfill("-",80))
+FileWrite(myfile,strcat(strfix("TOP"," ",21),strfix(class," ",26),strfix(ident," ",7),text))
+
+gosub ProcessChildren
+FileClose(myfile)
+
+Run("notepad.exe",fname)
+exit
+
+:ProcessChildren
+nextchild=cWndInfo(workwnd,8)
+ChildCount=0
+if nextchild==0
+   FileWrite(myfile,"    X                NONE")
+else
+   while nextchild
+       ChildCount=ChildCount+1
+       workwnd=nextchild
+       gosub gettextandclass
+       FileWrite(myfile," ")
+       FileWrite(myfile,strcat("    ",strfix(ChildCount," ",17),strfix(class," ",26),strfix(ident," ",7),text))
+
+       nextchild=cWndInfo(workwnd,6)
+
+       gosub ProcessGrandchildren    ; note this destroys workwnd variable....
+   endwhile
+endif
+return
+
+:ProcessGrandchildren
+grandchild=cWndInfo(workwnd,8)
+GrandCount=0
+if grandchild==0
+   FileWrite(myfile,"        X            NONE")
+else
+   while grandchild
+       GrandCount=GrandCount+1
+       workwnd=grandchild
+       gosub gettextandclass
+       FileWrite(myfile,strcat("        ",strfix(GrandCount," ",13),strfix(class," ",26),strfix(ident," ",7),text))
+
+       grandchild=cWndInfo(workwnd,6)
+
+       gosub ProcessGreatGrandChildren
+   endwhile
+endif
+
+return
+
+:ProcessGreatGrandchildren
+greatgrandchild=cWndInfo(workwnd,8)
+greatGrandCount=0
+if greatgrandchild==0
+   FileWrite(myfile,"            X        NONE")
+else
+   while greatgrandchild
+       greatGrandCount=greatGrandCount+1
+       workwnd=greatgrandchild
+       gosub gettextandclass
+       FileWrite(myfile,strcat("            ",strfix(greatGrandCount," ",9),strfix(class," ",26),strfix(ident," ",7),text))
+
+       greatgrandchild=cWndInfo(workwnd,6)
+       gosub processlevel5
+   endwhile
+endif
+
+return
+
+:ProcessLevel5
+L5child=cWndInfo(workwnd,8)
+L5Count=0
+if l5child==0
+   FileWrite(myfile,"                X    NONE")
+else
+   while l5child
+       l5count=L5Count+1
+       workwnd=l5child
+       gosub gettextandclass
+       FileWrite(myfile,strcat("                ",strfix(L5Count," ",5),strfix(class," ",26),strfix(ident," ",7),text))
+
+       l5child=cWndInfo(workwnd,6)
+
+       gosub processlevel5
+   endwhile
+endif
+
+return
+
+
+:GETTEXTANDCLASS
+text=cWndInfo(workwnd,0)
+ident=cWndInfo(workwnd,1)
+class=cWndInfo(workwnd,2)
+return   

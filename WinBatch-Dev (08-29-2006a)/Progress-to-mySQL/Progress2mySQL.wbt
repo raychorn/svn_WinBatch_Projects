@@ -1,0 +1,10 @@
+;*********************************************************************************************************
+; Progress2mySQL.wbt
+;
+; Purpose:  Automate the task of making Progress Procedures and mySQL Tables from Progress Schema Reports.
+;
+;*********************************************************************************************************
+
+_wname = "Progress2mySQL v1.0.0"
+wname = "%_wname% [Progress2mySQL] (c)1990-2006 Hierarchical Applications Limited, All Rights Reserved."
+

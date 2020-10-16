@@ -1,0 +1,62 @@
+; Js_to_CF_SrcEnc.wbt
+;
+; Purposes: Converts instances of '#' to '##' and breaks into smaller strings suitable for use in a <CFSCRIPT>.
+
+AddExtender("WWWSK32I.DLL")
+
+_wname = "Js_to_CF_SrcEnc v1.0"
+wname = "%_wname% (c)2005 Ray C Horn, All Rights Reserved."
+
+CR = StrCat(Num2Char(13),Num2Char(10))
+_crlf = CR
+
+_dblTicks = '"'
+
+_maxStringLen = 100
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+_now = TimeYmdHms()	; YYYY:MM:DD:HH:MM:SS
+_nowBegin = _now
+
+_yyyy = ItemExtract( 1, _now, ":")
+_mm = ItemExtract( 2, _now, ":")
+_dd = ItemExtract( 3, _now, ":")
+
+;inputS = AskTextBox( "Enter the JS Code from SrcEnc Here","?", "", 1, 0)
+types = "All Files|*.*|JS Files|*.js|"
+fnInput = AskFileName("Open File", "Z:\wwwroot", types, "*.js", 1)
+
+sz = FileSize(fnInput)
+
+;types = "All Files|*.*|JS Files|*.js|"
+;fn1 = AskFileName("Save File", "Z:\wwwroot", types, "*.js", 0)
+
+fn1 = StrCat( fnInput, '_')
+
+;varName = AskLine("CF Var name", "code_disabl_right_click_script_III_js ?", "code_disabl_right_click_script_III_js")
+
+varName = fn1
+dabegin = StrIndex(varName, "\", StrLen(varName), @BACKSCAN)
+if dabegin <> 0 then varName = StrSub( varName, dabegin + 1, StrLen(varName) - dabegin + 1)
+daend = StrIndex(varName, ".", 1, @FWDSCAN)
+if daend <> 0 then varName = StrSub( varName, 1, daend - 1)
+varName = StrReplace( varName, '-', '_')
+
+old = FileOpen(fnInput, "READ")
+new = FileOpen(fn1, "WRITE")
+_x = 1
+FileWrite( new, StrCat( varName, " = ArrayNew(1);"))
+while @TRUE             ; Loop till break do us end
+	x = FileRead(old)
+	If x == "*EOF*" Then Break
+	FileWrite( new, StrCat( varName, "[%_x%] = ", _dblTicks, urlEncode(x), _dblTicks, ";"))
+	_x = _x + 1
+endwhile
+FileClose(new)
+FileClose(old)
+
+exit
+
+
+

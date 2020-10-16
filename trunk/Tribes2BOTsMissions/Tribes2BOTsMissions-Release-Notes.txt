@@ -1,0 +1,21 @@
+Quick readme on this release of Tribes2BOTsMissions.EXE - The Tribes2 Utility to Copy BOTs Missions from one folder to another.
+
+-------------------
+Installation
+-------------------
+
+Make a folder under C:\Program Files or the like and then double click Tribes2BOTsMissions.exe
+
+You will be asked for your Tribes2 Destination Root Folder and then your Tribes2 Source Root Folder.
+
+Tribes2BOTsMissions then copies all your BOTs Missions from the Source Folders to the Destination Folders but will prompt you whenever it may overwrite an existing file in the Desitnation folders.
+
+---------------------
+Contact
+---------------------
+
+This is an early release, more features to come.  
+Please send comments and bug reports to 
+halsmalltalker@hotmail.com
+
+Thank you and enjoy!

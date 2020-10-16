@@ -1,0 +1,40 @@
+;Here is an example of using a one second timer event.
+#DefineFunction TimerProc(MyDialogHandle,MyDialogMessage,MyDialogControlID,param4,param5)
+InitDialog = 0
+TimerTick = 1
+
+Switch MyDialogMessage
+   Case InitDialog
+      ; enable 1 second timer events
+      DialogProcOptions(MyDialogHandle, TimerTick, 1000)
+      Return (-1)
+   Case TimerTick
+      Clock=DialogControlGet(MyDialogHandle, 3, 4)
+      Clock=Clock-1
+      If Clock==0 Then Return(2) ; exit, buttonpushed==2
+      DialogControlSet(MyDialogHandle, 3, 4, Clock)
+      Return(-1)
+EndSwitch ; MyDialogMessage
+Return(-1) ; Do default processing
+#EndFunction
+
+TimerFormat=`WWWDLGED,6.1`
+
+TimerCaption=`Timer Example`
+TimerX=78
+TimerY=129
+TimerWidth=121
+TimerHeight=117
+TimerNumControls=3
+TimerProcedure="TimerProc"
+TimerFont=`DEFAULT`
+TimerTextColor=`DEFAULT`
+TimerBackground=`DEFAULT,DEFAULT`
+TimerConfig=0
+
+Timer001=`12,82,35,14,PUSHBUTTON,DEFAULT,"OK",1,DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+Timer002=`66,82,35,14,PUSHBUTTON,DEFAULT,"Cancel",0,DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+Timer003=`22,15,71,53,VARYTEXT,clock,"10",DEFAULT,DEFAULT,DEFAULT,"Tahoma|49152|70|34","128|0|0",DEFAULT`
+ButtonPushed=Dialog("Timer",1)
+
+exit

@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=increaseConnections.wbt
+Targ=W:\WinBatch-Dev\increaseConnections\increaseConnections.exe
+Icon=
+CmpVersion=3
+[Options]
+TechWebPage=http://rayhorn.contentopia.net/rayhorn
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=
+CompanyName=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=increaseConnections
+FileVersion=1.0
+InternalName=increaseConnections.exe
+LegalCopyright=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=increaseConnections.exe
+ProductName=increaseConnections
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=0

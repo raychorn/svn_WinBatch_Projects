@@ -1,0 +1,27 @@
+[Main]
+Type=1
+Src=cf_encoder.WBT
+Targ=W:\WinBatch-Dev\cf_encoder\cf_encoder.exe
+Icon=W:\WinBatch-Dev\cf_encoder\xp_004.ico
+CmpVersion=3
+[Options]
+TechWebPage=http://www.ez-ajax.com
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=http://www.ez-ajax.com
+CompanyName=(c). Copyright 1990-2007, Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=cf_encoder
+FileVersion=2.4h
+InternalName=cf_encoder.exe
+LegalCopyright=(c). Copyright 1990-2007, Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2007, Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=cf_encoder.exe
+ProductName=cf_encoder
+ProductVersion=2.4h
+[Other Files]
+Count=0
+[Extenders]
+Count=2
+File001=wproc34i.dll
+File002=WWZIP34I.DLL

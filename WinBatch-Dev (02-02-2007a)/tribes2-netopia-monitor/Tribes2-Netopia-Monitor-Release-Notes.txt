@@ -1,0 +1,21 @@
+Quick readme on this release of Tribes2-Netopia-Monitor - The Tribes2 Utility to monitor Players and Bandwidth usage.
+
+-------------------
+Installation
+-------------------
+
+Make a folder called C:\Tribes2-Netopia-Monitor or the like and then double click Tribes2-Netopia-Monitor.exe
+
+You will be asked for some information the Tribes2-Netopia-Monitor utility requires and then you be on your way.
+
+Tribes2-Netopia-Monitor assumes the following is true :
+
+---------------------
+Contact
+---------------------
+
+This is an early release, more features to come.  
+Please send comments and bug reports to 
+halsmalltalker@hotmail.com
+
+Thank you and enjoy!

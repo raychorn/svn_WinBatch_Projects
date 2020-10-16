@@ -1,0 +1,42 @@
+; Tribes2Priority.wbt
+
+wName = "Tribes2 Priority Vers 1.0"
+
+procNameTribes2 = "tribes2.exe"
+
+AddExtender("wproc32i.dll")
+
+ret = tVersion()
+; Message("Task Extender Version",ret)
+
+id = tListProc()
+; list=Askitemlist("List of all current processes",id,@TAB,@UNSORTED,@SINGLE)
+
+for i = 1 to ItemCount( id, @TAB)
+	aProc = ItemExtract( i, id, @TAB)
+
+	; parse off process ID and Name
+	procid = itemextract( 2, aProc, "|")
+	procname = itemextract( 1, aProc, "|")
+
+	if procname == procNameTribes2 then
+	endif
+next
+
+ret = tGetProcInfo(procid)
+pfc = itemextract(1,ret,@TAB)
+pwss = itemextract(2,ret,@TAB)
+wss = itemextract(3,ret,@TAB)
+qpppu = itemextract(4,ret,@TAB)
+qppu = itemextract(5,ret,@TAB)
+qpnppu = itemextract(6,ret,@TAB)
+
+qnppu = itemextract(7,ret,@TAB)
+pfu = itemextract(8,ret,@TAB)
+ppfu = itemextract(9,ret,@TAB)
+string = strcat("PageFaultcount",@TAB,pfc,@CRLF,"PeakWorkingSetSize",@TAB,pwss,@CRLF, "WorkingSetSize",@TAB,wss,@CRLF,"QuotaPeakPagedPoolUsage", @TAB,qpppu,@CRLF,"QuotaPagedPoolUsage",@TAB,qppu,@CRLF)
+string = strcat(string,"QuotaPeakNonPagedPoolUsage",@TAB,qpnppu,@CRLF, "QuotaNonPagedPoolUsage",@TAB,qnppu,@CRLF,"PagefileUsage", @TAB,pfu,@CRLF,"PeakPagefileUsage",@TAB,ppfu)
+
+message("Memory info on process %procname%",string)
+
+Exit

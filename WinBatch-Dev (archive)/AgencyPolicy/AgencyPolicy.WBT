@@ -1,0 +1,362 @@
+__appName = "AgencyPolicy"
+_appName = "%__appName% v1.2"
+
+;FamiliesFirst c2003
+;Agency Policy Script 
+;
+;Usage START /WAIT AgencyPolicy.exe %USERNAME% %USERDOMAIN% %COMPUTERNAME%
+
+AddExtender("wwodb32i.dll")
+
+_dsn = "AgencyPolicy"
+_dbServer = "APPDEV"
+_dsnUser = "sa"
+_dsnPwd = "almostall4one"
+
+; this needs to be a scratch space on the user's hard drive - terms don't get a drive C...
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+_regFile = "%_myPath%AgencyPolicy.reg"
+
+_regEdtWinName = "Registry Editor"
+
+_iniKeyName = "[AgencyPolicy]"
+_iniValueName = "AgencyPolicy="
+
+_odbcFName = "odbc.ini"
+_odbcBakFName = "odbc-ini.bak"
+
+_odbcValHeader = "[ODBC 32 bit Data Sources]"
+
+_odbcValString = "AgencyPolicy=SQL Server (32 bit)"
+
+__sqlsrv32 = "sqlsrv32.dll"
+
+Gosub InitODBC
+
+if _okayToODBC == @False
+	exit
+endif
+
+;INITIALIZE VARIABLES
+
+;_debug = 1
+_debug = 0
+
+UserName = "UnDefined"
+UserDomain = "UnDefined"
+ComputerName = "UnDefined"
+
+_table = "AgencyPolicy"
+
+If IsDefined( param1)
+	UserName = param1
+Else
+	UserName = AskLine("%_appName%", "UserName ? (rhorn)", "UnDefined-UserName")
+Endif
+
+If IsDefined( param2)
+	UserDomain = param2
+Else
+	UserDomain = AskLine("%_appName%", "UserDomain ? (FF_PDC1)", "UnDefined-UserDomain")
+Endif
+
+If IsDefined( param3)
+	ComputerName = param3
+Else
+	ComputerName = AskLine("%_appName%", "ComputerName ? (appdev)", "UnDefined-ComputerName")
+Endif
+
+; Message("%_appName%", "UserName (%UserName%), UserDomain (%UserDomain%), ComputerName (%ComputerName%)")
+
+_crlf = StrCat(Num2Char(13), Num2Char(10))
+_tab = StrCat(Num2Char(9))
+
+_myFPath = IntControl( 1004, 0, 0, 0, 0)
+_myPath =  FilePath( _myFPath)
+_fileNameLog =  StrCat( "%_myPath%%__appName%", ".Log")
+
+_fhandLog = FileOpen( _fileNameLog, "APPEND")
+
+_today = TimeDate()
+FileWrite( _fhandLog, "%_today% BEGIN :: %_appName% %_crlf%")
+
+_now = TimeYmdHms()
+_nowBegin = _now
+FileWrite( _fhandLog, "%_tab% %_now% UserName (%UserName%), UserDomain (%UserDomain%), ComputerName (%ComputerName%)")
+
+;THIS ALLOCATES A SQL ENVIRONMENT HANDLE
+henv = qAllocEnv()
+
+If henv == -1
+	;THIS RETURNS LAST CODE SET BY LAST SQL FUNCTION
+	retcode = qLastCode()
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qAllocEnv failed (%retcode%)")
+Endif
+
+;ALLOCATES A SQL CONNECTION HANDLE - MAXIMUM 
+;OF 10 OPEN CONNECTION HANDLES
+hdbc = qAllocConnect(henv) 
+
+If hdbc == -1
+	retcode = qLastCode()
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qAllocConnect failed (%retcode%)")
+Endif
+
+;CONNECTS TO THE "SAMPLE" DATA SOURCE 
+;WITH THE DATA SOURCE NAME 'ContactDSN'
+retcode = qConnect(hdbc, _dsn, _dsnUser, _dsnPwd) 
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)  
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qConnect failed (%retcode%). The ODBC DSN (DataSource Name) of %_dsn% is probably missing or the username/pwd is wrong within this program.")
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)  
+
+If hstmt == -1
+	retcode = qLastCode()
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qAllocStmt failed (%retcode%)")
+Endif
+
+; Step 1 :: Has the user been entered in the database yet regardless of the date ?
+; Step 2 :: If the user has not been entered in the database then insert the record - show the prompts and get the responses
+
+;THE FOLLOWING EXECUTES AN SQL STATEMENT.
+;THE COLUMNS BELOW ARE ACTUAL COLUMN NAMES IN YOUR DATA SOURCE, ;E.G.,"LASTNAME":
+retcode = qExecDirect(hstmt, "SELECT id, promptTag_vc, prompt_text FROM AgencyPolicyPrompts WHERE (promptTag_vc LIKE 'p1.%%') ORDER BY promptTag_vc")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qExecDirect failed (%retcode%)")
+Endif
+
+prompt_text0 = 0
+prompt_p1 = ""
+
+While @TRUE
+  ;FETCHES A ROW OF DATA FROM A RESULT SET
+	retcode = qFetch(hstmt) 
+
+	If retcode == @qNoData Then Break
+
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Warning :: qFetch failed (%retcode%)")
+		Break
+	Endif
+
+	_index = ""
+	retcode = qGetData(hstmt, 2, "promptTag_vc", 255)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Warning", "promptTag_vc qGetData failed (%retcode%)")
+		endif
+		Break
+	else
+		_index = StrReplace( promptTag_vc, ".", "")
+	Endif
+
+	retcode = qGetData(hstmt, 3, "prompt_text", 255)
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		IF  StriCmp( _outputMode, _outputModeVerbose ) == 0
+			Message("%_appName% :: Warning", "P_LNAME qGetData failed (%retcode%)")
+		endif
+		Break
+	else
+		prompt_text0 = prompt_text0 + 1
+		prompt_text%prompt_text0% = prompt_text
+		prompt_p1 = StrCat( prompt_p1 , prompt_text%prompt_text0% )
+		if StrLen(StrTrim( prompt_text%prompt_text0% )) == 0
+			prompt_p1 = StrCat( prompt_p1 , _crlf , _crlf)
+		endif
+	Endif
+
+EndWhile
+
+;SQL_CLOSE - RESETS OR FREES A SQL STATEMENT HANDLE 
+;(SET WITH QALLOC)
+qFreeStmt(hstmt, 0)  
+qFreeStmt(hstmt, 2)  ; SQL_UNBIND
+
+;THE FOLLOWING EXECUTES AN SQL STATEMENT.
+;THE COLUMNS BELOW ARE ACTUAL COLUMN NAMES IN YOUR DATA SOURCE, ;E.G.,"LASTNAME":
+retcode = qExecDirect(hstmt, "SELECT id, today_dt, UserName_vc, UserDomain_vc, ComputerName_vc FROM %_table% WHERE (UserName_vc = '%UserName%') AND (UserDomain_vc = '%UserDomain%') AND (ComputerName_vc = '%ComputerName%')")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+	_errmsg = qError(hstmt, 2)
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% Warning :: qExecDirect failed (%retcode%) -- Reason :: The specified user has not yet responded to this program.")
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab%%_tab% %_now% Reason :: %_errmsg%")
+Endif
+
+numcols = qNumRsltCol( hstmt)
+
+_dataExists = 0
+
+While @TRUE
+  ;FETCHES A ROW OF DATA FROM A RESULT SET
+	retcode = qFetch(hstmt) 
+
+	If retcode == @qNoData Then Break
+
+	If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+		_errmsg = qError(hstmt, 2)
+		_now = TimeYmdHms()
+		FileWrite( _fhandLog, "%_tab% %_now% Warning :: qFetch failed (%retcode%) [%_errmsg%]")
+		Break
+	Endif
+
+	_dataExists = _dataExists + 1
+
+EndWhile
+
+if _dataExists == 0
+	q = AskYesNo( "FamiliesFirst Inc. Agency Policy", prompt_p1)
+	if q == @YES
+		_q = "Yes"
+	else
+		_q = "No"
+	endif
+	_now = TimeYmdHms()
+	FileWrite( _fhandLog, "%_tab% %_now% prompt_p1 (%_q%) [%q%]")
+;	Message( "debug", "q = [%q%], _q = [%_q%]")
+
+	if q == @YES
+		;SQL_CLOSE - RESETS OR FREES A SQL STATEMENT HANDLE 
+		;(SET WITH QALLOC)
+		qFreeStmt(hstmt, 0)  
+		qFreeStmt(hstmt, 2)  ; SQL_UNBIND
+
+		_sql = "INSERT INTO %_table% (today_dt, UserName_vc, UserDomain_vc, ComputerName_vc) VALUES (GETDATE(), '%UserName%', '%UserDomain%', '%ComputerName%')"
+		retcode = qExecDirect(hstmt, _sql)
+		
+		If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+			_errmsg = qError(hstmt, 2)
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_tab% %_now% Warning :: qExecDirect failed (%retcode%) -- Reason :: The specified user's acceptance cannot be recorded in the database.")
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_tab%%_tab% %_now% SQL :: %_sql%")
+			_now = TimeYmdHms()
+			FileWrite( _fhandLog, "%_tab%%_tab% %_now% Error :: %_errmsg%")
+		Endif
+	endif
+
+endif
+
+_today = TimeDate()
+_now = TimeYmdHms()
+_ds = TimeDiffSecs(_now, _nowBegin)
+_dsv = _ds
+_dv = 60 * 60
+_hh = Int(_dsv / _dv)
+_dsv = _dsv - (_hh * _dv)
+_dv = 60
+_mm = Int(_dsv / _dv)
+_dsv = _dsv - (_mm * _dv)
+_ss = _dsv
+if _hh <= 9
+	_hh = "0%_hh%"
+endif
+if _mm <= 9
+	_mm = "0%_mm%"
+endif
+if _ss <= 9
+	_ss = "0%_ss%"
+endif
+_t = "%_hh%:%_mm%:%_ss%"
+FileWrite( _fhandLog, "%_today% END :: %_appName% :: Run-Time %_ds% seconds or %_t% (HH:MM:SS)")
+
+fileclose( _fhandLog)
+
+;SQL_DROP  - RESETS OR FREES AN SQL STATEMENT HANDLE
+qFreeStmt(hstmt, 1)
+;CLOSES A CONNECTION TO A DATA SOURCE
+qDisconnect(hdbc)
+;FREES AN SQL CONNECTION HANDLE
+qFreeConnect(hdbc)
+;FREES AN SQL ENVIRONMENT HANDLE
+qFreeEnv(henv)
+
+exit
+
+:InitODBC
+	_okayToODBC = @False
+	_windirName = "windir"
+	_windir = Environment(_windirName)
+	_odbcINI = "%_windir%\%_odbcFName%"
+	if FileExist( _odbcINI) == @True
+		_sqlsrv32 = "%_windir%\System32\%__sqlsrv32%"
+		_odbcDriverString = "Driver32=%_sqlsrv32%"
+		if FileExist( _sqlsrv32) == @True
+			__sqlsrv32 = StrReplace( _sqlsrv32, "\", "\\")
+			_fhand = FileOpen( _regFile, "WRITE")
+			filewrite( _fhand, "REGEDIT4")
+			filewrite( _fhand, "")
+			filewrite( _fhand, "[HKEY_LOCAL_MACHINE\SOFTWARE\ODBC\ODBC.INI\AgencyPolicy]")
+			filewrite( _fhand, '"Driver"="%__sqlsrv32%"')
+			filewrite( _fhand, '"Description"="AgencyPolicy"')
+			filewrite( _fhand, '"Server"="%_dbServer%"')
+			filewrite( _fhand, '"Database"="AgencyPolicy"')
+			filewrite( _fhand, '"LastUser"="WAN_User"')
+			filewrite( _fhand, '"Trusted_Connection"="Yes"')
+			fileclose( _fhand)
+	
+			_resp = Run(_regFile, "")
+			WinActivate( _regEdtWinName)
+			SendKeysTo( _regEdtWinName, "!Y")
+			if _resp == @True
+				WinActivate( _regEdtWinName)
+				SendKeysTo( _regEdtWinName, "{ENTER}")
+
+				_iniKeyFound = @False
+				_iniValueFound = @False
+				_fhand = FileOpen( _odbcINI, "READ")
+				while @TRUE             ; Loop till break do us end
+					x = FileRead(_fhand)
+					If x == "*EOF*" Then Break
+					if StrCmp( x, _iniValueName) == 0
+						_iniValueFound = @True
+					endif
+					if StrCmp( x, _iniKeyName) == 0
+						_iniKeyFound = @True
+					endif
+				endwhile
+				fileclose( _fhand)
+
+				if _iniValueFound == @False
+					_odbcBAK = StrReplace( _odbcINI, _odbcFName, _odbcBakFName)
+					_fhandIn = FileOpen( _odbcINI, "READ")
+					_fhandOut = FileOpen( _odbcBAK, "WRITE")
+					_iniValHeadFound = @False
+					while @TRUE             ; Loop till break do us end
+						x = FileRead(_fhandIn)
+						If x == "*EOF*" Then Break
+						if _iniValHeadFound == @True
+							FileWrite( _fhandOut, _odbcValString)
+						endif
+						if StrCmp( x, _odbcValHeader) == 0
+							_iniValHeadFound = @True
+						endif
+						FileWrite( _fhandOut, x)
+					endwhile
+					if _iniKeyFound == @False
+						FileWrite( _fhandOut, _iniKeyName)
+						FileWrite( _fhandOut, _iniKeyName)
+					endif
+					fileclose( _fhandOut)
+					fileclose( _fhandIn)
+
+					FileDelete( _odbcINI)
+					FileRename( _odbcBAK, _odbcINI)
+				endif
+
+				_okayToODBC = @True
+			endif
+		endif
+	endif
+return
+

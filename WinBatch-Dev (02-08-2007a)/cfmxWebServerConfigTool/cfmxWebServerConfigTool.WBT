@@ -1,0 +1,717 @@
+;************************************************************************
+; cfmxWebServerConfigTool.wbt
+; 
+;************************************************************************
+
+AddExtender("WWZIP34I.DLL")
+
+#DefineFunction GetWMIInfo()
+	IntControl(73, 2,0,0,0)
+	Locator = ObjectOpen("WbemScripting.SWbemLocator")
+	Service = Locator.ConnectServer()
+	Security = Service.Security_     
+	Security.ImpersonationLevel = 3
+	Class = "Win32_ComputerSystemProduct"
+	Instance = Service.InstancesOf(Class)
+	Enum = ObjectCollectionOpen(Instance)
+	While 1
+		Obj = ObjectCollectionNext(Enum)
+		If Obj == 0 Then Break
+		man=Obj.Vendor
+		model=Obj.Name
+		serial=Obj.IdentifyingNumber
+	EndWhile
+	
+	ObjectCollectionClose(Enum)
+	ObjectClose(Instance)
+	ObjectClose(Security)
+	ObjectClose(Service)
+	ObjectClose(Locator)
+	data=StrCat(man,@TAB,model,@TAB,serial)
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction handleFile(fName, jrunFileName, proxyToken, deactToken, trueSymbol, falseSymbol)
+	IntControl(73, 2,0,0,0)
+	if StrIndexNc( fName, jrunFileName, 1, @Fwdscan) <> 0
+		bool = @FALSE
+		bool2 = @FALSE
+		fHand = FileOpen(fName, "READ")
+		tempFileName = StrCat(fName, '.Bak')
+		fHandOut = FileOpen(tempFileName, "WRITE")
+		while @TRUE             ; Loop till break do us end
+			x = FileRead(fHand)
+			If x == "*EOF*" Then Break
+			if StrIndexNc( x, proxyToken, 1, @Fwdscan) <> 0
+				bool = @TRUE
+			endif
+			if bool == @TRUE
+				if StrIndexNc( x, deactToken, 1, @Fwdscan) <> 0
+					if StrIndexNc( x, trueSymbol, 1, @Fwdscan) <> 0
+						; make the true into false...
+						x = StrReplace(x, trueSymbol, falseSymbol)
+						bool2 = @TRUE
+					endif
+				;	Message( "handleFile :: INFO #1 - [%x%]", fName)
+				endif
+			endif
+			FileWrite( fHandOut, x)
+		endwhile
+		FileClose(fHandOut)
+		FileClose(fHand)
+
+	if bool2 == @TRUE
+		FileDelete( fName)
+		FileRename( tempFileName, fName)
+	else
+		FileDelete( tempFileName)
+	endif
+
+;	Message( "handleFile :: INFO - [%fName%]", fName)
+	endif
+	data="[bool=%bool%], [bool2=%bool2%]"
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction handleWsConfig(fName, apacheFName, wsconfigPropFName, jrunserverStoreFName, cfmxVersion, webServerType, webServerTypeNum)
+	IntControl(73, 2,0,0,0)
+
+;	Message( "handleWsConfig :: INFO - [%fName%]", fName)
+	_dirsList = DirItemize(StrCat(fName, "\*.*"))
+	bool_make_sites = @FALSE
+	if ItemCount(_dirsList, @TAB) == 0
+		bool_make_sites = @TRUE
+	endif
+	_site_one_path = StrCat(fName, "\1")
+	if bool_make_sites == @TRUE
+		Message( "handleWsConfig :: INFO - [%fName%] [%_site_one_path%]", fName)
+		DirMake( _site_one_path)
+	endif
+	_prop_file_path = StrCat(fName, "\", wsconfigPropFName)
+	if FileExist( _prop_file_path) <> @FALSE
+		FileDelete( _prop_file_path)
+	endif
+	; populate the wsconfig.properties file for webServerType...
+	fHandOut = FileOpen(_prop_file_path, "WRITE")
+	FileWrite( fHandOut, "#JRun Web Server Configuration File")
+;	FileWrite( fHandOut, "#Fri May 23 10:19:20 EDT 2003")
+	_formmated_date = TimeDate()
+	FileWrite( fHandOut, "#%_formmated_date%")
+	; ****************************************************************
+	Switch webServerTypeNum
+		case 1
+		;	Apache
+			_forward_slash_root = StrReplace( apacheFName, "\", "/")
+			FileWrite( fHandOut, '1=%webServerType%,%_forward_slash_root%,"","",""')
+			break
+		case 2
+		;	IIS 4/5
+			FileWrite( fHandOut, '1=%webServerType%,false,""')
+			break
+		case 3
+		;	IIS 6
+			FileWrite( fHandOut, '1=%webServerType%,false,""')
+			break
+		case 4
+		;	iPlanet 4
+			FileWrite( fHandOut, '1=%webServerType%,c:/netscape/server4/https-servername/config') ; iPlanet needs to point to config folder
+			break
+		case 5
+		;	iPlanet 6
+			FileWrite( fHandOut, '1=%webServerType%,c:/netscape/server4/https-servername/config') ; iPlanet needs to point to config folder
+			break
+	EndSwitch
+	; ****************************************************************
+	_default_symbol = "default"
+	if cfmxVersion == 7
+		_default_symbol = "coldfusion"
+	endif
+	FileWrite( fHandOut, '1 .srv=localhost,"%_default_symbol%"')
+	FileClose(fHandOut)
+	_jrunStore_file_path = StrCat(_site_one_path, "\", jrunserverStoreFName)
+	if FileExist( _jrunStore_file_path) <> @FALSE
+		FileDelete( _jrunStore_file_path)
+	endif
+	; populate the jrunserver.store file for Apache...
+	fHandOut = FileOpen(_jrunStore_file_path, "WRITE")
+	_port_symbol = "51010"
+	if cfmxVersion == 7
+		_port_symbol = "51011"
+	endif
+	FileWrite( fHandOut, "proxyservers=127.0.0.1:%_port_symbol%")
+	FileClose(fHandOut)
+
+; *************************
+	Switch webServerTypeNum
+		case 1
+		;	Apache
+			; extract the mod_jrun20.so file from the \runtime\lib\wsconfig.jar file
+			_wsconfig_jar_file_path = StrCat( fName, ".jar")
+			fe_val = FileExist( _wsconfig_jar_file_path)
+			if fe_val <> @FALSE
+				_temp = Environment("TEMP")
+				if DirExist( _temp) <> @TRUE
+					_temp = Environment("TMP")
+				endif
+				_temp = "c:\@2"
+				_tempBase = _temp
+				xunzipper = zUnZipFiles("C d", _wsconfig_jar_file_path, "*.so", "", _temp) ; mod_jrun*.so -- \connectors\apache\intel-win\
+			;	A = AskItemList("zUnZipFiles Listing Returns", xunzipper, @tab, @unsorted, @single, @true)
+				_destFName = StrCat(_site_one_path, "\mod_jrun20.so")
+				if FileExist(_destFName) == @FALSE
+					FileCopy( "%_temp%\connectors\apache\intel-win\prebuilt\mod_jrun20.so", _destFName, @False)
+				endif
+				const_inflating_symbol = "inflating: "
+				n = ItemCount( xunzipper, @tab)
+				for i = 1 to n
+					_fn = ItemExtract( i, xunzipper, @tab)
+					p = StrIndexNC( _fn, const_inflating_symbol, 1, @Fwdscan)
+					if p > 0
+						p = p + StrLen(const_inflating_symbol)
+						_fn = StrSub( _fn, p, StrLen(_fn) - p + 1)
+					endif
+					_fn = StrReplace( _fn, "/", "\")
+					if FileExist(_fn) <> @FALSE
+						FileDelete( _fn)
+					endif
+					xunzipper = ItemReplace(_fn, i, xunzipper, @tab)
+				next
+				for i = 1 to n
+					_fn = ItemExtract( i, xunzipper, @tab)
+					nn = ItemCount( _fn, "\")
+					_fn = ItemRemove( nn, _fn, "\")
+					nn = nn - 1
+					for j = nn to 1 by -1
+						if DirExist( _fn)
+							mm = DirItemize( StrCat(_fn, "\*.*"))
+							if ( (StrLen(mm) == 0) && (_fn <> _tempBase) ) then DirRemove( _fn)
+						endif
+						_fn = ItemRemove( j, _fn, "\")
+					next
+				next
+			endif
+			break
+		case 2
+		;	IIS 4/5
+			Message( "INFO", "wsconfig.properties has not been implemented for IIS 4/5")
+			break
+		case 3
+		;	IIS 6
+			Message( "INFO", "wsconfig.properties has not been implemented for IIS 6")
+			break
+		case 4
+		;	iPlanet 4
+			Message( "INFO", "wsconfig.properties has not been implemented for iPlanet 4")
+			break
+		case 5
+		;	iPlanet 6
+			Message( "INFO", "wsconfig.properties has not been implemented for iPlanet 6")
+			break
+	EndSwitch
+; *************************
+
+	data="[done=true]"
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+#DefineFunction handleApacheConf(fName, loadModuleToken, insertionToken, rootCFMX, cfmxVersion)
+	IntControl(73, 2,0,0,0)
+
+;	Message( "handleFile :: INFO - [%fName%]", fName)
+	tempFileName = ""
+	if FileExist( fName) <> @FALSE
+		bool = @FALSE
+		bool2 = @FALSE
+		bool3 = @FALSE
+		fHand = FileOpen(fName, "READ")
+		while @TRUE             ; Loop till break do us end
+			x = FileRead(fHand)
+			If x == "*EOF*" Then Break
+			if StrIndexNc( x, loadModuleToken, 1, @Fwdscan) <> 0
+				bool = @TRUE
+			endif
+		endwhile
+		FileClose(fHand)
+
+		if bool == @FALSE
+			fHand = FileOpen(fName, "READ")
+			tempFileName = StrCat(fName, '.Bak')
+			fHandOut = FileOpen(tempFileName, "WRITE")
+			while @TRUE             ; Loop till break do us end
+				x = FileRead(fHand)
+				If x == "*EOF*" Then Break
+				if bool3 == @FALSE
+					if StrIndexNc( x, insertionToken, 1, @Fwdscan) <> 0
+						bool = @TRUE
+					endif
+					if bool == @TRUE
+						if StrLen( x) == 0 then bool2 = @TRUE
+					endif
+					if bool2 == @TRUE
+						; insert the required code here.
+						FileWrite( fHandOut, "")
+						FileWrite( fHandOut, "# JRun Settings")
+						_rootCFMX = StrReplace( rootCFMX, "\", "/")
+						FileWrite( fHandOut, 'LoadModule jrun_module "%_rootCFMX%/1/mod_jrun20.so"')
+						FileWrite( fHandOut, "<IfModule mod_jrun20.c>")
+						FileWrite( fHandOut, StrCat(@tab, "JRunConfig Verbose false"))
+						FileWrite( fHandOut, StrCat(@tab, "JRunConfig Apialloc false"))
+						FileWrite( fHandOut, StrCat(@tab, "JRunConfig Ssl false"))
+						FileWrite( fHandOut, StrCat(@tab, "JRunConfig Ignoresuffixmap false"))
+						FileWrite( fHandOut, StrCat(@tab, 'JRunConfig Serverstore "%_rootCFMX%/1/jrunserver.store"'))
+						_port_symbol = "51010"
+						if cfmxVersion == 7
+							_port_symbol = "51011"
+						endif
+						FileWrite( fHandOut, StrCat(@tab, "JRunConfig Bootstrap 127.0.0.1:%_port_symbol%"))
+						FileWrite( fHandOut, StrCat(@tab, "#JRunConfig Errorurl <optionally redirect to this URL on errors>"))
+						FileWrite( fHandOut, StrCat(@tab, "#JRunConfig ProxyRetryInterval 600"))
+						FileWrite( fHandOut, StrCat(@tab, "#JRunConfig ConnectTimeout 15"))
+						FileWrite( fHandOut, StrCat(@tab, "#JRunConfig RecvTimeout 300"))
+						FileWrite( fHandOut, StrCat(@tab, "#JRunConfig SendTimeout 15"))
+						FileWrite( fHandOut, StrCat(@tab, "AddHandler jrun-handler .jsp .jws .cfm .cfml .cfc .cfr .cfswf"))
+						FileWrite( fHandOut, "</IfModule>")
+						bool2 = @FALSE
+						bool3 = @TRUE
+					endif
+				endif
+				FileWrite( fHandOut, x)
+			endwhile
+			FileClose(fHandOut)
+			FileClose(fHand)
+		endif
+
+		if bool3 == @TRUE
+			_dt = StrReplace( TimeYmdHms(), ":", "-")
+			FileCopy( fName, StrReplace(fName, ".conf", StrCat(" (", _dt, ")", ".conf")), @False)
+			FileDelete( fName)
+			FileRename( tempFileName, fName)
+		else
+			if FileExist( tempFileName)
+				FileDelete( tempFileName)
+			endif
+		endif
+	endif
+	data="[fName=%fName%], [cfmxVersion=%cfmxVersion%]"
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+_wname = "cfmx Web Server Config Tool v1.0"
+wname = "%_wname% (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved."
+
+IntControl (81, GetTickCount(), 0, 0, 0)
+
+_wname_ = StrReplace( StrReplace( _wname, ".", "_"), " ", "_")
+
+const_Cr = Num2Char(13)
+
+const_licenseKey_symbol = "licenseKey"
+const_cfmx_root_symbol = "coldfusion-root"
+const_apache_root_symbol = "apache-root"
+
+const_proxyService_symbol = 'name="ProxyService"'
+
+const_deactivated_symbol = 'name="deactivated"'
+
+const_true_symbol = ">true<"
+const_false_symbol = ">false<"
+
+const_LoadModule_jrun_symbol = "LoadModule jrun_module "
+const_IfModule_mod_symbol = "<IfModule mod_ssl.c>"
+
+const_jrun_xml = "jrun.xml"
+const_cfmx61_root_folder = "runtime\servers\default\server-inf\%const_jrun_xml%"
+const_cfmx7_root_folder = "runtime\servers\coldfusion\server-inf\%const_jrun_xml%"
+
+const_wsconfig_root_folder = "runtime\lib\wsconfig"
+
+const_wsconfig_properties = "wsconfig.properties"
+
+const_jrunserver_store = "jrunserver.store"
+
+const_apache_conf_root_folder = "conf"
+
+const_apache_conf_file = "httpd.conf"
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+_iniPath = '%_myPath%%_wname_%.INI'
+
+if FileExist(_iniPath) == @False
+	IniWritePvt("Main", const_licenseKey_symbol, "", _iniPath)
+endif
+licenseKey = IniReadPvt ("Main", const_licenseKey_symbol, "", _iniPath)
+
+;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+IntControl(1008,1,0,0,0)
+IntControl(12,5,0,0,0)
+;;;;;;;; Assorted Colors ;;;;;;;;;
+DKBLUE="0,0,128"
+BLUE="0,0,255"
+LTGRAY="192,192,192"
+GRAY="128,128,128"
+DKGRAY="64,64,64"
+GREEN="0,255,0"
+RED="255,0,0"
+BLACK="0,0,0"
+WHITE="255,255,255"
+YELLOW="255,255,0"
+
+const_my_laptop_machine_id = "CNF5321M85"
+
+const_Apache_symbol = "Apache"
+const_IIS_4_5_symbol = "IIS 4, IIS 5"
+const_IIS_6_symbol = "IIS 6"
+const_iPlanet_4_symbol = "iPlanet 4"
+const_iPlanet_6_symbol = "iPlanet 6"
+const_Quit_symbol = "Quit"
+
+const_Apache_type_symbol = const_Apache_symbol
+const_IIS_4_5_type_symbol = "IIS"
+const_IIS_6_type_symbol = const_IIS_4_5_type_symbol
+const_iPlanet_4_type_symbol = "NES"
+const_iPlanet_6_type_symbol = const_iPlanet_4_type_symbol
+
+list = StrCat(const_Apache_symbol,@tab,const_IIS_4_5_symbol,@tab,const_IIS_6_symbol,@tab,const_iPlanet_4_symbol,@tab,const_iPlanet_6_symbol,@tab,const_Quit_symbol)
+webServerName = AskItemList("Choose your web server to configure:", list, @tab, @unsorted, @single, @false)
+
+listType = StrCat(const_Apache_type_symbol,@tab,const_IIS_4_5_type_symbol,@tab,const_IIS_6_type_symbol,@tab,const_iPlanet_4_type_symbol,@tab,const_iPlanet_6_type_symbol)
+
+_webServerTypeNum = ItemLocate(webServerName, list, @tab)
+if (_webServerTypeNum == 0) || (_webServerTypeNum == ItemCount( list, @tab)) then exit
+_webServerType = ItemExtract( _webServerTypeNum, listType, @tab)
+
+datax = GetWmiInfo()
+;aa = AskItemlist("???",datax,@TAB,@UNSORTED,@SINGLE)
+
+_licenseWarning = @FALSE
+
+machineNum = ItemExtract( ItemCount( datax,@TAB), datax,@TAB)
+if machineNum == const_my_laptop_machine_id
+	for lki = 1 to ItemCount( datax,@TAB)
+		_concat_char = ""
+		if lki <> ItemCount( datax,@TAB) then _concat_char = "+"
+		licenseKey = StrCat(licenseKey, StrTrim(ItemExtract( lki, datax,@TAB)), _concat_char) ; fake a license Key for now for testing...
+	next
+else
+	if (StrLen(licenseKey) == 0) && (_webServerTypeNum <> 1)
+		_licenseWarning = @TRUE
+		Message( "WARNING", "You have selected a function that can only be performed AFTER you have obtained a Registration License Key for this product.%const_Cr%The FREE version only supports a single ColdFusion instance for the Apache web server only.")
+	endif
+endif
+
+if _licenseWarning == @FALSE
+	count_cfmx_tries = 1
+	
+	dirCFMX7 = IniReadPvt ("Main", const_cfmx_root_symbol, "", _iniPath)
+	
+	:tryCFMXAgainLoop
+	
+	if DirExist( dirCFMX7) == @FALSE
+		flags=1|2
+		dirCFMX7 = AskDirectory("Select root folder for CFMX7", "C:\", "","Are you sure?",flags)
+		IniWritePvt("Main", const_cfmx_root_symbol, dirCFMX7, _iniPath)
+	endif
+	
+	bool_cfmx = @FALSE
+	rootFolderCFMX = StrCat( dirCFMX7, const_wsconfig_root_folder)
+	if DirExist( rootFolderCFMX) == @TRUE
+		bool_cfmx = @TRUE
+	endif
+	
+	if bool_cfmx == @FALSE
+		if count_cfmx_tries == 3 then exit
+		count_cfmx_tries = count_cfmx_tries + 1
+		Message( "ERROR - Cannot Proceed without ColdFusion Server - Attempt # %count_cfmx_tries% of 2.", "PLS double-check the root path you selected to ensure it is really the root folder for the ColdFusion Server.  Click the okay button to try again. You have one more chance to get this right before it's time to restart the whole process.")
+		dirCFMX7 = ""
+		if count_cfmx_tries < 3 then goto tryCFMXAgainLoop
+		exit
+	endif
+	
+	_version = 6.1
+	rootFolder = StrCat( dirCFMX7, const_cfmx61_root_folder)
+	if FileExist( rootFolder) == @FALSE
+		_version = 7
+		rootFolder = StrCat( dirCFMX7, const_cfmx7_root_folder)
+		if FileExist( rootFolder) == @FALSE
+			Message("ERROR - Unable to recognize the version of ColdFusion you are attempting to configure.", dirCFMX7)
+		endif
+	endif
+	
+	count_apache_tries = 1
+	
+	dirWebServer = IniReadPvt ("Main", const_apache_root_symbol, "", _iniPath)
+	
+	; iPlanet needs to point to config folder
+	:tryApacheAgainLoop
+	
+	if DirExist( dirWebServer) == @FALSE
+		flags=1|2
+		dirWebServer = AskDirectory("Select root folder for %webServerName%", "C:\", "","Are you sure?",flags)
+		IniWritePvt("Main", const_apache_root_symbol, dirWebServer, _iniPath)
+	endif
+	
+	bool_apache = @FALSE
+	rootFolderApache = dirWebServer
+	; **************************************
+	Switch _webServerTypeNum
+		case 1
+		;	Apache
+			rootFolderApache = StrCat( dirWebServer, const_apache_conf_root_folder)
+			break
+		case 2
+		;	IIS 4/5
+			break
+		case 3
+		;	IIS 6
+			break
+		case 4
+		;	iPlanet 4
+			break
+		case 5
+		;	iPlanet 6
+			break
+	EndSwitch
+	; **************************************
+	if DirExist( rootFolderApache) == @TRUE
+		bool_apache = @TRUE
+	endif
+	
+	if bool_apache == @FALSE
+		if count_apache_tries == 3 then exit
+		count_apache_tries = count_apache_tries + 1
+		Message( "ERROR - Cannot Proceed without %webServerName% Web Server - Attempt # %count_apache_tries% of 2.", "At present this tool only works with the Apache web server. PLS double-check the root path you selected to ensure it is really the root folder for the Apache Web Server - the root folder is the one in which the 'conf' folder resides.  Click the okay button to try again. You have one more chance to get this right before it's time to restart the whole process.")
+		dirWebServer = ""
+		if count_apache_tries < 3 then goto tryApacheAgainLoop
+		exit
+	endif
+endif
+
+Gosub PerformProcessingWithGUI
+
+exit
+
+
+:PerformProcessingWithGUI
+	bExit=1   
+	bRegister=2
+
+	BoxesUp("100,100,900,900",@NORMAL)
+
+	rectutext="100,100,1000,900"
+	rectTherm="200,350,800,650"
+	rectButton="0,0,100,100"
+	rectThermLine1="100,550,900,550"
+	rectThermLine2="900,550,900,800"
+	rectThermLine3="900,800,100,800"
+	rectThermLine4="100,800,100,550"
+	ThermPenWidth=20
+	rectThermText1="100,50,1000,199"
+	rectThermPercent="490,625,550,725"
+	rectTopHalf="0,0,1000,210"
+	rectBotHalf="0,210,1000,1000" 
+	rectTitle="100,20,900,170"
+	rectTitleText="10,10,790,140"
+	TitleHeight=950
+	rectNote="100,30,900,270"
+	NoteHeight=400
+	rectNoteText="70,200,950,800"
+     
+	rectnoteline1="0,0,1000,0"
+	rectNoteline2="1000,1000,1000,0"
+	rectNoteLine3="0,1000,1000,1000"
+	rectNoteLine4="0,0,0,1000"
+	notepenwidth=20
+	rectnoteline1b="40,150,960,150"
+	rectNoteline2b="960,840,960,150"
+	rectNoteLine3b="40,840,960,840"
+	rectNoteLine4b="40,150,40,840"
+	notepenwidthb=10
+	Thermid=3
+	Noteid=4
+	; Make main window look nice
+	BoxColor(1,"128,0,0",1)
+	BoxDrawRect(1,"0,0,1000,1000",2)
+	BoxCaption(1,"Configuring your %webServerName% Web Server for ColdFusion MX 7.0.1")
+             
+	;;;;Do note box
+	BoxNew(Noteid,rectNote,1)
+	BoxColor(Noteid,LTGRAY,0)       ; Light Gray no gradient
+	BoxDrawRect(Noteid,"",2)
+	
+	BoxTextFont(Noteid,"Arial",NoteHeight / 2,170,0)
+	BoxTextColor(Noteid,RED)
+	
+	BoxPen(Noteid,WHITE,notepenwidth)
+	boxdrawline(Noteid,rectNoteLine1)
+	boxdrawline(Noteid,rectNoteLine4)
+	BoxPen(Noteid,GRAY,notepenwidth)
+	boxdrawline(Noteid,rectNoteLine2)
+	boxdrawline(Noteid,rectNoteLine3)
+	BoxPen(Noteid,WHITE,notepenwidthb)
+	boxdrawline(Noteid,rectNoteLine2b)
+	boxdrawline(Noteid,rectNoteLine3b)
+	BoxPen(Noteid,GRAY,notepenwidthb)
+	boxdrawline(Noteid,rectNoteLine1b)
+	boxdrawline(Noteid,rectNoteLine4b)
+	
+	BoxDataTag(Noteid,"NOTE")
+	BoxDrawText(Noteid,rectNoteText,"Initializing...",1,4)
+             
+	;Draw thermoneter outline
+	BoxNew(Thermid,rectTherm,2)
+	BoxUpdates(Thermid,0)
+	BoxCaption(Thermid,"Name Goes Here")
+	BoxColor(Thermid,LTGRAY,0)
+	BoxDrawRect(Thermid,"",2)
+	; Draw updating thermometer here
+	; there are 3 virtual pixels per percent
+	; we have to draw 3 boxes and some text...
+	BoxDataTag(Thermid,"FRED")
+	BoxCaption(Thermid,"Please wait. Processing Files...")
+	
+	n = 3
+
+	if (StrLen(licenseKey) == 0)
+		Message("Shareware Notice", "You are using a shareware version of this %webServerName% Web Server Config Tool that handles only one web site for a single ColdFusion server instance. Please purchase a License to unlock the full version that will support IIS, Apache and iPlanet for multiple virtual hosts and full support for ColdFusion/JRun.")
+	endif
+             
+	if _licenseWarning == @FALSE
+		for ii = 1 to n
+			BoxDataClear(Thermid,"FRED")
+			BoxUpdates(Thermid,0)
+			BoxColor(Thermid,GREEN,0)
+			xxx= 100+((800*ii)/n)
+			per=(100.0*ii)/n
+			per=Int(per)
+			BoxDrawRect(Thermid,"104,554,%xxx%,796",2)
+			BoxColor(Thermid,GRAY,0)
+			BoxDrawRect(Thermid,"%xxx%,554,896,796",2)
+			BoxPen(Thermid,BLACK,ThermPenWidth)
+			boxdrawline(Thermid,rectThermLine1)
+			boxdrawline(Thermid,rectThermLine2)
+			boxdrawline(Thermid,rectThermLine3)
+			boxdrawline(Thermid,rectThermLine4)
+	
+			s = ""
+			if ii == 1
+				_val = handleFile(rootFolder, const_jrun_xml, const_proxyService_symbol, const_deactivated_symbol, const_true_symbol, const_false_symbol)
+				s = "Configuring JRun.XML"
+			else
+				if ii == 2
+					rootFolder = StrCat( dirCFMX7, const_wsconfig_root_folder)
+					rootApacheFolder = StrCat( dirWebServer, const_apache_conf_root_folder)
+					_val2 = handleWsConfig(rootFolder, rootApacheFolder, const_wsconfig_properties, const_jrunserver_store, _version, _webServerType, _webServerTypeNum)
+					s = "Configuring wsconfig.properties"
+				else
+					if ii == 3
+						; ****************************************************************
+						Switch _webServerTypeNum
+							case 1
+							;	Apache
+								rootApacheFolder = StrCat( rootApacheFolder, "\", const_apache_conf_file)
+								_val3 = handleApacheConf(rootApacheFolder, const_LoadModule_jrun_symbol, const_IfModule_mod_symbol, rootFolderCFMX, _version)
+								s = "Configuring Apache http.conf"
+								break
+							case 2
+							;	IIS 4/5
+								break
+							case 3
+							;	IIS 6
+								break
+							case 4
+							;	iPlanet 4
+								break
+							case 5
+							;	iPlanet 6
+								break
+						EndSwitch
+						; ****************************************************************
+					endif
+				endif
+			endif
+	
+			if per<50 then BoxTextColor(Thermid,WHITE)
+			BoxDrawText(Thermid,rectThermPercent,"%per%%%",0,0)
+			BoxTextColor(Thermid,BLACK)
+			BoxColor(Thermid,LTGRAY,0)
+			BoxDrawText(Thermid,rectThermText1,"Steps completed: %ii% of %n% (%s%)",1,0)
+			BoxDataClear(NoteId,"NOTE");;;
+			BoxDrawText(Noteid,rectNoteText,"Configuring Apache for ColdFusion MX 7.0.1",1,4);;;
+			BoxUpdates(Thermid,2)
+	
+		;	TimeDelay(Random(2.0))   ;Fake passage of time
+		next
+
+		BoxTextColor(Noteid,BLUE)        
+		BoxDrawText(Noteid,rectNoteText,"Done !",1,4)
+	else
+		BoxTextColor(Noteid,BLUE)        
+		BoxDrawText(Noteid,rectNoteText,"PLS Register to proceed.",1,4)
+	endif
+
+	if (StrLen(licenseKey) == 0)
+		while 1
+			BoxButtonDraw(1,bRegister,"&Register",  "550,860,700,930")
+			BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930")
+	
+			iBox = 0
+			BoxButtonWait()
+			while iBox == 0
+				for x = 1 to 2
+					if BoxButtonStat(1,x) then iBox = x
+				next
+			end while
+
+			if iBox
+				switch iBox
+					case bExit
+						exit
+						break
+					case bRegister
+						gosub DoRegister
+						break
+				end switch
+			endif
+		end while
+	endif
+
+	if (StrLen(licenseKey) > 0)
+		BoxDestroy(Thermid)
+		BoxDestroy(Noteid)
+	endif
+Return
+
+
+

@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=ChameleonMod-Setup.wbt
+Targ=P:\myWinbatch\ChameleonMod-Setup\Tribes2ChameleonMod_v110-Setup.exe
+Icon=P:\myWinbatch\tribes2missions\won.ico
+CmpVersion=2
+[Options]
+TechWebPage=http://Tribes2ChameleonMod.HALSmalltalker.Com
+RunHidden=0
+[Version Info]
+Comments=http://Tribes2ChameleonMod.HALSmalltalker.Com
+CompanyName=HAL Smalltalker, Inc.
+FileDescription=ChameleonMod-Setup Vers 1.10
+FileVersion=1.10
+InternalName=ChameleonMod-Setup.exe
+LegalCopyright=(c). Copyright 1990-2001 All Rights Reserved
+LegalTrademarks=http://Tribes2ChameleonMod.HALSmalltalker.Com
+OriginalFilename=ChameleonMod-Setup.exe
+ProductName=ChameleonMod-Setup
+ProductVersion=1.10
+[Other Files]
+Count=1
+File001=P:\myWinbatch\ChameleonMod-Setup\Chameleon_v110.exe
+[Extenders]
+Count=0

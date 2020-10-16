@@ -1,0 +1,63 @@
+;*****************************************************************************
+; renameFiles.wbt
+;
+; Purpose:  Rename files in the target folder based on the given file mask.
+;
+;*****************************************************************************
+
+_wname = "renameFiles v1.0"
+wname = "%_wname% [Rename Files] (c)1978-2006 Hierarchical Applications Limited, All Rights Reserved."
+
+Cr = Num2Char(13)
+CrLf = StrCat(Cr, Num2Char(10))
+_crlf = CrLf
+
+bool_abstract = @FALSE
+pattern_abstract = "backup_volume.bkf"
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+If param0 > 0
+	_pathTarget = param1
+Else
+	_pathTarget = AskLine("Input", "Please enter your Target pathName", "J:\Backups\@SVN")
+Endif
+
+If param0 > 1
+	_filePattern = param2
+Else
+	_filePattern = AskLine("Input", "Please enter the file pattern to Rename", pattern_abstract)
+Endif
+
+logName = StrCat(_myPath,_wname, ".log")
+
+_now = TimeYmdHms()
+_nowBegin = _now
+
+fHandLog = FileOpen(logName, "APPEND")
+FileWrite(fHandLog, "%_now% BEGIN :: %wname% %_crlf%")
+FileWrite(fHandLog, "_pathTarget = [%_pathTarget%]")
+FileWrite(fHandLog, "_filePattern = [%_filePattern%]")
+
+_dName = StrCat(_pathTarget, "\", _filePattern)
+lst = FileItemize(_dName)
+num_lst = ItemCount(lst, @TAB)
+
+_now = TimeYmdHms()
+FileWrite( fHandLog, "%_now% num_lst = [%num_lst%], _dName = [%_dName%]")
+
+n = ItemCount(lst, @TAB)
+for i = 1 to n
+	_fn = ItemExtract(i, lst, @TAB)
+	_fName = StrCat(_pathTarget, "\", _fn)
+	_newFName = StrReplace( pattern_abstract, ".bkf", StrCat(" (", StrReplace( TimeYmdHms(), ":", "_"), ").bkf"))
+	_newFName = StrCat(_pathTarget, "\", _newFName)
+	FileRename( _fName, _newFName)
+	_now = TimeYmdHms()
+	FileWrite( fHandLog, "%_now% Rename = [%_fName%] to [%_newFName%]")
+next
+
+FileClose(fHandLog)
+
+exit
+

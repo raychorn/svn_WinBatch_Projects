@@ -1,0 +1,113 @@
+;************************************************************************
+; webmail-server.wbt
+; 
+;************************************************************************
+
+_wname = "Webmail Cleaner v1.0.0"
+wname = "%_wname% (c)2007-2008 Vyper Logix, Corp, All Rights Reserved."
+
+#DefineFunction GetMouseClick() 
+	IntControl(73, 2,0,0,0)
+
+	buttons = 0
+	While buttons == 0
+	   buttons = MouseInfo(4)
+	EndWhile
+	coords = MouseInfo(2)
+	cx = ItemExtract( 1, coords, " ")
+	cy = ItemExtract( 2, coords, " ")
+	Return(StrCat("%buttons%",@TAB,"%cx%",@TAB,"%cy%"))
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+_myPathName = IntControl( 1004, 0, 0, 0, 0)
+_myPath = FilePath( _myPathName)
+_myName = StrReplace( _myPathName, _myPath, "")
+_myName = StrReplace( _myName, StrCat( ".", ItemExtract( ItemCount( _myName, "."), _myName, ".")), "")
+_wname_ = StrReplace( StrReplace( _wname, ".", "_"), " ", "_")
+_iniPath = '%_myPath%%_wname_%.INI'
+
+if FileExist(_iniPath) == @True
+	;FileDelete(_iniPath)
+endif
+
+_winname = "Microsoft Outlook Web Access"
+
+coords = ArrDimension(20)
+coordsDel = ""
+if WinExist(_winname) == @TRUE
+	WinActivate(_winname)
+	WinZoom(_winname)
+	if (FileSize( _iniPath) == 0)
+		for n = 1 to ArrInfo(coords, 1)
+			Message("Select #%n%","Click Left Mouse Button on checkbox #%n%.")
+			coords[n-1] = GetMouseClick()
+			IniWritePvt( "coords", "coord-%n%", coords[n-1], _iniPath)
+			TimeDelay(1)
+		next
+		IniWritePvt( "coords", "count", n-1, _iniPath)
+		Message("Select Delete Button","Click Left Mouse Button on the delete button.")
+		coordsDel = GetMouseClick()
+		IniWritePvt( "coords", "delete", coordsDel, _iniPath)
+		Message("Ready to run","Dismiss this dialog to begin the process.")
+	else
+		maxNum = IniReadPvt( "coords", "max", 2, _iniPath)
+		delay1 = IniReadPvt( "coords", "delay1", 1, _iniPath)
+		delay2 = IniReadPvt( "coords", "delay2", 1, _iniPath)
+		delay3 = IniReadPvt( "coords", "delay3", 1, _iniPath)
+		delay4 = IniReadPvt( "coords", "delay4", 1, _iniPath)
+		pgFwd = IniReadPvt( "coords", "coord-pgFwd", "", _iniPath)
+		if (StrLen(pgFwd) == 0)
+			coordsFwd = GetMouseClick()
+			IniWritePvt( "coords", "coord-pgFwd", coordsFwd, _iniPath)
+			for j = 1 to 16000
+				TimeDelay(delay1)
+				cx = ItemExtract( 2, coordsFwd, @TAB)
+				cy = ItemExtract( 3, coordsFwd, @TAB)
+				MouseMove(cx+5, cy+5, _winname, "")
+				MouseClick(@LCLICK, 0)
+			next
+		endif
+		for j = 1 to maxNum
+			n = IniReadPvt( "coords", "count", 0, _iniPath)
+			for i = 1 to n
+				TimeDelay(delay1)
+				if IsKeyDown(@CTRL | @SHIFT)
+					exit
+				endif
+				coords = IniReadPvt( "coords", "coord-%i%", "", _iniPath)
+				if (StrLen(coords) > 0)
+					cx = ItemExtract( 2, coords, @TAB)
+					cy = ItemExtract( 3, coords, @TAB)
+					MouseMove(cx+5, cy+5, _winname, "")
+					TimeDelay(delay2)
+					MouseClick(@LCLICK, 0)
+				endif
+			next
+			if IsKeyDown(@CTRL | @SHIFT)
+				exit
+			endif
+			coords = IniReadPvt( "coords", "delete", "", _iniPath)
+			if (StrLen(coords) > 0)
+				cx = ItemExtract( 2, coords, @TAB)
+				cy = ItemExtract( 3, coords, @TAB)
+				MouseMove(cx+5, cy+5, _winname, "")
+				TimeDelay(delay3)
+				MouseClick(@LCLICK, 0)
+				Display(delay4, "Progress", "%j% of %maxNum%. Press Ctrl+Shift to cancel.")
+			endif
+		next
+	endif
+endif
+
+exit
+
+
+

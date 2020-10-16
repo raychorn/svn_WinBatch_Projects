@@ -1,0 +1,73 @@
+; Pager.wbt
+
+AddExtender("wwser32i.dll")           ; Load the serial extender
+
+basedir = "F:\208.128.219.19\winbatch\ServerRescue\watchdog\"
+
+; "C:\Program Files\WinBatch\system\WinBatch.exe" F:\208.128.219.19\winbatch\ServerRescue\Pager.wbt F:\208.128.219.19\winbatch\ServerRescue\watchdog\ %pagerCode%
+
+pagerCode = "911#"
+
+If param0 == 2
+    basedir = param1
+    pagerCode = param2
+Endif
+
+modem_file = "%basedir%modem.txt"
+
+port = ""
+rsvd = ""
+baud = ""
+format = ""
+handshake = ""
+pagerPhone = ""
+
+i = 0;
+handle = FileOpen( modem_file, "READ")
+If handle > 0
+    while @TRUE             ; Loop till break do us end
+        data = FileRead(handle)
+        If data == "*EOF*" Then Break
+        i = i + 1
+
+        Switch i
+            case 1
+                port = data
+            break
+            case 2
+                rsvd = data
+            break
+            case 3
+                baud = data
+            break
+            case 4
+                format = data
+            break
+            case 5
+                handshake = data
+            break
+            case 6
+                pagerPhone = data
+            break
+            case i    ; default case
+            break
+        EndSwitch
+    endwhile
+    FileClose(handle)
+Endif
+
+port=pComOpen( port, rsvd, baud, format, handshake)  ; Open com port
+
+pTimeout(port,2000)                   ; Set Timeout 2 secs.  You can use
+                                      ; a timeout when you cannot predict
+                                      ; what you are going to get back.
+
+s = "%pagerPhone%,,,%pagerCode%"
+result = pModemDial( port, 1, s)
+;Message("%pagerPhone% + %pagerCode%", "%result%") ; Display it
+
+pComClose(port,0)                     ; Close the com port
+
+exit
+
+

@@ -1,0 +1,26 @@
+[Main]
+Type=1
+Src=autoConfigLaptop.wbt
+Targ=W:\WinBatch-Dev\autoConfigLaptop\autoConfigLaptop.exe
+Icon=
+CmpVersion=3
+[Options]
+TechWebPage=http://rayhorn.contentopia.net/blog
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=
+CompanyName=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=autoConfigLaptop
+FileVersion=1.0
+InternalName=autoConfigLaptop.exe
+LegalCopyright=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=autoConfigLaptop.exe
+ProductName=autoConfigLaptop
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=1
+File001=wwwnt34i.dll

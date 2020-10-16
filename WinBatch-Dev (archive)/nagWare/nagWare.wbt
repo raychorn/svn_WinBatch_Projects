@@ -1,0 +1,372 @@
+;;;;;;;;;;;;;;;; Self-Registration via Registry ;;;;;;;;;;;;;;;;;;;;
+; Goal: Design a means of Self-Registering a software product such
+;       that it can 'know' when the trial period has expired and
+;       also so it can keep people from 'hacking' the mechanism.
+; Idea: Cryptography ?!? WOuld need to deploy objects that can
+;       allow this to happen... Feasible? Try using NachoTech CP32...
+
+; ActiveX Self-Registration and Self-Installation Module
+; Goal: Register the appropriate objects after copying to the target dirs or register in-place.
+
+_regsvr32 = "regsvr32.exe" ; 
+_Cp32ocx = "Cp32.ocx"
+_Cp32dll = "Cp32dll.dll"
+
+_slashS = "/s"
+
+_wd0 = DirWindows(0)
+_wd1 = DirWindows(1)
+
+_tryAgain = 0
+
+:tryAgain
+ErrorMode(@off)
+LastError()
+_cp = ObjectOpen( "CP32.Cp32Ctrl.1")
+err=LastError( )
+ErrorMode(@cancel)
+if err <> 0
+	; Got here either because the OCX doesn't exist or that object was never registered so we will try to register and go with it.
+	; Locate regsvr32.exe in either the c:\winnt\system32 or c:\windows\system dirs - see also DirWindows(0) or DirWindows(1)
+
+	__regsvr32 = StrReplace( StrCat( _wd0, "\", _regsvr32), "\\", "\")
+	if FileExist( __regsvr32)
+;		Message( "FOUND", __regsvr32)
+	else
+		__regsvr32 = StrReplace( StrCat( _wd1, "\", _regsvr32), "\\", "\")
+		if FileExist( __regsvr32)
+;			Message( "FOUND", __regsvr32)
+		else
+			types = "All EXEs|*.exe;*.com;*.pif;*.lnk|"
+			__regsvr32 = AskFileName( "Locate REGSVR32 to continue", "C:\", types, _regsvr32, 1)
+		endif
+	endif
+	
+	if FileExist( __regsvr32)
+		; Now we run __regsvr32 to register our 2 objects
+		RunHideWait( __regsvr32, StrCat( _slashS, " ", _Cp32ocx))
+		RunHideWait( __regsvr32, StrCat( _slashS, " ", _Cp32dll))
+		_tryAgain = _tryAgain + 1
+		if _tryAgain < 2
+			Goto tryAgain
+		else
+			Goto tryAgainFailed
+		endif
+	else
+		Goto tryAgainFailed
+	endif
+
+	:tryAgainFailed
+	Message( "Fatal System ERROR", "Unable to continue without a valid %_regsvr32% program in the proper place.")
+	exit
+endif
+
+:readyToGo
+; Got this far because All Systems are Go !
+; To Do:
+;         1). Look for the Registry Key and Value in the right place.
+;         2). Create or Read the Registration Key (Key is the Date + Random_Digits + Guard_Digits + CRC encrypted using a standard key)
+;         3). Write or Validate the Registration Key
+;         4). Determine if the product may run
+;         5). Display the Time Remaining or Exit with a message directing user to Register, etc.
+ObjectClose( _cp)
+
+exit
+
+;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+
+IntControl(12,5,0,0,0)
+;;;;;;;; Assorted Colors ;;;;;;;;;
+DKBLUE="0,0,128"
+BLUE="0,0,255"
+LTGRAY="192,192,192"
+GRAY="128,128,128"
+DKGRAY="64,64,64"
+GREEN="0,255,0"
+RED="255,0,0"
+BLACK="0,0,0"
+WHITE="255,255,255"
+YELLOW="255,255,0"
+
+__URL = "http://shareware.hal-smalltalker.com/dirZapper"
+
+;;;;;;;;;;;; This Example  ;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; Drawing the Main Box ;;;;;;;;
+;; Note the use of while 1. This use of while maintains
+;; the boxes until a user clicks on a button and exits 
+;; the while construction
+BoxesUp("100,100,900,900",@NORMAL)
+
+while 1
+	_URL = __URL
+
+   BoxColor(1,"0,0,128",4)
+   BoxCaption(1, StrCat( "NagWare Pop-Up Window (c). Copyright 1999 HAL Smalltalker, Inc. ", _URL))
+;; Note: Here we specify 8 buttons numbered 1 to 8.
+;; You can change this. Edit the list of buttons here,
+;; go to the "Select a button" routine and add or subtract
+;; your button selection information. Then create a subroutine
+;; at the end of this script to do what you need done when
+;; the button is pushed. There is a sample for you to use.
+
+	bButtons=3 
+   bExit=1   
+   bHelp=2
+
+   bURL=3
+
+   BoxDrawRect(1,"0,0,1000,1000",2)
+
+   BoxTextFont(1,"Times",50,80,0|0)
+   BoxTextColor(1,"255,255,0")
+   BoxDrawText(1,"10,280,1000,1000","dirZapper v1.0 Shareware License",0,0)
+
+   BoxTextFont(1,"Times",22,80,0|0)
+   BoxDrawText(1,"10,350,1000,1000","You may use dirZapper v1.0 for 30 days prior to Registration. If you decide to continue using this product",0,0)
+   BoxDrawText(1,"10,380,1000,1000","after this initial period, you must register this product and pay a registration fee to HAL Smalltalker, Inc.",0,0)
+   BoxDrawText(1,"10,410,1000,1000","If you do not register, you may not continue to use the software. ",0,0)
+
+   BoxDrawText(1,"10,460,1000,1000","The dirZapper Shareware may be copied and distributed without fee as a single, unmodified, intact entity, ",0,0)
+   BoxDrawText(1,"10,490,1000,1000","as long as it is not part of another system.",0,0)
+
+   BoxDrawText(1,"10,550,1000,1000","You may not alter, merge, modify, or adapt the dirZapper program in anyway including disassembling or",0,0)
+   BoxDrawText(1,"10,580,1000,1000","decompiling. You may modify the examples and resource files as part of your use of the program.",0,0)
+
+   BoxDrawText(1,"10,640,1000,1000","The dirZapper Shareware is distributed AS IS. HAL Smalltalker, Inc. DISCLAIMS ALL WARRANTIES ",0,0)
+   BoxDrawText(1,"10,670,1000,1000","ON THIS PROGRAM INCLUDING, WITHOUT LIMITATION, ALL IMPLIED WARRANTIES OF ",0,0)
+   BoxDrawText(1,"10,700,1000,1000","MERCHANTABILITY AND FITNESS. In no event will HAL Smalltalker, Inc. be liable for ",0,0)
+   BoxDrawText(1,"10,730,1000,1000","any damages arising out of the use or the inability to use this program.",0,0)
+
+   BoxTextFont(1,"Times",18,80,0|0)
+   BoxDrawText(1,"10,790,1000,1000","Copyright © 1990-1999 HAL Smalltalker, Inc.",0,0)
+   BoxDrawText(1,"10,820,1000,1000","dirZapper is a servicemark of HAL Smalltalker, Inc.",0,0)
+
+;;;;; This section creates the fancy banner headline in a box
+               rectNote="100,30,900,270"
+               NoteHeight=400
+               rectNoteText="70,200,950,800"
+               
+               rectnoteline1="0,0,1000,0"
+               rectNoteline2="1000,1000,1000,0"
+               rectNoteLine3="0,1000,1000,1000"
+               rectNoteLine4="0,0,0,1000"
+               notepenwidth=20
+               rectnoteline1b="40,150,960,150"
+               rectNoteline2b="960,840,960,150"
+               rectNoteLine3b="40,840,960,840"
+               rectNoteLine4b="40,150,40,840"
+               notepenwidthb=10
+               wbid=2
+               Thermid=3
+               Noteid=4
+        BoxNew(Noteid,rectNote,1)
+        BoxColor(Noteid,LTGRAY,0)       ; Light Gray no gradient
+        BoxDrawRect(Noteid,"",2)
+;;;;;  --------- This line changes the headline font -----------------        
+        BoxTextFont(Noteid,"Arial",NoteHeight,170,0)
+        BoxTextColor(Noteid,RED)
+        
+        BoxPen(Noteid,WHITE,notepenwidth)
+        boxdrawline(Noteid,rectNoteLine1)
+        boxdrawline(Noteid,rectNoteLine4)
+        BoxPen(Noteid,GRAY,notepenwidth)
+        boxdrawline(Noteid,rectNoteLine2)
+        boxdrawline(Noteid,rectNoteLine3)
+        BoxPen(Noteid,WHITE,notepenwidthb)
+        boxdrawline(Noteid,rectNoteLine2b)
+        boxdrawline(Noteid,rectNoteLine3b)
+        BoxPen(Noteid,GRAY,notepenwidthb)
+        boxdrawline(Noteid,rectNoteLine1b)
+        boxdrawline(Noteid,rectNoteLine4b)
+        
+        ;BoxDataTag(Noteid,"NOTE")
+
+        ;   BoxDataClear(NoteId,"NOTE")
+
+
+;;;;;  ----------- The BoxDrawText  line creates the headline text. Copy (don't move)
+;;;;; this line anywhere in this script you need to change the headline text.
+
+
+
+	BoxDrawText(Noteid,rectNoteText,"dirZapper v1.0",1,4)
+
+	i1 = Random( 2)
+	i2 = Random( 1)
+
+	if i1 == 0
+		upperX1 = 100
+		upperY1 = 860
+		lowerX1 = 500
+		lowerY1 = 930
+
+		if i2 == 0
+			upperX2 = 550
+			upperY2 = 860
+			lowerX2 = 700
+			lowerY2 = 930
+
+			upperX3 = 750
+			upperY3 = 860
+			lowerX3 = 900
+			lowerY3 = 930
+		else
+			upperX2 = 750
+			upperY2 = 860
+			lowerX2 = 900
+			lowerY2 = 930
+
+			upperX3 = 550
+			upperY3 = 860
+			lowerX3 = 700
+			lowerY3 = 930
+		endif
+	else
+		if i1 == 1
+			upperX1 = 350
+			upperY1 = 860
+			lowerX1 = 750
+			lowerY1 = 930
+
+			if i2 == 0
+				upperX2 = 100
+				upperY2 = 860
+				lowerX2 = 250
+				lowerY2 = 930
+	
+				upperX3 = 800
+				upperY3 = 860
+				lowerX3 = 950
+				lowerY3 = 930
+			else
+				upperX2 = 800
+				upperY2 = 860
+				lowerX2 = 950
+				lowerY2 = 930
+	
+				upperX3 = 100
+				upperY3 = 860
+				lowerX3 = 250
+				lowerY3 = 930
+			endif
+		else
+			if i1 == 2
+				upperX1 = 550
+				upperY1 = 860
+				lowerX1 = 950
+				lowerY1 = 930
+
+				if i2 == 0
+					upperX2 = 100
+					upperY2 = 860
+					lowerX2 = 250
+					lowerY2 = 930
+		
+					upperX3 = 350
+					upperY3 = 860
+					lowerX3 = 500
+					lowerY3 = 930
+				else
+					upperX2 = 350
+					upperY2 = 860
+					lowerX2 = 500
+					lowerY2 = 930
+		
+					upperX3 = 100
+					upperY3 = 860
+					lowerX3 = 250
+					lowerY3 = 930
+				endif
+			else
+			endif
+		endif
+	endif
+
+;	Message( "DEBUG", "i1=%i1%, i2=%i2%, %upperX1%,%upperY1%,%lowerX1%,%lowerY1%, %upperX2%,%upperY2%,%lowerX2%,%lowerY2%, %upperX3%,%upperY3%,%lowerX3%,%lowerY3%")
+
+   BoxButtonDraw(1,bURL,   "&Register dirZapper v1.0 and get dirZapper 2.0 FREE",  "%upperX1%,%upperY1%,%lowerX1%,%lowerY1%")
+   BoxButtonDraw(1,bHelp,    "&Help",  "%upperX2%,%upperY2%,%lowerX2%,%lowerY2%")
+   BoxButtonDraw(1,bExit,    "Continue",  "%upperX3%,%upperY3%,%lowerX3%,%lowerY3%")
+
+   
+   iBox=0
+   BoxButtonWait()
+   while iBox==0
+      for x=1 to bButtons
+         if BoxButtonStat(1,x) then iBox=x
+      next
+   end while
+
+
+;;; Select a button  ;;;;
+
+    
+   if iBox
+      BoxDataClear(1,"TOP")
+      switch iBox
+         case bExit
+            exit
+            break
+         case bURL
+            gosub DoBrowser
+            break
+         case bHelp
+            gosub DoHelp
+            break
+      end switch
+
+   endif
+end while
+exit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+:DoBrowser
+	_URL = __URL
+	Gosub openBrowser
+Return
+
+
+:DoHelp
+	_URL = StrReplace( StrCat( DirGet(), "\product-help.html"), "\\", "\")
+	Gosub openBrowser
+Return     
+     
+
+
+:openBrowser
+; INPUT _URL ... this is the URL to open using the browser of choice...
+	ErrorMode(@OFF)
+	Run( "iexplore.exe", _URL)
+	ErrorMode(@CANCEL)
+
+	_LE = LastError()
+	if _LE > 0
+		; Can't locate IE so now we look for some variant of Netscape Navigator
+		ErrorMode(@OFF)
+		Run( "netscape.exe", _URL)
+		ErrorMode(@CANCEL)
+
+		_LE = LastError()
+		if _LE > 0
+			; Can't locate IE or Netscape Navigator so now we have to ask the user which browser should be used...
+			types = "All EXEs|*.exe;*.com;*.pif;*.lnk|"
+			fn1 = AskFileName( "Select your favorite browser", "C:\", types, "iexplore.exe", 1)
+			ErrorMode(@OFF)
+			Run( fn1, _URL)
+			ErrorMode(@CANCEL)
+
+			_LE = LastError()
+			if _LE > 0
+				Message( "ERROR - Unable to launch your web browser...", "Corrective Action: Install Internet Explorer 5.0 and try again... We favor using IE 5.0 and so should you.")
+			else
+				; stick this value into the Registry so next time you won't need to ask... do this in the next version
+			endif
+		endif
+	endif
+
+Return
+
+

@@ -1,0 +1,161 @@
+;************************************************************************
+; windows-enum.wbt
+; 
+;************************************************************************
+
+#DefineFunction EnumWindows(bool_onlySecondMonitor)
+	IntControl(73, 2,0,0,0)
+	allwins = WinItemize( )
+	
+	if bool_onlySecondMonitor == @True
+		_allwins = ""
+		_clientWidth = Int(WinMetrics(0) * 0.80)
+		kLen = ItemCount( allwins, @TAB)
+		for j = 1 to kLen
+			aWin = ItemExtract( j, allwins, @TAB)
+		;	aState = WinState(aWin)
+			wpos = WinPlaceGet(@NORMAL, aWin)
+			_wposX = Int( ItemExtract( 1, wpos, " "))
+			_wposY = Int( ItemExtract( 2, wpos, " "))
+			_wposX2 = Int( ItemExtract( 3, wpos, " "))
+			_wposY2 = Int( ItemExtract( 4, wpos, " "))
+			_wWidth = _wposX2 - _wposX
+			_wHeight = _wposY2 - _wposY
+			if ( (_wposX >= _clientWidth) || (_wposX2 >= _clientWidth) ) && (_wWidth > 150) && (_wHeight > 150)
+				_allwins = ItemInsert( StrCat(aWin, ",", wpos), ItemCount( _allwins, @TAB) + 1, _allwins, @TAB)
+			endif
+		next
+	endif
+	Return(_allwins)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+_wname = "Windows-Enum v1.2"
+wname = "%_wname% (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved."
+
+
+_actions0 = 7
+_actions1 = "Hide"
+_actions2 = "Iconize"
+_actions3 = "Show"
+_actions4 = "State"
+_actions5 = "Zoom"
+_actions6 = "Close"
+_actions7 = "1st Monitor"
+
+_numMonitors = WinMetrics(80)
+
+bool_onlySecondMonitor = @False
+if _numMonitors == 2
+	q = AskYesNo('Question', 'Would you like to restore a window from your 2nd monitor back to your primary monitor ?')
+	If q == @YES Then bool_onlySecondMonitor = @True
+endif
+
+while 1
+	allwins = EnumWindows(bool_onlySecondMonitor)
+
+; Find a window
+	mywind = AskItemList( "Windows", allwins, @TAB, @sorted, @single)
+
+	mywind = ItemExtract( 1, mywind, ",")
+
+;	Message("DEBUG", "mywind => %mywind%")
+
+	actions_list = ""
+	For i = 1 to _actions0
+		_var = _actions%i%
+		actions_list = StrCat( actions_list, "%_var%", " <", mywind, ">")
+		If i < _actions0
+			actions_list = StrCat( actions_list, @tab)
+		endif
+	Next
+
+;	Message("Hint", "You can regain control over a window that is sitting on your 2nd monitor by using the Place Action which will place the window on the left side of your primary monitor.")
+	Action = AskItemList("Actions (Place can move a window from the 2nd monitor to the primary monitor)", actions_list, @tab, @sorted, @single)
+
+	action_item = StrTrim(ItemExtract( 1, Action, "<"))
+
+	If StriCmp( action_item, _actions1) == 0
+		WinHide( mywind)
+	Else
+		If StriCmp( action_item, _actions2) == 0
+			WinIconize( mywind)
+		Else
+			If StriCmp( action_item, _actions3) == 0
+				WinShow( mywind)
+			Else
+				If StriCmp( action_item, _actions4) == 0
+					_winstate = WinState( mywind)
+					Gosub explainWinState
+					Message( "WinState( %mywind%)", _winstate_desc)
+				Else
+					If StriCmp( action_item, _actions5) == 0
+						WinZoom( mywind)
+					Else
+						If StriCmp( action_item, _actions6) == 0
+							WinClose( mywind)
+						Else
+							If StriCmp( action_item, _actions7) == 0
+								wpos = WinPlaceGet(@NORMAL, mywind)
+								_wposX = Int( ItemExtract( 1, wpos, " "))
+								wposX = _wposX - _wposX
+								wposY = Int( ItemExtract( 2, wpos, " "))
+								wposX2 = Int( ItemExtract( 3, wpos, " "))
+								wposX2 = wposX2 - _wposX
+								wposY2 = Int( ItemExtract( 4, wpos, " "))
+							;	if wposY2 > 768 then wposY2 = wposY2 - 768
+								_wpos = "%wposX% %wposY% %wposX2% %wposY2%"
+								WinShow(mywind)
+								WinPlaceSet(@NORMAL, mywind, _wpos)
+							Else
+								Message( "UNKNOWN", "Action=%Action% action_item=%action_item%")
+							Endif
+						Endif
+					Endif
+				Endif
+			Endif
+		Endif
+	Endif
+
+endwhile
+
+exit
+
+:explainWinState
+;-1 @HIDDEN Specified window exists, but is hidden
+; 0 @FALSE	Specified window does not exist
+; 1 @ICON	Specified window is iconic (minimized)
+; 2 @NORMAL Specified window is a normal window
+; 3 @ZOOMED Specified window is zoomed (maximized)
+
+	_winstate_desc = "ERROR"
+
+	Switch _winstate
+		case -1
+				_winstate_desc = "@HIDDEN"
+				break
+		case 0
+				_winstate_desc = "@FALSE"
+				break
+		case 1
+				_winstate_desc = "@ICON"
+				break
+		case 2
+				_winstate_desc = "@NORMAL"
+				break
+		case 3
+				_winstate_desc = "@ZOOMED"
+				break
+		case response	 ; default case
+				_winstate_desc = "UNKNOWN"
+				break
+	EndSwitch
+
+return

@@ -1,0 +1,11 @@
+; ascii-tilde.wbt
+
+while 1
+
+; Show the hex equivalent of entered character
+inpchar = AskLine("ANSI Equivalents", "Char:", "")
+ansi = StrSub(inpchar, 1, 1)
+ansiequiv = Char2Num(InpChar)
+Message("ANSI Codes", "%ansi% => %ansiequiv%")
+
+endwhile

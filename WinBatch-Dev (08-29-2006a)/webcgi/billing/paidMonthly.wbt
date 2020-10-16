@@ -1,0 +1,59 @@
+:paidMonthly
+; _PAID_MONTHLY_Format .......... input
+; CustomerRecord0 ............... input
+; CustomerRecord%i% ............. input
+; paidMonthly0 .................. output
+; paidMonthly%i% ................ output
+
+If IsDefined( i) == @YES
+    i_pdMon = i
+Endif
+
+If IsDefined( aRec) == @YES
+    aRec_pdMon = aRec
+Endif
+
+If IsDefined( _field_name) == @YES
+    _field_name_pdMon = _field_name
+Endif
+
+If IsDefined( _name) == @YES
+    _name_pdMon = _name
+Endif
+
+paidMonthly0 = 0
+
+For i=1 to CustomerRecord0
+    aRec = CustomerRecord%i%
+    _name = ItemExtract( 1, aRec, "=")
+    
+    If (StrIndex( _name, _PAID_MONTHLY_Format, 1, @FWDSCAN) > 0)
+        paidMonthly0 = paidMonthly0 + 1
+        paidMonthly%paidMonthly0% = _name
+    Endif
+Next
+
+Drop( i, aRec, _name, _field_name)
+
+If IsDefined( i_pdMon) == @YES
+    i = i_pdMon
+    Drop( i_pdMon)
+Endif
+
+If IsDefined( aRec_pdMon) == @YES
+    aRec = aRec_pdMon
+    Drop( aRec_pdMon)
+Endif
+
+If IsDefined( _field_name_pdMon) == @YES
+    _field_name = _field_name_pdMon
+    Drop( _field_name_pdMon)
+Endif
+
+If IsDefined( _name_pdMon) == @YES
+    _name = _name_pdMon
+    Drop( _name_pdMon)
+Endif
+
+return
+

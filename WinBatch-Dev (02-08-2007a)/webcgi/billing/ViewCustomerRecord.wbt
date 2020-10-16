@@ -1,0 +1,22 @@
+:ViewCustomerRecord
+
+WebOut('', _html_crlf)
+
+_table = "customer"
+Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+sql_stmnt = "SELECT * FROM %_table% WHERE id = %_custid%"
+;sql_fetch_map = "N,S64,S64,S64,S32,S32,S32,S128,S32,S32,S32,S32,S32,N,N,S32,S32"
+sql_fetch_gosub = "ViewACustomerRecord"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+If IsDefined( _edit_mode) == @YES
+    __edit_mode = _edit_mode
+    _edit_mode = @FALSE
+Endif
+
+return
+

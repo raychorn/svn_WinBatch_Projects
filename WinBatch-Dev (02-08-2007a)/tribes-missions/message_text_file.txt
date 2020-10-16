@@ -1,0 +1,52 @@
+Note your new password is composed of letters, numbers and special characters. Be sure to enter your new password exactly as it appears 
+in this message.
+
+You may need to wait until the next server reset or mission change whichever happens first BEFORE your new password will work however you may 
+continue using your old password until it can no longer be used.
+
+It is our policy to make passwords as difficult to guess or remember so we can keep your ability to enjoy our servers securely in your hands 
+while at the same time making it as difficult as possible for others to abuse your clan name.
+
+DO NOT communicate your password to ANYONE whether they are a member of {USB} or not. In case your {USB} clan name is abused you may lose your 
+ability to connect using your clan name as well as your ability to Admin our servers.
+
+If you have a static IP address and DO NOT connect to the Internet using some kind of dial-up ISP we could use your Static IP Address in place 
+of your password since NOBODY else can be using your static IP Address since it is assigned to YOUR Internet Connection Account.
+
+================= {USB} News =================
+
+* DSL Installation Plans Move Forward Slowly
+
+We now have a tentative outside installation date of 02-28-2000 which means the outside wiring should be done by that date however this
+still leaves the inside wiring which is yet to be determined. To recap: this DSL is a 1.5 Mbps Symetrical DSL - this differs from most
+other run-of-the-mill DSLs in that the bandwidth is Symetrical; most other DSLs provide asymetrical bandwidth which means there is an
+imbalance in the amount of bandwidth available for uploads relative to downloads. Due to the nature of Tribes and how bandwidth is
+utilized by the game and game players - Tribes requires Symetrical Bandwidth which means the number of players connected at any time 
+is limited by the slowest speed at which an Internet Connection may transfer data. Cable Modem Technology is asymetrical which means 
+even though a cable modem may download files at something like 750 Kbps (aka 75 KBps) that same cable modem may upload at 
+only 160 Kbps (aka 16 KBps) however this means a Tribes server may allow only approx. 7 players at a time because each player will
+require approx. 2 KBps per connection. Symetrical DSLs are more costly than the asymetrical variety however they are less costly than
+a comparable T1 which runs at 1.5 Mbps (aka 150 KBps).
+
+* New Tribes Server Waits in the Wings
+
+We have a 500 Mhz Pentium III Server waiting in the wings for the new DSL to be installed. We plan on hosting 1 BIG Tribes 1 server
+on this server allowing a minimum of 14 Players but we may play around with allowing many more to see how many more can be connected
+in order to get a feel for how this new DSL will operate with Tribes servers.
+
+================= {USB} Warnings =================
+
+* AOL 5.0 causes Problems on YOUR computer
+
+AOL is being sued via a HUGE Class Action Lawsuit (see http://cnn.com search for keyword AOL) to the tune of $8 Billion (yes, that's
+Billion) because AOL 5.0 seems to limit which ISPs may be used to access the Internet to ONLY AOL and it may cause YOUR computer to
+lock-up, crash or possibly corrupt data.
+
+================= {USB} New Deployables =================
+
+* Com Hack Device
+
+Hacks into the enemy Communications Team-Chat and displays those messages for all team members of those on the team which deployed 
+the Com Hack Device. The enemy gets NO notice that messages are being intercepted, just like the real world. Com Hack Devices may be
+disabled or destroyed but MUST be deployed outside on SimTerrain. The Com Hack Device is a Passive Device however it will appear to
+be a Sensor Jammer on your Command Map displays.

@@ -1,0 +1,61 @@
+; ip-addressing.wbt
+
+_wname = "Advanced IP Addressing"
+_wname1 = "TCP/IP Address"
+
+_appName = "ip-addressing.wbt"
+
+If WinExist( _wname) == @TRUE
+	WinShow( _wname)
+	Delay( 1)
+	WinActivate( _wname)
+	Delay( 1)
+	
+	num_to_delete = AskLine( "%_appName%", "How many ip addresses to delete? (0 or more)", "")
+	If num_to_delete > 0
+		SendKeysTo( _wname, "!r")
+		SendKeysTo( _wname, "^{HOME}")
+		For i = 1 to num_to_delete
+			SendKeysTo( _wname, "!v")
+			SendKeysTo( _wname, "{DOWN}{UP}")
+		Next
+	Endif
+
+	num_to_add = AskLine( "%_appName%", "How many ip addresses to add? (0 or more)", "")
+	If num_to_add > 0
+		ip1 = AskLine( "%_appName%", "First IP address? (209.233.167.2)", "209.233.167.2")
+		If (StrLen( ip1) > 0) && (ItemCount( ip1, ".") == 4)
+			WinShow( _wname)
+			Delay( 1)
+			WinActivate( _wname)
+			Delay( 1)
+			base_ip = ItemExtract( 4, ip1, ".")
+			For j = 1 to num_to_add
+				ip_num = (j - 1) + base_ip
+				anIP = StrCat( ItemExtract( 1, ip1, "."), ".", ItemExtract( 2, ip1, "."), ".", ItemExtract( 3, ip1, "."), ".", "%ip_num%")
+				SendKeysTo( _wname, "!a")
+				Delay( 1)
+				SendKeysTo( _wname1, ItemExtract( 1, anIP, "."))
+;				 Delay( 1)
+				SendKeysTo( _wname1, ItemExtract( 2, anIP, "."))
+;				 Delay( 1)
+				SendKeysTo( _wname1, ItemExtract( 3, anIP, "."))
+;				 Delay( 1)
+				SendKeysTo( _wname1, ItemExtract( 4, anIP, "."))
+;				 Delay( 1)
+				SendKeysTo( _wname1, "{TAB}")
+;				 Delay( 1)
+				SendKeysTo( _wname1, "!a")
+;				 Delay( 1)
+			Next
+		Else
+			Message( "ERROR", "Invalid IP address %ip1%.")
+		Endif
+	Endif
+Else
+	Message( "ERROR", "Unable to do anything unless you open the %_wname% window in the Network Control Panel applet.")
+Endif
+
+exit
+
+

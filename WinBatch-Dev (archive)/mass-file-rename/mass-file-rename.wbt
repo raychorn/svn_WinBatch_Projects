@@ -1,0 +1,30 @@
+; mass-file-rename.wbt
+
+wName = "mass-file-rename"
+
+IntControl(29, @TAB, 0, 0, 0)
+
+	_ftypes = "All Files|%_types%"
+	_fname = AskFileName( "Path for Mass File Rename?", "C:\", _ftypes, "", 1)
+	_fpath = FilePath( _fname)
+	_fext = FileExtension(_fname)
+
+	_srcPattern = StrLower( AskLine("Pattern From:", "Part of file name to replace", ""))
+	_dstPattern = AskLine("Pattern To:", "Part of file name to substitute", "")
+
+	_wildcard = StrReplace( "%_fpath%\*.%_fext%", "\\", "\")
+	_ifiles = FileItemize(_wildcard)
+
+;	message( "DEBUG", "_wildcard=(%_wildcard%)")
+
+	for i = 1 to ItemCount( _ifiles, @TAB)
+		_mname = ItemExtract( i, _ifiles, @TAB)
+		_newname = StrReplace( StrLower( _mname), _srcPattern, _dstPattern)
+		BoxCaption( 1, StrCat( wName, "Rename %_mname% to %_newname%"))
+		FileRename(_mname, _newname)
+	next
+
+exit
+
+
+

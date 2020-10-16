@@ -1,0 +1,23 @@
+Executed as user: KRONOS\SYSTEM. ...OnStart:  Create Table [WFCDB].[dbo].[hrPersnl] Step   DTSRun OnFinish:  Create Table [WFCDB].[dbo].[hrPersnl] Step   DTSRun OnStart:  Copy Data from hrPersnl to [WFCDB].[dbo].[hrPersnl] Step   DTSRun OnError:  Copy Data from hrPersnl to [WFCDB].[dbo].[hrPersnl] Step, Error = -2147217865 (80040E37)      Error string:  The Microsoft Jet database engine could not find the object 'hrPersnl'.  Make sure the object exists and that you spell its name and the path name correctly.      Error source:  Microsoft JET Database Engine      Help file:        Help context:  5003011      Error Detail Records:      Error:  -2147217865 (80040E37); Provider Error:  -543884569 (DF94FAE7)      Error string:  The Microsoft Jet database engine could not find the object 'hrPersnl'.  Make sure the object exists and that you spell its name and the path name correctly.      Error source:  Microsoft JET Database Engine      Help file:        Help context:  ...  Process Exit Code 1.  The step failed.
+
+
+=============================
+
+
+\\Elgrande2\Programs\Abra\Programs\Data\hrPersnl.DBF
+
+\\Elgrande2\Programs\Abra\Programs\Data
+
+
+=============================
+
+select `P_ACCUMCUR`,`P_ACTIVE`,`P_ALLOCBY`,`P_ANNUAL`,`P_ANYCHANG`,`P_AUTOHOL`,`P_AUTOILL`,`P_AUTOPAY`,`P_AUTOPER`,`P_AUTOREG`,`P_AUTOVAC`,`P_BEN_EXP`,`P_BIRTH`,`P_BONUS`,`P_BONUSAMT`,`P_BUSEXT`,`P_BUSPHONE`,`P_CELLULAR`,`P_CFICATIP`,`P_CHADATE`,`P_CITIZEN`,`P_COBRA`,`P_COMPANY`,`P_COMPARAT`,`P_CURTIPS`,`P_DEPINSUR`,`P_DEPNDTS`,`P_DISAVET`,`P_DISCHARG`,`P_EEOCLASS`,`P_EFFDATE`,`P_EIC`,`P_EICMSTAT`,`P_EMPEMAIL`,`P_EMPLOY`,`P_EMPNO`,`P_EMPTYPE`,`P_EXEMPT`,`P_FCITY`,`P_FCOUNTRY`,`P_FCOUNTY`,`P_FNAME`,`P_FSTATE`,`P_FSTREET1`,`P_FSTREET2`,`P_FUNCTION`,`P_FZIP`,`P_HANDICAP`,`P_HCITY`,`P_HCOUNTRY`,`P_HCOUNTY`,`P_HPHONE`,`P_HSTATE`,`P_HSTREET1`,`P_HSTREET2`,`P_HZIP`,`P_I9RENEW`,`P_I9VERIF`,`P_ILLACCR`,`P_ILLCARRY`,`P_ILLCLOSE`,`P_ILLIND`,`P_ILLRATE`,`P_ILLTAKEN`,`P_JMISC1`,`P_JMISC2`,`P_JMISC3`,`P_JMISC4`,`P_JOBCODE`,`P_JOBDATE`,`P_JOBGROUP`,`P_JOBTITLE`,`P_LABORIND`,`P_LASTCHK`,`P_LASTHIRE`,`P_LEAVERET`,`P_LEVEL1`,`P_LEVEL2`,`P_LEVEL3`,`P_LEVEL4`,`P_LEVEL5`,`P_LNAME`,`P_LNORMU`,`P_LOCATION`,`P_LPAYDATE`,`P_LPAYFREQ`,`P_LSALARY`,`P_LSTPAYDT`,`P_LUNITR`,`P_MAILSTOP`,`P_MARRIED`,`P_MI`,`P_MILITARY`,`P_MISC1`,`P_MISC2`,`P_MISC3`,`P_MISC4`,`P_NEXTPAY`,`P_NEXTPERF`,`P_NICKNAME`,`P_NORMUNIT`,`P_NOTES`,`P_ORIGHIRE`,`P_OTHERID`,`P_OTHERVET`,`P_PAGER`,`P_PAYDATE`,`P_PAYFREQ`,`P_PAYGROUP`,`P_PAYSTAT`,`P_PENSION`,`P_PERACCR`,`P_PERCARRY`,`P_PERCLOSE`,`P_PERFDATE`,`P_PERIND`,`P_PERRATE`,`P_PERTAKEN`,`P_QFICATIP`,`P_QTDUNTAX`,`P_QTIPALLO`,`P_QTIPSREP`,`P_RACE`,`P_RATING`,`P_REASON`,`P_RECALC`,`P_RECRUTR`,`P_REHIRE`,`P_SALARY`,`P_SALGRADE`,`P_SALHOUR`,`P_SALUT`,`P_SEASONAL`,`P_SENDATE`,`P_SEX`,`P_SHIFT`,`P_SHIFTPRE`,`P_SMOKER`,`P_SOURCE`,`P_SSN`,`P_STATUTE`,`P_SUPEMAIL`,`P_SUPERNO`,`P_SUPERVIS`,`P_TERMDATE`,`P_TERMREAS`,`P_TERMTYPE`,`P_TSTAMP`,`P_UNIONCD`,`P_UNIONDT`,`P_UNITPAY`,`P_UNITRATE`,`P_VACACCR`,`P_VACCARRY`,`P_VACCLOSE`,`P_VACIND`,`P_VACRATE`,`P_VACTAKEN`,`P_VIETNAM`,`P_VISAEXP`,`P_VISATYPE`,`P_WORKCODE`,`P_WORKCOMP`,`P_WORKRATE`,`P_YFICATIP`,`P_YTDUNTAX`,`P_YTIPALLO`,`P_YTIPSREP` from `hrPersnl`
+
+=============================
+
+SELECT     P_EXEMPT, P_EMPNO, P_FNAME, P_MI, P_LNAME, P_ORIGHIRE, P_SUPERVIS, P_BIRTH, P_JOBTITLE, P_LEVEL1, P_LEVEL2, P_LEVEL3, P_LEVEL4, 
+                      P_ACTIVE, P_HSTREET1, P_HCITY, P_HSTATE, P_HZIP, P_HCOUNTRY, P_EMPEMAIL
+FROM         dbo.hrPersnl
+WHERE     (P_LEVEL1 = N'70') AND (P_ACTIVE = N'a' OR P_ACTIVE = N'l' OR P_ACTIVE = N't') AND (P_LEVEL3 = N'100' OR
+                      P_LEVEL3 = N'200' OR
+                      P_LEVEL3 = N'520')

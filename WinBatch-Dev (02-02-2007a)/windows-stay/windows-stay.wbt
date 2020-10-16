@@ -1,0 +1,280 @@
+; windows-stay.wbt
+
+; Filter out xx/xx from the Total Control window titles - but DO NOT filter them out of the initial window list... 
+; Filter out those Total Control window titles that DO not have the 2nd part of the title...
+
+wName = "Windows-Stay v1.4"
+
+_winstate = -1 ; compiler complained so here's a value for ya compiler !
+
+_timeDelaySecs = 10
+
+__allwins = ""
+__allwinsPos = ""
+
+_TotalControlSymbol = "Total CONtrol -"
+_TotalControlPlayersOnSymbol = "Players on "
+_TotalControlSymbol2 = "Total CONtrol"
+_ISpawnSymbol = "InfiniteSpawn v2.0"
+
+_ProgramManagerSymbol = "Program Manager"
+
+_TribeStatSymbol = "TribeStat"
+
+mywinds = ""
+
+BoxCaption( 1, "%wName% - Asking for seconds...")
+
+__timeDelaySecs = StrTrim( AskLine( wName, "Wait how many seconds until windows are snapped into place ? (default is %_timeDelaySecs% seconds)", _timeDelaySecs))
+
+if int(__timeDelaySecs) > 1
+	_timeDelaySecs = int(__timeDelaySecs)
+endif
+
+while 1
+	if mywinds == ""
+		BoxCaption( 1, "%wName% - Getting windows...")
+		allwins = WinItemize()
+	
+		BoxCaption( 1, "%wName% - Filtering windows...")
+		Gosub EditWindowsList
+	endif
+
+	if (__allwins == "")
+		__allwins = _allwins
+		__allwinsPos = _allwinsPos
+		BoxCaption( 1, "%wName% - Asking for windows...")
+		mywinds = AskItemList("Select Windows to stay-put", __allwins, @TAB, @sorted, @multiple)
+	endif
+
+	Gosub SleepSome
+
+	BoxCaption( 1, "%wName% - Snapping windows...")
+	Gosub SnapWins
+
+endwhile
+
+exit
+
+
+:SleepSome
+	_delayTime = "0000:00:00:00:00:%_timeDelaySecs%"
+	_newTime = TimeAdd( TimeYmdHms(), _delayTime)
+	BoxCaption( 1, "%wName% - Sleeping until %_newTime%")
+	TimeWait( _newTime)
+return
+
+
+
+:SnapWins
+	for i = 1 to ItemCount( mywinds, @TAB)
+		__itx = ""
+		_item = ItemExtract( i, mywinds, @TAB)
+		if WinExist( _item) == @TRUE
+			_winState = WinState( _item)
+		endif
+		_x1 = StrIndexNc( _item, _TotalControlSymbol, 1, @FWDSCAN)
+		_x2 = -1
+		if _x1 > 0
+			_x2 = StrIndexNc( _item, _TotalControlPlayersOnSymbol, _x1 + StrLen( _TotalControlSymbol), @FWDSCAN)
+		endif
+		_itNum = 0
+		if ( (_x1 <> 0) && (_x2 <> -1) )
+			__item = StrCat( StrSub( _item, 1, _x1 + StrLen(_TotalControlSymbol)), StrSub( _item, _x2, StrLen(_item) - (_x2 - (_x1 + StrLen(_TotalControlSymbol)))))
+			for j = 1 to ItemCount( __allwins, @TAB)
+				_it = ItemExtract( j, __allwins, @TAB)
+				_x11 = StrIndexNc( _it, _TotalControlSymbol, 1, @FWDSCAN)
+				_x21 = -1
+				if _x11 > 0
+					_x21 = StrIndexNc( _it, _TotalControlPlayersOnSymbol, _x11 + StrLen( _TotalControlSymbol), @FWDSCAN)
+				endif
+				if ( (_x11 <> 0) && (_x21 <> -1) )
+					__it = StrCat( StrSub( _it, 1, _x11 + StrLen(_TotalControlSymbol)), StrSub( _it, _x21, StrLen(_it) - (_x21 - (_x11 + StrLen(_TotalControlSymbol)))))
+					if __item == __it
+						_itNum = j
+						x_allwins = _allwins
+						x_allwinsPos = _allwinsPos
+						_xWsallwins = allwins
+						_xWs = WinItemize()
+						allwins = _xWs
+						Gosub EditWindowsList
+						; grab the real window from the _allwins list
+						for k = 1 to ItemCount( _allwins, @TAB)
+							_itx = ItemExtract( k, _allwins, @TAB)
+							_x111 = StrIndexNc( _itx, _TotalControlSymbol, 1, @FWDSCAN)
+							_x211 = -1
+							if _x111 > 0
+								_x211 = StrIndexNc( _itx, _TotalControlPlayersOnSymbol, _x111 + StrLen( _TotalControlSymbol), @FWDSCAN)
+							endif
+							if ( (_x111 <> 0) && (_x211 <> -1) )
+								__itx = StrCat( StrSub( _itx, 1, _x111 + StrLen(_TotalControlSymbol)), StrSub( _itx, _x211, StrLen(_itx) - (_x211 - (_x111 + StrLen(_TotalControlSymbol)))))
+								if __it == __itx
+									break
+								else
+									__itx = ""
+								endif
+							endif
+						next
+						allwins = _xWsallwins
+						_allwins = x_allwins
+						_allwinsPos = x_allwinsPos
+						drop( _xWsallwins, x_allwins, x_allwinsPos, x_allwins)
+						_winState = WinState( _it)
+						break
+					endif
+				endif
+			next
+		else
+			if WinExist( _item) == @TRUE
+				_itNum = ItemLocate( _item, __allwins, @TAB)
+			endif
+		endif
+		if _itNum <> 0
+			_itPos = ItemExtract( _itNum, __allwinsPos, @TAB)
+			if WinExist( _item) == @TRUE
+				ErrorMode(@OFF)
+				_winState = WinState( _item)
+				_itGet = WinPlaceGet( _winState, _item)
+				ErrorMode(@CANCEL)
+			else
+				if WinExist( _itx) == @TRUE
+					ErrorMode(@OFF)
+					_winState = WinState( _itx)
+					_itGet = WinPlaceGet( _winState, _itx)
+					ErrorMode(@CANCEL)
+				else
+					_itGet = ""
+				endif
+			endif
+			if _itPos <> _itGet
+				BoxCaption( 1, "%wName% - Repositioning (%_item%)...")
+				if _winState == @ICON
+					ErrorMode(@OFF)
+					WinZoom( _item)
+					WinShow( _item)
+					ErrorMode(@CANCEL)
+				endif
+				if WinExist( _item) == @TRUE
+					ErrorMode(@OFF)
+					WinPlaceSet( @NORMAL, _item, _itPos)
+					ErrorMode(@CANCEL)
+				else
+					if WinExist( _itx) == @TRUE
+						ErrorMode(@OFF)
+						WinPlaceSet( @NORMAL, _itx, _itPos)
+						ErrorMode(@CANCEL)
+					endif
+				endif
+			endif
+		endif
+	next
+return
+
+
+
+:EditWindowsList
+	; allwins is the input list
+	; _allwins is the output list
+	if IsDefined( i) == @TRUE
+		x_i = i
+	endif
+	if IsDefined( _item) == @TRUE
+		x_item = _item
+	endif
+	if IsDefined( _winState) == @TRUE
+		x_winState = _winState
+	endif
+	if IsDefined( _x1) == @TRUE
+		x_x1 = _x1
+	endif
+	if IsDefined( _x2) == @TRUE
+		x_x2 = _x2
+	endif
+	if IsDefined( _x3) == @TRUE
+		x_x3 = _x3
+	endif
+	if IsDefined( _x4) == @TRUE
+		x_x4 = _x4
+	endif
+
+	_allwins = ""
+	_allwinsPos = ""
+	for i = 1 to ItemCount( allwins, @TAB)
+		_item = ItemExtract( i, allwins, @TAB)
+		if WinExist( _item) == @TRUE
+			_winState = WinState( _item)
+			_x1 = StrIndexNc( _item, _TotalControlSymbol, 1, @FWDSCAN)
+			_x2 = -1
+			if _x1 > 0
+				_x2 = StrIndexNc( _item, _TotalControlPlayersOnSymbol, _x1 + StrLen( _TotalControlSymbol), @FWDSCAN)
+			endif
+			_x3 = StrIndexNc( _item, _ProgramManagerSymbol, 1, @FWDSCAN)
+			_x4 = StrIndexNc( _item, _TribeStatSymbol, 1, @FWDSCAN)
+			if (_winState == @NORMAL)
+				if ( ( ( ( (_x1 <> 0) && (_x2 <> -1) ) && (_x3 == 0) && (_x4 == 0) ) || ( ( (_x1 == 0) && (_x2 == -1) ) && (_x3 == 0) && (_x4 == 0) ) ) && (StrUpper(_item) <> StrUpper(_TotalControlSymbol2)) && (StrUpper(_item) <> StrUpper(_ISpawnSymbol)) )
+					if WinExist( _item) == @TRUE
+						_allwins = StrCat( _allwins, _item, @TAB)
+						_allwinsPos = StrCat( _allwinsPos, WinPlaceGet( @NORMAL, _item), @TAB)
+					endif
+				endif
+			endif
+		endif
+	next
+
+	if IsDefined( x_i) == @TRUE
+		i = x_i
+	endif
+	if IsDefined( x_item) == @TRUE
+		_item = x_item
+	endif
+	if IsDefined( x_winState) == @TRUE
+		_winState = x_winState
+	endif
+	if IsDefined( x_x1) == @TRUE
+		_x1 = x_x1
+	endif
+	if IsDefined( x_x2) == @TRUE
+		_x2 = x_x2
+	endif
+	if IsDefined( x_x3) == @TRUE
+		_x3 = x_x3
+	endif
+	if IsDefined( x_x4) == @TRUE
+		_x4 = x_x4
+	endif
+	drop( x_i, x_item, x_winState, x_x1, x_x2, x_x3, x_x4)
+return
+
+
+
+:explainWinState
+;-1 @HIDDEN Specified window exists, but is hidden
+; 0 @FALSE	Specified window does not exist
+; 1 @ICON	Specified window is iconic (minimized)
+; 2 @NORMAL Specified window is a normal window
+; 3 @ZOOMED Specified window is zoomed (maximized)
+
+	_winstate_desc = "ERROR"
+
+	Switch _winstate
+		case -1
+				_winstate_desc = "@HIDDEN"
+				break
+		case 0
+				_winstate_desc = "@FALSE"
+				break
+		case 1
+				_winstate_desc = "@ICON"
+				break
+		case 2
+				_winstate_desc = "@NORMAL"
+				break
+		case 3
+				_winstate_desc = "@ZOOMED"
+				break
+		case _winstate	  ; default case
+				_winstate_desc = "UNKNOWN"
+				break
+	EndSwitch
+
+return

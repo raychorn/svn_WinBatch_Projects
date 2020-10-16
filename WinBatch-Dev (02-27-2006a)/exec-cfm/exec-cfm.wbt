@@ -1,0 +1,45 @@
+; exec-cfm.wbt
+
+AddExtender("wwwsk32i.dll")
+
+;Debug( @ON)
+
+_wname = "exec-cfm"
+wname = "%_wname%.wbt"
+
+_questionMarkSymbol = "?"
+
+_httpResponseOK = 200
+
+_URL = ""
+_htmlFolder = ""
+
+; param1 = StrCat( URL, "&isRunningBackground=True&RequestTimeout=999")
+
+if IsDefined( param1)
+	; param1 URL
+	_URL = param1
+Else
+;	exit
+Endif
+
+; param2 is the name of the folder into which we place the html files which are timestamped
+
+if IsDefined( param2)
+	; param2 html folder name
+	_htmlFolder = param2
+Else
+;	exit
+Endif
+
+if (StrLen( _URL) > 0)
+	serv = httpGetServer(_URL, "")
+	path = httpGetpath(_URL, "")
+	query = ItemExtract( 2, _URL, _questionMarkSymbol)
+	_path = StrCat( path, _questionMarkSymbol, query)
+	a = httpRecvQuery(serv, path, query, 10240, @hMethodGet)
+endif
+
+exit
+
+

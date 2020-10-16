@@ -1,0 +1,440 @@
+; WebSiteDLLrescue.wbt
+
+IntControl(1001, 1, 0, 0, 0)
+
+IntControl(29, @TAB, 0, 0, 0)
+
+AddExtender("WWWNT32I.DLL")
+AddExtender("WWWSK32I.DLL")
+
+_master_cycle_count = 10
+
+;BoxCaption(1, "%url_wName% %line%")
+
+_appName = "WebSiteDLLrescue"
+
+wName00 = "WebSiteDLLrescue"
+
+wName1 = "httpd32.exe"
+
+;shutdown_path = "C:\Program Files\resourcekit\"
+;shutdown_command = "%shutdown_path%shutdown.exe"
+;shutdown_parms = "/l /r /t:5 /y"
+
+shutdown_path = "C:\Program Files\ServerRescue-911\"
+shutdown_command = "%shutdown_path%close-windows"
+shutdown_parms = ""
+
+wins = WinItemizeEx( wName00, @TRUE, @False)
+If ItemCount( wins, @TAB) > 0
+	exit ; do NOT allow more than 1 copy to run at a time ro there will be problems
+Endif
+
+wName1 = "DLL Initialization Failed"
+wName2 = "counter.exe"
+wName3 = "rand.exe"
+wName4 = "WebSite WSAPI DLL Failure"
+wName5 = "Error"
+
+by_pass_website_restart = "true"
+
+_URL = "http://cybercash-net.com/robots.txt"
+_mode = by_pass_website_restart
+
+If param0 > 0
+	_URL = param1
+Else
+	_URL = AskLine("WebSite DLL Rescue", "URL?", "http://xxx/robots.txt")
+Endif
+
+If param0 > 1
+	_mode = param2
+Else
+	_mode = AskLine("WebSite DLL Rescue", "Mode? (true=by-pass the immediate WebSite recovery and only look for DLL problems, false to stop/start WebSite)", "true")
+Endif
+
+fname = "c:\temp\robots.txt"
+
+_cycle_count = 0
+
+_response_code = 0 ; 200 stops the process assuming the web server is running
+
+_beginTime = GetTickCount( )
+_endGoal = _beginTime + (60 * 4 * 1000)
+_ticksNow = 0
+_nowTime = GetTickCount( )
+
+Delay( 45)
+
+while (_cycle_count < _master_cycle_count)	; (_response_code <> 200) && 
+
+	wins = WinItemizeEx(wName00,@TRUE,@False)
+	If ItemCount(wins, @TAB) > 1
+		exit ; do NOT allow more than 1 copy to run at a time ro there will be problems
+	Endif
+
+	_just_restarted_webserver = @FALSE
+	
+	Gosub clearPopUps
+	If _clearedPopUps == @TRUE
+		line = "(2-%_cycle_count%) (cycle the Web Server service)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		RunShell("C:\WebSite\support\cycleWebServer.cmd", "", "C:\WebSite\support\", @NORMAL, @WAIT)
+
+		_just_restarted_webserver = @TRUE
+
+		Delay( 20)
+
+		_cycle_count = _cycle_count + 1
+
+		Gosub clearPopUps
+	Endif
+
+	urls_domain_name = httpGetServer( _URL, "")
+	path = httpGetpath( _URL, "")
+
+	Delay( 2)
+
+	_response_code = -1
+	ErrorMode(@OFF)
+	_response_code = httpRecvFile(urls_domain_name, path, fname, 0)
+	ErrorMode(@CANCEL)
+
+	txt = "httpRecvFile Return code is %_response_code%"
+
+	If (_response_code <> 200)
+		line = "(2-%_cycle_count%) (cycle the Web Server service)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		RunShell("C:\WebSite\support\cycleWebServer.cmd", "", "C:\WebSite\support\", @NORMAL, @WAIT)
+
+; Try to figure out if the service is stuck ?
+
+		Delay( 20)
+
+		_cycle_count = _cycle_count + 1
+
+		Gosub clearPopUps
+	Endif
+
+	line = "(0f-%_cycle_count%) (_ticksNow=%_ticksNow%, _nowTime=%_nowTime%, _endGoal=%_endGoal%) (Sleeping...)..."
+	BoxCaption(1, "%_appName% %line%")
+		
+	Delay( 10)
+
+	_nowTime = GetTickCount( )
+	_ticksNow = _nowTime - _beginTime
+	If (_beginTime + _ticksNow) > _endGoal
+		break
+	Endif
+
+	line = "(0g-%_cycle_count%) (_ticksNow=%_ticksNow%, _nowTime=%_nowTime%, _endGoal=%_endGoal%)..."
+	BoxCaption(1, "%_appName% %line%")
+
+	Gosub isWebSiteServiceStuck
+	If _isWebSiteServiceStuck == @TRUE
+		break
+	Endif
+	
+endwhile
+
+If (_response_code <> 200)
+
+	urls_domain_name = httpGetServer( _URL, "")
+	path = httpGetpath( _URL, "")
+
+	_response_code = -1
+	ErrorMode(@OFF)
+	_response_code = httpRecvFile(urls_domain_name, path, fname, 0)
+	ErrorMode(@CANCEL)
+
+	If (_response_code <> 200)
+
+		RunShell( shutdown_command, shutdown_parms, shutdown_path, @NORMAL, @NOWAIT)
+
+	Endif
+
+Endif
+
+exit
+
+If StriCmp( _mode, by_pass_website_restart) <> 0
+	line = "(00-%_cycle_count%) (SLEEPING 30 secs - waiting for server start-up)..."						 
+	BoxCaption(1, "%_appName% %line%")
+
+	Delay( 30) ; wait for website to come up if it's going to before seeing if it requires attention
+Endif
+
+while (_response_code <> 200) && (_cycle_count < _master_cycle_count)
+
+;Message( "DEBUG", "_mode=%_mode%, _response_code=%_response_code%")
+
+    line = "(0a-%_cycle_count%) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (_mode=%_mode%)..."
+    BoxCaption(1, "%_appName% %line%")
+
+    If StriCmp( _mode, by_pass_website_restart) <> 0
+        line = "(0b-%_cycle_count%) (Gosub correctDLLproblems)..."
+        BoxCaption(1, "%_appName% %line%")
+
+        Gosub correctDLLproblems
+;Message( "DEBUG", "How the fuck did this happen? _mode=%_mode%, _response_code=%_response_code%")
+;exit
+
+        If (_response_code <> 200) && (_cycle_count > _master_cycle_count)
+            Message( "WARNING", "Cycle count is %_cycle_count% and Response code is %_response_code% - Give Up?")
+            exit
+        Endif
+    Else
+        line = "(0c-%_cycle_count%) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (Gosub detectDLLproblem)..."
+        BoxCaption(1, "%_appName% %line%")
+
+        Gosub detectDLLproblem
+
+        line = "(0d-%_cycle_count%) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (_response_code=%_response_code%)..."
+        BoxCaption(1, "%_appName% %line%")
+
+        If (StriCmp( _mode, by_pass_website_restart) <> 0) && (_response_code <> 200)
+            _mode = "false"
+
+            line = "(0e-%_cycle_count%) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (_mode=%_mode%)..."
+            BoxCaption(1, "%_appName% %line%")
+        Endif
+    Endif
+
+    line = "(0f-%_cycle_count%) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%) (Sleeping...)..."
+    BoxCaption(1, "%_appName% %line%")
+        
+    Delay( 10)
+
+    _nowTime = GetTickCount( )
+    _ticksNow = _nowTime - _beginTime
+    If _ticksNow > _endGoal
+        break
+    Endif
+
+    line = "(0g-%_cycle_count%) (_ticksNow=%_ticksNow%, _endGoal=%_endGoal%)..."
+    BoxCaption(1, "%_appName% %line%")
+    
+endwhile
+
+exit
+
+:isWebSiteServiceStuck
+    _isWebSiteServiceStuck = @FALSE
+    
+    line = "(1-%_cycle_count%) (get the current state of the Web Server service)..."
+    BoxCaption(1, "%_appName% %line%")
+
+    state = wntSvcStatus("", "Web Server", 0, 2)  ; get the current state of the Web Server service
+
+    Switch state
+      case 1
+        s = "1   SERVICE_STOPPED     The service is not running."
+
+;        Gosub correctDLLproblems
+
+;        If (_response_code <> 200) && (_cycle_count > _master_cycle_count)
+;            Message( "WARNING", "Cycle count is %_cycle_count% and Response code is %_response_code% - Give Up?")
+;            exit
+;        Endif
+        break
+      case 2
+        s = "2   SERVICE_START_PENDING   The service is starting."
+        _isWebSiteServiceStuck = @TRUE
+        break
+      case 3
+        s = "3   SERVICE_STOP_PENDING    The service is stopping."
+        _isWebSiteServiceStuck = @TRUE
+        break
+      case 4
+        s = "4   SERVICE_RUNNING The service is running."
+        _isWebSiteServiceStuck = @TRUE
+
+;        If (WinExist(wName1) == @TRUE) || (WinExist(wName2) == @TRUE) || (WinExist(wName4) == @TRUE) || (WinExist(wName5) == @TRUE)
+;            Gosub correctDLLproblems
+;        Endif
+        
+;        If (_response_code <> 200) && (_cycle_count > _master_cycle_count)
+;            Message( "WARNING", "Cycle count is %_cycle_count% and Response code is %_response_code% - Give Up?")
+;            exit
+;        Endif
+        break
+      case 5
+        s = "5   SERVICE_CONTINUE_PENDING    The service continue is pending."
+        _isWebSiteServiceStuck = @TRUE
+        break
+      case 6
+        s = "6   SERVICE_PAUSE_PENDING   The service pause is pending."
+        _isWebSiteServiceStuck = @TRUE
+        break
+      case 7
+        s = "7   SERVICE_PAUSED  The service is paused."
+        break
+    EndSwitch
+
+;    Message( "DEBUG", "FOUND: %wName% Service status is %s%")
+
+    line = "(1-%_cycle_count%) (%s%)..."
+    BoxCaption(1, "%_appName% %line%")
+return
+
+
+:doSomethingWithDLLproblem
+    _cycle_count = _cycle_count + 1
+    
+    line = "(1-%_cycle_count%) (get the current state of the Web Server service)..."
+    BoxCaption(1, "%_appName% %line%")
+
+    state = wntSvcStatus("", "Web Server", 0, 2)  ; get the current state of the Web Server service
+
+    Switch state
+      case 1
+        s = "1   SERVICE_STOPPED     The service is not running."
+
+        Gosub correctDLLproblems
+
+        If (_response_code <> 200) && (_cycle_count > _master_cycle_count)
+            Message( "WARNING", "Cycle count is %_cycle_count% and Response code is %_response_code% - Give Up?")
+            exit
+        Endif
+        break
+      case 2
+        s = "2   SERVICE_START_PENDING   The service is starting."
+        break
+      case 3
+        s = "3   SERVICE_STOP_PENDING    The service is stopping."
+        break
+      case 4
+        s = "4   SERVICE_RUNNING The service is running."
+
+        If (WinExist(wName1) == @TRUE) || (WinExist(wName2) == @TRUE) || (WinExist(wName4) == @TRUE) || (WinExist(wName5) == @TRUE)
+            Gosub correctDLLproblems
+        Endif
+        
+        If (_response_code <> 200) && (_cycle_count > _master_cycle_count)
+            Message( "WARNING", "Cycle count is %_cycle_count% and Response code is %_response_code% - Give Up?")
+            exit
+        Endif
+        break
+      case 5
+        s = "5   SERVICE_CONTINUE_PENDING    The service continue is pending."
+        break
+      case 6
+        s = "6   SERVICE_PAUSE_PENDING   The service pause is pending."
+        break
+      case 7
+        s = "7   SERVICE_PAUSED  The service is paused."
+        break
+    EndSwitch
+
+;    Message( "DEBUG", "FOUND: %wName% Service status is %s%")
+return
+
+exit
+
+
+:detectDLLproblem
+If (WinExist(wName1) == @TRUE) || (WinExist(wName2) == @TRUE) || (WinExist(wName4) == @TRUE) || (WinExist(wName5) == @TRUE)
+;    Gosub doSomethingWithDLLproblem
+    Gosub correctDLLproblems
+Endif
+
+return
+
+
+:correctDLLproblems
+    _cycle_count = _cycle_count + 1
+
+line = "(3-%_cycle_count%) (close the %wName1% or %wName2% or %wName4% window)..."
+BoxCaption(1, "%_appName% %line%")
+
+Gosub clearPopUps
+
+urls_domain_name = httpGetServer( _URL, "")
+path = httpGetpath( _URL, "")
+
+If (StriCmp( _mode, by_pass_website_restart) <> 0) || ((WinExist(wName1) == @TRUE) || (WinExist(wName2) == @TRUE) || (WinExist(wName4) == @TRUE) || (WinExist(wName5) == @TRUE))
+    _response_code = -1
+    If _clearedPopUps <> @TRUE
+        Delay( 30)
+        Gosub clearPopUps
+        ErrorMode(@OFF)
+        _response_code = httpRecvFile(urls_domain_name, path, fname, 0)
+        ErrorMode(@CANCEL)
+        txt = "httpRecvFile Return code is %_response_code%"
+    Endif
+
+    If (_response_code <> 200)
+        line = "(2-%_cycle_count%) (cycle the Web Server service)..."
+        BoxCaption(1, "%_appName% %line%")
+
+        RunShell("C:\WebSite\support\cycleWebServer.cmd", "", "C:\WebSite\support\", @NORMAL, @WAIT)
+
+        Gosub clearPopUps
+    Endif
+
+Endif
+
+line = "(5-%_cycle_count%) (PING: %urls_domain_name%)..."
+BoxCaption(1, "%_appName% %line%")
+
+ErrorMode(@OFF)
+url_pingable = wxPing( urls_domain_name)
+ErrorMode(@CANCEL)
+
+If url_pingable == @TRUE
+    line = "(6-%_cycle_count%) (HTTP: fetch %urls_domain_name% %path% into %fname%)..."
+    BoxCaption(1, "%_appName% %line%")
+
+    ErrorMode(@OFF)
+    _response_code = httpRecvFile(urls_domain_name, path, fname, 0)
+    ErrorMode(@CANCEL)
+    txt = "httpRecvFile Return code is %_response_code%"
+
+    line = "(7-%_cycle_count%) (HTTP: fetch %urls_domain_name% %path% into %fname% => %txt%)..."
+    BoxCaption(1, "%_appName% %line%")
+Else
+    _response_code = -1 ; 'eh can't even ping the machine...
+Endif
+
+return
+
+
+:clearPopUps
+_clearedPopUps = @FALSE
+while (WinExist(wName1) == @TRUE) || (WinExist(wName2) == @TRUE) || (WinExist(wName3) == @TRUE) || (WinExist(wName4) == @TRUE) || (WinExist(wName5) == @TRUE)
+	If WinExist(wName1) == @TRUE
+		ErrorMode(@OFF)
+		WinActivate(wName1)
+		SendKeysTo(wName1, `{ENTER}`)
+		ErrorMode(@CANCEL)
+		_clearedPopUps = @TRUE
+	Else
+		If WinExist(wName2) == @TRUE
+			ErrorMode(@OFF)
+			WinActivate(wName2)
+			SendKeysTo(wName2, `{ENTER}`)
+			ErrorMode(@CANCEL)
+			_clearedPopUps = @TRUE
+		Else
+			If WinExist(wName3) == @TRUE
+				ErrorMode(@OFF)
+				WinActivate(wName3)
+				SendKeysTo(wName3, `{ENTER}`)
+				ErrorMode(@CANCEL)
+				_clearedPopUps = @TRUE
+			Else
+				If WinExist(wName4) == @TRUE
+					ErrorMode(@OFF)
+					WinActivate(wName4)
+					SendKeysTo(wName4, `{ENTER}`)
+					ErrorMode(@CANCEL)
+					_clearedPopUps = @TRUE
+				Endif
+			Endif
+		Endif
+	Endif
+endwhile
+return
+

@@ -1,0 +1,169 @@
+:EMailACustomerRecord
+
+If IsDefined( t_custname) == @YES
+    t_custname_EACR = t_custname
+Endif
+
+If IsDefined( t_emailaddress) == @YES
+    t_emailaddress_EACR = t_emailaddress
+Endif
+
+If IsDefined( t_domain_name) == @YES
+    t_domain_name_EACR = t_domain_name
+Endif
+
+If IsDefined( t_ip) == @YES
+    t_ip_EACR = t_ip
+Endif
+
+If IsDefined( t_to) == @YES
+    t_to_EACR = t_to
+Endif
+
+If IsDefined( t_message) == @YES
+    t_message_EACR = t_message
+Endif
+
+If IsDefined( rc) == @YES
+    rc_EACR = rc
+Endif
+
+If IsDefined( err) == @YES
+    err_EACR = err
+Endif
+
+If IsDefined( msg) == @YES
+    msg_EACR = msg
+Endif
+
+t_custname = %sql_alias%1
+t_emailaddress = %sql_alias%2
+t_domain_name = %sql_alias%3
+t_ip = %sql_alias%4
+
+WebOut('<BR><FONT COLOR="BLUE"><B>%t_custname%, %t_emailaddress%, %t_domain_name%, %t_ip%</B></FONT><BR>', _html_crlf)
+
+WebOut('<FONT COLOR="BLUE"><B>_subject=%_subject%</B></FONT><BR>', _html_crlf)
+
+;t_to = "%t_emailaddress% (%t_custname%)"
+t_to = "%t_emailaddress%"
+t_message = StrCat( "To: %t_to% (%t_custname%) (%t_domain_name%/%t_ip%)", _cr, _cr, _cr, line, _cr, _cr, _message)
+
+httpAuth( _username, _password)
+
+_serv = httpGetServer(http_prefix, "")
+
+WebOut('<FONT COLOR="BLUE"><B>_serv=%_serv%</B></FONT><BR>', _html_crlf)
+
+t_to = urlEncode( t_to)
+g_CC = urlEncode( cc_address)
+SUBJECT = urlEncode( _subject)
+g_REPLYTO = urlEncode( reply_to_address)
+
+Temp = environment("temp")
+if strsub(temp,strlen(temp),1)!="\" then temp=strcat(temp,"\")
+tempfile=strcat(temp,"_SENDemail.txt")
+handle=fileopen(tempfile, "write")
+filewrite(handle, t_message)
+fileclose(handle)
+
+;TEXT = urlEncode( t_message)
+
+TEXT = urlEncode( tempfile)
+
+_query = StrCat( "t_to=", t_to, "&g_CC=", g_CC, "&SUBJECT=", SUBJECT, "&g_REPLYTO=", g_REPLYTO, "&TEXT=", TEXT)
+
+WebOut('<FONT COLOR="BLUE"><B>_query=', 0)
+WebOut(_query, 0)
+WebOut('</B></FONT><BR>', _html_crlf)
+
+WebOut('<FONT COLOR="BLUE"><B>_SENDemail_path=%_SENDemail_path%</B></FONT><BR>', _html_crlf)
+
+ErrorMode(@OFF)
+rc = httpRecvQuery( _serv, _SENDemail_path, _query, 999999, @hMethodGet)
+ErrorMode(@CANCEL)
+
+Drop( _serv)
+
+Drop( tempfile, TEXT, handle, Temp, g_REPLYTO, SUBJECT, g_CC, t_to)
+
+;ErrorMode(@OFF)
+;rc = smtpSendText( mailhost, reply_to_address, t_emailaddress, _subject, t_message)
+;ErrorMode(@CANCEL)
+;If rc == @FALSE
+;    err = wxGetLastErr()
+;    msg = wxGetErrDesc(err)
+
+;    WebOut('<BR><FONT COLOR="RED"><B>ERROR: smtpSendText rc=%rc%, msg=%msg%</B></FONT><BR>', _html_crlf)
+
+;    Drop( err, msg)
+;Else
+    WebOut('<FONT COLOR="BLUE"><B>smtpSendText sent message okay... rc=%rc%</B></FONT><BR>', _html_crlf)
+;Endif
+
+;ErrorMode(@OFF)
+;rc = smtpSendText( mailhost, reply_to_address, cc_address, _subject, t_message)
+;ErrorMode(@CANCEL)
+;If rc == @FALSE
+;    err = wxGetLastErr()
+;    msg = wxGetErrDesc(err)
+
+;    WebOut('<BR><FONT COLOR="RED"><B>ERROR: smtpSendText rc=%rc%, msg=%msg%</B></FONT><BR>', _html_crlf)
+
+;    Drop( err, msg)
+;Endif
+
+WebOut('<BR>', _html_crlf)
+
+Drop( t_emailaddress, t_custname, t_domain_name, t_ip, rc, t_message, t_to)
+
+If IsDefined( msg_EACR) == @YES
+    msg = msg_EACR
+    Drop( msg_EACR)
+Endif
+
+If IsDefined( err_EACR) == @YES
+    err = err_EACR
+    Drop( err_EACR)
+Endif
+
+If IsDefined( rc_EACR) == @YES
+    rc = rc_EACR
+    Drop( rc_EACR)
+Endif
+
+If IsDefined( t_to_EACR) == @YES
+    t_to = t_to_EACR
+    Drop( t_to_EACR)
+Endif
+
+If IsDefined( t_ip_EACR) == @YES
+    t_ip = t_ip_EACR
+    Drop( t_ip_EACR)
+Endif
+
+If IsDefined( t_emailaddress_EACR) == @YES
+    t_emailaddress = t_emailaddress_EACR
+    Drop( t_emailaddress_EACR)
+Endif
+
+If IsDefined( t_domain_name_EACR) == @YES
+    t_domain_name = t_domain_name_EACR
+    Drop( t_domain_name_EACR)
+Endif
+
+If IsDefined( t_message_EACR) == @YES
+    t_message = t_message_EACR
+    Drop( t_message_EACR)
+Endif
+
+If IsDefined( t_custname_EACR) == @YES
+    t_custname = t_custname_EACR
+    Drop( t_custname_EACR)
+Endif
+
+return
+
+
+
+

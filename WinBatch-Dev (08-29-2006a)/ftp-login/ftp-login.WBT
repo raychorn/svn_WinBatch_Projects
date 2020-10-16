@@ -1,0 +1,19 @@
+; ftp-login
+
+types = "All Files|*.*|"
+fName = AskFileName("SelectFile", "", types, "", 1)
+
+fin = FileOpen(fName, "READ")
+while @TRUE             ; Loop till break do us end
+	x = FileRead(fin)
+	for i = 1 to StrLen( x)
+		n = Char2Num( StrSub( x, i, 1))
+		msb = int(n / 16)
+		lsb = n - (msb * 16)
+	next
+	break
+	If x == "*EOF*" Then Break
+endwhile
+FileClose(fin)
+
+; Password=lz333F5FAAD1F64042E71F95A21FEC63A7

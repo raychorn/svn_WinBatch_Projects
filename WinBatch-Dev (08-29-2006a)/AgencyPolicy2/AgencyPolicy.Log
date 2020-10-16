@@ -1,0 +1,50 @@
+Tue 11/18/2003 11:44:26 AM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:11:44:26 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003 11:59:54 AM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:11:59:54 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003 12:02:04 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:12:02:04 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003 12:03:24 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:12:03:24 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003  1:51:07 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:13:51:07 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003  1:55:05 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:13:55:05 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003  1:59:55 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:13:59:55 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003  2:14:38 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:14:14:38 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003  2:15:23 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:14:15:23 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+Tue 11/18/2003  2:15:56 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:14:15:56 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (appdev)
+	 2003:11:18:14:16:26 prompt_p1 (Yes) [1]
+Tue 11/18/2003  2:16:49 PM END :: AgencyPolicy v2.0 :: Run-Time 54 seconds or 00:00:54 (HH:MM:SS)
+Tue 11/18/2003  2:28:21 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:14:28:21 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (TROSQUESERE)
+Tue 11/18/2003  2:28:22 PM END :: AgencyPolicy v2.0 :: Run-Time 1 seconds or 00:00:01 (HH:MM:SS)
+Tue 11/18/2003  2:28:46 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:14:28:46 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (TROSQUESERE)
+	 2003:11:18:14:28:49 prompt_p1 (No) [0]
+Tue 11/18/2003  2:28:49 PM END :: AgencyPolicy v2.0 :: Run-Time 3 seconds or 00:00:03 (HH:MM:SS)
+Tue 11/18/2003  2:28:51 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:14:28:51 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (TROSQUESERE)
+	 2003:11:18:14:28:52 prompt_p1 (Yes) [1]
+Tue 11/18/2003  2:28:52 PM END :: AgencyPolicy v2.0 :: Run-Time 1 seconds or 00:00:01 (HH:MM:SS)
+Tue 11/18/2003  2:28:54 PM BEGIN :: AgencyPolicy v2.0 
+
+	 2003:11:18:14:28:54 UserName (rhorn), UserDomain (FF_PDC1), ComputerName (TROSQUESERE)
+Tue 11/18/2003  2:28:54 PM END :: AgencyPolicy v2.0 :: Run-Time 0 seconds or 00:00:00 (HH:MM:SS)

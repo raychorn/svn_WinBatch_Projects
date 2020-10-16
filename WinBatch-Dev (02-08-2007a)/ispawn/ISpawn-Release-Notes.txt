@@ -1,0 +1,46 @@
+Quick readme on this release of ISpawn.EXE - The Tribes2 Utility to replace the Dynamix ISpawn.exe .
+
+-------------------
+Installation
+-------------------
+
+Make a folder under C:\ISpawn or the like and then double click ISpawn.exe
+
+You will be asked for some information the ISpawn utility requires and then you be on your way.
+
+ISpawn assumes the following is true :
+
+* Your Tribes2 Server is launched using a .BAT or .CMD file
+* The .BAT or .CMD file contains the following or something similar :
+
+del ..\console.log
+cd ..\
+Tribes2.exe -dedicated -mod your-mod-name-here
+
+The Tribes2 Server Port is specified in the prefs/serverPrefs.cs file and it MUST be specified in the Server Address
+you type into iSpawn using the same format iSpawn expects and prompts you for.
+
+ISpawn then waits for the number of seconds you specified initially (say 90) and then it polls the Tribes2 Server to
+determine if the server is online. If the Tribes2 Server is not online it performs a restart and tracks the stats.
+
+Note : This Utility program works with almost any game server including Tribes2.
+
+ISpawn assumes the following:
+
+* The Tribes2 Server it is told to operate with is currently running.
+* ISpawn cannot be installed into a folder that contains any chars other than a-z, A-Z, 0-9 cuz it will complain otherwise.
+
+ISpawn has a command line interface and it assume the parameters are space delimited and follows the same order as
+the questions ISpawn asks the user for when ISpawn is started up :
+
+ISpawn.exe parm1 parm2 parm3 parm4 ... parmLast
+
+---------------------
+Contact
+---------------------
+
+This is an early release, more features to come.  
+Please send comments and bug reports to 
+halsmalltalker@hotmail.com
+
+Thank you and enjoy!

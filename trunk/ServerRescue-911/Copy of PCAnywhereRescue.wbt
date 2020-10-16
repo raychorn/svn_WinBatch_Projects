@@ -1,0 +1,116 @@
+; PCAnywhereRescue.wbt
+
+Gosub choosePCAnywhereServer
+
+while StrLen( pcAnywhere) > 0
+    ; Start-Up the appropriate PCAnywhere Window as required.
+    RunShell("C:\Program Files\pcANYWHERE 8.0\awrem32.exe", "C:\Program Files\pcANYWHERE 8.0\DATA\%pcAnywhere%", "C:\Program Files\pcANYWHERE 8.0\DATA", @NORMAL, @NOWAIT)
+
+    pcANYWHEREwindow = "pcANYWHERE Waiting..."
+
+    while WinExist(pcANYWHEREwindow) == @FALSE
+    endwhile
+
+    Delay(2)
+
+    If WinExist(pcANYWHEREwindow) == @TRUE
+        mins = 1
+        Gosub dumdedum
+    Endif
+
+    If WinExist(pcANYWHEREwindow) == @TRUE
+        Gosub quitPCAnywhereConnect
+    Else
+        WinPlaceSet(@NORMAL, wName, wPos)
+;        WinZoom (wName)
+        WinPlaceSet(@ZOOMED, wName, wPos)
+        server%keys% = keys
+    Endif
+
+    Delay(5)
+    
+    Gosub choosePCAnywhereServer
+
+endwhile
+
+exit
+
+:choosePCAnywhereServer
+pcAnywhere = ""
+ip = ""
+keys = ""
+wName = ""
+wPos = ""
+If WinExist("PICARD2") == @FALSE
+    ;Picard2
+    ip = "e-servers.net"
+    keys = "p"
+    pcAnywhere = "Server 2.CHF"
+    wName = "PICARD2"
+    wPos = "0 60 405 508"
+Else
+    If WinExist("DATA2") == @FALSE
+        ;Data2
+        ip = "adultservers.net"
+        keys = "d"
+        pcAnywhere = "Server3.CHF"
+        wName = "DATA2"
+        wPos = "405 59 811 507"
+    Else
+        If WinExist("RIKER") == @FALSE
+            ; Riker
+            ip = "cybercash-net.com"
+            keys = "r"
+            pcAnywhere = "Server 1.CHF"
+            wName = "RIKER"
+            wPos = "0 506 405 955"
+        Else
+            If WinExist("ZONE1") == @FALSE
+                ;Zone1
+                ip = "adult-zone.com"
+                keys = "z"
+                pcAnywhere = "Zone1.CHF"
+                wName = "ZONE1"
+                wPos = "405 506 811 955"
+            Else
+                pcAnywhere = ""
+                ip = ""
+                keys = ""
+                wName = ""
+                wPos = ""
+            Endif
+        Endif
+    Endif
+Endif
+return
+
+
+:dumdedum
+goal = mins * 60
+timer = 0
+While timer < goal
+    remain = goal - timer
+    if WinExist(pcANYWHEREwindow)    ; Make user user did not close it manually
+        WinTitle(pcANYWHEREwindow, "%pcANYWHEREwindow% %ip% (%remain% seconds left)")
+    else
+        return
+    endif
+    Delay(10)
+    timer = timer + 10
+    ; Wait for PCAnywhere to make the connection
+    if WinExist(pcANYWHEREwindow)    ; Make user user did not close it manually
+        WinActivate(pcANYWHEREwindow)
+        SendKeysTo(pcANYWHEREwindow, keys)
+        SendKeysTo(pcANYWHEREwindow, `{ENTER}`)
+    else
+        return
+    endif
+EndWhile
+Return
+
+:quitPCAnywhereConnect
+WinActivate(pcANYWHEREwindow)
+SendKeysTo(pcANYWHEREwindow, `{ESC}`)
+Return
+
+

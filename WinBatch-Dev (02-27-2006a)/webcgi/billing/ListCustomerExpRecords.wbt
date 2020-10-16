@@ -1,0 +1,23 @@
+:ListCustomerExpRecords
+
+_record_count = 1
+
+WebOut('<FONT SIZE="4"><SELECT NAME="%_CustomerList%" SIZE="%_selection_list_height%">', _html_crlf)
+
+_table = "customer"
+sql_fetch_map = "N,S65,S33"
+sql_level = ""
+sql_fetch_gosub = "ListCustExpRecordsOneByOne"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+WebOut('</SELECT></FONT>', _html_crlf)
+
+_record_count = _record_count - 1
+
+WebOut('<B>%_record_count% Customers Listed</B>', _html_crlf)
+
+return
+

@@ -1,0 +1,249 @@
+:SaveFieldsToDb
+; Variables used by this subroutine
+; field%j% .... input - field names
+; _html_crlf .. input - _html_crlf - the number of carriage-returns after each HTML code output
+; j ........... output - used
+; aField ...... output - used
+; aValue ...... output - used
+
+If IsDefined( __debug) == @NO
+    __debug = @FALSE
+Endif
+
+    _table = WebParamData('_table')
+
+If __debug <> @FALSE
+    WebOut('<LI>', 0)
+    WebOut('<B><FONT COLOR="BLUE" SIZE="2">SaveFieldsToDb: ', 0)
+    WebOut("_table=(", 0)
+    WebOut(_table, 0)
+    WebOut(")", 0)
+    WebOut(", field0=(", 0)
+    WebOut(field0, 0)
+    WebOut(")", 0)
+    WebOut(", _custid=(", 0)
+    WebOut(_custid, 0)
+    WebOut(")", 0)
+    WebOut('</LI>', _html_crlf)
+Endif
+
+    Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+    If StrCmp( _table, _receivables_table) == 0
+        sql_stmnt = "INSERT into %_table% ("
+        sql_values = "VALUES ("
+    Else
+        sql_stmnt = "UPDATE %_table% SET"
+    Endif
+
+If __debug <> @FALSE
+    WebOut('<OL>', 0)
+Endif
+
+    aComma = ""
+
+    For _j = 1 To field0
+
+If __debug <> @FALSE
+    WebOut('<LI>', 0)
+    WebOut('<B><FONT COLOR="BLUE" SIZE="2">SaveFieldsToDb: ', 0)
+
+    WebOut("IsDefined( field%_j%)=(", 0)
+    WebOut(IsDefined( field%_j%), 0)
+Endif
+
+        If IsDefined( field%_j%) == @YES
+            aField = field%_j%
+            _aTable = _table
+            _aField = aField
+            sql_fetch_cols_i = ItemLocate( _aField, sql_fetch_cols, ",")
+
+If __debug <> @FALSE
+    WebOut("), _j=(", 0)
+    WebOut(_j, 0)
+    WebOut("), _table=(", 0)
+    WebOut(_table, 0)
+    WebOut("), aField=(", 0)
+    WebOut(aField, 0)
+    WebOut("), _aField=(", 0)
+    WebOut(_aField, 0)
+    WebOut("), sql_fetch_cols_i=(", 0)
+    WebOut(sql_fetch_cols_i, 0)
+Endif
+
+            If sql_fetch_cols_i > 0
+                sql_fetch_map_s = ItemExtract( sql_fetch_cols_i, sql_fetch_map, ",")
+                aValue = StrTrim( WebParamData('%aField%'))
+
+If __debug <> @FALSE
+    WebOut("), sql_fetch_map_s=(", 0)
+    WebOut(sql_fetch_map_s, 0)
+    WebOut("), aValue=(", 0)
+    WebOut(aValue, 0)
+    WebOut(")", 0)
+Endif
+
+                _field__usable = @FALSE
+                If (StrCmp( aField, website__activation__) == 0) || (StrCmp( aField, website__termination__) == 0)
+                    If StrIndex( aValue, _date_field_separator, 1, @FWDSCAN) > 0
+                        If ItemCount( aValue, _date_field_separator) == 3
+                            _field__usable = @TRUE
+                        Endif
+                    Else
+                        If StrLen( aValue) == 0
+                            _field__usable = @TRUE
+                        Endif
+                    Endif
+                    If (_field__usable == @TRUE) && (ItemCount( aValue, _date_field_separator) == 3)
+                        Call( StrCat( _cgi_dir, "ToDbDate.wbc"), "aValue")
+                    Else
+                        aValue = ""
+                        _field__usable = @TRUE
+                    Endif
+                Else
+                    _field__usable = @TRUE
+                Endif
+                If _field__usable == @TRUE
+                    If StrIndex( sql_fetch_map_s, "S", 1, @FWDSCAN) > 0
+                        If StrCmp( _table, _receivables_table) == 0
+                            If StrCmp( _aField, "notes") == 0
+                                aValue = StrReplace( aValue, "'", "`")
+                            Endif
+                            sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField%")
+                            sql_values = StrCat( sql_values, "%aComma% '%aValue%'")
+                        Else
+                            sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField% = '%aValue%'")
+                        Endif
+                    Else
+                        If StrIndex( sql_fetch_map_s, "D", 1, @FWDSCAN) > 0
+                            If (StrLen( aValue) == 0) || (ItemCount( aValue, _date_field_separator) == 3)
+                                If StrLen( aValue) > 0
+                                    Call( StrCat( _cgi_dir, "ToDbDate.wbc"), "aValue")
+                                Endif
+                            
+                                If StrCmp( _table, _receivables_table) == 0
+                                    sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField%")
+                                    sql_values = StrCat( sql_values, "%aComma% '%aValue%'")
+                                Else
+                                    If StrLen( aValue) > 0
+                                        sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField% = '%aValue%'")
+                                    Else
+                                        sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField% = NULL")
+                                    Endif
+                                Endif
+                            Endif
+                        Else
+                            aValue = StrTrim( aValue)
+                            If StrLen( aValue) == 0
+                                aValue = "0"
+                            Endif
+                            If StrCmp( _table, _receivables_table) == 0
+                                sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField%")
+                                sql_values = StrCat( sql_values, "%aComma% %aValue%")
+                            Else
+                                If StrLen( aValue) > 0
+                                    sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField% = %aValue%")
+                                Else
+                                    sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField% = NULL")
+                                Endif
+                            Endif
+                        Endif
+                    Endif
+                Endif
+        
+                Drop( field%_j%, _field__usable, sql_fetch_map_s)
+;            Else
+;                If StrCmp( _table, _receivables_table) == 0
+;                    If StrCmp( _aField, __custid__) == 0
+;                    Endif
+;                    sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField%")
+;                    sql_values = StrCat( sql_values, "%aComma% '%aValue%'")
+;                Else
+;                    sql_stmnt = StrCat( sql_stmnt, "%aComma% %_aField% = '%aValue%'")
+;                Endif
+            Endif
+            
+            Drop( aComma, sql_fetch_cols_i)
+           
+            Drop( _aTable, aField)
+        Endif
+
+If __debug <> @FALSE
+    WebOut('</FONT></B><BR>', 0)
+    WebOut('</LI>', _html_crlf)
+Endif
+
+        aComma = ","
+
+    Next
+
+If __debug <> @FALSE
+    WebOut('</OL>', _html_crlf)
+Endif
+    
+    Drop( _j)
+
+    If StrCmp( _table, _receivables_table) <> 0
+        sql_stmnt = StrCat( sql_stmnt, " WHERE ")
+        _custid = WebParamData('_custid')
+
+        If StrCmp( _table, _customer_table) == 0
+            sql_stmnt = StrCat( sql_stmnt, "id")
+            sql_stmnt = StrCat( sql_stmnt, " = %_custid% ")
+        Else
+            sql_stmnt = StrCat( sql_stmnt, "id")
+            _id = WebParamData('_id')
+            sql_stmnt = StrCat( sql_stmnt, " = %_id% ")
+
+            sql_stmnt = StrCat( sql_stmnt, "AND custid")
+            _id = WebParamData('_id')
+            sql_stmnt = StrCat( sql_stmnt, " = %_custid% ")
+        Endif
+
+        sql_stmnt = StrCat( sql_stmnt, ";")
+    Else ; this is the code for the receivables or prepayment table record insertion
+        If _add_prepayment_mode == @TRUE
+            sql_stmnt = StrCat( sql_stmnt, ", pid")
+            sql_values = StrCat( sql_values, ", -1")
+        Endif
+
+        sql_stmnt = StrCat( sql_stmnt, ", custid")
+        sql_values = StrCat( sql_values, ", %_custid%")
+
+        sql_stmnt = StrCat( sql_stmnt, ", webid")
+        sql_values = StrCat( sql_values, ", %_webid%")
+
+        sql_stmnt = StrCat( sql_stmnt, ") ")
+        sql_values = StrCat( sql_values, ")")
+        sql_stmnt = StrCat( sql_stmnt, sql_values)
+    Endif
+
+    sql_fetch = @FALSE
+    sql_level = ""
+    sql_fetch_gosub = ""
+    sql_alias = _table
+    _datasource = datasource
+    sql_stmnt = StrReplace( sql_stmnt, " SET,", " SET")
+    sql_stmnt = StrReplace( sql_stmnt, " (,", " (")
+    Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+    WebOut('<BR><BR><LI><FONT COLOR="BLUE"><B>sql_stmnt=', 0)
+    WebOut(sql_stmnt, 0)
+    WebOut(', retcode=%retcode%</B></FONT></LI><BR><BR>', _html_crlf)
+
+If __debug <> @FALSE
+    WebOut('<OL>', _html_crlf)
+    For j = 1 To field0
+        If IsDefined( field%j%) == @YES
+            aField = field%j%
+            aValue = WebParamData('%aField%')
+            WebOut('<LI><B>%aField%=%aValue%</B></LI>', _html_crlf)
+        Endif
+    Next
+    WebOut('</OL>', _html_crlf)
+Endif
+    
+    Drop( sql_values, sql_stmnt)
+
+return
+

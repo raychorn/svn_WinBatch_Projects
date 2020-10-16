@@ -1,0 +1,42 @@
+; odbcDLLrescue.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+;AddExtender("WWWNT32I.DLL")
+;AddExtender("WWWSK32I.DLL")
+
+_appName = "odbcDLLrescue"
+
+wName1 = "ODBC Driver Manager"
+wName2 = "ODBC Installer"
+
+while 1
+	Gosub clearPopUps
+
+	Delay( 5)
+
+endwhile
+
+exit
+
+:clearPopUps
+_clearedPopUps = @FALSE
+while (WinExist(wName1) == @TRUE) || (WinExist(wName2) == @TRUE)
+	If WinExist(wName1) == @TRUE
+		ErrorMode(@OFF)
+		WinActivate(wName1)
+		SendKeysTo(wName1, `{ENTER}`)
+		ErrorMode(@CANCEL)
+		_clearedPopUps = @TRUE
+	Else
+		If WinExist(wName2) == @TRUE
+			ErrorMode(@OFF)
+			WinActivate(wName2)
+			SendKeysTo(wName2, `{ENTER}`)
+			ErrorMode(@CANCEL)
+			_clearedPopUps = @TRUE
+		Endif
+	Endif
+endwhile
+return
+

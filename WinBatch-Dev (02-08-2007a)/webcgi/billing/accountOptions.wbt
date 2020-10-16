@@ -1,0 +1,60 @@
+:accountOptions
+; _AccountOptionsListFormat ..... input
+; _AccountOptionsOldFormat ...... input
+; CustomerRecord0 ............... input
+; CustomerRecord%i% ............. input
+; accountOptions0 ............... output
+; accountOptions%i% ............. output
+
+If IsDefined( i) == @YES
+    i_AOpts = i
+Endif
+
+If IsDefined( aRec) == @YES
+    aRec_AOpts = aRec
+Endif
+
+If IsDefined( _field_name) == @YES
+    _field_name_AOpts = _field_name
+Endif
+
+If IsDefined( _name) == @YES
+    _name_AOpts = _name
+Endif
+
+accountOptions0 = 0
+
+For i=1 to CustomerRecord0
+    aRec = CustomerRecord%i%
+    _name = ItemExtract( 1, aRec, "=")
+    
+    If (StrIndex( _name, _AccountOptionsListFormat, 1, @FWDSCAN) > 0) || (StrIndex( _name, _AccountOptionsOldFormat, 1, @FWDSCAN) > 0)
+        accountOptions0 = accountOptions0 + 1
+        accountOptions%accountOptions0% = _name
+    Endif
+Next
+
+Drop( i, aRec, _name, _field_name)
+
+If IsDefined( i_AOpts) == @YES
+    i = i_AOpts
+    Drop( i_AOpts)
+Endif
+
+If IsDefined( aRec_AOpts) == @YES
+    aRec = aRec_AOpts
+    Drop( aRec_AOpts)
+Endif
+
+If IsDefined( _field_name_AOpts) == @YES
+    _field_name = _field_name_AOpts
+    Drop( _field_name_AOpts)
+Endif
+
+If IsDefined( _name_AOpts) == @YES
+    _name = _name_AOpts
+    Drop( _name_AOpts)
+Endif
+
+return
+

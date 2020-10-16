@@ -1,0 +1,55 @@
+; watchdog-hack.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+AddExtender("WWWNT32I.DLL")
+AddExtender("WWWSK32I.DLL")
+
+_appName = "watchdog-hack"
+
+If param0 > 0
+	_name = param1
+Else
+	_name = AskLine("%_appName%", "Server Name?", "DATA or DATA2 or the like")
+Endif
+
+text = ""
+
+For i = 1 to StrLen( _name)
+	_ch = StrSub( _name, i, 1)
+	_n = Char2Num( _ch)
+	Gosub toHex
+	text = StrCat( text, "%_ch% = %_n% / %_h%, ")
+Next
+
+Message( "%_appName%", "%_name% -> (%text%)")
+
+exit
+
+
+:toHex
+
+__h0 = '0'
+__h1 = '1'
+__h2 = '2'
+__h3 = '3'
+__h4 = '4'
+__h5 = '5'
+__h6 = '6'
+__h7 = '7'
+__h8 = '8'
+__h9 = '9'
+__h10= 'A'
+__h11= 'B'
+__h12= 'C'
+__h13= 'D'
+__h14= 'E'
+__h15= 'F'
+
+_h1 = Int( _n / 16)
+_h2 = _n - (_h1 * 16)
+
+_h = StrCat( __h%_h1%, __h%_h2%)
+
+return
+

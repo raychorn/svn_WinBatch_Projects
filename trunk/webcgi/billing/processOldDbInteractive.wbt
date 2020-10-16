@@ -1,0 +1,148 @@
+:processOldDbInteractive
+; param1 ........... input - the name of the variable that holds the this_cgi value
+; param2 ........... input - the name of the variable that holds the _cgi_dir value
+; param3 ........... input - the name of the variable that holds the _datasource value
+
+If param0 <> 3
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for processOldDbInteractive</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( this_cgi) == @YES
+    this_cgi_PODI = this_cgi
+Endif
+
+If IsDefined( _cgi_dir) == @YES
+    _cgi_dir_PODI = _cgi_dir
+Endif
+
+If IsDefined( _datasource) == @YES
+    _datasource_PODI = _datasource
+Endif
+
+_param1 = %param1%
+this_cgi = "%_param1%"
+
+_param2 = %param2%
+_cgi_dir = "%_param2%"
+
+_param3 = %param3%
+_datasource = "%_param3%"
+
+_ticks_begin = GetTickCount( )
+
+_fileid_count = 0
+_id = 0
+
+theDirs = DirItemize( StrReplace( StrCat( _private_dir, "\*.*"), "\\", "\"))
+count = ItemCount( theDirs, @TAB)
+
+WebOut('<FORM ACTION="%this_cgi%" METHOD="POST">', _html_crlf)
+WebOut('<B>Make your Selection(s): <SMALL>count=%count%</SMALL> </B><BR><BR>', _html_crlf)
+
+WebOut('%i% <INPUT TYPE="CHECKBOX" NAME="ProcessOldDatabase" VALUE="processOldDatabase', 0)
+WebOut('"> <B>Process ALL Records', 0)
+WebOut('</B><BR><BR>', _html_crlf)
+
+For i=1 to count
+    d = ItemExtract(i, theDirs, @TAB)
+    cf = StrReplace( StrCat( _private_dir, "\", d, "\", _customer_file), "\\", "\")
+    
+    _d = StrReplace( StrCat( _private_dir, "\", d), "\\", "\")
+
+WebOut('<BR><B><FONT COLOR="BLUE">processOldDbInteractive: DEBUG _d=%_d%</FONT></B><BR>', _html_crlf)
+
+    d_YmdHms = FileYmdHms( _d)
+
+WebOut('<BR><B><FONT COLOR="BLUE">processOldDbInteractive: DEBUG fname=%d%, d_YmdHms=%d_YmdHms%</FONT></B><BR>', _html_crlf)
+
+    Dtop( _d
+
+;    __debug = @FALSE
+    Call( StrCat( _cgi_dir, "InsertDirNameIntoDb.wbc"), "_datasource d _cgi_dir d_YmdHms")
+
+    Call( StrCat( _cgi_dir, "AnyRecordsForFileID.wbc"), "_cgi_dir _datasource")
+
+    If _fileid_count < 1
+        If FileExist( cf)
+            WebOut('%i% <INPUT TYPE="CHECKBOX" NAME="CustomerDirName%i%" VALUE="', 0)
+            WebOut('%_id%,', 0)
+            WebOut('%cf%,', 0)
+            WebOut('%d%', 0)
+            WebOut('"> <B>#', 0)
+            WebOut('', 0)
+            If i <> _id
+                WebOut('%i% Id #', 0)
+            Endif
+
+            WebOut('%_id%', 0)
+            WebOut(' %d%</B><BR>', _html_crlf)
+        Else
+            WebOut('<LI><B><FONT COLOR="RED">MISSING: %d%, %cf%</FONT></B></LI>', _html_crlf)
+        Endif
+    Endif
+Next
+WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="PROCESS-RECORD">', _html_crlf)
+WebOut('<INPUT TYPE="SUBMIT" NAME="Submit1" VALUE="Process Customer Record">', _html_crlf)
+WebOut('</FORM>', _html_crlf)
+
+_ticks_end = GetTickCount( )
+    
+_ticks_elapsed = _ticks_end - _ticks_begin
+_ticks_average = _ticks_elapsed / count
+
+_secs_to_delay = 30
+_ticks_begin2 = GetTickCount( )
+Delay( _secs_to_delay)
+_ticks_end2 = GetTickCount( )
+_ticks_elapsed2 = (_ticks_end2 - _ticks_begin2) / _secs_to_delay
+
+_hrs_elapsed = 0
+_mins_elapsed = 0
+_secs_elapsed = _ticks_elapsed / _ticks_elapsed2
+If _secs_elapsed > 60
+    _mins_elapsed = _secs_elapsed / 60
+    _secs_elapsed = _secs_elapsed - (_mins_elapsed * 60)
+
+    If _mins_elapsed > 60
+        _hrs_elapsed = _mins_elapsed / 60
+        _mins_elapsed = _mins_elapsed - (_hrs_elapsed * 60)
+    Endif
+Endif
+
+_hrs_elapsed = StrFixLeft( "%_hrs_elapsed%", "0", 2)
+_mins_elapsed = StrFixLeft( "%_mins_elapsed%", "0", 2)
+_secs_elapsed = StrFixLeft( "%_secs_elapsed%", "0", 2)
+
+
+WebOut('<LI><FONT COLOR="BLUE"><B>', _html_crlf)
+WebOut('count=%count%, ', _html_crlf)
+WebOut('_ticks_elapsed=%_ticks_elapsed%, ', _html_crlf)
+WebOut('_ticks_average=%_ticks_average%, ', _html_crlf)
+WebOut('_ticks_elapsed2=%_ticks_elapsed2%', _html_crlf)
+WebOut('<BR>elapsed time=%_hrs_elapsed%:%_mins_elapsed%:%_secs_elapsed%', _html_crlf)
+WebOut('</B></FONT></LI>', _html_crlf)
+
+Drop( this_cgi, _cgi_dir, _param1, _param2, _ticks_begin, _fileid_count, _id, theDirs, count, i, d, cf, _ticks_end, _ticks_elapsed, _ticks_average)
+Drop( _secs_to_delay, _ticks_begin2, _ticks_end2, _ticks_elapsed2, _hrs_elapsed, _mins_elapsed, _secs_elapsed, _param3)
+Drop( _datasource)
+
+If IsDefined( this_cgi_PODI) == @YES
+    this_cgi = this_cgi_PODI
+    Drop( this_cgi_PODI)
+Endif
+
+If IsDefined( _cgi_dir_PODI) == @YES
+    _cgi_dir = _cgi_dir_PODI
+    Drop( _cgi_dir_PODI)
+Endif
+
+If IsDefined( _datasource_PODI) == @YES
+    _datasource = _datasource_PODI
+    Drop( _datasource_PODI)
+Endif
+
+return
+
+
+

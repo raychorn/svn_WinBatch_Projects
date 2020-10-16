@@ -1,0 +1,424 @@
+_prodVersion = "0.94d"
+_wname = "ezAJAX-Installer_v%_prodVersion%"
+
+AddExtender("WWWSK44I.DLL")
+AddExtender("WWZIP34I.DLL")
+AddExtender("WWCPU44I.DLL")
+AddExtender("WWINT44I.DLL")
+
+#DefineFunction GetWMIInfo()
+	IntControl(73, 2,0,0,0)
+	Locator = ObjectOpen("WbemScripting.SWbemLocator")
+	Service = Locator.ConnectServer()
+	Security = Service.Security_     
+	Security.ImpersonationLevel = 3
+	Class = "Win32_ComputerSystemProduct"
+	Instance = Service.InstancesOf(Class)
+	Enum = ObjectCollectionOpen(Instance)
+	While 1
+		Obj = ObjectCollectionNext(Enum)
+		If Obj == 0 Then Break
+		man=Obj.Vendor
+		model=Obj.Name
+		serial=Obj.IdentifyingNumber
+	EndWhile
+	
+	ObjectCollectionClose(Enum)
+	ObjectClose(Instance)
+	ObjectClose(Security)
+	ObjectClose(Service)
+	ObjectClose(Locator)
+	data=StrCat(man,@TAB,model,@TAB,serial)
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction CleanUpFiles(_myPath, fPat)
+	IntControl(73, 2,0,0,0)
+	fList = FileItemize(StrCat(_myPath, fPat))
+	n = ItemCount( fList, @TAB)
+	if n > 0
+		for i = 1 to n
+			fname = StrCat(_myPath, ItemExtract( i, fList, @TAB))
+			if FileExist(fname)
+				FileDelete(fname)
+			endif
+		next
+	endif
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction AutomatedInstallation(_myPath, _dialogTitle)
+	IntControl(73, 2,0,0,0)
+	fList = FileItemize(StrCat(_myPath, "*.zip"))
+	if ItemCount( fList, @TAB) == 1
+		fname = StrCat(_myPath, ItemExtract( 1, fList, @TAB))
+		if FileExist(fname)
+			flags = 1|2
+			targetDir = AskDirectory("To which folder do you want %_dialogTitle% installed ?", "", "","Are you sure?",flags)
+			if DirExist(targetDir)
+				xunzipper = zUnZipFiles("d o", fname, "*.*", "", targetDir)
+				Message( _dialogTitle, StrCat( "The installation has completed with a status of (", xunzipper, ")."))
+			else
+				Message( _dialogTitle, "The target directory for this installation could not be found - recommend you perform a manual installation into the target directory of your choice.")
+			endif
+		else
+			Message( StrCat("ERROR - ", _dialogTitle), "Cannot perform the automated installation due to a problem with the .ZIP file(s). Recommend you perform the installation manually.")
+		endif
+	else
+		Message( StrCat("ERROR - ", _dialogTitle), "Cannot perform the automated installation due to a problem with the .ZIP file(s). Recommend you perform the installation manually.")
+	endif
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction getCPUID()
+	IntControl(73, 2,0,0,0)
+	supt=cCpuSupt()
+	b=cCpuid()
+	if supt == 1
+		; Figure out processor type
+		;*  0 = 8086/88
+		;*  2 = 80286
+		;*  3 = 80386
+		;*  4 = 80486
+		;*  5 = Pentium(R) Processors
+		;*  6 = Pentium II, Pentium III, PentiumPro(R) Processors
+		;* 7-14 unknown Pentium
+		;* 15 = Pentium IV
+	
+		cpudata = "8086/88|80186|80286|80386|80486|Pentium(R) Processor|Pentium II, Pentium III, PentiumPro(R) Processor|cpuid7|cpuid8|cpuid9|cpuid 10|cpuid 11|cpuid 12|cpuid 13|cpuid14|Pentium 4"
+		lookup=b+1
+		if lookup>15
+			;Message("CPUID > 15","Eeep.  What CPUID is this machine?")
+			lookup=16
+		endif
+		
+		cpustring=ItemExtract(lookup,cpudata,"|")
+		
+		;Message("cCpuid returns: %b%",cpustring)
+	else
+	;   Message("Unsupported…", "cCpuid() results are iffy, since your system does not support CPUID opcode.")
+	
+	endif
+	Return (cpustring)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction getCPUIDext()
+	IntControl(73, 2,0,0,0)
+	cputypeext = cCpuIdExt()
+	cpustep=cputypeext & 15
+	cpumodel=(cputypeext >> 4) & 15
+	cpufamily=(cputypeext >> 8) & 15
+	cpuprocessortype=(cputypeext >> 12) & 3
+	
+	pdata="Standard OEM CPU|OverDrive|Dual CPU|Reserved"
+	
+	cpuprocessorstring=ItemExtract(cpuprocessortype+1,pdata,"|")
+	
+	Return (strcat(cpuprocessorstring,"|","Family=",cpufamily,"|","CpuModel=",cpumodel,"|","Step=",cpustep))
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction readFile(fname)
+	IntControl(73, 2,0,0,0)
+	
+	xx = ''
+	handle = FileOpen(fname, "READ")
+	While @TRUE ; Loop till break do us end
+		line = FileRead(handle)
+		If line == "*EOF*" Then Break
+		xx = StrCat(xx,line)
+	EndWhile
+	FileClose(handle)
+
+	Return xx
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction getHTTP(srvr,url,parms,fname)
+	IntControl(73, 2,0,0,0)
+	
+	tophandle=iBegin(0,"","")
+	connecthandle=iHostConnect(tophandle, srvr,@HTTP,"", "")
+	datahandle=iHttpInit(connecthandle, "GET", url, "",0)
+	If datahandle==0
+		err=iGetLastError()
+		Message("Last Error",err)
+		iClose(tophandle)
+		Exit
+	EndIf
+	myheader=StrReplace( StrReplace( url, '&', @CRLF), '=', ':') 
+	rslt=iHttpOpen(datahandle, myheader , 0, 0)
+	If rslt=="ERROR" || rslt!=200
+		If rslt == "ERROR"
+			errstr = "WinInet Error"
+			rslt = iGetLastError()
+		Else
+			errstr = "HTTP Error"
+		EndIf
+		Message(errstr,rslt)
+		iClose(tophandle)
+		Exit
+	EndIf
+	xx=iReadData(datahandle, fname)
+	
+	iClose(datahandle)
+	iClose(connecthandle)
+	iClose(tophandle)
+	
+	Return readFile(fname)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction getWindowsVersion()
+	IntControl(73, 2,0,0,0)
+	v = WinVersion(5)
+	
+	Platform="Unknown"
+	if v=="1-4-0" then Platform="Windows 95"
+	if v=="1-4-10" then Platform="Windows 98"
+	if v=="1-4-90" then Platform="Windows ME"
+	if v=="2-3-51" then Platform="Windows NT 3.51"
+	if v=="2-4-0" then Platform="Windows NT 4.0"
+	if v=="2-5-0" then Platform="Windows 2000"
+	if v=="2-5-1" then Platform="Windows XP"
+	if v=="2-5-2" then Platform="Windows 2003"
+	
+	i = DOSVersion(@MAJOR)
+	d = DOSVersion(@MINOR)
+	If StrLen(d) == 1 Then d = StrCat("0", d)
+	Return (StrCat(platform," ","%i%.%d%"))
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+#DefineFunction regGetBuyURL(_publisher, _appName, _appVer)
+	IntControl(73, 0,0,0,0)
+
+	defaultURL = "http://www.regnow.com/contact.html"
+	_url = defaultURL
+
+	keyPath = StrCat("SOFTWARE\Digital River\SoftwarePassport\", _publisher, "\", _appName, "\", _appVer)
+
+	ErrorMode(@OFF)
+	value = RegQueryValue(@REGMACHINE, StrCat(keyPath, "[BuyURL]"))
+	ErrorMode(@CANCEL)
+	_err = LastError()
+	if _err == 0
+		_url = value
+	endif
+
+	Return _url
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+_myPath = FilePath( IntControl( 1004, 0, 0, 0, 0))
+
+_dialogTitle = "ezAJAX(tm) Community Edition Registration v%_prodVersion%"
+
+MyDialogFormat=`WWWDLGED,6.1`
+
+MyDialogCaption=`%_dialogTitle%`
+
+MyDialogX=090
+MyDialogY=066
+MyDialogWidth=400
+MyDialogHeight=245
+MyDialogNumControls=012
+MyDialogProcedure=`DEFAULT`
+MyDialogFont=`DEFAULT`
+MyDialogTextColor=`DEFAULT`
+MyDialogBackground=`DEFAULT,51|102|255`
+MyDialogConfig=0
+
+MyDialog001=`357,227,036,012,PUSHBUTTON,DEFAULT,"Cancel",0,2,1,"Microsoft Sans Serif|5632|70|34","0|0|0",DEFAULT`
+MyDialog002=`005,013,192,162,MULTILINEBOX,eulaTxt,"Multiline edit 1",DEFAULT,4,8,DEFAULT,DEFAULT,DEFAULT`
+MyDialog003=`001,003,200,192,GROUPBOX,DEFAULT,"EULA",DEFAULT,3,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog004=`007,179,036,012,PUSHBUTTON,DEFAULT,"I Agree",1,1,DEFAULT,"Microsoft Sans Serif|5632|70|34","0|0|0",DEFAULT`
+MyDialog005=`159,179,036,012,PUSHBUTTON,DEFAULT,"I Disagree",2,5,DEFAULT,"Microsoft Sans Serif|5632|70|34","0|0|0",DEFAULT`
+MyDialog006=`005,227,042,012,PUSHBUTTON,DEFAULT,"Privacy Policy",3,6,DEFAULT,"Microsoft Sans Serif|5632|40|34","0|0|0",DEFAULT`
+MyDialog007=`003,199,196,012,STATICTEXT,DEFAULT,"For support or technical difficulties kindly contact us at support@ez-ajax.com.",DEFAULT,7,DEFAULT,"Microsoft Sans Serif|5632|40|34","0|0|0",DEFAULT`
+MyDialog008=`067,227,042,012,PUSHBUTTON,DEFAULT,"Our Guarantee",4,8,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog009=`223,227,066,012,PUSHBUTTON,DEFAULT,"http://www.ez-ajax.com",5,9,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog010=`205,007,188,202,PICTURE,DEFAULT,"Picture 1",DEFAULT,10,DEFAULT,DEFAULT,DEFAULT,"W:\WinBatch-Dev\ezAJAX-Installer\ezAJAX Logo 08-16-2006a.bmp"`
+MyDialog011=`133,227,062,012,PUSHBUTTON,DEFAULT,"Installation Instructions",6,11,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog012=`077,179,036,012,PUSHBUTTON,DEFAULT,"Buy Now",7,12,DEFAULT,"Microsoft Sans Serif|5632|70|34","0|0|0",DEFAULT`
+
+filename = StrCat(_myPath,"ezAJAX™ Community Edition License Agreement.txt")
+eulaTXT = FileGet(filename , "")
+
+:mainLoop
+ButtonPushed=Dialog("MyDialog")
+
+;Message("Debug", "ButtonPushed = [%ButtonPushed%]")
+
+if ButtonPushed == 1
+	datax = GetWmiInfo()
+	;aa = AskItemlist("???",datax,@TAB,@UNSORTED,@SINGLE)
+	
+	for i = 1 to ItemCount(datax, @TAB)
+		datax = ItemReplace(StrReplace(StrTrim(ItemExtract(i, datax, @TAB)), '|', '_'), i, datax, @TAB)
+	next
+	
+	machineID = StrReplace(datax, @TAB, '|')
+
+	cpuID = getCPUID()
+	cpuIDext = getCPUIDext()
+	zMem=cMemStat()
+	zWindows=getWindowsVersion()
+	zOSID=StrCat("CPUID=",cpuID,"|",cpuIDext,"|","RAM=",zMem,"|","windows=",zWindows)
+	
+	:loop1
+	_username = AskLine( _dialogTitle, "Enter your Valid Internet Email Address. Your Trial Runtime License will be sent to the email address you enter below.", "myName@domain.com")
+	if ( (StrLen(_username) == 0) || (_username == "myName@domain.com") ) then Goto loop1
+	_username = StrLower(_username)
+
+;	Message( _dialogTitle, "You are about to be asked for a Domain Name or Server Name for this Installation, you will be allowed to install this Trial Edition for one server or domain name per physical computer only.")
+
+	:loop1a
+	_servername = AskLine( _dialogTitle, "Enter the Domain Name or Server Name for this Installation. Use a name like www.mydomain.com or localhost or 127.0.0.1. Limit One Server Name per Phyiscal Server.", "my.domain.com")
+	if ( (StrLen(_servername) == 0) || (_servername == "my.domain.com") ) then Goto loop1a
+	_servername = StrLower(_servername)
+	
+	serv = "www.ezajax.us"
+	if machineID == "Hewlett-Packard|HP Pavilion dv9000 (EW635AV#ABA)|CNF6362P1G"
+	;	serv = "localhost:8500"
+	endif
+
+	path = "/ezAJAX_Registrations/registerProduct.cfm"
+	query = StrCat('computerID=', urlEncode(machineID),'&serverName=', urlEncode(_servername),'&userName=', urlEncode(_username), '&osid=', urlEncode(zOSID), '&productVersion=', urlEncode(_prodVersion))
+	
+	__fname = '%_myPath%xx.txt'
+	datum = httpRecvQuery(serv, path, query, 8192, @hMethodGet) ; @hHeader|
+
+	datum = StrReplace(StrReplace(StrTrim(datum), @CRLF, ''), @TAB, '')
+	ClipPut(datum)
+	if (datum == "OK")
+		_status = "Your Registration has been approved. You may download your RuntimeLicense.dat file from http://www.ezajax.us.  At this point you may allow the Installer to unZIP the product to the folder of your choice on your web server; copy the RuntimeLicense.dat file to the root folder where this product is installed."
+		Message( _dialogTitle, StrCat(_status,@CRLF," This notice has been copied to your Windows Clipboard for your convenience."))
+		; perform the installation...
+		AutomatedInstallation(_myPath, _dialogTitle)
+		CleanUpFiles(_myPath, "*.ZIP")
+	else
+		_db = ""
+		if (StrIndexNc( datum, "Notice 102.", 1, @Fwdscan) > 0)
+			_status = StrCat("Your Registration was previously approved: (", datum, ")")
+			Message( _dialogTitle, StrCat(_status,@CRLF," This notice has been copied to your Windows Clipboard for your convenience."))
+			AutomatedInstallation(_myPath, _dialogTitle)
+			CleanUpFiles(_myPath, "*.ZIP")
+			exit
+		else
+			_status = StrCat("Your Registration has been disapproved for the following reason(s): (", datum, ")")
+			Message( _dialogTitle, StrCat(_status,@CRLF," This notice has been copied to your Windows Clipboard for your convenience."))
+		endif
+		Goto loop1
+	endif
+endif
+
+if ButtonPushed == 2
+	CleanUpFiles(_myPath, "*.ZIP")
+	exit
+endif
+
+if ButtonPushed == 3
+	filename = StrCat(_myPath,"ezAJAX(tm) Community Edition Privacy Policy.txt")
+	privacyPolicyTXT = FileGet(filename , "")
+	Message("Privacy Policy", privacyPolicyTXT)
+	goto mainLoop
+endif
+
+if ButtonPushed == 4
+	filename = StrCat(_myPath,"ezAJAX(tm) Community Edition Service Guarantee.txt")
+	serviceGuaranteeTXT = FileGet(filename , "")
+	Message("Service Guarantee", serviceGuaranteeTXT)
+	goto mainLoop
+endif
+
+if ButtonPushed == 5
+	keyHandle = RegOpenkey(@RegClasses, "http")
+	whatBrowser = RegQueryValue(keyHandle, "shell\open\command")
+	RegClosekey(keyHandle)
+	RunShell(whatBrowser, "http://www.ez-ajax.com", "C:\", @NORMAL, @NOWAIT)
+	TimeDelay(5)
+	goto mainLoop
+endif
+
+if ButtonPushed == 6
+	filename = StrCat(_myPath,"ezAJAX(tm) Community Edition Installation Instructions.txt")
+	installationInstructionsTXT = FileGet(filename , "")
+	Message("Installation Instructions", installationInstructionsTXT)
+	goto mainLoop
+endif
+
+if ButtonPushed == 7
+	keyHandle = RegOpenkey(@RegClasses, "http")
+	whatBrowser = RegQueryValue(keyHandle, "shell\open\command")
+	RegClosekey(keyHandle)
+	_url = regGetBuyURL("Hierarchical Applications Limited, Inc.", "ezAJAX(tm) Community Edition Framework", "0")
+	if (StrIndexNc(_url, "/contact.html", 1, @Fwdscan) > -1)
+		_url = "http://ez-ajax.com"
+	endif
+	RunShell(whatBrowser, _url, "C:\", @NORMAL, @NOWAIT)
+	TimeDelay(5)
+	goto mainLoop
+endif
+
+exit
+
+

@@ -1,0 +1,191 @@
+; close-windows.wbt
+
+AddExtender("WWWNT32I.DLL")
+
+_appName = "close-windows.wbt"
+
+_wname_norton = "Norton System Doctor"
+_wname_norton_close = "Close Norton System Doctor"
+_wname_norton_closed = @FALSE
+
+_norton_close_cycle_count_max = 5
+
+_norton_close_main_count = 0
+_norton_close_main_count_max = 6
+
+_norton_close_wait_count_max = 10
+
+_website_service_name = "Web Server"
+_watchdog_service_name = "WatchDog Internet Monitor"
+
+_website_service_count_max = 6
+
+shutdown_path = "C:\Program Files\resourcekit\"
+shutdown_command = "%shutdown_path%shutdown.exe"
+shutdown_parms = "/l /r /t:5 /y"
+
+while WinExist( _wname_norton) == @TRUE
+
+	_norton_close_cycle_count = 0
+
+	If WinExist( _wname_norton) == @TRUE
+		WinShow( _wname_norton)
+		Delay( 1)
+		WinActivate( _wname_norton)
+		Delay( 1)
+		If WinExist( _wname_norton) == @TRUE
+			WinClose( _wname_norton)
+		Endif
+
+		line = "(%_norton_close_cycle_count%/%_norton_close_cycle_count_max%) (%_norton_close_main_count%/%_norton_close_main_count_max%) Closed %_wname_norton%..."
+		BoxCaption(1, "%_appName% %line%")
+
+		_norton_close_wait_count = 0
+
+		while WinExist( _wname_norton_close) == @FALSE
+			line = "(%_norton_close_cycle_count%/%_norton_close_cycle_count_max%) (%_norton_close_main_count%/%_norton_close_main_count_max%) (%_norton_close_wait_count%/%_norton_close_wait_count_max%) Wait for %_wname_norton_close%..."
+			BoxCaption(1, "%_appName% %line%")
+			Delay( 1)
+			_norton_close_wait_count = _norton_close_wait_count + 1
+			If (WinExist( _wname_norton) == @FALSE) || (_norton_close_wait_count > _norton_close_wait_count_max)
+				line = "(%_norton_close_cycle_count%/%_norton_close_cycle_count_max%) (%_norton_close_main_count%/%_norton_close_main_count_max%) (%_norton_close_wait_count%/%_norton_close_wait_count_max%) End Wait for %_wname_norton_close%..."
+				BoxCaption(1, "%_appName% %line%")
+				break
+			Endif
+		endwhile
+
+		while WinExist( _wname_norton_close) == @TRUE
+			Delay( 1)
+			If WinExist( _wname_norton_close) == @TRUE
+				WinShow( _wname_norton_close)
+				WinActivate( _wname_norton_close)
+				SendKeysTo( _wname_norton_close, "{ENTER}")
+;				 _wname_norton_closed = @TRUE
+;				 break
+			Else
+				_norton_close_cycle_count = _norton_close_cycle_count + 1
+				If _norton_close_cycle_count > _norton_close_cycle_count_max
+					_wname_norton_closed = @TRUE
+					break
+				Endif
+
+				line = "(%_norton_close_cycle_count%/%_norton_close_cycle_count_max%) (%_norton_close_main_count%/%_norton_close_main_count_max%) Waiting for %_wname_norton_close%..."
+				BoxCaption(1, "%_appName% %line%")
+			Endif
+		endwhile
+	Endif
+
+	_norton_close_main_count = _norton_close_main_count + 1
+	If _norton_close_main_count > _norton_close_main_count_max
+		break
+	Endif
+endwhile
+
+_wname_to_close = "checkit"
+Gosub closeNamedWindow
+
+_service_name = _watchdog_service_name
+Gosub stopNTRunningService
+
+_service_name = _website_service_name
+Gosub stopNTRunningService
+
+line = "(SHUTDOWN)..."
+BoxCaption(1, "%_appName% %line%")
+
+RunShell( shutdown_command, shutdown_parms, shutdown_path, @NORMAL, @NOWAIT)
+
+exit
+
+
+:stopNTRunningService
+	Gosub isNTServiceRunning
+
+	If (_isNTServiceStuck || _isNTServiceRunning)
+		line = "(STOP the %_service_name% service)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		ErrorMode(@OFF)
+		wntSvcControl( "", _service_name, 0, 1)	 ; STOP the Web Server service
+		ErrorMode(@CANCEL)
+
+		_website_service_count = 0
+
+		while _website_service_count <= _website_service_count_max
+			Delay( 5)
+			Gosub isNTServiceRunning
+			If (_isNTServiceStuck == @FALSE) && (_isNTServiceRunning == @FALSE)
+				break
+			Endif
+			_website_service_count = _website_service_count + 1
+		endwhile
+	Endif
+return
+
+
+:isNTServiceRunning
+	_isNTServiceStuck = @FALSE
+	_isNTServiceRunning = @FALSE
+	
+	line = "(get the current state of the %_service_name% service)..."
+	BoxCaption(1, "%_appName% %line%")
+
+	ErrorMode(@OFF)
+	state = wntSvcStatus("", _service_name, 0, 2)  ; get the current state of the Web Server service
+	ErrorMode(@CANCEL)
+
+	Switch state
+	  case 1
+		s = "1 SERVICE_STOPPED ... The service is not running."
+		break
+	  case 2
+		s = "2 SERVICE_START_PENDING ... The service is starting."
+		_isNTServiceStuck = @TRUE
+		break
+	  case 3
+		s = "3 SERVICE_STOP_PENDING ... The service is stopping."
+		_isNTServiceStuck = @TRUE
+		break
+	  case 4
+		s = "4 SERVICE_RUNNING ... The service is running."
+		_isNTServiceRunning = @TRUE
+		break
+	  case 5
+		s = "5 SERVICE_CONTINUE_PENDING ... The service continue is pending."
+		_isNTServiceStuck = @TRUE
+		break
+	  case 6
+		s = "6 SERVICE_PAUSE_PENDING ... The service pause is pending."
+		_isNTServiceRunning = @TRUE
+		break
+	  case 7
+		s = "7 SERVICE_PAUSED ... The service is paused."
+		_isNTServiceRunning = @TRUE
+		break
+	EndSwitch
+
+	line = "(%s%)..."
+	BoxCaption(1, "%_appName% %line%")
+return
+
+
+:closeNamedWindow
+	while WinExist( _wname_to_close) == @TRUE
+
+		If WinExist( _wname_to_close) == @TRUE
+			line = "Closed %_wname_to_close%..."
+			BoxCaption(1, "%_appName% %line%")
+
+			WinShow( _wname_to_close)
+			Delay( 1)
+			WinActivate( _wname_to_close)
+			Delay( 1)
+			If WinExist( _wname_to_close) == @TRUE
+				WinClose( _wname_to_close)
+				break
+			Endif
+		Endif
+	endwhile
+
+return
+

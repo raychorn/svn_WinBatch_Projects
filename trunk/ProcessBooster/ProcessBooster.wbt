@@ -1,0 +1,146 @@
+;************************************************************************
+; ProcessBooster.wbt
+; 
+;************************************************************************
+
+AddExtender("wproc34i.dll")
+
+_wname = "ProcessBooster v1.0.0"
+wname = "%_wname% (c)1980-2007 Hierarchical Applications Limited, All Rights Reserved."
+
+#DefineFunction getWinPlatformByName() 
+	IntControl(73, 2,0,0,0)
+	
+	v = WinVersion(5)
+	Platform = "Unknown"
+
+	if v == "1-4-0" then Platform = "Windows 95"
+	if v == "1-4-10" then Platform = "Windows 98"
+	if v == "1-4-90" then Platform = "Windows ME"
+	if v == "2-3-51" then Platform = "Windows NT 3.51"
+	if v == "2-4-0" then Platform = "Windows NT 4.0"
+	if v == "2-5-0" then Platform = "Windows 2000"
+	if v == "2-5-1" then Platform = "Windows XP"
+	if v == "2-5-2" then Platform = "Windows 2003 Server"
+	if v == "2-6-0" then Platform = "Windows Vista"
+
+	Return(Platform)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction getPriorityNameFromBitField(v) 
+	IntControl(73, 2,0,0,0)
+	
+	priority = "undefined"
+
+	if v == 32 then priority = "NORMAL_PRIORITY_CLASS"
+	if v == 64 then priority = "IDLE_PRIORITY_CLASS"
+	if v == 128 then priority = "HIGH_PRIORITY_CLASS"
+	if v == 256 then priority = "REALTIME_PRIORITY_CLASS"
+	if v == 16384 then priority = "BELOW_NORMAL_PRIORITY_CLASS"
+	if v == 32768 then priority = "ABOVE_NORMAL_PRIORITY_CLASS"
+
+	Return(priority)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+#DefineFunction _itemLocate(item,list,delim) 
+	IntControl(73, 2,0,0,0)
+	
+	found = ""
+	n = ItemCount( list, delim)
+	for i = 1 to n
+		x = ItemExtract( i, list, delim)
+		if (StrIndexNc( x, item, 1, @Fwdscan) > 0)
+			found = x
+			break
+		endif
+	next
+
+	Return(found)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+
+#EndFunction
+
+
+winVersionPlatform = getWinPlatformByName()
+procList = tListProc()
+
+procCount = ItemCount( procList, @TAB)
+
+;param1 = "ruby"
+
+spec = ""
+
+if IsDefined( param1)
+	spec = _itemLocate(param1,procList, @TAB)
+Else
+	spec = AskItemList("Process List (Select Proc to Boost)", procList, @TAB, @sorted, @single, @TRUE)
+Endif
+
+if (StrLen(spec) > 0)
+	procName = ItemExtract( 1, spec, "|")
+	procId = ItemExtract( 2, spec, "|")
+else
+	exit
+endif
+
+if (StriCmp(param1, procName) == 0) 
+	exit
+endif
+
+ErrorMode(@OFF)
+ret=tGetProcInfo(procid)
+ErrorMode(@CANCEL)
+If ret == 0
+	err = tGetLastError()
+	Message("tGetProcInfo Failed",StrCat("tGetlasterror Returned ",err))
+	Exit
+EndIf
+pfc=ItemExtract(1,ret,@TAB)
+pwss=ItemExtract(2,ret,@TAB)
+wss= ItemExtract(3,ret,@TAB)
+qpppu=ItemExtract(4,ret,@TAB)
+qppu=ItemExtract(5,ret,@TAB)
+qpnppu= ItemExtract(6,ret,@TAB)
+qnppu=ItemExtract(7,ret,@TAB)
+pfu=ItemExtract(8,ret,@TAB)
+ppfu=ItemExtract(9,ret,@TAB)
+
+STRING=StrCat("PageFaultCount",@TAB,@TAB,@TAB,pfc,@CRLF,"PeakWorkingSetSize",@TAB,@TAB,pwss,@CRLF, "WorkingSetSize",@TAB,@TAB,@TAB,wss,@CRLF,"QuotaPeakPagedPoolUsage",@TAB,@TAB,qpppu,@CRLF,"QuotaPagedPoolUsage",@TAB,@TAB,qppu,@CRLF)
+STRING=StrCat(STRING,"QuotaPeakNonPagedPoolUsage",@TAB,qpnppu,@CRLF, "QuotaNonPagedPoolUsage",@TAB,@TAB,qnppu,@CRLF,"PagefileUsage",@TAB,@TAB,@TAB,pfu,@CRLF,"PeakPagefileUsage",@TAB,@TAB,@TAB,ppfu)
+
+v = tGetPriority(procId)
+priority = getPriorityNameFromBitField(v)
+
+if v == 128 then goto noBoost
+
+tSetPriority ( procId, 128)
+
+v = tGetPriority(procId)
+priority = getPriorityNameFromBitField(v)
+
+:noBoost
+Message("Memory info on process %procname% running at %priority%",STRING)

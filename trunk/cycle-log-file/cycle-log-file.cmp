@@ -1,0 +1,24 @@
+[Main]
+Type=1
+Src=cycle-log-file.wbt
+Targ=Z:\myWinBatch\cycle-log-file\cycle-log-file.exe
+Icon=
+CmpVersion=2
+[Options]
+TechWebPage=
+RunHidden=0
+[Version Info]
+Comments=produced for macromedia by HAL Smalltalker,Inc. & Ray Horn
+CompanyName=Macromedia Inc.
+FileDescription=cycle-log-file
+FileVersion=1.0
+InternalName=cycle-log-file.exe
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=cycle-log-file.exe
+ProductName=cycle-log-file
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=0

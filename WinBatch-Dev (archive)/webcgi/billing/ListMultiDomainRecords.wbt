@@ -1,0 +1,10 @@
+:ListMultiDomainRecords
+
+WebOut('<FONT SIZE="4"><SELECT NAME="%_CustomerList%" SIZE="20" MULTIPLE="MULTIPLE">', _html_crlf)
+
+_list_multi_mode = @TRUE
+
+Call( StrCat( _cgi_dir, "_ListDomainRecords.wbc"), "")
+
+return
+

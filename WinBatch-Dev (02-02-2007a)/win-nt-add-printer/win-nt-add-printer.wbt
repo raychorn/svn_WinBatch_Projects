@@ -1,0 +1,10 @@
+; win-nt-add-printer.wbt
+
+;Debug( @TRUE)
+
+; wntAddPrinter( user-id, pswd, net-resource, local device, persist)
+AddExtender("WWWNT32I.DLL")
+b_resp = wntAddPrinter( "har-disney\Z000447", "kaiser@7660boo", "\\har-sweetpea\Q4-HP4SIMX", @NONE, @false)
+
+Message( "DEBUG", "b_resp=%b_resp%")
+

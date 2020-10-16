@@ -1,0 +1,1010 @@
+;************************************************************************
+; cf_encoder.wbt
+; 
+;************************************************************************
+
+Addextender("wproc34i.dll")
+AddExtender("WWZIP34I.DLL")
+
+#DefineFunction GetWMIInfo()
+	IntControl(73, 2,0,0,0)
+	Locator = ObjectOpen("WbemScripting.SWbemLocator")
+	Service = Locator.ConnectServer()
+	Security = Service.Security_     
+	Security.ImpersonationLevel = 3
+	Class = "Win32_ComputerSystemProduct"
+	Instance = Service.InstancesOf(Class)
+	Enum = ObjectCollectionOpen(Instance)
+	While 1
+		Obj = ObjectCollectionNext(Enum)
+		If Obj == 0 Then Break
+		man=Obj.Vendor
+		model=Obj.Name
+		serial=Obj.IdentifyingNumber
+	EndWhile
+	
+	ObjectCollectionClose(Enum)
+	ObjectClose(Instance)
+	ObjectClose(Security)
+	ObjectClose(Service)
+	ObjectClose(Locator)
+	data=StrCat(man,@TAB,model,@TAB,serial)
+	Return(data)
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+
+;This UDF is sort of like the FileItemPath function in that it returns a
+;tab delimited list of files.  
+
+; This function returns a tab delimited list of files in a directory tree.
+; Parameters
+;       tree - always initialize to ""
+;       dir  - directroy to start in
+;       mask - file mask to search for, like "*.*"   "*.exe"  "*.txt" etc
+;              no directory info allows in the mask
+;       currentlevel - initialize to zero
+;       maxlevel  - controls how many levels deep you wish to go.  TO
+;                   go all the way down set to a large number like 9999
+;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#DefineFunction FileItemRecursive(tree,dir,mask,currentlevel,maxlevel)
+   ;DebugTrace(@ON,"xxxdebug.txt")
+   If currentlevel>=maxlevel Then Return(tree)
+   currentlevel=currentlevel+1
+
+   DirChange(dir)
+   dlist=ItemSort(DirItemize("*.*"),@TAB)
+   dcount=ItemCount(dlist,@TAB)
+
+   For xx=1 To dcount
+      thisdir=ItemExtract(xx,dlist,@TAB)
+      tree=FileItemRecursive(tree,thisdir,mask,currentlevel,maxlevel)
+   Next
+
+   If tree=="" Then tt=""
+   Else tt=@TAB
+
+   flist=FileItemPath(mask)
+   If flist != ""
+      flist=ItemSort(flist,@TAB)
+      tree=StrCat(tree,tt,flist)
+   EndIf
+
+   DirChange("..")
+   Return(tree)
+#EndFunction
+
+
+#DefineFunction CountLOC(fname)
+	loc = 0
+	iLoc = StrIndexNc(fname, ".js", 1, @FWDSCAN)
+	jLoc = StrIndexNc(fname, ".cfm", 1, @FWDSCAN)
+	eLoc = StrIndexNc(fname, ".exe", 1, @FWDSCAN)
+	if ( (FileExist(fname) == @TRUE) && (eLoc == 0) && ( (iLoc > 0) || (jLoc > 0) ) )
+		ErrorMode(@OFF)
+		fHand = FileOpen(fname, "READ")
+		while @TRUE             ; Loop till break do us end
+			x = FileRead(fHand)
+			If x == "*EOF*" Then Break
+			loc = loc + 1
+		endwhile
+		FileClose(fHand)
+		ErrorMode(@CANCEL)
+	endif
+   Return(loc)
+
+	:WBERRORHANDLER
+	Return
+#EndFunction
+
+
+_wname = "cf_encoder v2.4"
+_yyyy =   ItemExtract(1, TimeYmdHms(), ":")
+wname = "%_wname% (c). 1978-%_yyyy% Hierarchical Applications Limited, All Rights Reserved."
+
+cfLOC = 0
+jsLOC = 0
+
+IntControl (81, GetTickCount(), 0, 0, 0)
+
+_wname_ = StrReplace( StrReplace( _wname, ".", "_"), " ", "_")
+
+const_Cr = Num2Char(13)
+
+const_licenseKey_symbol = "licenseKey"
+const_cfencoder_symbol = "cfencoder"
+const_jsminifier_symbol = "jsminifier"
+
+_myPathName = IntControl( 1004, 0, 0, 0, 0)
+
+_myPath = FilePath( _myPathName)
+
+_myName = StrReplace( _myPathName, _myPath, "")
+
+_myName = StrReplace( _myName, StrCat( ".", ItemExtract( ItemCount( _myName, "."), _myName, ".")), "")
+
+_iniPath = '%_myPath%%_wname_%.INI'
+
+default_cfencoderEXE = "C:\JRun4\servers\cfusion\cfusion-ear\cfusion-war\WEB-INF\cfusion\bin\cfencode.exe"
+default_jsminifierEXE = "C:\Inetpub\wwwroot\Rabid_Packager\bin\jsmin.exe"
+
+if FileExist(_iniPath) == @False
+	IniWritePvt("Main", const_licenseKey_symbol, "", _iniPath)
+	IniWritePvt("Main", const_cfencoder_symbol, default_cfencoderEXE, _iniPath)
+	IniWritePvt("Main", const_jsminifier_symbol, default_jsminifierEXE, _iniPath)
+endif
+licenseKey = IniReadPvt ("Main", const_licenseKey_symbol, "", _iniPath)
+cfencoderEXE = IniReadPvt ("Main", const_cfencoder_symbol, default_cfencoderEXE, _iniPath)
+jsminifierEXE = IniReadPvt ("Main", const_jsminifier_symbol, default_jsminifierEXE, _iniPath)
+
+;;;;;;;;;;;;;;;; Generic Initialization ;;;;;;;;;;;;;;;;;;;;
+IntControl(1008,1,0,0,0)
+IntControl(12,5,0,0,0)
+;;;;;;;; Assorted Colors ;;;;;;;;;
+DKBLUE="0,0,128"
+BLUE="0,0,255"
+LTGRAY="192,192,192"
+GRAY="128,128,128"
+DKGRAY="64,64,64"
+GREEN="0,255,0"
+RED="255,0,0"
+BLACK="0,0,0"
+WHITE="255,255,255"
+YELLOW="255,255,0"
+
+const_my_laptop_machine_id = "CND607062Y"
+
+datax = GetWmiInfo()
+;aa = AskItemlist("???",datax,@TAB,@UNSORTED,@SINGLE)
+
+_licenseWarning = @FALSE
+
+machineNum = ItemExtract( ItemCount( datax,@TAB), datax,@TAB)
+if machineNum == const_my_laptop_machine_id
+	for lki = 1 to ItemCount( datax,@TAB)
+		_concat_char = ""
+		if lki <> ItemCount( datax,@TAB) then _concat_char = "+"
+		licenseKey = StrCat(licenseKey, StrTrim(ItemExtract( lki, datax,@TAB)), _concat_char) ; fake a license Key for now for testing...
+	next
+else
+	if (StrLen(licenseKey) == 0)
+		_licenseWarning = @TRUE
+		Message( "WARNING", "You have selected a function that can only be performed AFTER you have obtained a Registration License Key for this product.%const_Cr%")
+	endif
+endif
+
+allsections = IniItemizePvt("",_iniPath)
+iPos = ItemLocate( "Main", allsections, @TAB)
+if iPos > 0
+	allsections = ItemRemove( iPos, allsections, @TAB)
+endif
+aSectionName = ""
+dontDeployList = "Choose a Project"
+deployToServersList = "Choose a Project"
+dontEncodeList = "Choose a Project"
+chosenProject = ""
+:loopbackD1
+projectsList = allsections
+
+MyDialogFormat=`WWWDLGED,6.1`
+
+MyDialogCaption=`ColdFusion Encoder v2.4`
+MyDialogX=050
+MyDialogY=050
+MyDialogWidth=502
+MyDialogHeight=307
+MyDialogNumControls=027
+MyDialogProcedure=`DEFAULT`
+MyDialogFont=`Comic Sans MS|6144|40|66`
+MyDialogTextColor=`0|0|0`
+MyDialogBackground=`DEFAULT,DEFAULT`
+MyDialogConfig=0
+
+MyDialog001=`115,289,066,012,PUSHBUTTON,DEFAULT,"Do the Deployment",1,1,32,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog002=`273,289,036,012,PUSHBUTTON,DEFAULT,"Cancel",0,2,DEFAULT,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog003=`011,017,124,126,ITEMBOX,projectsList,DEFAULT,DEFAULT,4,DEFAULT,"Comic Sans MS|5632|40|66","0|0|0",DEFAULT`
+MyDialog004=`003,005,138,174,GROUPBOX,DEFAULT,"Deployable Projects",DEFAULT,3,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog005=`015,163,046,012,PUSHBUTTON,DEFAULT,"Add a Project",2,5,DEFAULT,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog006=`077,259,414,012,EDITBOX,cfencoderEXE,DEFAULT,DEFAULT,6,DEFAULT,"Comic Sans MS|6144|40|66","0|0|0",DEFAULT`
+MyDialog007=`005,259,070,012,PUSHBUTTON,DEFAULT,"ColdFusion Encoder Path:",3,7,DEFAULT,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog008=`145,005,348,088,GROUPBOX,DEFAULT,"Do Not Deploy List",DEFAULT,8,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog009=`149,017,338,056,ITEMBOX,dontDeployList,DEFAULT,DEFAULT,9,DEFAULT,"Comic Sans MS|5632|40|66","0|0|0",DEFAULT`
+MyDialog010=`151,077,046,012,PUSHBUTTON,DEFAULT,"Add Item",4,10,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+MyDialog011=`201,077,048,012,PUSHBUTTON,DEFAULT,"Remove Item",5,11,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+MyDialog012=`065,163,054,012,PUSHBUTTON,DEFAULT,"Choose Project",6,12,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+MyDialog013=`007,183,486,072,GROUPBOX,DEFAULT,"Deployment Servers List",DEFAULT,13,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog014=`013,197,476,038,ITEMBOX,deployToServersList,DEFAULT,DEFAULT,14,DEFAULT,"Comic Sans MS|5632|40|66","0|0|0",DEFAULT`
+MyDialog015=`015,239,042,012,PUSHBUTTON,DEFAULT,"Add Server",7,15,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+MyDialog016=`067,239,050,012,PUSHBUTTON,DEFAULT,"Remove Server",8,16,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+MyDialog017=`039,147,096,012,VARYTEXT,chosenProject,"Vary 1",DEFAULT,17,DEFAULT,"Comic Sans MS|5632|40|66","0|0|0",DEFAULT`
+MyDialog018=`013,147,024,012,STATICTEXT,DEFAULT,"Project:",DEFAULT,18,DEFAULT,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog019=`005,273,074,012,PUSHBUTTON,DEFAULT,"JavaScript Minifier Path:",9,19,DEFAULT,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog020=`081,273,408,012,EDITBOX,jsminifierEXE,DEFAULT,DEFAULT,20,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog021=`133,239,054,012,CHECKBOX,useCFencoderEXE,"Use CF Encoder",1,21,DEFAULT,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog022=`193,239,056,012,CHECKBOX,useJSminifierEXE,"Use Js Minifier",1,22,DEFAULT,"Comic Sans MS|5632|70|66","0|0|0",DEFAULT`
+MyDialog023=`253,077,044,012,PUSHBUTTON,DEFAULT,"Add Wildcard",10,23,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+MyDialog024=`147,097,344,086,GROUPBOX,DEFAULT,"Do No Encode List",DEFAULT,24,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog025=`151,109,334,054,ITEMBOX,dontEncodeList,DEFAULT,DEFAULT,25,DEFAULT,DEFAULT,DEFAULT,DEFAULT`
+MyDialog026=`153,167,036,012,PUSHBUTTON,DEFAULT,"Add",11,26,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+MyDialog027=`191,167,036,012,PUSHBUTTON,DEFAULT,"Remove",12,27,DEFAULT,"Comic Sans MS|6144|70|66","0|0|0",DEFAULT`
+
+ButtonPushed=Dialog("MyDialog")
+
+;Message( "Debug", "useCFencoderEXE = [%useCFencoderEXE%], useJSminifierEXE = [%useJSminifierEXE%]")
+
+if ButtonPushed == 2
+		flags = 1|2
+		dirName = AskDirectory("Locate the folder you wish to deploy (the folder name becomes the project name)", "C:\inetpub\wwwroot", "","Are you sure?",flags)
+		nCnt = ItemCount( dirName, "\")
+:loopbackD2
+		anItem = ItemExtract( nCnt, dirName, "\")
+		if (StrLen(anItem) == 0) then 
+			nCnt = nCnt - 1
+			Goto loopbackD2
+		endif
+		iPos = ItemLocate( anItem, allsections, @TAB)
+		if iPos == 0
+			allsections = ItemInsert( anItem, ItemCount( allsections, @TAB), allsections, @TAB)
+			aSectionName = anItem
+
+			flags=4|8
+			_srcFOLDER = IniReadPvt (aSectionName, "_srcFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+			_srcFOLDER = AskDirectory("Source folder to encode from ? (Project %aSectionName%)", "", _srcFOLDER,"Are you sure?",flags)
+			IniWritePvt(aSectionName, "_srcFOLDER", _srcFOLDER, _iniPath)
+
+			flags=1|2
+			_dstFOLDER = IniReadPvt (aSectionName, "_dstFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+			_dstFOLDER = AskDirectory("Destination folder to encode to ? (Project %aSectionName%)", "", _dstFOLDER,"Are you sure?",flags)
+			IniWritePvt(aSectionName, "_dstFOLDER", _dstFOLDER, _iniPath)
+		else
+			message("Warning: The item you just entered is already in the list.", anItem)
+		endif
+		Goto loopbackD1
+endif
+
+;	Message("Your choice is: (ButtonPushed=%ButtonPushed%)",projectsList)
+
+if (ButtonPushed == 3) || (FileExist( cfencoderEXE) == @False)
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	_srcFOLDER = IniReadPvt (aSectionName, "_srcFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+	types = "EXE Files|*.exe"
+	cfencoderEXE = AskFileName("Select the Cfencoder file", FilePath(_srcFOLDER), types, "", 1)
+	IniWritePvt("Main", const_cfencoder_symbol, cfencoderEXE, _iniPath)
+	Goto populateProjectChoice
+endif
+; +++
+if (ButtonPushed == 4) ; add item to dontDeployList
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can add an item to the do not deploy list.")
+		Goto loopbackD1
+	endif
+
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	_srcFOLDER = IniReadPvt (aSectionName, "_srcFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+	xxx = FilePath(_srcFOLDER)
+	types = "Content Files|*.*"
+	anItem = AskFileName("Select a file to add to the do Not Deploy List (these files will not be deployed) [%aSectionName%] [%_srcFOLDER%] [%xxx%]", FilePath(_srcFOLDER), types, "", 1)
+	iPos = ItemLocate( anItem, _doNotDeployList, @TAB)
+	if iPos == 0
+		_doNotDeployList = ItemInsert( anItem, ItemCount( _doNotDeployList, @TAB), _doNotDeployList, @TAB)
+		dontDeployList = _doNotDeployList
+	endif
+	IniWritePvt(aSectionName, "doNotDeployList", _doNotDeployList, _iniPath)
+	Goto populateProjectChoice
+endif
+
+if (ButtonPushed == 5) ; drop item from dontDeployList
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can remove an item from the do not deploy list.")
+		Goto loopbackD1
+	endif
+
+	iPos = ItemLocate( dontDeployList, _doNotDeployList, @TAB)
+	if iPos > 0
+		_doNotDeployList = ItemRemove( iPos, _doNotDeployList, @TAB)
+		dontDeployList = _doNotDeployList
+		IniWritePvt(aSectionName, "doNotDeployList", _doNotDeployList, _iniPath)
+	else
+		dontDeployList = _doNotDeployList
+		deployToServersList = _serversDeployList
+	endif
+	Goto populateProjectChoice
+endif
+
+if (ButtonPushed == 6) ; populate dontDeployList
+	:populateProjectChoice
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	chosenProject = aSectionName
+	_doNotDeployList = IniReadPvt (aSectionName, "doNotDeployList", "", _iniPath)
+	dontDeployList = _doNotDeployList
+	_serversDeployList = IniReadPvt (aSectionName, "serversDeployList", StrCat("\\192.168.3.1\D$", @TAB, "\\192.168.3.2\C$"), _iniPath)
+	_doNotEncodeList = IniReadPvt (aSectionName, "doNotEncodeList", "", _iniPath)
+	dontEncodeList = _doNotEncodeList
+
+	useCFencoderEXE = IniReadPvt (aSectionName, "useCFencoderEXE", 0, _iniPath)
+	useJSminifierEXE = IniReadPvt (aSectionName, "useJSminifierEXE", 0, _iniPath)
+
+	serversDeployListWithPaths = ""
+	for x = 1 to ItemCount(_serversDeployList, @TAB)
+		xItem = ItemExtract(x, _serversDeployList, @TAB)
+		dirName = IniReadPvt (aSectionName, xItem, "", _iniPath)
+		serversDeployListWithPaths = ItemInsert( StrCat(xItem, ",", "(%dirName%)"), x, serversDeployListWithPaths, @TAB)
+	next
+	deployToServersList = serversDeployListWithPaths
+
+	Goto loopbackD1
+endif
+
+if (ButtonPushed == 7) ; add server to deployment list
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can add a server to the server deployment list.")
+		Goto loopbackD1
+	endif
+
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	aServerPath = AskLine("(Project %aSectionName%)", "Server Path Name or UNC Path (example: \\192.168.3.2\C$)", "")
+	_serversDeployList = ItemInsert( aServerPath, ItemCount(_serversDeployList, @TAB), _serversDeployList, @TAB)
+	IniWritePvt(aSectionName, "serversDeployList", _serversDeployList, _iniPath)
+
+	xItem = aServerPath
+	dirName = IniReadPvt(aSectionName, xItem, "", _iniPath)
+	flags = 1|2
+	dirName = AskDirectory("Select Deployment Path for (%xItem%) (Project %aSectionName%)", xItem, dirName, "Are you sure?", flags)
+	IniWritePvt(aSectionName, xItem, dirName, _iniPath)
+
+	dontDeployList = _doNotDeployList
+	deployToServersList = _serversDeployList
+	Goto loopbackD1
+endif
+
+if (ButtonPushed == 8) ; remove server to deployment list
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can remove a server from the server deployment list.")
+		Goto loopbackD1
+	endif
+
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	deployToServersList = ItemExtract( 1, deployToServersList, @TAB)
+	iPos = ItemLocate( deployToServersList, _serversDeployList, @TAB)
+	if iPos > 0
+		_serversDeployList = ItemRemove( iPos, _serversDeployList, @TAB)
+		deployToServersList = _serversDeployList
+		IniWritePvt(aSectionName, "serversDeployList", _serversDeployList, _iniPath)
+	else
+		deployToServersList = _serversDeployList
+	endif
+	dontDeployList = _doNotDeployList
+	Goto loopbackD1
+endif
+
+if (ButtonPushed == 9) || (FileExist( jsminifierEXE) == @False)
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	_srcFOLDER = IniReadPvt (aSectionName, "_srcFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+	types = "EXE Files|*.exe"
+	jsminifierEXE = AskFileName("Select the JavaScript Minifier file", FilePath(_srcFOLDER), types, "", 1)
+	IniWritePvt("Main", const_jsminifier_symbol, jsminifierEXE, _iniPath)
+	Goto populateProjectChoice
+endif
+;+++
+if (ButtonPushed == 10)
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can add an item to the do not deploy list.")
+		Goto loopbackD1
+	endif
+
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	flags=1|2
+	anItem = AskDirectory("Select Directory for WildCard Do Not Deploy Specification", "c:\inetpub\wwwroot\", "","Are you sure?",flags)
+	anItem = StrCat(anItem, "*.*")
+
+	iPos = ItemLocate( anItem, _doNotDeployList, @TAB)
+	if iPos == 0
+		_doNotDeployList = ItemInsert( anItem, ItemCount( _doNotDeployList, @TAB), _doNotDeployList, @TAB)
+		dontDeployList = _doNotDeployList
+	endif
+	IniWritePvt(aSectionName, "doNotDeployList", _doNotDeployList, _iniPath)
+	Goto populateProjectChoice
+
+	;	Message( "Debug", "ButtonPushed = [%ButtonPushed%]")
+endif
+
+if (ButtonPushed == 11) ; add item to dontEncodeList
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can add an item to the do not encode list.")
+		Goto loopbackD1
+	endif
+
+	if StrLen(projectsList) > 0 then aSectionName = projectsList
+	_srcFOLDER = IniReadPvt (aSectionName, "_srcFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+	xxx = FilePath(_srcFOLDER)
+	types = "Content Files|*.*"
+	anItem = AskFileName("Select a file to add to the do Not Encode List (these files will not be encoded) [%aSectionName%] [%_srcFOLDER%] [%xxx%]", FilePath(_srcFOLDER), types, "", 1)
+	iPos = ItemLocate( anItem, _doNotEncodeList, @TAB)
+	if iPos == 0
+		_doNotEncodeList = ItemInsert( anItem, ItemCount( _doNotEncodeList, @TAB), _doNotEncodeList, @TAB)
+		dontEncodeList = _doNotEncodeList
+	endif
+	IniWritePvt(aSectionName, "doNotEncodeList", _doNotEncodeList, _iniPath)
+	Goto populateProjectChoice
+endif
+
+if (ButtonPushed == 12) ; drop item from dontEncodeList
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can remove an item from the do not encode list.")
+		Goto loopbackD1
+	endif
+
+	iPos = ItemLocate( dontEncodeList, _doNotEncodeList, @TAB)
+	if iPos > 0
+		_doNotEncodeList = ItemRemove( iPos, _doNotEncodeList, @TAB)
+		dontEncodeList = _doNotEncodeList
+		IniWritePvt(aSectionName, "doNotEncodeList", _doNotEncodeList, _iniPath)
+	else
+		dontEncodeList = _doNotEncodeList
+	endif
+	Goto populateProjectChoice
+endif
+
+if ButtonPushed == 1
+	if (StrLen(aSectionName) == 0)
+		Message( "Warning", "You must choose a project before you can deploy a project.")
+		Goto loopbackD1
+	endif
+
+	IniWritePvt(aSectionName, "useCFencoderEXE", useCFencoderEXE, _iniPath)
+	IniWritePvt(aSectionName, "useJSminifierEXE", useJSminifierEXE, _iniPath)
+
+	_srcFOLDER = IniReadPvt (aSectionName, "_srcFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+	_dstFOLDER = IniReadPvt (aSectionName, "_dstFOLDER", "c:\inetpub\wwwroot\", _iniPath)
+
+	if DirExist(_dstFOLDER) == @False then DirMake(_dstFOLDER)
+
+	serversDeployList = IniReadPvt (aSectionName, "serversDeployList", "", _iniPath)
+
+	_doNotEncodeList = IniReadPvt (aSectionName, "doNotEncodeList", "", _iniPath)
+
+	srcFilesList = FileItemRecursive("",_srcFOLDER,"*.cf?",0,15)
+	allFilesList = FileItemRecursive("",_srcFOLDER,"*.*",0,15)
+	
+	dstFilesList = FileItemRecursive("",_dstFOLDER,"*.*",0,15)
+	FileDelete(dstFilesList)
+	
+	for x = 1 to ItemCount(_doNotDeployList, @TAB)
+		xItem = ItemExtract(x, _doNotDeployList, @TAB)
+		if (StrIndex(xItem, "\*.*", 1, @FWDSCAN) > 0)
+			xDirName = StrReplace( xItem, "\*.*", "")
+			_doNotDeployMacroList = FileItemize(xItem)
+			for xM = 1 to ItemCount(_doNotDeployMacroList, @TAB)
+				xItem = ItemExtract(xM, _doNotDeployMacroList, @TAB)
+				xItem = StrCat( xDirName,"\",xItem)
+				xi = ItemLocate( xItem, allFilesList, @TAB)
+				if xi > 0
+					xN1 = ItemCount(allFilesList, @TAB)
+					allFilesList = ItemRemove( xi, allFilesList, @TAB)
+					xN2 = ItemCount(allFilesList, @TAB)
+				endif
+			next
+		else
+			;xItem = StrReplace( xItem, _srcFOLDER, _dstFOLDER)
+			xi = ItemLocate( xItem, allFilesList, @TAB)
+			if xi > 0
+				xN1 = ItemCount(allFilesList, @TAB)
+				allFilesList = ItemRemove( xi, allFilesList, @TAB)
+				xN2 = ItemCount(allFilesList, @TAB)
+			endif
+		endif
+	next
+	
+	Gosub PerformProcessingWithGUI
+	
+	stats_total = stats_encoded + stats_copied
+	Message( "Run-Time Stats", "%stats_total% Files Processed. %stats_encoded% Files Encoded.  %stats_copied% Files Copied but not Encoded. cfLOC = (%cfLOC%), jsLOC = (%jsLOC%)")
+
+	dstFilesList = FileItemRecursive("",_dstFOLDER,"*.*",0,15)
+	xN0 = ItemCount(dstFilesList, @TAB)
+	
+	_yesNo = AskYesNo( "Files Deployment Dialog", "Do you wish to Deploy %xN2% Files of %xN0% Files ? (Project %aSectionName%)")
+	if _yesNo == @YES
+		serversDeployList = _serversDeployList
+		for x = 1 to ItemCount(serversDeployList, @TAB)
+			xItem = ItemExtract(x, serversDeployList, @TAB)
+			dirName = IniReadPvt (aSectionName, xItem, "", _iniPath)
+			nCnt = ItemCount( dirName, "\")
+			ch = StrSub( dirName, StrLen(dirName), 1)
+			if (ch == "\") then 
+				nCnt = nCnt - 1
+			endif
+			dName = ItemExtract( nCnt, dirName, "\")
+			dt = TimeYmdHms()
+			m = ItemExtract( 2, dt, ":")
+			d = ItemExtract( 3, dt, ":")
+			yyyy = ItemExtract( 1, dt, ":")
+			hh = ItemExtract( 4, dt, ":")
+			mm = ItemExtract( 5, dt, ":")
+			ss = ItemExtract( 6, dt, ":")
+			zipName = StrCat(dName, "-%m%-%d%-%yyyy%_%hh%-%mm%-%ss%.zip")
+			_dirName = ItemRemove( ItemCount( dirName, "\"), dirName, "\")
+			_dirName = ItemRemove( ItemCount( _dirName, "\"), _dirName, "\")
+			DirChange(dirName)
+			xzipper = zZipFiles("R 9", zipName, "*.*", "")
+			if FileExist(StrCat(dirName,zipName)) then FileMove( StrCat(dirName,zipName), StrCat(_dirName,"\",zipName), @False)
+		next
+		zipMask = StrCat(dName, "-%m%-%d%-%yyyy%*.zip")
+		zipFileFolder = StrCat(_dirName, "\", zipMask)
+		zipFilesList = FileItemize(zipFileFolder)
+		zipFilesList = ItemSort(zipFilesList, @TAB)
+		zipFilesList = ItemRemove( 1, zipFilesList, @TAB)
+		zipFilesList = ItemRemove( ItemCount(zipFilesList, @TAB), zipFilesList, @TAB)
+		for x = 1 to ItemCount(zipFilesList, @TAB)
+			xItem = ItemExtract(x, zipFilesList, @TAB)
+			zipName = StrCat(_dirName, "\", xItem)
+			if FileExist( zipName)
+				FileDelete( zipName)
+			endif
+		next
+		Gosub PerformFileCopyWithGUI
+	endif
+	
+	count=tCountProc()
+	proclist=tlistproc()
+	
+	for i = 1 to ItemCount( proclist, @TAB)
+		aProcData = ItemExtract( i, proclist, @TAB)
+		if ItemLocate( _myName, aProcData, "|")
+			procid=itemextract(2,aProcData,"|")
+			if Procid != ""
+			   hProcess=tOpenProc(procid,3);PROCESS_TERMINATE
+				if hProcess
+				   tKillProc(hProcess)
+					tcloseproc(hProcess)  
+				 ;  Message("tKillProc","%procname% is terminated")
+				endif
+			else
+			;  Message("tKillProc","Need a valid process id")
+			endif
+	
+			break
+		endif
+	next
+endif
+
+aSectionName = projectsList
+if (StrLen(aSectionName) == 0)
+	Goto loopbackD1
+endif
+
+exit
+
+if _licenseWarning == @FALSE
+endif
+
+exit
+
+
+:PerformProcessingWithGUI
+	bExit=1   
+	bRegister=2
+
+	BoxesUp("100,100,900,900",@NORMAL)
+
+	rectutext="100,100,1000,900"
+	rectTherm="200,350,800,650"
+	rectButton="0,0,100,100"
+	rectThermLine1="100,550,900,550"
+	rectThermLine2="900,550,900,800"
+	rectThermLine3="900,800,100,800"
+	rectThermLine4="100,800,100,550"
+	ThermPenWidth=20
+	rectThermText1="100,50,1000,199"
+	rectThermPercent="490,625,550,725"
+	rectTopHalf="0,0,1000,210"
+	rectBotHalf="0,210,1000,1000" 
+	rectTitle="100,20,900,170"
+	rectTitleText="10,10,790,140"
+	TitleHeight=950
+	rectNote="100,30,900,270"
+	NoteHeight=400
+	rectNoteText="70,200,950,800"
+     
+	rectnoteline1="0,0,1000,0"
+	rectNoteline2="1000,1000,1000,0"
+	rectNoteLine3="0,1000,1000,1000"
+	rectNoteLine4="0,0,0,1000"
+	notepenwidth=20
+	rectnoteline1b="40,150,960,150"
+	rectNoteline2b="960,840,960,150"
+	rectNoteLine3b="40,840,960,840"
+	rectNoteLine4b="40,150,40,840"
+	notepenwidthb=10
+	Thermid=3
+	Noteid=4
+	; Make main window look nice
+	BoxColor(1,"128,0,0",1)
+	BoxDrawRect(1,"0,0,1000,1000",2)
+	BoxCaption(1,"Encoding files for ColdFusion MX")
+             
+	;;;;Do note box
+	BoxNew(Noteid,rectNote,1)
+	BoxColor(Noteid,LTGRAY,0)       ; Light Gray no gradient
+	BoxDrawRect(Noteid,"",2)
+	
+	BoxTextFont(Noteid,"Arial",NoteHeight / 2,170,0)
+	BoxTextColor(Noteid,RED)
+	
+	BoxPen(Noteid,WHITE,notepenwidth)
+	boxdrawline(Noteid,rectNoteLine1)
+	boxdrawline(Noteid,rectNoteLine4)
+	BoxPen(Noteid,GRAY,notepenwidth)
+	boxdrawline(Noteid,rectNoteLine2)
+	boxdrawline(Noteid,rectNoteLine3)
+	BoxPen(Noteid,WHITE,notepenwidthb)
+	boxdrawline(Noteid,rectNoteLine2b)
+	boxdrawline(Noteid,rectNoteLine3b)
+	BoxPen(Noteid,GRAY,notepenwidthb)
+	boxdrawline(Noteid,rectNoteLine1b)
+	boxdrawline(Noteid,rectNoteLine4b)
+	
+	BoxDataTag(Noteid,"NOTE")
+	BoxDrawText(Noteid,rectNoteText,"Initializing...",1,4)
+             
+	;Draw thermoneter outline
+	BoxNew(Thermid,rectTherm,2)
+	BoxUpdates(Thermid,0)
+	BoxCaption(Thermid,"Name Goes Here")
+	BoxColor(Thermid,LTGRAY,0)
+	BoxDrawRect(Thermid,"",2)
+	; Draw updating thermometer here
+	; there are 3 virtual pixels per percent
+	; we have to draw 3 boxes and some text...
+	BoxDataTag(Thermid,"FRED")
+	BoxCaption(Thermid,"Please wait. Processing Files...")
+	
+	n = ItemCount( allFilesList, @tab)
+
+	if (StrLen(licenseKey) == 0)
+		Message("Shareware Notice", "You are using a shareware version of this cf_encoder program. Please purchase a License to unlock the full version.")
+	endif
+             
+	if _licenseWarning == @FALSE
+		stats_encoded = 0
+		stats_copied = 0
+
+		fp = FilePath(_dstFOLDER)
+		sp = FilePath(_srcFOLDER)
+		
+		for ii = 1 to n
+			BoxDataClear(Thermid,"FRED")
+			BoxUpdates(Thermid,0)
+			BoxColor(Thermid,GREEN,0)
+			xxx= 100+((800*ii)/n)
+			per=(100.0*ii)/n
+			per=Int(per)
+			BoxDrawRect(Thermid,"104,554,%xxx%,796",2)
+			BoxColor(Thermid,GRAY,0)
+			BoxDrawRect(Thermid,"%xxx%,554,896,796",2)
+			BoxPen(Thermid,BLACK,ThermPenWidth)
+			boxdrawline(Thermid,rectThermLine1)
+			boxdrawline(Thermid,rectThermLine2)
+			boxdrawline(Thermid,rectThermLine3)
+			boxdrawline(Thermid,rectThermLine4)
+	
+			s = ItemExtract( ii, allFilesList, @tab)
+			t = StrReplace( s, sp, fp)
+			_s = s
+			k = ItemLocate( s, srcFilesList, @tab)
+			if (StrIndexNc( s, ".cfm", 1, @Fwdscan) > 0) then cfLOC = cfLOC + CountLOC(s)
+			if ( (useCFencoderEXE == 1) && (k > 0) )
+				dp = FilePath(t)
+				if (DirExist(dp) == @FALSE)
+					DirMake(dp)
+				endif
+				kE = ItemLocate( s, _doNotEncodeList, @tab)
+				if (kE == 0)
+					RunShell(cfencoderEXE, '%s% %t% /q /v "2"', "", @NORMAL, @WAIT)
+				else
+					FileCopy( s, t, @False)
+				endif
+				s = StrCat("*",t)
+				stats_encoded = stats_encoded + 1
+			else
+				_p = ""
+				_n = ItemCount( t, "\")
+				for zi = 1 to _n
+					_p = StrCat(_p, ItemExtract( zi, t, "\"))
+					if (zi > 1) && (zi < _n)
+						if (DirExist(_p) == @FALSE)
+							DirMake(_p)
+						endif
+					endif
+					_p = StrCat(_p, "\")
+				next
+				if (FileExist(_s) == @True)
+					ErrorMode(@OFF)
+					bool = FileCopy( _s, t, @False)
+					_err = LastError()
+					ErrorMode(@CANCEL)
+					; simply copy the file without encoding it...
+					srcSize = FileSize(_s)
+					dstSize = FileSize(t)
+					if ( (FileExist(t)) && (srcSize == dstSize) )
+						if ( (useJSminifierEXE == 1) && (StrIndexNc( s, ".js", 1, @Fwdscan) > 0) )
+							; +++
+							handle = FileOpen("%_myPath%jsMin.cmd", "WRITE")
+							FileWrite(handle, '%jsminifierEXE% < %s% > %t%')
+							FileClose(handle)
+							RunShell("%_myPath%jsMin.cmd", "", "", @HIDDEN, @WAIT)
+						endif
+						if (StrIndexNc( s, ".js", 1, @Fwdscan) > 0) then jsLOC = jsLOC + CountLOC(s)
+						;	Message( "Debug", '%s% %t% /q /v "2"')
+						stats_copied = stats_copied + 1
+					else
+						Message( "DEBUG", "ERROR: s = (%_s%), t = (%t%), _err = (%_err%), bool = (%bool%), srcSize = (%srcSize%), dstSize = (%dstSize%)")
+					endif
+				endif
+			endif
+	
+			if per<50 then BoxTextColor(Thermid,WHITE)
+			BoxDrawText(Thermid,rectThermPercent,"%per%%%",0,0)
+			BoxTextColor(Thermid,BLACK)
+			BoxColor(Thermid,LTGRAY,0)
+			BoxDrawText(Thermid,rectThermText1,"%ii%/%n% (%s%)",1,0)
+			BoxDataClear(NoteId,"NOTE");;;
+			BoxDrawText(Noteid,rectNoteText,"Encoding ColdFusion Files",1,4);;;
+			BoxUpdates(Thermid,2)
+	
+		;	TimeDelay(Random(2.0))   ;Fake passage of time
+		next
+
+		BoxTextColor(Noteid,BLUE)        
+		BoxDrawText(Noteid,rectNoteText,"Done !",1,4)
+	else
+		BoxTextColor(Noteid,BLUE)        
+		BoxDrawText(Noteid,rectNoteText,"PLS Register to proceed.",1,4)
+	endif
+
+	if (StrLen(licenseKey) == 0)
+		while 1
+			BoxButtonDraw(1,bRegister,"&Register",  "550,860,700,930")
+			BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930")
+	
+			iBox = 0
+			BoxButtonWait()
+			while iBox == 0
+				for x = 1 to 2
+					if BoxButtonStat(1,x) then iBox = x
+				next
+			end while
+
+			if iBox
+				switch iBox
+					case bExit
+						exit
+						break
+					case bRegister
+						gosub DoRegister
+						break
+				end switch
+			endif
+		end while
+	endif
+
+	if (StrLen(licenseKey) > 0)
+		BoxDestroy(Thermid)
+		BoxDestroy(Noteid)
+	endif
+Return
+
+
+:PerformFileCopyWithGUI
+	bExit=1   
+	bRegister=2
+
+	BoxesUp("100,100,900,900",@NORMAL)
+
+	rectutext="100,100,1000,900"
+	rectTherm="200,350,800,650"
+	rectButton="0,0,100,100"
+	rectThermLine1="100,550,900,550"
+	rectThermLine2="900,550,900,800"
+	rectThermLine3="900,800,100,800"
+	rectThermLine4="100,800,100,550"
+	ThermPenWidth=20
+	rectThermText1="100,50,1000,199"
+	rectThermPercent="490,625,550,725"
+	rectTopHalf="0,0,1000,210"
+	rectBotHalf="0,210,1000,1000" 
+	rectTitle="100,20,900,170"
+	rectTitleText="10,10,790,140"
+	TitleHeight=950
+	rectNote="100,30,900,270"
+	NoteHeight=400
+	rectNoteText="70,200,950,800"
+     
+	rectnoteline1="0,0,1000,0"
+	rectNoteline2="1000,1000,1000,0"
+	rectNoteLine3="0,1000,1000,1000"
+	rectNoteLine4="0,0,0,1000"
+	notepenwidth=20
+	rectnoteline1b="40,150,960,150"
+	rectNoteline2b="960,840,960,150"
+	rectNoteLine3b="40,840,960,840"
+	rectNoteLine4b="40,150,40,840"
+	notepenwidthb=10
+	Thermid=3
+	Noteid=4
+	; Make main window look nice
+	BoxColor(1,"128,0,0",1)
+	BoxDrawRect(1,"0,0,1000,1000",2)
+	BoxCaption(1,"Encoding files for ColdFusion MX")
+             
+	;;;;Do note box
+	BoxNew(Noteid,rectNote,1)
+	BoxColor(Noteid,LTGRAY,0)       ; Light Gray no gradient
+	BoxDrawRect(Noteid,"",2)
+	
+	BoxTextFont(Noteid,"Arial",NoteHeight / 2,170,0)
+	BoxTextColor(Noteid,RED)
+	
+	BoxPen(Noteid,WHITE,notepenwidth)
+	boxdrawline(Noteid,rectNoteLine1)
+	boxdrawline(Noteid,rectNoteLine4)
+	BoxPen(Noteid,GRAY,notepenwidth)
+	boxdrawline(Noteid,rectNoteLine2)
+	boxdrawline(Noteid,rectNoteLine3)
+	BoxPen(Noteid,WHITE,notepenwidthb)
+	boxdrawline(Noteid,rectNoteLine2b)
+	boxdrawline(Noteid,rectNoteLine3b)
+	BoxPen(Noteid,GRAY,notepenwidthb)
+	boxdrawline(Noteid,rectNoteLine1b)
+	boxdrawline(Noteid,rectNoteLine4b)
+	
+	BoxDataTag(Noteid,"NOTE")
+	BoxDrawText(Noteid,rectNoteText,"Initializing...",1,4)
+             
+	;Draw thermoneter outline
+	BoxNew(Thermid,rectTherm,2)
+	BoxUpdates(Thermid,0)
+	BoxCaption(Thermid,"Name Goes Here")
+	BoxColor(Thermid,LTGRAY,0)
+	BoxDrawRect(Thermid,"",2)
+	; Draw updating thermometer here
+	; there are 3 virtual pixels per percent
+	; we have to draw 3 boxes and some text...
+	BoxDataTag(Thermid,"FRED")
+	BoxCaption(Thermid,"Please wait. Copying Files...")
+	
+	n = ItemCount( dstFilesList, @TAB)
+
+	if (StrLen(licenseKey) == 0)
+		Message("Shareware Notice", "You are using a shareware version of this cf_encoder program. Please purchase a License to unlock the full version.")
+	endif
+             
+	if _licenseWarning == @FALSE
+		stats_encoded = 0
+		stats_copied = 0
+
+		if ItemCount(_serversDeployList, @TAB) == 0
+			Message( "Warning", "Cannot Deploy when there are no servers specified as deployment servers.")
+			exit
+		endif
+
+		for ii = 1 to n
+			x = ii
+			BoxDataClear(Thermid,"FRED")
+			BoxUpdates(Thermid,0)
+			BoxColor(Thermid,GREEN,0)
+			xxx= 100+((800*ii)/n)
+			per=(100.0*ii)/n
+			per=Int(per)
+			BoxDrawRect(Thermid,"104,554,%xxx%,796",2)
+			BoxColor(Thermid,GRAY,0)
+			BoxDrawRect(Thermid,"%xxx%,554,896,796",2)
+			BoxPen(Thermid,BLACK,ThermPenWidth)
+			boxdrawline(Thermid,rectThermLine1)
+			boxdrawline(Thermid,rectThermLine2)
+			boxdrawline(Thermid,rectThermLine3)
+			boxdrawline(Thermid,rectThermLine4)
+
+			for x = 1 to ItemCount(serversDeployList, @TAB)
+				xItem = ItemExtract(x, serversDeployList, @TAB)
+				dirName = IniReadPvt (aSectionName, xItem, "", _iniPath)
+		
+				xFileSrc = ItemExtract(ii, dstFilesList, @TAB)
+				xFileDst = StrReplace( xFileSrc, _dstFOLDER, dirName)
+			;	Message( "Debug", '[%xFileSrc%] [%xFileDst%]')
+				xFileDstPath = FilePath(xFileDst)
+				xFileDstPathBase = xFileDstPath
+				xFileDstPathBaseR = ""
+				const_htdocs = "\htdocs*\"
+			;	xxLoc = StrIndexNc( xFileDstPath, const_htdocs, 1, @Fwdscan)
+				xxLoc = StrIndexWild(xFileDstPath, const_htdocs, 1)
+				if xxLoc > 0
+					_xxLoc = StrIndex(xFileDstPath, "\", xxLoc + 1, @FWDSCAN)
+					xFileDstPathBase = StrSub( xFileDstPath, 1, _xxLoc - 1)
+					xFileDstPathBaseR = StrSub( xFileDstPath, _xxLoc, StrLen(xFileDstPath) - _xxLoc)
+				endif
+				_xFileDstPath = xFileDstPathBase
+				for xy = 1 to ItemCount(xFileDstPathBaseR, "\")
+					xFileDstPath_item = ItemExtract(xy, xFileDstPathBaseR, "\")
+					_xFileDstPath = StrCat(_xFileDstPath, xFileDstPath_item)
+					__de = DirExist(_xFileDstPath)
+				;	Message( "INFO", 'xy = [%xy%] DirExist [%_xFileDstPath%] [%__de%]')
+					if (__de == @FALSE)
+						retVal = DirMake(_xFileDstPath)
+					;	Message( "INFO", 'retVal = [%retVal%] DirMake [%_xFileDstPath%]')
+					endif
+					_xFileDstPath = StrCat(_xFileDstPath, "\")
+				next
+ErrorMode(@OFF)
+				retVal = FileCopy( xFileSrc, xFileDst, @FALSE)
+			;	Message( "INFO", 'xFileSrc = [%xFileSrc%] xFileDst = [%xFileDst%]')
+ErrorMode(@CANCEL)
+				if retVal <> @True
+					_lastErr = LastError()
+					Message( "ERROR - FileCopy Failed !", '[%_lastErr%] [%xFileSrc%] [%xFileDst%]')
+				endif
+				s = xFileDst
+			next
+
+			if per<50 then BoxTextColor(Thermid,WHITE)
+			BoxDrawText(Thermid,rectThermPercent,"%per%%%",0,0)
+			BoxTextColor(Thermid,BLACK)
+			BoxColor(Thermid,LTGRAY,0)
+			BoxDrawText(Thermid,rectThermText1,"%ii%/%n% (%s%)",1,0)
+			BoxDataClear(NoteId,"NOTE");;;
+			BoxDrawText(Noteid,rectNoteText,"Copying Encoded ColdFusion Files",1,4);;;
+			BoxUpdates(Thermid,2)
+	
+		;	TimeDelay(Random(2.0))   ;Fake passage of time
+		next
+
+		BoxTextColor(Noteid,BLUE)        
+		BoxDrawText(Noteid,rectNoteText,"Done !",1,4)
+	else
+		BoxTextColor(Noteid,BLUE)        
+		BoxDrawText(Noteid,rectNoteText,"PLS Register to proceed.",1,4)
+	endif
+
+	if (StrLen(licenseKey) == 0)
+		while 1
+			BoxButtonDraw(1,bRegister,"&Register",  "550,860,700,930")
+			BoxButtonDraw(1,bExit,    "E&xit",  "750,860,900,930")
+	
+			iBox = 0
+			BoxButtonWait()
+			while iBox == 0
+				for x = 1 to 2
+					if BoxButtonStat(1,x) then iBox = x
+				next
+			end while
+
+			if iBox
+				switch iBox
+					case bExit
+						exit
+						break
+					case bRegister
+						gosub DoRegister
+						break
+				end switch
+			endif
+		end while
+	endif
+
+	if (StrLen(licenseKey) > 0)
+		BoxDestroy(Thermid)
+		BoxDestroy(Noteid)
+	endif
+Return
+
+
+

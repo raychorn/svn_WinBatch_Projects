@@ -1,0 +1,35 @@
+[Main]
+Type=1
+Src=code-locker.WBT
+Targ=Z:\#wDisk\WinBatch-Dev\code-locker\code-locker.exe
+Icon=Z:\#wDisk\WinBatch-Dev\code-locker\xp_009.ico
+CmpVersion=4
+[Options]
+TechWebPage=http://www.ez-ajax.com
+UACManifestSelection=asInvoker
+UACManifestUI=false
+CodeSign=0
+CodeSignDetails=~~
+RunHidden=0
+LargeExtractDest=0
+PreventAutoExtract=0
+[Version Info]
+Comments=
+CompanyName=Hierarchical Applications Limited, Inc.
+FileDescription=code-locker
+FileVersion=1.0
+InternalName=code-locker.exe
+LegalCopyright=(c)1990-2007 Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c)1990-2007 Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=code-locker.exe
+ProductName=code-locker
+ProductVersion=1.0
+[Other Files]
+Count=4
+File001=Z:\#wDisk\WinBatch-Dev\code-locker\7z.dll
+File002=Z:\#wDisk\WinBatch-Dev\code-locker\7z.exe
+File003=Z:\#wDisk\WinBatch-Dev\code-locker\7-zip.dll
+File004=Z:\#wDisk\WinBatch-Dev\code-locker\codelocker.zip
+[Extenders]
+Count=1
+File001=WWZIP34I.DLL

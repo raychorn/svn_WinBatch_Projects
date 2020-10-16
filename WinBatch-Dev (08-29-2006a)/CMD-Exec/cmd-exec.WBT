@@ -1,0 +1,61 @@
+;*****************************************************************************
+; cmd-exec.wbt
+;
+; Purpose:  Exec a cmd file and wait for a file to appear then delay N seconds
+;
+;*****************************************************************************
+
+_wname = "CMD Exec v1.0.0"
+wname = "%_wname% [Delayed Cmd Exec] (c)1978-2005 Hierarchical Applications Limited, All Rights Reserved."
+
+Cr = Num2Char(13)
+CrLf = StrCat(Cr, Num2Char(10))
+_crlf = CrLf
+
+If param0 > 0
+	_pathName = param1
+Else
+	_pathName = AskLine("Input", "Please enter your CMD file name", "")
+Endif
+
+If param0 > 1
+	_pathTarget = param2
+Else
+	_pathTarget = AskLine("Input", "Please enter your Target file name", "")
+Endif
+
+If param0 > 2
+	_waitSecs = param3
+Else
+	_waitSecs = AskLine("Input", "Please enter num Secs to wait", "")
+Endif
+
+_pname = FilePath(_pathName)
+
+pname = "c:\JRun4\servers\visioneer\SERVER-INF\temp\cfusion.war-tmp\"
+;pname = "\\cfdev2\c$\JRun4\servers\visioneer\SERVER-INF\temp\cfusion.war-tmp\"
+
+logName = StrCat(pname,"cmd_exec_v100",".log")
+
+fHand = FileOpen(logName, "WRITE")
+FileWrite(fHand, "_pname = [%_pname%]")
+FileWrite(fHand, "_pathName = [%_pathName%]")
+FileWrite(fHand, "_pathTarget = [%_pathTarget%]")
+FileWrite(fHand, "_waitSecs = [%_waitSecs%]")
+FileClose(fHand)
+
+RunWait(Environment("COMSPEC"), "/c %_pathName%")
+
+_ts = GetTickCount()
+while 1
+	if FileExist(filename) then break
+	_tn = GetTickCount()
+	_et = _tn - _ts
+	if ((_et / 1000) > 30) then break
+endwhile
+
+if FileExist(filename)
+	TimeDelay(_waitSecs)
+endif
+
+

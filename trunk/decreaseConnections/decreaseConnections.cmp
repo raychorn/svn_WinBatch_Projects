@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=decreaseConnections.wbt
+Targ=W:\WinBatch-Dev\decreaseConnections\decreaseConnections.exe
+Icon=
+CmpVersion=3
+[Options]
+TechWebPage=http://rayhorn.contentopia.net/rayhorn
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=
+CompanyName=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=decreaseConnections
+FileVersion=1.0
+InternalName=decreaseConnections.exe
+LegalCopyright=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2005 Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=decreaseConnections.exe
+ProductName=decreaseConnections
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=0

@@ -1,0 +1,111 @@
+; Tribes2BOTsMissions.wbt
+
+wName = "Tribes2 BOTs Missions Vers 1.0"
+
+; Purpose: Copy All Missions with a .NAV file to a target folder...
+
+_dir_name = "D:\Tribes2"
+
+If param0 > 0
+	; param1 is the directory path name for the root folder for the game aka D:\Tribes2
+	_dir_name = param1
+Else
+	while 1
+;		_dir_name = AskLine(wName, "Tribes2 Destination root folder path ? %_dir_name%", _dir_name)
+		_dir_nameDest = AskDirectory( "Tribes2 Destination Root Folder ? %_dir_name%", "", "", "Tribes2 Destination Root Folder is", 2) 
+		missionsDestFilePath = "%_dir_nameDest%missions"
+		terrainsDestFilePath = "%_dir_nameDest%terrains"
+		if ( (DirExist( missionsDestFilePath) == @TRUE) && (DirExist( terrainsDestFilePath) == @TRUE) )
+			break;
+		endif
+	endwhile
+
+	while 1
+;		_dir_name = AskLine(wName, "Tribes2 Source root folder path ? %_dir_name%", _dir_name)
+		_dir_nameSrc = AskDirectory( "Tribes2 Source Root Folder ? %_dir_name%", "", "", "Tribes2 Source Root Folder is", 2) 
+		missionsSrcFilePath = "%_dir_nameSrc%missions"
+		terrainsSrcFilePath = "%_dir_nameSrc%terrains"
+		if ( (DirExist( missionsSrcFilePath) == @TRUE) && (DirExist( terrainsSrcFilePath) == @TRUE) )
+			break;
+		endif
+	endwhile
+Endif
+
+navHostMissionType = ".nav"
+
+terrainsHeightfieldSrcFilePath = "%_dir_nameSrc%terrains\heightfield"
+terrainsTextureSrcFilePath = "%_dir_nameSrc%terrains\texture"
+texturesGuiSrcFilePath = "%_dir_nameSrc%textures\gui"
+
+terrainsHeightfieldDstFilePath = "%_dir_nameDest%terrains\heightfield"
+terrainsTextureDestFilePath = "%_dir_nameDest%terrains\texture"
+texturesGuiDestFilePath = "%_dir_nameDest%textures\gui"
+
+fListPattern = "%terrainsSrcFilePath%\*%navHostMissionType%"
+fList = FileItemize( fListPattern)
+
+for i = 1 to ItemCount( fList, @TAB)
+	aFile = ItemExtract( i, fList, @TAB)
+	dFile = "%terrainsDestFilePath%\%aFile%"
+	BoxCaption( 1, "Checking... %dFile%")
+	if FileExist( dFile) == @FALSE
+		; can't find aFile in the target folder for terrains so we need to collect up all the files from the source and copy them to the target folders
+		fRoot = FileRoot( aFile)
+		fListM = FileItemize( "%missionsSrcFilePath%\%fRoot%.*")
+		for j = 1 to ItemCount( fListM, @TAB)
+			sFile = ItemExtract( j, fListM, @TAB)
+			tFile = "%missionsDestFilePath%\%sFile%"
+			if (DirExist( missionsDestFilePath) == @FALSE)
+				DirMake( missionsDestFilePath)
+			endif
+			BoxCaption( 1, "Copying... %sFile% to %missionsDestFilePath%")
+			ssFile = "%missionsSrcFilePath%\%sFile%"
+			FileCopy( ssFile, tFile, @TRUE)
+		next
+		fListT = FileItemize( "%terrainsSrcFilePath%\%fRoot%.*")
+		for j = 1 to ItemCount( fListT, @TAB)
+			sFile = ItemExtract( j, fListT, @TAB)
+			tFile = "%terrainsDestFilePath%\%sFile%"
+			if (DirExist( terrainsDestFilePath) == @FALSE)
+				DirMake( terrainsDestFilePath)
+			endif
+			BoxCaption( 1, "Copying... %sFile% to %terrainsDestFilePath%")
+			ssFile = "%terrainsSrcFilePath%\%sFile%"
+			FileCopy( ssFile, tFile, @TRUE)
+		next
+		fListTH = FileItemize( "%terrainsHeightfieldSrcFilePath%\%fRoot%*.*")
+		for j = 1 to ItemCount( fListTH, @TAB)
+			sFile = ItemExtract( j, fListTH, @TAB)
+			tFile = "%terrainsHeightfieldDstFilePath%\%sFile%"
+			if (DirExist( terrainsHeightfieldDstFilePath) == @FALSE)
+				DirMake( terrainsHeightfieldDstFilePath)
+			endif
+			BoxCaption( 1, "Copying... %sFile% to %terrainsHeightfieldDstFilePath%")
+			ssFile = "%terrainsHeightfieldSrcFilePath%\%sFile%"
+			FileCopy( ssFile, tFile, @TRUE)
+		next
+		fListTT = FileItemize( "%terrainsTextureSrcFilePath%\%fRoot%*.*")
+		for j = 1 to ItemCount( fListTT, @TAB)
+			sFile = ItemExtract( j, fListTT, @TAB)
+			tFile = "%terrainsTextureDestFilePath%\%sFile%"
+			if (DirExist( terrainsTextureDestFilePath) == @FALSE)
+				DirMake( terrainsTextureDestFilePath)
+			endif
+			BoxCaption( 1, "Copying... %sFile% to %terrainsTextureDestFilePath%")
+			ssFile = "%terrainsTextureSrcFilePath%\%sFile%"
+			FileCopy( ssFile, tFile, @TRUE)
+		next
+		fListTG = FileItemize( "*%texturesGuiSrcFilePath%\%fRoot%*.*")
+		for j = 1 to ItemCount( fListTG, @TAB)
+			sFile = ItemExtract( j, fListTG, @TAB)
+			tFile = "%texturesGuiDestFilePath%\%sFile%"
+			if (DirExist( texturesGuiDestFilePath) == @FALSE)
+				DirMake( texturesGuiDestFilePath)
+			endif
+			BoxCaption( 1, "Copying... %sFile% to %texturesGuiDestFilePath%")
+			ssFile = "%texturesGuiSrcFilePath%\%sFile%"
+			FileCopy( ssFile, tFile, @TRUE)
+		next
+	endif
+next
+

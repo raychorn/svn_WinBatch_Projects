@@ -1,0 +1,25 @@
+[Main]
+Type=1
+Src=Progress2mySQL.wbt
+Targ=W:\WinBatch-Dev\Progress-to-mySQL\Progress2mySQL.exe
+Icon=W:\WinBatch-Dev\Progress-to-mySQL\Progress2mySQL.ico
+CmpVersion=3
+[Options]
+TechWebPage=http://www.ez-ajax.com
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=
+CompanyName=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=Progress2mySQL
+FileVersion=1.0
+InternalName=Progress2mySQL.exe
+LegalCopyright=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2006, Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=Progress2mySQL.exe
+ProductName=Progress2mySQL
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=0

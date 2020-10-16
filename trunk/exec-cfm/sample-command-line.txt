@@ -1,0 +1,1 @@
+http://t2chameleon.com/__admin/tribes_master_server_sniffer.cfm?Folder=%5C%5CJaneway%5CJaneway_D%5CInetpub%5Cwww-root%5CTribes2ChameleonMod.HALSmalltalker.com%5Ctribes-server-list-1.xml&ServerList=%5C%5CPicard%5CPicard-F%5Cwww-root%5Cqstat24e%5Cplayer-tracker-template%5Ctribes2.lst&isRunningBackground=True&RequestTimeout=999

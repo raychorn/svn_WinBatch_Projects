@@ -1,0 +1,157 @@
+:doQuery
+;CONNECTS TO THE _datasource DATA SOURCE
+; param1 ............ input - the name of the variable that holds the datasource name
+; param2 ............ input - the name of the variable that holds the hdbc
+; param3 ............ input - the name of the variable that holds the sql_stmnt - the SQL statement
+; param4 ............ input - the name of the variable that holds the sql_fetch - the fetchable flag @TRUE or @FALSE
+; retcode ........... output - used
+; sql_fetched ....... output - holds the fetched flag @TRUE or @FALSE
+; _id ............... output - the file id from the database
+; _fname ............ output - the filename from the database
+If param0 <> 4
+    WebOut('<FONT COLOR="RED"><B>ERROR - Insufficient number of params (%param0) for doQuery</B></FONT>', _html_crlf)
+    return
+Endif
+
+If IsDefined( hstmt) == @YES
+    hstmt_doQuery = hstmt
+Endif
+
+If IsDefined( fnameBuf) == @YES
+    fnameBuf_doQuery = fnameBuf
+Endif
+
+If IsDefined( hdbc) == @YES
+    hdbc_doQuery = hdbc
+Endif
+
+If IsDefined( datasource) == @YES
+    datasource_doQuery = datasource
+Endif
+
+If IsDefined( sql_stmnt) == @YES
+    sql_stmnt_doQuery = sql_stmnt
+Endif
+
+_param2 = %param2%
+hdbc = %_param2%
+
+_param1 = %param1%
+datasource = "%_param1%"
+
+_param3 = %param3%
+sql_stmnt = "%_param3%"
+
+retcode = qConnect(hdbc, datasource, "", "")
+
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">doQuery: qConnect failed %retcode%, hdbc=%hdbc%, DSN=%datasource%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+;THIS ALLOCATES A SQL STATEMENT HANDLE
+hstmt = qAllocStmt(hdbc)
+
+If hstmt == -1
+  retcode = qLastCode()
+  WebOut('<BR><B><FONT COLOR="RED">doQuery: qAllocStmt failed %retcode%, hdbc=%hdbc%</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+retcode = qExecDirect(hstmt, sql_stmnt)
+If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+  WebOut('<BR><B><FONT COLOR="RED">doQuery: ', _html_crlf)
+  WebOut('qExecDirect failed %retcode%', _html_crlf)
+  WebOut('<BR>sql_stmnt=', _html_crlf)
+  WebOut(sql_stmnt, _html_crlf)
+  WebOut('</FONT></B><BR>', _html_crlf)
+  Exit
+Endif
+
+sql_fetched = @FALSE
+
+retcode = qFetch(hstmt)
+
+If (%param4% == @TRUE) && (retcode <> @qNoData)
+    fnameBuf = BinaryAlloc(260)
+    If fnameBuf == @FALSE
+        WebOut('<BR><B><FONT COLOR="RED">doQuery: BinaryAlloc failed for fnameBuf</FONT></B><BR>', _html_crlf)
+        Exit
+    Endif
+
+    While @TRUE
+        If retcode == @qNoData Then Break
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">doQuery: qFetch failed %retcode%</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        _id = 0
+        retcode = qGetData(hstmt, 1, "_id", 10)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">doQuery: qGetData failed %retcode% for _id</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        retcode = qGetData(hstmt, 2, "fnameBuf", 255)
+
+        If (retcode != @qSuccess) && (retcode != @qSuccessInfo)
+            WebOut('<BR><B><FONT COLOR="RED">doQuery: qGetData failed %retcode% for fnameBuf</FONT></B><BR>', _html_crlf)
+            Exit
+        Endif
+
+        If (retcode == @qSuccessInfo)  ; if the field was too small (This is how to handle errors)
+            msg = qError(hstmt, 2)
+            WebOut('<BR><B><FONT COLOR="RED">doQuery: qGetData error/status %msg% for fnameBuf</FONT></B><BR>', _html_crlf)
+        Endif
+
+        _fname = BinaryPeekStr(fnameBuf, 0, BinaryEodGet(fnameBuf))
+
+        sql_fetched = @TRUE
+
+        retcode = qFetch(hstmt)
+
+    EndWhile
+
+    BinaryFree(fnameBuf)
+Endif
+
+
+;SQL_CLOSE  - FREES A SQL CONNECTION
+qFreeStmt(hstmt, 1)
+;SQL_UNBIND
+;qFreeStmt(hstmt, 2)
+
+Drop( hstmt, fnameBuf, hdbc, _param2, datasource, _param3)
+
+If IsDefined( hstmt_doQuery) == @YES
+    hstmt = hstmt_doQuery
+    Drop( hstmt_doQuery)
+Endif
+
+If IsDefined( fnameBuf_doQuery) == @YES
+    fnameBuf = fnameBuf_doQuery
+    Drop( fnameBuf_doQuery)
+Endif
+
+If IsDefined( hdbc_doQuery) == @YES
+    hdbc = hdbc_doQuery
+    Drop( hdbc_doQuery)
+Endif
+
+If IsDefined( datasource_doQuery) == @YES
+    datasource = datasource_doQuery
+    Drop( datasource_doQuery)
+Endif
+
+If IsDefined( sql_stmnt_doQuery) == @YES
+    sql_stmnt = sql_stmnt_doQuery
+    Drop( sql_stmnt_doQuery)
+Endif
+
+return
+
+
+

@@ -1,0 +1,25 @@
+:processOldDatabase2
+; _private_dir ..... input
+
+theDirs = DirItemize( StrReplace( StrCat( _private_dir, "\*.*"), "\\", "\"))
+count = ItemCount( theDirs, @TAB)
+
+WebOut('<OL>', _html_crlf)
+For i=1 to count
+    d = ItemExtract(i, theDirs, @TAB)
+    WebOut('<LI><B>%d%</B></LI>', _html_crlf)
+
+    theFiles = FileItemize( StrReplace( StrCat( _private_dir, "\%d%\*.*"), "\\", "\"))
+    _count = ItemCount( theFiles, @TAB)
+    WebOut('<OL>', _html_crlf)
+    For j=1 to _count
+        f = ItemExtract(j, theFiles, @TAB)
+        WebOut('<LI><B>%f%</B></LI>', _html_crlf)
+    Next
+    WebOut('</OL>', _html_crlf)
+Next
+WebOut('</OL>', _html_crlf)
+
+return
+
+

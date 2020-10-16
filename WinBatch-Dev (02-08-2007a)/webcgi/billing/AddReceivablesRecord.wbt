@@ -1,0 +1,49 @@
+:AddReceivablesRecord
+
+WebOut('', _html_crlf)
+
+WebOut('<FORM ACTION="%_this_cgi%" METHOD="POST" TARGET="_top">', 0)
+
+_table = "receivables"
+Call( StrCat( _cgi_dir, "QuerySQLfetch_map.wbc"), "")
+
+sql_alias = _table
+sql_html_file = _viewReceivablesRecord_html
+Call( StrCat( _cgi_dir, "ViewACustWebSiteContactRecord.wbc"), "")
+
+WebOut('<BR>', 0)
+
+WebOut('<FONT SIZE="4"><SMALL><B>For WebSite: </B></SMALL><BR><SELECT NAME="%_WebSiteList%" SIZE="1">', _html_crlf)
+
+_table = "website"
+sql_stmnt = "SELECT id, domain_name, ip FROM %_table% WHERE custid = %_custid%"
+sql_fetch_map = "N,S128,S32"
+sql_fetch_gosub = "ListWebSiteRecordsOneByOne"
+sql_fetch = @TRUE
+sql_alias = _table
+_datasource = datasource
+Call( StrCat( _cgi_dir, "ExecSQLDirect.wbc"), "")
+
+WebOut('</SELECT></FONT>', _html_crlf)
+
+WebOut('<BR><BR>', 0)
+
+WebOut('<B><INPUT TYPE="SUBMIT" NAME="SUBMIT-BUTTON" VALUE="', 0)
+If _add_prepayment_mode == @TRUE
+    WebOut(_action_AddPrePayment, 0)
+Else
+    WebOut(_action_AddReceivable, 0)
+Endif
+WebOut('"></B>', 0)
+WebOut('<INPUT TYPE="HIDDEN" NAME="_action" VALUE="', 0)
+If _add_prepayment_mode == @TRUE
+    WebOut(_action_AddPrePayment, 0)
+Else
+    WebOut(_action_AddReceivable, 0)
+Endif
+WebOut('">', 0)
+
+WebOut('</FORM>', _html_crlf)
+
+return
+

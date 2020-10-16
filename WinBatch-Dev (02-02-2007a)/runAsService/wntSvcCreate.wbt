@@ -1,0 +1,41 @@
+;************************************************************************
+; wntSvcCreate.wbt
+; 
+;************************************************************************
+
+AddExtender("WWWNT34i.DLL")
+
+#DefineFunction makeService(myPath)
+	IntControl(73, 2,0,0,0)
+
+	ServiceName = "OpenLaszlo Server 4.0"
+	DisplayName = "OpenLaszlo Server 4.0"
+	BinaryPathName = "C:\Program Files\Java\jdk1.5.0_06\bin\java.exe"
+	LoadOrderGroup = ""
+	ServiceStartName = "LocalSystem"
+	Password = ""
+	createstring = Strcat(ServiceName,"|",DisplayName,"|",BinaryPathName,"|",LoadOrderGroup,"|",ServiceStartName,"|",Password)
+	ServiceType = 256|16
+	StartType = 3
+	ErrorControl = 0
+	createflags = strcat(ServiceType,"|",StartType,"|",ErrorControl)
+	wntSvcCreate("", createstring, createflags, "","")
+	
+	Message("Done","Added a service to the service control manager database.")
+
+	Return
+	
+	:WBERRORHANDLER
+	Error=LastError()
+	Terminate(error!=3246,"Error %error%",StrCat(wberrorhandlerline,@CRLF,IntControl(34,error,0,0,0)))
+	%wberrorhandlerassignment%="Not Found"
+	IntControl(73, 2,0,0,0)
+	Return
+#EndFunction
+
+_myPathName = IntControl( 1004, 0, 0, 0, 0)
+
+_myPath = FilePath( _myPathName)
+
+makeService(_myPath)
+

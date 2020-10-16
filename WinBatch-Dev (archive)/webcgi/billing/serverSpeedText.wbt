@@ -1,0 +1,41 @@
+:serverSpeedText
+; _serverSpeed ..... input
+; _serverSpeedText . output
+
+If StrIndex( _OC3_Connection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+    _serverSpeedText = _OC3_Connection_Text
+Else
+    If StrIndex( _OC3_LowerConnection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+        _serverSpeedText = _OC3_LowerConnection_Text
+    Else
+        If StrIndex( _DONT_CARE_Connection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+            _serverSpeedText = _DONT_CARE_Connection_Text
+        Else
+            If StrIndex( _T1_SharedConnection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+                _serverSpeedText = _T1_SharedConnection_Text
+            Else
+                If StrIndex( _T1_DedicatedConnection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+                    _serverSpeedText = _T1_DedicatedConnection_Text
+                Else
+                    If StrIndex( _T3_SharedConnection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+                        _serverSpeedText = _T3_SharedConnection_Text
+                    Else
+                        If StrIndex( _T3_LowShareConnection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+                            _serverSpeedText = _T3_LowShareConnection_Text
+                        Else
+                            If StrIndex( _T3_DedicatedConnection_Value, _serverSpeed, 1, @FWDSCAN) > 0
+                                _serverSpeedText = _T3_DedicatedConnection_Text
+                            Else
+                                _serverSpeedText = "UNKNOWN-Server-Speed"
+                            Endif
+                        Endif
+                    Endif
+                Endif
+            Endif
+        Endif
+    Endif
+Endif
+
+return
+
+

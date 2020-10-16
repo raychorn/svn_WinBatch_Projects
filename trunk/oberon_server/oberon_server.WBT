@@ -1,0 +1,77 @@
+;************************************************************************
+; oberon_server.wbt
+; 
+;************************************************************************
+
+_wname = "Oberon Server v1.0.0"
+wname = "%_wname% (c)2007-2008 Vyper Logix, Corp, All Rights Reserved."
+
+_myPathName = IntControl( 1004, 0, 0, 0, 0)
+_myPath = FilePath( _myPathName)
+_myName = StrReplace( _myPathName, _myPath, "")
+_myName = StrReplace( _myName, StrCat( ".", ItemExtract( ItemCount( _myName, "."), _myName, ".")), "")
+_wname_ = StrReplace( StrReplace( _wname, ".", "_"), " ", "_")
+_iniPath = '%_myPath%%_wname_%.INI'
+
+if FileExist(_iniPath) == @True
+	FileDelete(_iniPath)
+endif
+
+_mpserver = "C:\oberon_sdk\bin\multiplayer\mpserver\mpserver.exe"
+_mpserver_dirname = FilePath( _mpserver)
+
+if WinExist(_mpserver) == @TRUE
+	WinActivate(_mpserver)
+	WinClose( _mpserver)
+endif
+
+if FileExist( _mpserver)
+	RunShell( _mpserver, "", _mpserver_dirname, @NORMAL, @NOWAIT)
+endif
+
+TimeDelay(1)
+
+if WinExist(_mpserver) == @TRUE
+	WinActivate(_mpserver)
+	sx = WinPlaceGet( @NORMAL, _mpserver)
+	sx1 = ItemExtract( 1, sx, ' ')
+	sy1 = ItemExtract( 2, sx, ' ')
+	sx2 = ItemExtract( 3, sx, ' ')
+	sy2 = ItemExtract( 4, sx, ' ')
+	sxDelta = sx2 - sx1
+	syDelta = sy2 - sy1
+	WinPlaceSet( @NORMAL, _mpserver, "0 0 %sxDelta% %syDelta%")
+endif
+
+_mpchat = "C:\oberon_sdk\bin\multiplayer\mpchat\mpchat.exe"
+_mpchat_dirname = FilePath(_mpchat)
+
+if WinExist(_mpchat) == @TRUE
+	WinActivate(_mpchat)
+	WinClose( _mpchat)
+endif
+
+if FileExist( _mpchat)
+	RunShell( _mpchat, "", _mpchat_dirname, @NORMAL, @NOWAIT)
+endif
+
+TimeDelay(1)
+
+if WinExist(_mpchat) == @TRUE
+	WinActivate(_mpchat)
+	cx = WinPlaceGet( @NORMAL, _mpchat)
+	cx1 = ItemExtract( 1, cx, ' ')
+	cy1 = ItemExtract( 2, cx, ' ')
+	cx2 = ItemExtract( 3, cx, ' ')
+	cy2 = ItemExtract( 4, cx, ' ')
+	cxDelta = cx2 - cx1
+	cyDelta = cy2 - cy1
+	iy = syDelta
+	_cyDelta = cyDelta + syDelta
+	WinPlaceSet( @NORMAL, _mpchat, "0 %iy% %cxDelta% %_cyDelta%")
+endif
+
+exit
+
+
+

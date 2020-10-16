@@ -1,0 +1,90 @@
+; ftp-tester2.wbt
+
+AddExtender("WWWSK32I.DLL")
+
+IntControl(41, 1, 0, 0, 0) ; Y2K to 4 digit YYYY
+
+_appName = "ftp-tester2"
+
+wname_webcelerator = "webcelerator"
+
+_ftp_host = "207.55.210.25:22"
+_ftp_userid = "anonymous"
+_ftp_pswd = "support@yourdomain.com"
+_ftp_acct = ""
+_ftp_attempts = 1
+_ftp_remote_file = "/accel/webcelerator.exe"
+_ftp_local_file = "c:\temp\webcelerator.exe"
+_ftp_transfer_type = "B"
+
+_ftp_ascii_transfer_type = "A"
+_ftp_binary_transfer_type = "B"
+
+_debug_mode_no = "no"
+_debug_mode_yes = "yes"
+
+_debug_mode = _debug_mode_no
+
+If param0 > 0
+	_ftp_host = param1
+Else
+	_ftp_host = AskLine("%_appName%", "FTP Host Address?", _ftp_host)
+Endif
+
+If param0 > 1
+	_ftp_userid = param2
+Else
+	_ftp_userid = AskLine("%_appName%", "FTP Username?", _ftp_userid)
+Endif
+
+If param0 > 2
+	_ftp_pswd = param3
+Else
+	_ftp_pswd = AskLine("%_appName%", "FTP Password?", _ftp_pswd)
+Endif
+
+If param0 > 3
+	_ftp_acct = param4
+Else
+	_ftp_acct = AskLine("%_appName%", "FTP Account Name? ", _ftp_acct)
+Endif
+
+If param0 > 4
+	_ftp_local_file = param5
+Else
+	_ftp_local_file = AskLine("%_appName%", "Local Filename? ", _ftp_local_file)
+Endif
+
+If param0 > 5
+	_ftp_remote_file = param6
+Else
+	_ftp_remote_file = AskLine("%_appName%", "Remote Filename? ", _ftp_remote_file)
+Endif
+
+If param0 > 6
+	_ftp_transfer_type = param7
+Else
+	_ftp_transfer_type = AskLine("%_appName%", "FTP Ttransfer Type? (%_ftp_ascii_transfer_type% or %_ftp_binary_transfer_type%)", _ftp_transfer_type)
+	
+	If (_ftp_transfer_type <> _ftp_ascii_transfer_type) && (_ftp_transfer_type <> _ftp_binary_transfer_type)
+		_ftp_transfer_type = _ftp_binary_transfer_type
+	Endif
+Endif
+
+If param0 > 7
+	_ftp_attempts = param8
+Else
+	_ftp_attempts = AskLine("%_appName%", "FTP Connect Attempts? ", _ftp_attempts)
+Endif
+
+hSession = ftpOpen( _ftp_host, _ftp_userid, _ftp_pswd, _ftp_acct, _ftp_attempts)
+if !IsNumber(hSession)
+	Message( "%_appName% - FTP Open Error", hSession)
+	exit
+endif
+rs = ftpGet( hSession, _ftp_remote_file, _ftp_local_file, _ftp_transfer_type)
+ftpClose( hSession)
+Message("%_appName% - ftpGet returned", rs)
+
+exit
+

@@ -1,0 +1,133 @@
+; http-hammer.wbt
+
+AddExtender("wwwsk32i.dll")
+
+;Debug( @ON)
+
+wname = "http-hammer.wbt"
+
+;filename = "C:\RayHorn\VB5\VSFlex OCX\Version 2.01.036\vsflex2.zip"
+filename = "C:\TEMP\vsflex2.zip"
+
+;proxy_server_name = "gatekeeper"
+proxy_server_name = "gatekeeper.hq.adia"
+
+_retcode = httpFirewall( 1, proxy_server_name,"80","","")
+
+Message( "DEBUG", "_retcode=%_retcode%")
+
+URL = "ftp://ftp.videosoft.com/pub/videosoft/vsflex2.zip"
+serv = httpGetServer(URL, "")
+path = httpGetpath(URL, "")
+retcode = httpRecvFile( serv, path, filename, 0)
+
+Message( "DEBUG", "retcode=%retcode%")
+
+_error_cond = ""
+If retcode <> 200
+		_error_cond = " ERROR"
+Endif
+
+_sometext = ""
+
+_HTTPResponseCodeVar = "retcode"
+_HTTPResponse_descVar = "_sometext"
+Gosub explainHTTPResponseCode
+
+Message( "wname%_error_cond%", _sometext)
+
+exit
+
+
+:explainHTTPResponseCode
+; _HTTPResponseCodeVar ........... the name of the variabe that holds the HTTPResponseCode
+; _HTTPResponse_descVar ... the name of the variabe that holds the HTTPResponse_description text
+
+%_HTTPResponse_descVar% = "UNKNOWN"
+
+Message( "DEBUG", "_HTTPResponseCodeVar=%_HTTPResponseCodeVar%")
+
+Switch %_HTTPResponseCodeVar%
+	case 200
+			%_HTTPResponse_descVar% = "OK"
+			break
+	case 201
+			%_HTTPResponse_descVar% = "Created - Following a POST command, this indicates success, but the text of the response line indicates the URL of the new document. "
+			break
+	case 202
+			%_HTTPResponse_descVar% = "Accepted - Request accepted for asynchronous processing. "
+			break
+	case 203
+			%_HTTPResponse_descVar% = "Partial Information - Returned information may be cached or private. "
+			break
+	case 204
+			%_HTTPResponse_descVar% = "No Response - Used for scripts that don't return a visible result. "
+			break
+	case 301
+			%_HTTPResponse_descVar% = "Moved - Browsers with link editing capabilities should automatically link to the new reference. The response contains one or more header lines of the form URI: <url> string CrLf which specify "
+			%_HTTPResponse_descVar% = StrCat( %_HTTPResponse_descVar%, "alternative addresses for the object in question.")
+			break
+	case 302
+			%_HTTPResponse_descVar% = "Found - Same as move, except that linking to the found address doesn't make much sense, since the document URL is expected to change. This is the code that the httpd returns for a cgi script "
+			%_HTTPResponse_descVar% = StrCat( %_HTTPResponse_descVar%, "whose output contained a Location: header. ")
+			break
+	case 303
+			%_HTTPResponse_descVar% = "Method - Same as found, but a different method may be used to access the document; details about the method are sent in the message body. "
+			break
+	case 304
+			%_HTTPResponse_descVar% = "Not modified - Use the local copy if it was cached. "
+			break
+	case 400
+			%_HTTPResponse_descVar% = "Bad Request - Impossible request or syntax error "
+			break
+	case 401
+			%_HTTPResponse_descVar% = "Unauthorized - Request should be retried with proper authorization header. "
+			break
+	case 402
+			%_HTTPResponse_descVar% = "Payment Required - Request should be retried with proper charge-to header. "
+			break
+	case 403
+			%_HTTPResponse_descVar% = "Forbidden - Authorization will not help "
+			break
+	case 404
+			%_HTTPResponse_descVar% = "Not found - A document with that URL doesn't exist. "
+			break
+	case 407
+			%_HTTPResponse_descVar% = "Proxy Authentication Required - Must first authenticate with the proxy"
+			break
+	case 408
+			%_HTTPResponse_descVar% = "Request Timeout - did not produce a request within the time that the server was prepared to wait"
+			break
+	case 409
+			%_HTTPResponse_descVar% = "Conflict - request could not be completed due to a conflict with the current state of the resource."
+			break
+	case 410
+			%_HTTPResponse_descVar% = "Gone - The requested resource is no longer available at the server and no forwarding address is known. "
+			break
+	case 411
+			%_HTTPResponse_descVar% = "No such group - (NCSA httpd) the newsgroup in news:newsgroup doesn't exist. "
+			break
+	case 500
+			%_HTTPResponse_descVar% = "Internal Error "
+			break
+	case 501
+			%_HTTPResponse_descVar% = "Not implemented - ``I'm sorry, Dave, I can't do that.'' "
+			break
+	case 502
+			%_HTTPResponse_descVar% = "Timed out - (Seen in practice, not in the specification.) "
+			break
+	case 503
+			%_HTTPResponse_descVar% = "Service Unavailable - The server is currently unable to handle the request due to a temporary overloading or maintenance of the server."
+			break
+	case 504
+			%_HTTPResponse_descVar% = "Gateway Timeout -  The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server it accessed in attempting to complete the request."
+			break
+	case 505
+			%_HTTPResponse_descVar% = "HTTP Version Not Supported - The server does not support, or refuses to support, the HTTP protocol version that was used in the request message."
+			break
+EndSwitch
+
+return
+
+
+

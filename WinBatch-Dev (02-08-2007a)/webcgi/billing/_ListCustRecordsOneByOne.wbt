@@ -1,0 +1,139 @@
+:_ListCustRecordsOneByOne
+; param1 ........... input - the name of the variable that holds the delinquent receivables value total fee_due
+
+b_show_this_record = @FALSE
+
+If b_show_only_delinquencies
+    If param0 == 1
+        _param1 = %param1%
+        If StrLen( "%_param1%") > 0
+            b_show_this_record = @TRUE
+        Endif
+    Endif
+Else
+    b_show_this_record = @TRUE
+Endif
+
+If b_show_this_record == @FALSE
+    return
+Endif
+
+WebOut('<OPTION VALUE="', 0)
+If IsDefined( %sql_alias%1) == @YES
+    WebOut(%sql_alias%1, 0)
+    WebOut(_CustomerList_delimiter, 0)
+    i_max_string_len = StrLen( %sql_alias%1)
+    If (i_max_string_len + StrLen( %sql_alias%2) + 1) > _max_string_len
+        WebOut( StrSub( %sql_alias%2, 1, _max_string_len - i_max_string_len - 3), 0)
+        WebOut('...', 0)
+    Else
+        WebOut(%sql_alias%2, 0)
+    Endif
+    Drop( i_max_string_len)
+Endif
+WebOut('">%_record_count%: ', 0)
+If IsDefined( %sql_alias%2) == @YES
+    If b_show_domain_ip_names
+        i_max_string_len = StrLen( %sql_alias%2)
+        If i_max_string_len > _max_string_len
+            WebOut( StrSub( %sql_alias%2, 1, _max_string_len - i_max_string_len - 3), 0)
+            WebOut('...', 0)
+        Else
+            WebOut(%sql_alias%2, 0)
+        Endif
+        Drop( i_max_string_len)
+    Else
+        WebOut(%sql_alias%2, 0)
+    Endif
+Endif
+
+If b_show_domain_ip_names
+    If IsDefined( %sql_alias%3) == @YES
+        WebOut(' ', 0)
+        WebOut(%sql_alias%3, 0)
+    Endif
+
+    If IsDefined( %sql_alias%4) == @YES
+        WebOut('/', 0)
+        WebOut(%sql_alias%4, 0)
+    Endif
+Endif
+
+If __debug <> @FALSE
+    WebOut('<B><FONT COLOR="BLUE">ListCustRecordsOneByOne ', 0)
+    WebOut('param0=(', 0)
+    WebOut(param0, 0)
+    WebOut(')', 0)
+    WebOut(', %param1%=(', 0)
+    WebOut(%param1%, 0)
+    WebOut(')', 0)
+    WebOut('</FONT></B>', _html_crlf)
+Endif
+
+If b_show_delinquency_status
+    If param0 == 1
+        _param1 = %param1%
+        If StrLen( "%_param1%") > 0
+            d_record_count = d_record_count + 1
+
+            WebOut(' DELINQUENT: $', 0)
+
+            _d = Decimals( 2)
+
+            _dv = %_param1% * 1.0
+
+            If __debug <> @FALSE
+                WebOut('<B><FONT COLOR="BLUE">ListCustRecordsOneByOne ', 0)
+                WebOut('_dv=(', 0)
+                WebOut(_dv, 0)
+                WebOut(')', 0)
+                WebOut(', _d=(', 0)
+                WebOut(_d, 0)
+                WebOut(')', 0)
+                WebOut('</FONT></B>', _html_crlf)
+            Endif
+
+            WebOut('%_dv%', 0)
+        
+            d_total = d_total + _dv
+
+            Decimals( _d)
+    
+            Drop( _d, _dv)
+        Endif
+        Drop( _param1)
+    Endif
+Endif
+WebOut('</OPTION>', _html_crlf)
+
+_record_count = _record_count + 1
+
+return
+
+
+
+;:ListCustRecordsOneByOne
+
+;WebOut('<OPTION VALUE="', 0)
+;If IsDefined( %sql_alias%1) == @YES
+;    WebOut(%sql_alias%1, 0)
+;    WebOut(_CustomerList_delimiter, 0)
+;    i_max_string_len = StrLen( %sql_alias%1)
+;    If (i_max_string_len + StrLen( %sql_alias%2) + 1) > _max_string_len
+;        WebOut( StrSub( %sql_alias%2, 1, _max_string_len - i_max_string_len - 3), 0)
+;        WebOut('...', 0)
+;    Else
+;        WebOut(%sql_alias%2, 0)
+;    Endif
+;    Drop( i_max_string_len)
+;Endif
+;WebOut('">%_record_count%: ', 0)
+;If IsDefined( %sql_alias%2) == @YES
+;    WebOut(%sql_alias%2, 0)
+;Endif
+;WebOut('</OPTION>', _html_crlf)
+;
+;_record_count = _record_count + 1
+;
+;return
+

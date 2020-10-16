@@ -1,0 +1,3 @@
+T2S`4.2.15.172:28200`SegaNet CTF|3Bots Atlant`Dust to Dust`40`1`100`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game=base`mission=Capture the Flag`status=65`dedicated=1`bot_count=1`cpu_speed=594`info=SegaNet Tribes 2 | www.sega.net | contact: hal9000@sega.com | Dual P3 600, 2 Gb RAM, Netengine box on the SegaNet hub - Atlanta.`numteams=0
+

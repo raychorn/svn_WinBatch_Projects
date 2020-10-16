@@ -1,0 +1,28 @@
+:serverSpeedSelection
+; _selectName ..... input
+; _selection ...... input
+
+WebOut('<FONT SIZE="2"><SELECT NAME="%_selectName%">', 0)
+
+WebOut('<OPTION VALUE="%_DONT_CARE_Connection_Value%"', 0)
+If StrIndex( _DONT_CARE_Connection_Value, _selection, 1, @FWDSCAN) > 0
+    WebOut(' SELECTED="SELECTED"', 0)
+Endif
+WebOut('>%_DONT_CARE_Connection_Text%</OPTION>', 0)
+
+WebOut('<OPTION VALUE="%_OC3_Connection_Value%"', 0)
+If StrIndex( _OC3_Connection_Value, _selection, 1, @FWDSCAN) > 0
+    WebOut(' SELECTED="SELECTED"', 0)
+Endif
+WebOut('>%_OC3_Connection_Text%</OPTION>', 0)
+
+WebOut('<OPTION VALUE="%_T3_SharedConnection_Value%"', 0)
+If StrIndex( _T3_SharedConnection_Value, _selection, 1, @FWDSCAN) > 0
+    WebOut(' SELECTED="SELECTED"', 0)
+Endif
+WebOut('>%_T3_SharedConnection_Text%</OPTION>', 0)
+
+WebOut('</SELECT></FONT>', 0)
+
+return
+

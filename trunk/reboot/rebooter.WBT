@@ -1,0 +1,9 @@
+;************************************************************************
+; rebooter.wbt
+; 
+;************************************************************************
+
+_wname = "Rebooter v1.0.0"
+wname = "%_wname% (c)1990-2007 Hierarchical Applications Limited, All Rights Reserved."
+
+IntControl (67, 0, 1, 0, 0)

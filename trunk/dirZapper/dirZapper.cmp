@@ -1,0 +1,29 @@
+[Main]
+Type=1
+Targ=I:\myWinbatch\dirZapper\dirZapper.exe
+Icon=i:\myWinbatch\dirZapper\dirZapper.ico
+
+
+[Options]
+TechWebPage=http://shareware.hal-smalltalker.com/winbatch
+RunHidden=0
+
+[Version Info]
+Comments=
+CompanyName=HAL Smalltalker, Inc.
+FileDescription=dirZapper
+FileVersion=1.1
+InternalName=dirZapper.exe
+LegalCopyright=(c). Copyright 1990-1999 HAL Smalltalker, Inc., All Rights Reserved
+LegalTrademarks=
+OriginalFilename=dirZapper.exe
+ProductName=dirZapper
+ProductVersion=1.1
+
+[Other Files]
+Count=2
+File001=I:\myWinbatch\dirZapper\product-help.html
+File002=I:\myWinbatch\dirZapper\Yes02b1a200x183LSb.jpg
+[Extenders]
+Count=1
+File001=WWZIP32I.DLL

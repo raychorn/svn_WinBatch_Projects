@@ -1,0 +1,24 @@
+[Main]
+Type=1
+Src=auto-word-printer.wbt
+Targ=G:\myWinbatch\auto-word-printer\auto-word-printer.exe
+Icon=G:\myWinbatch\tribes2missions\won.ico
+CmpVersion=2
+[Options]
+TechWebPage=http://T2Chameleon.com/
+RunHidden=0
+[Version Info]
+Comments=
+CompanyName=HAL Smalltalker, Inc.
+FileDescription=auto-word-printer
+FileVersion=1.0
+InternalName=auto-word-printer.exe
+LegalCopyright=(c). Copyright 1990-2001 All Rights Reserved
+LegalTrademarks=http://T2Chameleon.com/
+OriginalFilename=auto-word-printer.exe
+ProductName=auto-word-printer
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=0

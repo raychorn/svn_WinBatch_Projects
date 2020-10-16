@@ -1,0 +1,3 @@
+T2S`209.96.178.247:28000` | Widomaker 1 ($A$) | `Reversion`32`0`121`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game=base`mission=Capture the Flag`status=17`dedicated=1`no_aliases=1`bot_count=0`cpu_speed=800`info=Widomaker1, Home of ($A$) www.team-sas.com`numteams=2
+

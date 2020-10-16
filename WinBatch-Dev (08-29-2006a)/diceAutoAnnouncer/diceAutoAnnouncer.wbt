@@ -1,0 +1,120 @@
+; diceAutoAnnouncer.wbt
+
+AddExtender("wwwsk32i.dll")
+
+_Token0 = 32
+_Token1 = "_Last_Name_Token"
+_Token2 = "_First_Name_Token"
+_Token3 = "_MI_Token"
+_Token4 = "_Address1_Token"
+_Token5 = "_Address2_Token"
+_Token6 = "_City_Token"
+_Token7 = "_State_Token"
+_Token8 = "_Zip_Token"
+_Token9 = "_Day_Phone_Token"
+_Token10 = "_Evening_Phone_Token"
+_Token11 = "_Fax_Token"
+_Token12 = "_Email_Token"
+_Token13 = "_Date_Available_Token"
+_Token14 = "_Education_Token"
+_Token15 = "_Years_Experience_Token"
+_Token16 = "_Years_Consulting_Token"
+_Token17 = "_Pay_Rate_Token"
+_Token18 = "_Work_status_Token"
+_Token19 = "_Relocate_Token"
+_Token20 = "_Travel_Token"
+_Token21 = "_State_Choice1_Token"
+_Token22 = "_State_Choice2_Token"
+_Token23 = "_State_Choice3_Token"
+_Token24 = "_Area_Token"
+_Token25 = "_Title_Token"
+_Token26 = "_Term_Token"
+_Token27 = "_Skills_Token"
+_Token28 = "_Industries_Token"
+_Token29 = "_Hardware_Token"
+_Token30 = "_Languages_Token"
+_Token31 = "_Databases_Token"
+_Token32 = "_Comments_Token"
+
+_Last_Name_Token = "Last_Name:"
+_First_Name_Token = "First_Name:"
+_MI_Token = "MI:"
+_Address1_Token = "Address1:"
+_Address2_Token = "Address2:"
+_City_Token = "City:"
+_State_Token = "State:"
+_Zip_Token = "Zip:"
+_Day_Phone_Token = "Day_Phone:"
+_Evening_Phone_Token = "Evening_Phone:"
+_Fax_Token = "Fax:"
+_Email_Token = "Email:"
+_Date_Available_Token = "Date_Available:"
+_Education_Token = "Education:"
+_Years_Experience_Token = "Years_Experience:"
+_Years_Consulting_Token = "Years_Consulting:"
+_Pay_Rate_Token = "Pay_Rate:"
+_Work_status_Token = "Work_status:"
+_Relocate_Token = "Relocate:"
+_Travel_Token = "Travel:"
+_State_Choice1_Token = "State_Choice1:"
+_State_Choice2_Token = "State_Choice2:"
+_State_Choice3_Token = "State_Choice3:"
+_Area_Token = "Area:"
+_Title_Token = "Title:"
+_Term_Token = "Term:"
+_Skills_Token = "Skills:"
+_Industries_Token = "Industries:"
+_Hardware_Token = "Hardware:"
+_Languages_Token = "Languages:"
+_Databases_Token = "Databases:"
+_Comments_Token = "Comments:"
+
+_wname = "diceAutoAnnouncer"
+wname = "%_wname%.wbt"
+
+filename = "C:\RayHorn\VB5\OnlineReq E-Mail Project\print_order.cfm.html"
+
+_types = "All Files|*.*"
+filename = AskFileName( "SelectFile", "C:\", _types, "", 1)
+
+_html_ext = "htm"
+
+If FileExist( filename) == @TRUE
+	_fext = FileExtension( filename)
+	b_fext_html = @FALSE
+	if StrIndexNc( _fext, _html_ext, 1, @FWDSCAN) > 0
+		b_fext_html = @TRUE
+	endif
+	fhand = FileOpen( filename, "READ")
+	fout = FileOpen( "C:\TEMP\%_wname%-log.txt", "WRITE")
+	while @TRUE				; Loop till break do us end
+		_aLine = FileRead(fhand)
+		If _aLine == "*EOF*" Then Break
+		if b_fext_html == @TRUE
+			_aLine = httpStripHTML( _aLine)
+		endif
+		for _ii = 1 to _Token0
+			_varname = _Token%_ii%
+			_varvalue = %_varname%
+			_i = StrIndexNc( _aLine, _varvalue, 1, @FWDSCAN)
+			if _i > 0
+				_varname = "v_Token%_ii%"
+				_value = StrSub( _aLine, _i + StrLen( _varvalue), StrLen( _aLine) - StrLen( _varvalue))
+				%_varname% = _value
+				FileWrite(fout, StrCat( TimeDate(), " : %_varname% (%_varvalue%)=(", _value, ")"))
+				break
+			endif
+		next
+	endwhile
+	FileClose(fhand)
+	FileClose(fout)
+Else
+	Message( "DEBUG - filename missing", filename)
+Endif
+
+;Message( "DEBUG", "_retcode=%_retcode%")
+
+exit
+
+
+

@@ -1,0 +1,9 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\ODBC\ODBC.INI\AgencyPolicy]
+"Driver"="C:\\WINDOWS\\System32\\sqlsrv32.dll"
+"Description"="AgencyPolicy"
+"Server"="APPDEV"
+"Database"="AgencyPolicy"
+"LastUser"="WAN_User"
+"Trusted_Connection"="Yes"

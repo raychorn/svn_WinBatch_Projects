@@ -1,0 +1,568 @@
+; LogWatchDogActivity.wbt
+
+;AddExtender("WWWNT32I.DLL")
+AddExtender("WWWSK32I.DLL")
+
+Goto realCode
+
+line = ""
+
+For i = 1 to param0
+    value = param%i%
+    line = StrCat( line, "param%i%=%value%, ")
+Next
+
+;Message("DEBUG-1/2: %param0% Parameter(s)", "%line%")
+
+    scriptDir = param1
+    status = param2
+
+    icount = ItemCount(param3, ",")
+    If icount > 1
+        server = ItemExtract(1, param3, ",")
+        pagerCode = ItemExtract(2, param3, ",")
+    Else
+        pagerCode = param3
+    Endif
+
+    service = param4
+
+    line = "Server=%server%, Service=%service%, Status=%status%, pagerCode=%pagerCode%, scriptDir=%scriptDir%"
+
+Message("DEBUG-2/2: %param0% Parameter(s)", "%line%")
+
+exit
+
+Goto realCode
+
+Run("notepad.exe", "")
+wName = "~Notepad"
+;Run("wordpad.exe", "")
+;wName = "~ WordPad"
+pos = WinPlaceGet(@NORMAL, wName)
+WinPlaceSet(@NORMAL, wName, "250 250 750 750")
+
+WinTitle(wName, "%pos% %wName%")
+
+; Apend some text in the window
+cr = StrCat(Num2Char(13))
+ClipPut("This is a test...")
+SendKey(`!E{ALT}!Ep`)
+SendKey(`{ENTER}`)
+SendKey(`{ENTER}`)
+
+;Delay(5)
+
+; Clear the text in the window
+;SendKey(`!E{ALT}!EA`)
+;SendKey(`!E{ALT}!El`)
+
+;WinActivate(wName)
+;Delay(5)
+;WinClose(wName)
+
+exit
+
+:realCode
+
+WinBatch = "C:\Program Files\WinBatch\system\WinBatch.exe"
+
+scriptDir = "F:\208.128.219.19\winbatch\ServerRescue"
+
+basedir = "%scriptDir%watchdog\"
+
+; "C:\Program Files\WinBatch\system\WinBatch.exe" F:\208.128.219.19\winbatch\ServerRescue\LogWatchDogActivity.wbt Riker mail.cybercash-net.com RED 111# F:\208.128.219.19\winbatch\ServerRescue
+; "C:\Program Files\WinBatch\system\WinBatch.exe" F:\208.128.219.19\winbatch\ServerRescue\LogWatchDogActivity.wbt Riker mail.cybercash-net.com GREEN 1110# F:\208.128.219.19\winbatch\ServerRescue
+
+If param0 == 4
+    scriptDir = param1
+    scriptDir = StrCat( scriptDir, "\")
+    scriptDir = StrReplace( scriptDir, "\\", "\")
+    basedir = "%scriptDir%watchdog\"
+
+    status = param2
+
+    icount = ItemCount(param3, ",")
+    If icount > 1
+        server = ItemExtract(1, param3, ",")
+        pagerCode = ItemExtract(2, param3, ",")
+    Else
+        pagerCode = param3
+    Endif
+
+    service = param4
+
+    debugdir = "%basedir%%server%\debug\"
+    t = StrReplace( TimeYmdHms( ), ":", "_")
+    dName = "%debugdir%%service%-%status%-%t%.txt"
+
+;    Run("notepad.exe", "")
+;    wName = "~Notepad"
+;    todayNow = TimeDate( )
+;    WinTitle(wName, "LogWatchDogActivity.wbt %todayNow% %wName%")
+
+;    line = "Server=%server%, Service=%service%, Status=%status%, pagerCode=%pagerCode%, scriptDir=%scriptDir%"
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("Server=%server%, ")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    WinActivate(wName)
+;    ClipPut("Service=%service%, ")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    WinActivate(wName)
+;    ClipPut("Status=%status%, ")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    WinActivate(wName)
+;    ClipPut("pagerCode=%pagerCode%, ")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    WinActivate(wName)
+;    ClipPut("scriptDir=%scriptDir%")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    SendKey(`{ENTER}`)
+
+    handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "Server=%server%, ")
+        FileWrite(handle, @CR)
+        FileWrite(handle, "Service=%service%, ")
+        FileWrite(handle, @CR)
+        FileWrite(handle, "Status=%status%, ")
+        FileWrite(handle, @CR)
+        FileWrite(handle, "pagerCode=%pagerCode%, ")
+        FileWrite(handle, @CR)
+        FileWrite(handle, "scriptDir=%scriptDir%")
+        FileWrite(handle, @CR)
+        FileWrite(handle, @CR)
+        FileClose(handle)
+    Endif
+    
+    fname = "%basedir%%server%\Activity.log"
+
+    cname = "%basedir%%server%\count.txt"
+
+    cmname = "%basedir%%server%\_count.txt"
+    
+    rescuesDir = "%basedir%%server%\Rescues\"
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("fname=%fname%, ")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    ClipPut("cname=%cname%, ")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    ClipPut("cmname=%cmname%, ")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    ClipPut("rescuesDir=%rescuesDir%")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    SendKey(`{ENTER}`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "fname=%fname%, ")
+        FileWrite(handle, @CR)
+        FileWrite(handle, "cname=%cname%, ")
+        FileWrite(handle, @CR)
+        FileWrite(handle, "cmname=%cmname%, ")
+        FileWrite(handle, @CR)
+        FileWrite(handle, "rescuesDir=%rescuesDir%")
+        FileWrite(handle, @CR)
+        FileWrite(handle, @CR)
+        FileClose(handle)
+    Endif
+ 
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("Reading %cmname%...")
+;    SendKey(`!E{ALT}!Ep`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "Reading %cmname%...")
+        FileClose(handle)
+    Endif
+
+    handle = FileOpen( cmname, "READ")
+    If handle > 0
+        cmax = FileRead(handle)
+        FileClose(handle)
+    Endif
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("done! cmax=%cmax%")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    SendKey(`{ENTER}`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "done! cmax=%cmax%")
+        FileWrite(handle, @CR)
+        FileWrite(handle, @CR)
+        FileClose(handle)
+    Endif
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("Reading %cname%...")
+;    SendKey(`!E{ALT}!Ep`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "Reading %cname%...")
+        FileClose(handle)
+    Endif
+
+    handle = FileOpen( cname, "READ")
+    If handle > 0
+        count = FileRead(handle)
+        FileClose(handle)
+    Endif
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("done! count=%count%")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    SendKey(`{ENTER}`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "done! count=%count%")
+        FileWrite(handle, @CR)
+        FileWrite(handle, @CR)
+        FileClose(handle)
+    Endif
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("BEFORE: status=%status%, count=%count%")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    SendKey(`{ENTER}`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "BEFORE: status=%status%, count=%count%")
+        FileWrite(handle, @CR)
+        FileWrite(handle, @CR)
+        FileClose(handle)
+    Endif
+
+    b_needs_update = @FALSE
+    If (status == "RED") || (status == "DOWN") || (status == "DN")
+        count = count - 1
+        If count < 0
+            count = 0;
+        Endif
+        b_needs_update = @TRUE
+    Else
+        If (status == "GREEN") || (status == "UP")
+            count = count + 1
+            If count > cmax
+                count = cmax;
+            Endif
+            b_needs_update = @TRUE
+        Endif
+    Endif
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("AFTER: status=%status%, count=%count%, b_needs_update=%b_needs_update%")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    SendKey(`{ENTER}`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "AFTER: status=%status%, count=%count%, b_needs_update=%b_needs_update%")
+        FileWrite(handle, @CR)
+        FileWrite(handle, @CR)
+        FileClose(handle)
+    Endif
+
+    If b_needs_update == @TRUE
+        handle = FileOpen( cname, "WRITE")
+        If handle > 0
+            FileWrite(handle, count)
+            FileClose(handle)
+        Endif
+    Endif
+    
+    handle = FileOpen( fname, "APPEND")
+    If handle > 0
+        line = StrCat( "", "%server%, ", "%service%, ", "%status%, ", "%count%")
+        line = StrCat( TimeDate(), ", ", line, @CR)
+        FileWrite(handle, line)
+        FileClose(handle)
+    Endif
+
+    ; Apend some text in the window
+;    WinActivate(wName)
+;    ClipPut("line=%line%")
+;    SendKey(`!E{ALT}!Ep`)
+;    SendKey(`{ENTER}`)
+;    SendKey(`{ENTER}`)
+
+   handle = FileOpen( dName, "APPEND")
+    If handle > 0
+        FileWrite(handle, "line=%line%")
+        FileWrite(handle, @CR)
+        FileWrite(handle, @CR)
+        FileClose(handle)
+    Endif
+
+;    Message("NetInfo(0)", NetInfo(0))
+    
+    If count == 0 ; count has reached 0 so now we must verify the internet connection is up to filter out false failures and then we have to take the appropriate actions to Resuce the Server
+        b_name0 = 10
+        b_name1 = "disney.com"
+        b_name2 = "persiankitty.com"
+        b_name3 = "rs.internic.net"
+        b_name4 = "tnt.turner.com"
+        b_name5 = "yahoo.com"
+        b_name6 = "hotmail.com"
+        b_name7 = "altavista.digital.com"
+        b_name8 = "apache.org"
+        b_name9 = "ipswitch.com"
+        b_name10 = "ora.com"
+
+        line = ""
+        any_true = 0
+        For i = 1 to b_name0
+            name = b_name%i%
+
+            ; Apend some text in the window
+;            ClipPut("PING: %name%...")
+;            SendKey(`!E{ALT}!Ep`)
+
+            handle = FileOpen( dName, "APPEND")
+            If handle > 0
+                FileWrite(handle, "PING: %name%...")
+                FileClose(handle)
+            Endif
+
+            ErrorMode(@OFF)
+            value = wxPing( b_name%i%)
+            ErrorMode(@CANCEL)
+            line = StrCat( line, "%name%=%value%, ")
+
+            ; Apend some text in the window
+;            WinActivate(wName)
+;            ClipPut("done! %name%=%value%")
+;            SendKey(`!E{ALT}!Ep`)
+;            SendKey(`{ENTER}`)
+;            SendKey(`{ENTER}`)
+
+            handle = FileOpen( dName, "APPEND")
+            If handle > 0
+                FileWrite(handle, "done! %name%=%value%")
+                FileWrite(handle, @CR)
+                FileWrite(handle, @CR)
+                FileClose(handle)
+            Endif
+
+            If value == @TRUE
+                any_true = any_true + 1
+                break
+            Endif
+        Next
+
+        ; now we test to see if the service is really down or was it a false alarm - the assumption here being that if we can PING some other server but can't PING our own then the server is dead but the connection is live
+        ErrorMode(@OFF)
+        service_is_live = wxPing( service)
+        ErrorMode(@CANCEL)
+
+        line = StrCat( line, "any_true=%any_true%, service_is_live=%service_is_live%, ")
+
+        handle = FileOpen( fname, "APPEND")
+        If handle > 0
+            line = StrCat( TimeDate(), ", ", line, @CR)
+            FileWrite(handle, line)
+            FileClose(handle)
+        Endif
+
+        ; Apend some text in the window
+;        WinActivate(wName)
+;        ClipPut("line=%line%")
+;        SendKey(`!E{ALT}!Ep`)
+;        SendKey(`{ENTER}`)
+;        SendKey(`{ENTER}`)
+
+        handle = FileOpen( dName, "APPEND")
+        If handle > 0
+            FileWrite(handle, "line=%line%")
+            FileWrite(handle, @CR)
+            FileWrite(handle, @CR)
+            FileClose(handle)
+        Endif
+
+        server_letter = ""
+        If (any_true > 0) && (service_is_live <> @TRUE) ; now we know this workstation is connected to the internet and the results are assumed to be valid so we can go ahead
+                                                        ; no need to go beyond this point unless we know the service is really down - we might even test ALL known IP addresses to see if it's really DEAD and not just playing possum
+            If StriCmp (server, "Riker") == 0
+                ; Riker
+                server_letter = "r"
+            Else
+                If StriCmp (server, "Picard2") == 0
+                    ;Picard2
+                    server_letter = "p"
+                Else
+                    If StriCmp (server, "Data2") == 0
+                        ;Data2
+                        server_letter = "d"
+                    Else
+                        If StriCmp (server, "Zone1") == 0
+                            ;Zone1
+                            server_letter = "z"
+                        Else
+                        Endif
+                    Endif
+                Endif
+            Endif
+
+            ; Apend some text in the window
+;            WinActivate(wName)
+;            ClipPut("server_letter=%server_letter%")
+;            SendKey(`!E{ALT}!Ep`)
+;            SendKey(`{ENTER}`)
+;            SendKey(`{ENTER}`)
+
+            handle = FileOpen( dName, "APPEND")
+            If handle > 0
+                FileWrite(handle, "server_letter=%server_letter%")
+                FileWrite(handle, @CR)
+                FileWrite(handle, @CR)
+                FileClose(handle)
+            Endif
+
+            If StrLen( server_letter) > 0 ; now we know which server needs to be rescued so we can go ahead
+                b_okay = @FALSE
+
+                While b_okay <> @TRUE
+                    line = "Rescue-911 Server is %server%"
+
+                    handle = FileOpen( fname, "APPEND")
+                    If handle > 0
+                        line = StrCat( TimeDate(), ", ", line, @CR)
+                        FileWrite(handle, line)
+                        FileClose(handle)
+                    Endif
+
+                    ; Apend some text in the window
+;                    WinActivate(wName)
+;                    ClipPut("line=%line%")
+;                    SendKey(`!E{ALT}!Ep`)
+;                    SendKey(`{ENTER}`)
+;                    SendKey(`{ENTER}`)
+
+                    handle = FileOpen( dName, "APPEND")
+                    If handle > 0
+                        FileWrite(handle, "line=%line%")
+                        FileWrite(handle, @CR)
+                        FileWrite(handle, @CR)
+                        FileClose(handle)
+                    Endif
+
+                    rescueFname = StrCat( rescuesDir, "rescue-", StrReplace(TimeYmdHms( ), ":", "-"), ".Log")
+                    handle = FileOpen( rescueFname, "APPEND")
+                    If handle > 0
+                        line = StrCat( TimeDate(), ", ", line, @CR)
+                        FileWrite(handle, line)
+                        FileClose(handle)
+                    Endif
+
+                    ; Apend some text in the window
+;                    WinActivate(wName)
+;                    ClipPut("rescueFname=%rescueFname%")
+;                    SendKey(`!E{ALT}!Ep`)
+;                    SendKey(`{ENTER}`)
+;                    SendKey(`{ENTER}`)
+
+                    handle = FileOpen( dName, "APPEND")
+                    If handle > 0
+                        FileWrite(handle, "rescueFname=%rescueFname%")
+                        FileWrite(handle, @CR)
+                        FileWrite(handle, @CR)
+                        FileClose(handle)
+                    Endif
+                
+                    ; attempt to restart the server we just identified
+                    ; RunShell(program-name, params, directory, display mode, waitflag)
+                    ; "C:\Program Files\WinBatch\system\WinBatch.exe" F:\208.128.219.19\winbatch\ServerRescue\LogWatchDogActivity.wbt Riker mail.cybercash-net.com RED
+                    ; "C:\Program Files\WinBatch\system\WinBatch.exe" F:\208.128.219.19\winbatch\ServerRescue\ServerRescue.wbt r
+;                    RunShell( WinBatch, "%scriptDir%\ServerRescue.wbt %server_letter%", scriptDir, @NORMAL, @WAIT)
+                    
+                    mins = 1
+                    Gosub dumdedum
+                EndWhile
+
+            Endif
+        Endif
+    Endif
+
+;   save the text in the window
+;    WinActivate(wName)
+;    SendKey(`!E{ALT}!FA`)
+;    SendKey( dName)
+;    SendKey(`{ENTER}`)
+
+;    Delay(5)
+
+;   Clear the text in the window
+;    WinActivate(wName)
+;    SendKey(`!E{ALT}!EA`)
+;    SendKey(`!E{ALT}!El`)
+
+;    Delay(5)
+;    WinClose(wName)
+;    SendKey(`N`)
+    
+Else
+    line = ""
+
+    For i = 1 to param0
+        value = param%i%
+        line = StrCat( line, "param%i%=%value%, ")
+    Next
+
+    Message("ERROR: %param0% Parameter(s)", "%line%")
+Endif
+
+exit
+
+:dumdedum
+; Here we wait a while to see if the server is really back online - if it does not then we have to page someone and then try again!
+goal = mins * 60
+timer = 0
+While timer < goal
+    remain = goal - timer
+
+    ErrorMode(@OFF)
+    value = wxPing( service)
+    ErrorMode(@CANCEL)
+    If value == @TRUE
+        b_okay = value
+        break
+    Endif
+
+    Delay(10)
+    timer = timer + 10
+EndWhile
+
+If b_okay <> @TRUE
+    RunShell( WinBatch, "%scriptDir%\Pager.wbt %basedir% %pagerCode%", scriptDir, @NORMAL, @WAIT)
+Endif
+Return
+
+

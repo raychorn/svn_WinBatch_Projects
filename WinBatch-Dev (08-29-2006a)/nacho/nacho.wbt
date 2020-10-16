@@ -1,0 +1,142 @@
+;----------------------------------------------------------------------
+; Filename:	cp.h
+; Description	CryptoPack(tm) header file.
+;
+; Notice: Copyright 1997 Nacho Technologies. All Rights Reserved.
+;----------------------------------------------------------------------
+;----------------------------------------
+; CryptoPack Operations
+;----------------------------------------
+
+CP_NO_OPERATION = 0
+CP_GET_VERSION_NUMBER = 1
+;
+; DES
+;
+CP_DES_ECB_ENCRYPT = 1001
+CP_DES_ECB_DECRYPT = 1002
+CP_DES_GENERATE_ONE_KEY = 1081
+CP_DES_TEST_FOR_WEAK_KEY = 1082
+CP_DES_ECB_VALIDATE = 1091
+;
+; Triple DES, two key
+;
+CP_3DES_ECB_TWO_KEY_ENCRYPT = 1101
+CP_3DES_ECB_TWO_KEY_DECRYPT = 1102
+CP_3DES_GENERATE_TWO_KEYS = 	1181
+CP_3DES_TEST_TWO_WEAK_KEYS = 1182
+CP_3DES_ECB_TWO_KEY_VALIDATE = 1191
+;
+; Triple DES, three key
+;
+CP_3DES_ECB_THREE_KEY_ENCRYPT = 1201
+CP_3DES_ECB_THREE_KEY_DECRYPT = 1202
+CP_3DES_GENERATE_THREE_KEYS = 1281
+CP_3DES_TEST_THREE_WEAK_KEYS = 1282
+CP_3DES_ECB_THREE_KEY_VALIDATE = 1291
+;
+; Blowfish
+;
+CP_BLOWFISH_ECB_ENCRYPT = 2001
+CP_BLOWFISH_ECB_DECRYPT = 2002
+CP_BLOWFISH_GENERATE_KEY = 2081
+CP_BLOWFISH_ECB_VALIDATE = 2091
+;
+; Compress-Decompress-Compare
+;
+CP_HUFFMAN_COMPRESS = 3001
+CP_HUFFMAN_DECOMPRESS = 3002
+
+CP_COMPARE_FILES = 4001
+
+;----------------------------------------
+; CryptoPack Results
+;----------------------------------------
+
+;
+; overall results
+;
+CP_RESULT_OK = 0
+CP_RESULT_BAD = 1
+CP_RESULT_OP_NOT_IMPLEMENTED = 2
+;
+; parameter errors
+;
+CP_RESULT_OPERATION_INVALID = 101
+CP_RESULT_SUBOPERATION_INVALID = 102
+CP_RESULT_FILE1_INVALID = 103
+CP_RESULT_FILE2_INVALID = 104
+CP_RESULT_KEY1_INVALID = 105
+CP_RESULT_KEY2_INVALID = 106
+CP_RESULT_KEY3_INVALID = 107
+CP_RESULT_LENGTHKEY1_INVALID = 108
+CP_RESULT_CLIPNULLS_INVALID = 109
+CP_RESULT_KEYTYPE_INVALID = 110
+
+CP_RESULT_DES_KEY_LENGTH_ERROR = 121
+
+CP_RESULT_BLOWFISH_KEY_LEN_ERR = 131
+;
+; operational results and errors
+;
+CP_RESULT_INPUT_FILE_NOT_FOUND = 1001
+CP_RESULT_INPUT_FILE_SEEK_FAIL = 1002
+CP_RESULT_CANNOT_OPEN_OUT_FILE = 1003
+
+CP_RESULT_DES_KEY1_OK = 2011
+CP_RESULT_DES_KEY1_WEAK = 2012
+CP_RESULT_DES_KEY1_SEMIWEAK = 2013
+CP_RESULT_DES_KEY1_MAYBE_WEAK = 2014
+
+CP_RESULT_DES_KEY1_KEY2_OK = 2021
+CP_RESULT_DES_KEY2_WEAK = 2022
+CP_RESULT_DES_KEY2_SEMIWEAK = 2023
+CP_RESULT_DES_KEY2_MAYBE_WEAK = 2024
+
+CP_RESULT_DES_KEY1_2_3_OK = 2031
+CP_RESULT_DES_KEY3_WEAK = 2032
+CP_RESULT_DES_KEY3_SEMIWEAK = 2033
+CP_RESULT_DES_KEY3_MAYBE_WEAK = 2034
+
+CP_RESULT_HUFFMAN_COMP_ERROR = 3001
+CP_RESULT_HUFFMAN_DECOMP_ERROR = 3002
+
+CP_RESULT_FILES_SAME = 4001
+CP_RESULT_FILES_SAME_EX_NULLS = 4002
+CP_RESULT_FILES_DIFFERENT = 4003
+
+;----------------------------------------
+; CryptoPack Options
+;----------------------------------------
+
+CP_OP_KEYTYPE_PRINTABLE_ASCII = 0; 0x21-0x7e
+CP_OP_KEYTYPE_ALPHANUM_ASCII = 1; 0-9, A-Z, a-z
+CP_OP_KEYTYPE_HEXADECIMAL = 2
+
+CP_OPTION_DES_KEY_BYTES = 8
+
+CP_OP_BLOWFISH_KEY_MIN_BYTES = 4;  4 * 8 =  32
+CP_OP_BLOWFISH_KEY_MAX_BYTES = 5; 56 * 8 = 448
+
+;----------------------------------------
+; To avoid the LNK2001 error:
+; For 'C',   use '#if 1'.
+; For 'C++', use '#if 0' and separate function prototype.
+;----------------------------------------
+
+;#if 0
+;short	do_cp(short operation,
+;			  short suboperation,
+;			  char * fileIn,
+;			  char * fileOut,
+;			  char * key1,
+;			  char * key2,
+;			  char * key3,
+;			  short lengthKey1,
+;			  short clipNulls,
+;			  short keyType,
+;			  char * resultStr);
+;#endif
+
+;----------------------------------------------------------------------
+

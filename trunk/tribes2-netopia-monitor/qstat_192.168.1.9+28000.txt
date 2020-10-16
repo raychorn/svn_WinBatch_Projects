@@ -1,0 +1,3 @@
+T2S`192.168.1.9:28000`{USB}Mayhem HQ #3`Sanctuary`32`12`10`0
+queryversion=VER5`net_protocol=42`minimum_net_protocol=42`build_version=23669`game={USB}Mayhem_v167_ultra`mission=Capture the Flag`status=17`dedicated=1`no_aliases=1`bot_count=10`cpu_speed=990`info=Tribes2 Dedicated Server running {USB}Mayhem Mod Vers v1.67+23669. Download Mod from http://usbmayhem.tribes-universe.com/ & Download Missions from http://Tribes2Maps.com. Rent a Dedicated Tribes Server from us for less than $1.49 per hour !`numteams=2
+

@@ -1,0 +1,37 @@
+; flash-builder.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+wName = "flash-builder.wbt"
+
+; Start-up Flash IDE
+
+:askForFlashIDE
+
+If param0 > 0
+	_pathFlashIDE = param1
+Else
+	_pathFlashIDE = AskLine("Input", "Please enter your Flash IDE pathName ?", "C:\Program Files\Macromedia\Flash 8\Flash.exe")
+Endif
+
+; Open the Flash.fla file using a path
+
+If param0 > 1
+	_pathFlashFLA = param1
+Else
+	_pathFlashFLA = AskLine("Input", "Please enter your Flash FLA pathName ?", "C:\@PGP\myFlash5\Chameleon-Clock\Chameleon-Clock.fla")
+Endif
+
+; Launch the Flash IDE
+
+if (FileExist(_pathFlashIDE)) then
+else
+	Message( "Error", "Unable to locate the Flash IDE, PLS try again.")
+	Goto askForFlashIDE
+endif
+
+; Click the Publish button
+
+; Close Flash IDE
+
+

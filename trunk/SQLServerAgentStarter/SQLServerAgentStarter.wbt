@@ -1,0 +1,68 @@
+; SQLServerAgentStarter.wbt
+
+_serviceName1 = "SQLServerAgent"
+_serviceName2 = "SQLAgent$SQL2000DAX"
+
+IntControl(29, @TAB, 0, 0, 0)
+
+AddExtender("WWWNT32I.DLL")
+
+_serviceName = _serviceName1
+Gosub isServiceStuck
+
+_serviceName = _serviceName2
+Gosub isServiceStuck
+
+exit
+
+
+:isServiceStuck
+    _isServiceStuck = @FALSE
+    
+    line = "(get the current state of the %_serviceName% service)..."
+    BoxCaption(1, "%_appName% %line%")
+
+    state = wntSvcStatus("", _serviceName, 0, 2)  ; get the current state of the Web Server service
+
+    Switch state
+      case 1
+        s = "1   SERVICE_STOPPED     The service is not running."
+
+		line = "(Starting %_serviceName% service)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		wntSvcStart( "", _serviceName, 0, "", "")
+        break
+      case 2
+        s = "2   SERVICE_START_PENDING   The service is starting."
+        _isServiceStuck = @TRUE
+        break
+      case 3
+        s = "3   SERVICE_STOP_PENDING    The service is stopping."
+        _isServiceStuck = @TRUE
+        break
+      case 4
+        s = "4   SERVICE_RUNNING The service is running."
+        _isServiceStuck = @TRUE
+
+        break
+      case 5
+        s = "5   SERVICE_CONTINUE_PENDING    The service continue is pending."
+        _isServiceStuck = @TRUE
+        break
+      case 6
+        s = "6   SERVICE_PAUSE_PENDING   The service pause is pending."
+        _isServiceStuck = @TRUE
+        break
+      case 7
+        s = "7   SERVICE_PAUSED  The service is paused."
+        break
+    EndSwitch
+
+    line = "%_serviceName% (%s%)..."
+    BoxCaption(1, "%_appName% %line%")
+return
+
+
+
+

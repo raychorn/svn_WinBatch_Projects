@@ -1,0 +1,49 @@
+; autoConfigLaptop.wbt
+
+IntControl(29, @TAB, 0, 0, 0)
+
+AddExtender("WWWNT34i.DLL")
+
+wName = "autoConfigLaptop.wbt"
+
+const_SEAGATE100M_symbol = "SEAGATE100M"
+const_FAT32_symbol = "FAT32"
+
+; locate the USB drive.
+
+_drivesList = DiskScan(2)
+
+bool_foundDrive = @False
+
+for i = 1 to ItemCount( _drivesList, @TAB)
+	aDrive = ItemExtract( i, _drivesList, @TAB)
+	aVolName = DiskVolInfo(aDrive, 1)
+	aVolSerial = DiskVolInfo(aDrive, 1)
+	aVolFileSys = DiskVolInfo(aDrive, 2)
+	aVolSize = DiskSize(aDrive, 0)
+	aVolSizeKB = Ceiling( aVolSize / 1024)
+	aVolSizeMB = Ceiling( aVolSizeKB / 1024)
+	if (StrUpper(aVolName) == StrUpper(const_SEAGATE100M_symbol)) && (StrUpper(aVolFileSys) == StrUpper(const_FAT32_symbol)) then
+		bool_foundDrive = @True
+		break
+	endif
+next
+
+if bool_foundDrive then
+	; disconnect the shares if any exist.
+
+	_remotesList = DiskScan(4)
+	nList = ItemCount( _remotesList, @TAB)
+	if (nList == 0) then
+		_remotesList = StrCat("Z:", @TAB, "X:", @TAB, "T:", @TAB, "W:")
+		nList = ItemCount( _remotesList, @TAB)
+	endif
+
+	for i = 1 to nList
+		aRemoteDrive = ItemExtract( i, _remotesList, @TAB)
+		wntCancelCon(aRemoteDrive,@TRUE,@TRUE)
+	next
+endif
+
+; launch PGPLogin to facilitate setup.
+

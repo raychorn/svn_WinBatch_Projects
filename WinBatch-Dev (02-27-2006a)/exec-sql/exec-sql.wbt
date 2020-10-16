@@ -1,0 +1,102 @@
+; exec-sql.wbt
+
+AddExtender("wwwsk32i.dll")
+
+;Debug( @ON)
+
+_wname = "exec-sql"
+wname = "%_wname%.wbt"
+
+_questionMarkSymbol = "?"
+_commaSymbol = ","
+_barSymbol = "|"
+
+_httpResponseOK = 200
+
+_URL = ""
+_qry = "SELECT id, email, password, tribesPlayerName, isValid FROM dbo.visitors"
+
+_endSymbol = "<B>Queries</B>"
+
+_dir = Environment( "TEMP")
+if StrSub( _dir, StrLen( _dir), 1) == "\"
+else
+	_dir = StrCat( _dir, "\")
+endif
+_tempFName = StrCat( _dir, "qry.txt")
+
+if IsDefined( param1)
+	; param1 URL
+	_URL = param1
+Else
+	_URL = StrTrim( AskLine( "Enter a URL", "URL: ", StrCat( "http://admindev.tribes-ultrastarbase.com/qry.cfm?RequestTimeout=300&username=admin-system&password=yabbadabbadoo&SQL=", urlEncode( _qry) )))
+	param1 = _URL
+Endif
+
+if StrLen( _URL) > 0
+	serv = httpGetServer(_URL, "")
+	path = httpGetpath(_URL, "")
+	query = ItemExtract( 2, _URL, _questionMarkSymbol)
+	_path = StrCat( path, _questionMarkSymbol, query)
+	if FileExist( _tempFName) == @TRUE
+		FileDelete( _tempFName)
+	endif
+	a = httpRecvQryF(serv, path, query, _tempFName, @hMethodGet)
+	if a == _httpResponseOK
+		Gosub bReadFile
+	endif
+endif
+
+exit
+
+
+:readFile
+	fhand = FileOpen(_tempFName, "READ")
+	while @TRUE				; Loop till break do us end
+		x = FileRead(fhand)
+		If x == "*EOF*" Then Break
+		x = StrTrim( x)
+		if StrLen( x) > 0
+			y = x
+		endif
+	endwhile
+	FileClose(fhand)
+return
+
+
+:bReadFile
+fs = FileSize(_tempFName)
+binbuf = BinaryAlloc(fs + 100)
+if binbuf == 0
+	Message("Error", "BinaryAlloc Failed")
+else
+	BinaryRead(binbuf, _tempFName)
+	_str = ""
+	_firstTime = @FALSE
+	_colNames = ""
+	for i = 1 to fs - 1
+		byte = BinaryPeek( binbuf, i )
+		c = Num2Char( byte)
+		if c == _barSymbol
+			if _firstTime == @FALSE
+				_firstTime = @TRUE
+				_colNames = _str
+			endif
+			for j = 1 to ItemCount( _colNames, _commaSymbol)
+				_cName = ItemExtract( j, _colNames, _commaSymbol)
+				_col_%_cName% = ItemExtract( j, _str, _commaSymbol)
+			next
+			if StrIndex( _str, _endSymbol, 1, @FWDSCAN) <> 0
+				return
+			endif
+			_str = ""
+		else
+			if (c <> @CR) && (c <> @LF)
+				_str = StrCat( StrTrim( _str), c)
+			endif
+		endif
+	next
+	binbuf = BinaryFree(binbuf)
+endif
+return
+

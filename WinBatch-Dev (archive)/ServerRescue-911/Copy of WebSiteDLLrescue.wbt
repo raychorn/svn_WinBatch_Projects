@@ -1,0 +1,132 @@
+; WebSiteDLLrescue.wbt
+
+AddExtender("WWWNT32I.DLL")
+AddExtender("WWWSK32I.DLL")
+
+;BoxCaption(1, "%url_wName% %line%")
+
+_appName = "WebSiteDLLrescue"
+
+wName = "DLL Initialization Failed"
+wName = "counter.exe"
+
+_URL = "http://cybercash-net.com/index0.htm"
+fname = "c:\temp\index0.htm"
+
+_cycle_count = 0
+
+_response_code = 0 ; 200 stops the process assuming the web server is running
+
+while (_response_code <> 200) && (_cycle_count < 10)
+
+	Gosub detectDLLproblem
+	
+	Delay( 10)
+	
+endwhile
+
+
+:doSomethingWithDLLproblem
+	_cycle_count = _cycle_count + 1
+	
+	line = "(1-%_cycle_count%) (get the current state of the Web Server service)..."
+	BoxCaption(1, "%_appName% %line%")
+
+	state = wntSvcStatus("", "Web Server", 0, 2)  ; get the current state of the Web Server service
+
+	Switch state
+	  case 1
+		s = "1   SERVICE_STOPPED     The service is not running."
+		break
+	  case 2
+		s = "2   SERVICE_START_PENDING   The service is starting."
+		break
+	  case 3
+		s = "3   SERVICE_STOP_PENDING    The service is stopping."
+		break
+	  case 4
+		s = "4   SERVICE_RUNNING The service is running."
+
+		line = "(2-%_cycle_count%) (stop the Web Server service)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		wntSvcControl("", "Web Server", 0, 1)  ; stop the Web Server service
+		_state = 0
+		while _state <> 1
+			_state = wntSvcStatus("", "Web Server", 0, 2)  ; get the current state of the Web Server service
+			Delay( 1)
+		endwhile
+
+		line = "(3-%_cycle_count%) (close the %wName% window)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		while WinExist(wName) == @TRUE
+			WinActivate(wName)
+			SendKeysTo(wName, `{ENTER}`)
+		endwhile
+
+		line = "(4-%_cycle_count%) (start the Web Server service)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		wntSvcStart("", "Web Server", 0, "", "")  ; start the Web Server service
+		_state = 0
+		while _state <> 4
+			_state = wntSvcStatus("", "Web Server", 0, 2)  ; get the current state of the Web Server service
+			Delay( 1)
+		endwhile
+
+		Delay( 30) ; give the web server time to settle and really get going - if this is possible
+		
+		urls_domain_name = httpGetServer( _URL, "")
+		path = httpGetpath( _URL, "")
+
+		line = "(5-%_cycle_count%) (PING: %urls_domain_name%)..."
+		BoxCaption(1, "%_appName% %line%")
+
+		ErrorMode(@OFF)
+		url_pingable = wxPing( urls_domain_name)
+		ErrorMode(@CANCEL)
+
+		If url_pingable == @TRUE
+			line = "(6-%_cycle_count%) (HTTP: fetch %urls_domain_name% %path% into %fname%)..."
+			BoxCaption(1, "%_appName% %line%")
+
+			_response_code = httpRecvFile(urls_domain_name, path, fname, 0)
+			txt = "httpRecvFile Return code is %_response_code%"
+
+			line = "(7-%_cycle_count%) (HTTP: fetch %urls_domain_name% %path% into %fname% => %txt%)..."
+			BoxCaption(1, "%_appName% %line%")
+		Else
+			_response_code = -1 ; 'eh can't even ping the machine...
+		Endif
+		
+		If (_response_code <> 200) && (_cycle_count > 10)
+			Message( "WARNING", "Cycle count is %_cycle_count% and Response code is %_response_code% - Give Up?")
+		Endif
+		break
+	  case 5
+		s = "5   SERVICE_CONTINUE_PENDING    The service continue is pending."
+		break
+	  case 6
+		s = "6   SERVICE_PAUSE_PENDING   The service pause is pending."
+		break
+	  case 7
+		s = "7   SERVICE_PAUSED  The service is paused."
+		break
+	EndSwitch
+
+;	 Message( "DEBUG", "FOUND: %wName% Service status is %s%")
+return
+
+exit
+
+
+:detectDLLproblem
+If WinExist(wName) == @TRUE
+	Gosub doSomethingWithDLLproblem
+Endif
+
+return
+
+
+

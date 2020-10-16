@@ -1,0 +1,26 @@
+[Main]
+Type=1
+Src=netshare.wbt
+Targ=W:\WinBatch-Dev\netshare\netshare.exe
+Icon=W:\WinBatch-Dev\ezAJAX-Installer\xp_001.ico
+CmpVersion=3
+[Options]
+TechWebPage=http://www.ez-ajax.com
+RunHidden=0
+LargeExtractDest=0
+[Version Info]
+Comments=http://www.ez-ajax.com
+CompanyName=(c). Copyright 1990-2007, Hierarchical Applications Limited, All Rights Reserved.
+FileDescription=netshare
+FileVersion=1.0
+InternalName=netshare.exe
+LegalCopyright=(c). Copyright 1990-2007, Hierarchical Applications Limited, All Rights Reserved.
+LegalTrademarks=(c). Copyright 1990-2007, Hierarchical Applications Limited, All Rights Reserved.
+OriginalFilename=netshare.exe
+ProductName=netshare
+ProductVersion=1.0
+[Other Files]
+Count=0
+[Extenders]
+Count=1
+File001=wwwnt34i.dll
